@@ -6,7 +6,7 @@ import {
 import { useChannelsStore } from "../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
 import { useLoader } from "../../hooks/useLoader.hook";
-import { DEFAULT_OVERVIEW } from "../../shared/constants";
+import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -76,10 +76,14 @@ export const PictureInPictureViewerAdapter = () => {
           lensEnabled={isLensOn}
           colormap={colormap}
           onViewportLoad={onViewportLoad}
+          onViewStateChange={({ viewState }) => {
+            const z = Math.min(Math.max(Math.round(-(viewState as any).zoom), 0), loader.length - 1);
+            useViewerStore.setState({ pyramidResolution: z });
+          }}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) => value.toString()),
+                pixelValues: values.map((value) => value ? value.toString() : FILL_PIXEL_VALUE),
               }),
             handleCoordinate: () => {},
           }}

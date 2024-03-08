@@ -30,6 +30,6 @@ export type ViewerStoreMethods = {
 
 export type ViewerSourceType = {
   description: string;
-  isDemoImage: boolean;
-  urlOrFile: string;
+  isDemoImage?: boolean;
+  urlOrFile: string | File | File[];
 }

@@ -1,10 +1,6 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import AvivatorTs from './AvivatorTs'
+import { App } from './App'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <AvivatorTs/>
-  </React.StrictMode>,
-)
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<App/>)

@@ -14,6 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { OverviewSelect } from "./OverviewSelect/OverviewSelect";
 import { useEffect, useState } from "react";
 import MenuIcon from '@mui/icons-material/Menu';
+import DropzoneButton from "./DropzoneButton/DropzoneButton";
 
 export const ViewController = () => {
   const [isControllerOn, setIsControllerOn] = useState(true);
@@ -58,6 +59,9 @@ export const ViewController = () => {
               </Box>
             ) : (
               <Box sx={sx.viewControllerSectionsWrapper}>
+                <Box>
+                  <DropzoneButton/>
+                </Box>
                 <Box>
                   <Typography sx={sx.viewControllerSectionHeader}>
                     Colormap
