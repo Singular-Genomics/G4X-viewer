@@ -9,26 +9,25 @@ import { ChannelControllers } from "./ChannelControllers";
 import { useLoader } from "../../hooks/useLoader.hook";
 import { LensSelect } from "./LensSelect/LensSelect";
 import { AddChannel } from "./AddChannel/AddChannel";
-import { SgLoader, SgLogo } from "singular-genomics-ui";
 import CloseIcon from "@mui/icons-material/Close";
 import { OverviewSelect } from "./OverviewSelect/OverviewSelect";
 import { useEffect, useState } from "react";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import DropzoneButton from "./DropzoneButton/DropzoneButton";
+import { ScLogo } from "../../shared/components/ScLogo";
+import { ScLoader } from "../../shared/components/ScLoader";
+import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
 
 export const ViewController = () => {
   const [isControllerOn, setIsControllerOn] = useState(true);
 
   const [isViewerLoading, colormap] = useViewerStore(
-    useShallow((store) => [
-      store.isViewerLoading,
-      store.colormap,
-    ])
+    useShallow((store) => [store.isViewerLoading, store.colormap])
   );
 
   useEffect(() => {
-    window.dispatchEvent(new Event("onControllerToggle"))
-  }, [isControllerOn])
+    window.dispatchEvent(new Event("onControllerToggle"));
+  }, [isControllerOn]);
 
   const metadata = useMetadata();
   const loader = useLoader();
@@ -42,25 +41,30 @@ export const ViewController = () => {
         <Box sx={sx.viewControllerContainer}>
           <Box sx={sx.viewControllerContentWrapper}>
             <Box sx={sx.viewControllerHeaderWrapper}>
-              <SgLogo version="dark" />
+              <ScLogo version="dark" />
               <Typography sx={sx.viewControllerHeaderText}>
                 G4X Viewer
               </Typography>
               <IconButton
                 sx={sx.viewControllerHeaderButton}
-                onClick={() => {setIsControllerOn(false)}}
+                onClick={() => {
+                  setIsControllerOn(false);
+                }}
               >
                 <CloseIcon />
               </IconButton>
             </Box>
             {isViewerLoading ? (
               <Box sx={sx.viewControllerLoaderWrapper}>
-                <SgLoader />
+                <ScLoader />
               </Box>
             ) : (
               <Box sx={sx.viewControllerSectionsWrapper}>
                 <Box>
-                  <DropzoneButton/>
+                  <DropzoneButton />
+                </Box>
+                <Box>
+                  <BinaryDropzoneButton />
                 </Box>
                 <Box>
                   <Typography sx={sx.viewControllerSectionHeader}>
@@ -102,9 +106,9 @@ export const ViewController = () => {
             size="large"
             disableTouchRipple
             onClick={() => setIsControllerOn(true)}
-            style={{ color: '#FFF' }}
+            style={{ color: "#FFF" }}
           >
-            <MenuIcon fontSize="large"/>
+            <MenuIcon fontSize="large" />
           </IconButton>
         </Box>
       )}
@@ -116,7 +120,6 @@ const sx = {
   viewControllerContainer: {
     backgroundColor: "#8E9092",
     padding: "10px 0 0 10px",
-    //TMP
     width: "450px",
     height: "100vh",
   },
@@ -159,8 +162,8 @@ const sx = {
     height: "100%",
   },
   viewControllerToggleButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 10,
-  }
+  },
 };

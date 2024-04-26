@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { SgLogo } from "singular-genomics-ui";
+import { ScLogo } from "../../shared/components/ScLogo";
 
 export const LogoBanner = () => (
   <Box sx={sx.logoBannerContainer}>
-    <SgLogo version="light"/>
+    <ScLogo version="light"/>
     <Typography sx={sx.logoText}>
       Singular Connect
     </Typography>
@@ -13,6 +13,7 @@ export const LogoBanner = () => (
 const sx = {
   logoBannerContainer: {
     position: 'absolute',
+    zIndex: 1000,
     top: 10,
     left: 20,
     display: 'flex',

@@ -2,12 +2,13 @@ import { Box, Typography } from "@mui/material";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 import { useImage } from "../hooks/useImage.hook";
 import { PictureInPictureViewerAdapter } from "./PictureInPictureViewerAdapter/PictureInPictureViewerAdapter";
-import { SgLoader } from "singular-genomics-ui";
+
 import { ViewController } from "./ViewController";
 import { LogoBanner } from "./LogoBanner/LogoBanner";
 import { AvivatorTsProps } from "./AvivatorTs.types";
 import { useShallow } from "zustand/react/shallow";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
+import { ScLoader } from "../shared/components/ScLoader";
 
 export default function AvivatorTs({ initSource }: AvivatorTsProps) {
   const [source, isViewerLoading] = useViewerStore(
@@ -25,7 +26,7 @@ export default function AvivatorTs({ initSource }: AvivatorTsProps) {
             <PictureInPictureViewerAdapter />
           ) : (
             <Box sx={sx.loaderContainer}>
-              <SgLoader />
+              <ScLoader version="light"/>
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
             </Box>
           )}
