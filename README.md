@@ -6,7 +6,7 @@ This repository is a proof concept for the G4X Viewer application based on the
 ## Setup
 1. After opening the project directory run:
 	```bash
-    npm install --legacy-peer-deps
+    npm install
 	```
 2. Run the application:
     ```bash
