@@ -3,7 +3,7 @@ import { ViewerStore, ViewerStoreValues } from "./ViewerStore.types";
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
-  isViewerLoading: true,
+  isViewerLoading: false,
   isOverviewOn: true,
   isLensOn: false,
   useColorMap: false,

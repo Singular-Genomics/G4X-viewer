@@ -1,5 +1,5 @@
-import { ViewerSourceType } from "../stores/ViewerStore"
+import { ViewerSourceType } from "../stores/ViewerStore";
 
 export type AvivatorTsProps = {
-  initSource: ViewerSourceType
-}
+  initSource?: ViewerSourceType;
+};

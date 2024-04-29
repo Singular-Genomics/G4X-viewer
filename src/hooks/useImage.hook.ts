@@ -6,22 +6,28 @@ import { useMetadata } from "./useMetadata.hook";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 
 // Legacy from original Avivator app
-import { buildDefaultSelection, createLoader, getMultiSelectionStats, guessRgb } from './../legacy/utils';
+import {
+  buildDefaultSelection,
+  createLoader,
+  getMultiSelectionStats,
+  guessRgb,
+} from "./../legacy/utils";
 import { unstable_batchedUpdates } from "react-dom";
 import { isInterleaved } from "@hms-dbmi/viv";
 import { COLOR_PALLETE, FILL_PIXEL_VALUE } from "../shared/constants";
 
-export const useImage = (source: ViewerSourceType) => {
+export const useImage = (source: ViewerSourceType | null) => {
   const loader = useLoader();
   const metadata = useMetadata();
 
   useEffect(() => {
     async function changeLoader() {
+      if (!source) return null;
 
-      // Should we use sth different than setState 
+      // Should we use sth different than setState
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
-     
+
       const { urlOrFile } = source;
 
       // --------------------- LEGACY LOADER ----------------------
@@ -32,13 +38,13 @@ export const useImage = (source: ViewerSourceType) => {
       );
       // ----------------------------------------------------------
 
-      let nextMeta : any;
+      let nextMeta: any;
       let nextLoader: any;
 
       if (Array.isArray(newLoader)) {
         if (newLoader.length > 1) {
-          nextMeta = newLoader.map(l => l.metadata);
-          nextLoader = newLoader.map(l => l.data);
+          nextMeta = newLoader.map((l) => l.metadata);
+          nextLoader = newLoader.map((l) => l.data);
         } else {
           nextMeta = newLoader[0].metadata;
           nextLoader = newLoader[0].data;
@@ -51,14 +57,14 @@ export const useImage = (source: ViewerSourceType) => {
         unstable_batchedUpdates(() => {
           useChannelsStore.setState({ loader: nextLoader });
           useViewerStore.setState({
-            metadata: nextMeta
+            metadata: nextMeta,
           });
         });
 
         const url = new URL(window.location.href);
         url.search =
-          typeof urlOrFile === 'string' ? '?image_url=' + urlOrFile : '';
-        window.history.pushState({}, '', url);
+          typeof urlOrFile === "string" ? "?image_url=" + urlOrFile : "";
+        window.history.pushState({}, "", url);
       }
     }
     if (source) changeLoader();
@@ -66,12 +72,15 @@ export const useImage = (source: ViewerSourceType) => {
 
   useEffect(() => {
     const changeSettings = async () => {
+      if (!source) return null;
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({ isViewerLoading: true });
       const newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
-      const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
+      const channelOptions = Channels.map(
+        (c: any, i: any) => c.Name ?? `Channel ${i}`
+      );
       // Default RGB.
       let newContrastLimits = [];
       let newDomains = [];
@@ -87,17 +96,17 @@ export const useImage = (source: ViewerSourceType) => {
           newContrastLimits = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newDomains = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newColors = [
             [255, 0, 0],
             [0, 255, 0],
-            [0, 0, 255]
+            [0, 0, 255],
           ];
         }
         useViewerStore.setState({ useColorMap: false });
@@ -118,7 +127,7 @@ export const useImage = (source: ViewerSourceType) => {
                   COLOR_PALLETE[i]
               );
         useViewerStore.setState({
-          useColorMap: true
+          useColorMap: true,
         });
       }
       useChannelsStore.setState({
@@ -127,15 +136,15 @@ export const useImage = (source: ViewerSourceType) => {
         domains: newDomains,
         contrastLimits: newContrastLimits,
         colors: newColors,
-        channelsVisible: newColors.map(() => true)
+        channelsVisible: newColors.map(() => true),
       });
       useViewerStore.setState({
-        isChannelLoading: newSelections.map(i => !i),
+        isChannelLoading: newSelections.map((i) => !i),
         isViewerLoading: false,
         pixelValues: new Array(newSelections.length).fill(FILL_PIXEL_VALUE),
         // Set the global selections (needed for the UI). All selections have the same global selection.
         globalSelection: newSelections[0],
-        channelOptions
+        channelOptions,
       });
     };
     if (metadata) changeSettings();

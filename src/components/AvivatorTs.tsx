@@ -1,21 +1,19 @@
 import { Box, Typography } from "@mui/material";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
-import { useImage } from "../hooks/useImage.hook";
 import { PictureInPictureViewerAdapter } from "./PictureInPictureViewerAdapter/PictureInPictureViewerAdapter";
 
 import { ViewController } from "./ViewController";
 import { LogoBanner } from "./LogoBanner/LogoBanner";
-import { AvivatorTsProps } from "./AvivatorTs.types";
 import { useShallow } from "zustand/react/shallow";
-import { ImageInfo } from "./ImageInfo/ImageInfo";
 import { ScLoader } from "../shared/components/ScLoader";
+import { useImage } from "../hooks/useImage.hook";
 
-export default function AvivatorTs({ initSource }: AvivatorTsProps) {
+export default function AvivatorTs() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
 
-  useImage(source || initSource);
+  useImage(source);
 
   return (
     <Box sx={sx.mainContainer}>
@@ -23,17 +21,22 @@ export default function AvivatorTs({ initSource }: AvivatorTsProps) {
       <Box sx={sx.viewerWrapper}>
         <>
           {!isViewerLoading ? (
-            <PictureInPictureViewerAdapter />
+            source ? (
+              <PictureInPictureViewerAdapter />
+            ) : (
+              <Typography sx={sx.infoText} variant="h2">
+                Please upload an image file to view.
+              </Typography>
+            )
           ) : (
             <Box sx={sx.loaderContainer}>
-              <ScLoader version="light"/>
+              <ScLoader version="light" />
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
             </Box>
           )}
-          <ImageInfo />
         </>
       </Box>
-      <ViewController />
+      <ViewController imageLoaded={!!source} />
     </Box>
   );
 }
@@ -49,7 +52,7 @@ const sx = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    position: 'relative',
+    position: "relative",
   },
   loaderContainer: {
     background: "rgba(190, 190, 190, 0.1)",
@@ -69,5 +72,9 @@ const sx = {
     width: "300px",
     display: "flex",
     justifyContent: "space-between",
+  },
+  infoText: {
+    color: "rgb(248, 248, 248)",
+    fontSize: "16px",
   },
 };

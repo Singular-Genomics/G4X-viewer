@@ -17,8 +17,9 @@ import DropzoneButton from "./DropzoneButton/DropzoneButton";
 import { ScLogo } from "../../shared/components/ScLogo";
 import { ScLoader } from "../../shared/components/ScLoader";
 import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
+import { ViewControllerProps } from "./ViewController.types";
 
-export const ViewController = () => {
+export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
 
   const [isViewerLoading, colormap] = useViewerStore(
@@ -63,39 +64,47 @@ export const ViewController = () => {
                 <Box>
                   <DropzoneButton />
                 </Box>
-                <Box>
-                  <BinaryDropzoneButton />
-                </Box>
-                <Box>
-                  <Typography sx={sx.viewControllerSectionHeader}>
-                    Colormap
-                  </Typography>
-                  <ColormapSelector />
-                </Box>
-                <Box>
-                  <Typography sx={sx.viewControllerSectionHeader}>
-                    Global Selection
-                  </Typography>
-                  <GlobalSelectionSliders />
-                </Box>
-                <Box>
-                  <Typography sx={sx.viewControllerSectionHeader}>
-                    View Controlls
-                  </Typography>
-                  <OverviewSelect />
-                  {!colormap && shape[labels.indexOf("c")] > 1 && (
-                    <LensSelect />
-                  )}
-                </Box>
-                {!isViewerLoading && !isRgb && (
+                <Box
+                  sx={{
+                    ...sx.viewControllerSectionsWrapper,
+                    opacity: imageLoaded ? 1 : 0.25,
+                    pointerEvents: imageLoaded ? "auto" : "none",
+                  }}
+                >
+                  <Box>
+                    <BinaryDropzoneButton />
+                  </Box>
                   <Box>
                     <Typography sx={sx.viewControllerSectionHeader}>
-                      Channels Settings
+                      Colormap
                     </Typography>
-                    <ChannelControllers />
-                    {!isRgb && <AddChannel />}
+                    <ColormapSelector />
                   </Box>
-                )}
+                  <Box>
+                    <Typography sx={sx.viewControllerSectionHeader}>
+                      Global Selection
+                    </Typography>
+                    <GlobalSelectionSliders />
+                  </Box>
+                  <Box>
+                    <Typography sx={sx.viewControllerSectionHeader}>
+                      View Controlls
+                    </Typography>
+                    <OverviewSelect />
+                    {!colormap && shape[labels.indexOf("c")] > 1 && (
+                      <LensSelect />
+                    )}
+                  </Box>
+                  {!isViewerLoading && !isRgb && (
+                    <Box>
+                      <Typography sx={sx.viewControllerSectionHeader}>
+                        Channels Settings
+                      </Typography>
+                      <ChannelControllers />
+                      {!isRgb && <AddChannel />}
+                    </Box>
+                  )}
+                </Box>
               </Box>
             )}
           </Box>
