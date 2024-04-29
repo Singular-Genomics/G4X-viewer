@@ -132,7 +132,6 @@ const sx = {
     display: 'flex',
     flexDirection: 'column',
     gap: '15px',
-    maxHeight: '550px',
     paddingRight: '10px',
     overflowY: 'auto',
   }

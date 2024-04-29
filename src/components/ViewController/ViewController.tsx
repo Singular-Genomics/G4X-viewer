@@ -61,9 +61,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </Box>
             ) : (
               <Box sx={sx.viewControllerSectionsWrapper}>
-                <Box>
-                  <DropzoneButton />
-                </Box>
+                <DropzoneButton />
                 <Box
                   sx={{
                     ...sx.viewControllerSectionsWrapper,
@@ -71,9 +69,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                     pointerEvents: imageLoaded ? "auto" : "none",
                   }}
                 >
-                  <Box>
-                    <BinaryDropzoneButton />
-                  </Box>
+                  <BinaryDropzoneButton />
                   <Box>
                     <Typography sx={sx.viewControllerSectionHeader}>
                       Colormap
@@ -148,11 +144,13 @@ const sx = {
   viewControllerContentWrapper: {
     backgroundColor: "rgba(255, 255, 255, 0.6)",
     borderTopLeftRadius: "20px",
-    padding: "20px 10px 10px 20px",
+    padding: "20px 10px 20px 20px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
     gap: "10px",
+    overflow: "auto",
+    scrollbarWidth: "thin",
   },
   viewControllerSectionHeader: {
     fontWeight: 700,
