@@ -6,7 +6,7 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isViewerLoading: false,
   isOverviewOn: true,
   isLensOn: false,
-  isMetadataLayerOn: false,
+  isMetadataLayerOn: true,
   useColorMap: false,
   colormap: "",
   globalSelection: { c: 0, t: 0, z: 0 },
