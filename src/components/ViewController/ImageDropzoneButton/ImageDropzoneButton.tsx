@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useDropzone } from "../../../hooks/useDropzone";
 
-export default function DropzoneButton() {
+export default function ImageDropzoneButton() {
   const { getRootProps, getInputProps } = useDropzone();
 
   return (

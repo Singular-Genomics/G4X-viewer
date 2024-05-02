@@ -13,13 +13,13 @@ import CloseIcon from "@mui/icons-material/Close";
 import { OverviewSelect } from "./OverviewSelect/OverviewSelect";
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import DropzoneButton from "./DropzoneButton/DropzoneButton";
 import { ScLogo } from "../../shared/components/ScLogo";
 import { ScLoader } from "../../shared/components/ScLoader";
 import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
 import { ViewControllerProps } from "./ViewController.types";
 import { MetadataLayerToggle } from "./MetadataLayerToggle";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
+import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
@@ -65,7 +65,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </Box>
             ) : (
               <Box sx={sx.viewControllerSectionsWrapper}>
-                <DropzoneButton />
+                <ImageDropzoneButton />
                 <Box
                   sx={{
                     ...sx.viewControllerSectionsWrapper,
