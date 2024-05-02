@@ -19,6 +19,7 @@ import { ScLoader } from "../../shared/components/ScLoader";
 import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
 import { ViewControllerProps } from "./ViewController.types";
 import { MetadataLayerToggle } from "./MetadataLayerToggle";
+import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
@@ -26,6 +27,8 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isViewerLoading, colormap] = useViewerStore(
     useShallow((store) => [store.isViewerLoading, store.colormap])
   );
+
+  const files = useBinaryFilesStore((store) => store.files);
 
   useEffect(() => {
     window.dispatchEvent(new Event("onControllerToggle"));
@@ -88,7 +91,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                       View Controlls
                     </Typography>
                     <OverviewSelect />
-                    <MetadataLayerToggle />
+                    {!!files.length && <MetadataLayerToggle />}
                     {!colormap && shape[labels.indexOf("c")] > 1 && (
                       <LensSelect />
                     )}
