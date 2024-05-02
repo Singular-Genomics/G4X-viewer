@@ -1,6 +1,8 @@
 export type FilesState = {
+  fileName: string;
   files: File[];
   setFiles: (files: File[]) => void;
+  setFileName: (newFileName: string) => void;
   config: LayerConfig;
   setConfig: (config: LayerConfig) => void;
 };
