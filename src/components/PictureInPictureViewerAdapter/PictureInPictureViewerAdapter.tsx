@@ -52,11 +52,12 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
+  const [colormap, isLensOn, isMetadataLayerOn, isOverviewOn, lensSelection, onViewportLoad] =
     useViewerStore(
       useShallow((store) => [
         store.colormap,
         store.isLensOn,
+        store.isMetadataLayerOn,
         store.isOverviewOn,
         store.lensSelection,
         store.onViewportLoad,
@@ -76,7 +77,7 @@ export const PictureInPictureViewerAdapter = () => {
   });
 
   const deckProps = {
-    layers: [metadataLayer],
+    layers: isMetadataLayerOn ? [metadataLayer] : [],
     getTooltip: getCutomTooltp,
   };
 
