@@ -1,30 +1,20 @@
-import { Grid } from "@mui/material"
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore"
-import { useShallow } from "zustand/react/shallow"
-import { ScCheckbox } from "../../../shared/components/ScCheckbox"
-
+import { Grid } from "@mui/material";
+import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
+import { useShallow } from "zustand/react/shallow";
+import { ScCheckbox } from "../../../shared/components/ScCheckbox";
 
 export const OverviewSelect = () => {
-  const [
-    isOverviewOn,
-    toggleOverview
-  ] = useViewerStore(
-    useShallow((store) => [
-      store.isOverviewOn,
-      store.toggleOverview
-    ])
-  )
+  const [isOverviewOn, toggleOverview] = useViewerStore(
+    useShallow((store) => [store.isOverviewOn, store.toggleOverview])
+  );
 
   return (
     <Grid
       container
-      direction='row'
-      justifyContent='flex-start'
-      alignItems='center'
+      direction="row"
+      justifyContent="flex-start"
+      alignItems="center"
     >
-      <Grid item xs={3}>
-        Overview
-      </Grid>
       <Grid item xs={2}>
         <ScCheckbox
           onChange={toggleOverview}
@@ -32,6 +22,9 @@ export const OverviewSelect = () => {
           disableTouchRipple
         />
       </Grid>
+      <Grid item>
+        Overview
+      </Grid>
     </Grid>
-  )
-}
+  );
+};

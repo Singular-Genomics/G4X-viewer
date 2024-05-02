@@ -18,6 +18,7 @@ import { ScLogo } from "../../shared/components/ScLogo";
 import { ScLoader } from "../../shared/components/ScLoader";
 import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
 import { ViewControllerProps } from "./ViewController.types";
+import { MetadataLayerToggle } from "./MetadataLayerToggle";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
@@ -87,6 +88,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                       View Controlls
                     </Typography>
                     <OverviewSelect />
+                    <MetadataLayerToggle />
                     {!colormap && shape[labels.indexOf("c")] > 1 && (
                       <LensSelect />
                     )}
