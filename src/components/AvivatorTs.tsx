@@ -7,6 +7,7 @@ import { LogoBanner } from "./LogoBanner/LogoBanner";
 import { useShallow } from "zustand/react/shallow";
 import { ScLoader } from "../shared/components/ScLoader";
 import { useImage } from "../hooks/useImage.hook";
+import { ImageInfo } from "./ImageInfo/ImageInfo";
 
 export default function AvivatorTs() {
   const [source, isViewerLoading] = useViewerStore(
@@ -22,7 +23,10 @@ export default function AvivatorTs() {
         <>
           {!isViewerLoading ? (
             source ? (
-              <PictureInPictureViewerAdapter />
+              <>
+                <PictureInPictureViewerAdapter />
+                <ImageInfo />
+              </>
             ) : (
               <Typography sx={sx.infoText} variant="h2">
                 Please upload an image file to view.
