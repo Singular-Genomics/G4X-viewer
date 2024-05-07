@@ -35,6 +35,9 @@ const sx = {
         border: "none ",
       },
     },
+    "& .MuiTypography-root": {
+      overflow: 'hidden',
+    },
     "&:hover": {
       [`& .${outlinedInputClasses.notchedOutline}`]: {
         border: "1px solid rgba(0, 177, 164, 1)",
