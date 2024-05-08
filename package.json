@@ -17,6 +17,7 @@
     "@hms-dbmi/viv": "^0.16.1",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
+    "@types/lodash": "^4.17.0",
     "it-pipe": "^3.0.1",
     "it-tar": "^6.0.5",
     "jszip": "^3.10.1",
