@@ -67,7 +67,7 @@ export const GlobalSelectionSliders = () => {
 
   return (
     <Box>
-      {globalControlLabels.map((label: any) => {
+      {globalControlLabels.length ? globalControlLabels.map((label: any) => {
         const size = shape[labels.indexOf(label)];
 
         if(size <= 1) {
@@ -110,7 +110,11 @@ export const GlobalSelectionSliders = () => {
             </Grid>
           </Grid>
         );
-      })}
+      }) : (
+        <Box>
+          <Typography textAlign="center">No global selection data</Typography>
+        </Box>
+      )}
     </Box>
   );
 };

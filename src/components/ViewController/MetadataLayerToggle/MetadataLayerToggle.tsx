@@ -1,11 +1,11 @@
-import { Grid } from "@mui/material";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
+import { useViewerStore } from "../../../stores/ViewerStore";
+import { Grid } from "@mui/material";
 import { ScCheckbox } from "../../../shared/components/ScCheckbox";
 
-export const OverviewSelect = () => {
-  const [isOverviewOn, toggleOverview] = useViewerStore(
-    useShallow((store) => [store.isOverviewOn, store.toggleOverview])
+export const MetadataLayerToggle = () => {
+  const [isMetadataLayerOn, toggleMetadataLayer] = useViewerStore(
+    useShallow((store) => [store.isMetadataLayerOn, store.toggleMetadataLayer])
   );
 
   return (
@@ -17,13 +17,13 @@ export const OverviewSelect = () => {
     >
       <Grid item xs={2}>
         <ScCheckbox
-          onChange={toggleOverview}
-          checked={isOverviewOn}
+          onChange={toggleMetadataLayer}
+          checked={isMetadataLayerOn}
           disableTouchRipple
         />
       </Grid>
       <Grid item>
-        Overview
+        Metadata Layer
       </Grid>
     </Grid>
   );
