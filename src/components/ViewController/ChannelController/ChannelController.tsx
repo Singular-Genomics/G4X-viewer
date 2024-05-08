@@ -52,6 +52,7 @@ export const ChannelController = ({
           <ScSelect
             value={name}
             onChange={(e) => onSelectionChange(e.target.value as string)}
+            sx={sx.channelSelect}
           >
             {channelOptions.map((opt) => (
               <MenuItem disabled={isLoading} key={opt} value={opt}>
@@ -140,4 +141,7 @@ const sx = {
       boxShadow: "0px 0px 0px 8px rgba(0, 177, 164, 0.3)",
     },
   },
+  channelSelect: {
+    width: '200px'
+  }
 };
