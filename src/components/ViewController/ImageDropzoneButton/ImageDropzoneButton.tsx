@@ -1,22 +1,3 @@
-<<<<<<< HEAD
-import { Button } from "@mui/material";
-import { useDropzone } from "../../../hooks/useDropzone";
-
-export default function ImageDropzoneButton() {
-  const { getRootProps, getInputProps } = useDropzone();
-
-  return (
-    <Button
-      fullWidth
-      variant="outlined"
-      sx={sx.dropDownButton}
-      size="small"
-      {...getRootProps()}
-    >
-      <input {...getInputProps({ accept: ".tif, .tiff" })} />
-      Upload image file
-    </Button>
-=======
 import { Button, TextField, Box } from "@mui/material";
 import { useDropzone } from "../../../hooks/useDropzone";
 import { useViewerStore } from "../../../stores/ViewerStore";
@@ -47,13 +28,10 @@ export default function ImageDropzoneButton() {
         Upload image file
       </Button>
     </Box>
->>>>>>> master
   );
 }
 
 const sx = {
-<<<<<<< HEAD
-=======
   textField: {
     marginBottom: '8px',
     '& .MuiFormLabel-root.Mui-focused': {
@@ -63,7 +41,6 @@ const sx = {
       borderBottom: '2px solid rgba(0, 177, 164, 1)',
     }
   },
->>>>>>> master
   dropDownButton: {
     borderStyle: "dashed",
     width: "100%",
