@@ -3,15 +3,28 @@ import {
   Dialog,
   DialogContent,
   LinearProgress,
+  TextField,
   Typography,
+  Box
 } from "@mui/material";
 import { useFileHandler } from "./useFileHandler";
+import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 
 export default function BinaryDropzoneButton() {
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();
+  const fileName = useBinaryFilesStore(store => store.fileName);
 
   return (
-    <>
+    <Box>
+      <TextField
+        variant="filled"
+        label="Transcript File Name"
+        size="small"
+        fullWidth
+        inputProps={{ readOnly: true }}
+        value={fileName || " "}
+        sx={sx.textField}
+      />
       <Button
         fullWidth
         variant="outlined"
@@ -34,11 +47,20 @@ export default function BinaryDropzoneButton() {
           </Typography>
         </DialogContent>
       </Dialog>
-    </>
+    </Box>
   );
 }
 
 const sx = {
+  textField: {
+    marginBottom: '8px',
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: "rgba(0, 177, 164, 1)",
+    },
+    '& .MuiInputBase-root::after': {
+      borderBottom: '2px solid rgba(0, 177, 164, 1)',
+    }
+  },
   dropDownButton: {
     borderStyle: "dashed",
     width: "100%",
