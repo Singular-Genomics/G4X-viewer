@@ -15,7 +15,7 @@ export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
-  const { setFiles, setConfig } = useBinaryFilesStore();
+  const { setFiles, setConfig, setFileName } = useBinaryFilesStore();
 
   const handleWorkerProgress = async (e: any) => {
     if (e.data.progress) {
@@ -53,6 +53,7 @@ export const useFileHandler = () => {
       setLoading(false);
       worker.terminate();
     };
+    setFileName(file.name);
     worker.postMessage(file);
   };
 

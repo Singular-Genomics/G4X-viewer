@@ -10,7 +10,9 @@ const defaultLayerConfig: LayerConfig = {
 
 export const useBinaryFilesStore = create<FilesState>((set) => ({
   files: [],
+  fileName: '',
   setFiles: (files) => set({ files }),
+  setFileName: (newFileName) => set({ fileName: newFileName}),
   config: defaultLayerConfig,
   setConfig: (config) => set({ config }),
 }));
