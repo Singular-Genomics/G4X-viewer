@@ -1,3 +1,4 @@
+import { useBinaryFilesStore } from "../stores/BinaryFilesStore";
 import { useViewerStore } from "../stores/ViewerStore";
 import { useDropzone as useReactDropzone } from 'react-dropzone';
 
@@ -15,7 +16,9 @@ export const useDropzone = () => {
         description: 'data.zarr'
       };
     }
+
     useViewerStore.setState({ source: newSource });
+    useBinaryFilesStore.setState({ files: [], fileName: '' })
   };
   return useReactDropzone({
     onDrop: handleSubmitFile
