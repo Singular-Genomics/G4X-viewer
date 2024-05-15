@@ -9,7 +9,7 @@ import { ScLoader } from "../shared/components/ScLoader";
 import { useImage } from "../hooks/useImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 
-export default function AvivatorTs() {
+export default function G4XViewer() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );

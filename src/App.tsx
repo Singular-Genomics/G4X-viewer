@@ -1,4 +1,4 @@
-import AvivatorTs from "./components/AvivatorTs";
+import G4XViewer from "./components/G4XViewer";
 import { SnackbarProvider } from "notistack";
 
 export const App = () => {
@@ -11,7 +11,7 @@ export const App = () => {
       autoHideDuration={3000}
       maxSnack={3}
     >
-      <AvivatorTs />
+      <G4XViewer />
     </SnackbarProvider>
   );
 };
