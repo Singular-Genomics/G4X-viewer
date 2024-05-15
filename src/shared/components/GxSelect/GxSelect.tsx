@@ -5,7 +5,7 @@ import {
   outlinedInputClasses,
 } from "@mui/material";
 
-export const ScSelect = ({ children, sx: styles, ...rest }: SelectProps) => {
+export const GxSelect = ({ children, sx: styles, ...rest }: SelectProps) => {
   return (
     <Select sx={{...sx.rounded, ...styles}} MenuProps={{ sx: sx.roundedMenu }} {...rest}>
       {children}

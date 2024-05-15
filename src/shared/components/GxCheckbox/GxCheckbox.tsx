@@ -1,6 +1,6 @@
 import { Checkbox, CheckboxProps } from "@mui/material";
 
-export const ScCheckbox = (props: CheckboxProps) => (
+export const GxCheckbox = (props: CheckboxProps) => (
   <Checkbox 
     sx={sx.checkbox}
     {...props}

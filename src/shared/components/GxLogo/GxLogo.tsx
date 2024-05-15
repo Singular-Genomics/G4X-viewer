@@ -1,8 +1,8 @@
 import darkLogo from '../../../assets/img/darkLogo.svg';
 import lightLogo from '../../../assets/img/lightLogo.svg';
-import { ScLogoProps } from './ScLogo.types';
+import { GxLogoProps } from './GxLogo.types';
 
-export const ScLogo = function ({ version = 'dark' }: ScLogoProps) {
+export const GxLogo = function ({ version = 'dark' }: GxLogoProps) {
   return (
     <img
       src={version === 'light' ? lightLogo : darkLogo}

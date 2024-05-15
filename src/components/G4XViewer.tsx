@@ -5,7 +5,7 @@ import { PictureInPictureViewerAdapter } from "./PictureInPictureViewerAdapter/P
 import { ViewController } from "./ViewController";
 import { LogoBanner } from "./LogoBanner/LogoBanner";
 import { useShallow } from "zustand/react/shallow";
-import { ScLoader } from "../shared/components/ScLoader";
+import { GxLoader } from "../shared/components/GxLoader";
 import { useImage } from "../hooks/useImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 
@@ -34,7 +34,7 @@ export default function G4XViewer() {
             )
           ) : (
             <Box sx={sx.loaderContainer}>
-              <ScLoader version="light" />
+              <GxLoader version="light" />
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
             </Box>
           )}

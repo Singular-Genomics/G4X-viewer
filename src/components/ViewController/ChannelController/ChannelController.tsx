@@ -10,8 +10,8 @@ import { Grid, IconButton, MenuItem, Slider, Tooltip, Typography } from "@mui/ma
 import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { truncateDecimalNumber } from "../../../legacy/utils";
-import { ScSelect } from "../../../shared/components/ScSelect/ScSelect";
-import { ScCheckbox } from "../../../shared/components/ScCheckbox";
+import { GxSelect } from "../../../shared/components/GxSelect/GxSelect";
+import { GxCheckbox } from "../../../shared/components/GxCheckbox";
 
 export const ChannelController = ({
   color,
@@ -49,7 +49,7 @@ export const ChannelController = ({
         alignItems="center"
       >
         <Grid item xs={10}>
-          <ScSelect
+          <GxSelect
             value={name}
             onChange={(e) => onSelectionChange(e.target.value as string)}
             sx={sx.channelSelect}
@@ -59,7 +59,7 @@ export const ChannelController = ({
                 <Typography>{opt}</Typography>
               </MenuItem>
             ))}
-          </ScSelect>
+          </GxSelect>
         </Grid>
         <Grid item xs={1}>
           <ChannelOptions
@@ -90,7 +90,7 @@ export const ChannelController = ({
           {getPixelValueDisplay(pixelValue, isLoading)}
         </Grid>
         <Grid item xs={2}>
-          <ScCheckbox
+          <GxCheckbox
             onChange={toggleIsOn}
             disabled={isLoading}
             checked={channelVisible}

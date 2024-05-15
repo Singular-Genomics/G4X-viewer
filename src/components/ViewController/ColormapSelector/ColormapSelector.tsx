@@ -1,7 +1,7 @@
 import { Box, MenuItem, Typography } from "@mui/material";
 import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { COLORMAP_OPTIONS } from "../../../shared/constants";
-import { ScSelect } from "../../../shared/components/ScSelect/ScSelect";
+import { GxSelect } from "../../../shared/components/GxSelect/GxSelect";
 
 export const ColormapSelector = () => {
 
@@ -12,7 +12,7 @@ export const ColormapSelector = () => {
 
   return (
     <Box>
-      <ScSelect
+      <GxSelect
         value={colormap}
         displayEmpty
         defaultValue=""
@@ -36,7 +36,7 @@ export const ColormapSelector = () => {
             </MenuItem>
           ))
         }
-      </ScSelect>
+      </GxSelect>
     </Box>
   );
 };

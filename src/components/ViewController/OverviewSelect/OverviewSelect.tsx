@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
-import { ScCheckbox } from "../../../shared/components/ScCheckbox";
+import { GxCheckbox } from "../../../shared/components/GxCheckbox";
 
 export const OverviewSelect = () => {
   const [isOverviewOn, toggleOverview] = useViewerStore(
@@ -16,7 +16,7 @@ export const OverviewSelect = () => {
       alignItems="center"
     >
       <Grid item xs={2}>
-        <ScCheckbox
+        <GxCheckbox
           onChange={toggleOverview}
           checked={isOverviewOn}
           disableTouchRipple

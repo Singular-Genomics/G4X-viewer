@@ -1,13 +1,13 @@
 import { Box, keyframes } from '@mui/material';
-import { ScLogo } from '../ScLogo';
-import { ScLoaderProps } from './ScLoader.types';
+import { GxLogo } from '../GxLogo';
+import { GxLoaderProps } from './GxLoader.types';
 
-export const ScLoader = function ({ version = 'dark' }: ScLoaderProps) {
+export const GxLoader = function ({ version = 'dark' }: GxLoaderProps) {
   return (
     <Box sx={sx.wrapper}>
       <Box sx={sx.loader} />
       <Box sx={sx.logoWrapper}>
-        <ScLogo version={version} /> 
+        <GxLogo version={version} /> 
       </Box>
     </Box>
   );

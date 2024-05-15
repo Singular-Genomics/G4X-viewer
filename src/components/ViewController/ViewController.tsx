@@ -13,8 +13,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { OverviewSelect } from "./OverviewSelect/OverviewSelect";
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { ScLogo } from "../../shared/components/ScLogo";
-import { ScLoader } from "../../shared/components/ScLoader";
+import { GxLogo } from "../../shared/components/GxLogo";
+import { GxLoader } from "../../shared/components/GxLoader";
 import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
 import { ViewControllerProps } from "./ViewController.types";
 import { MetadataLayerToggle } from "./MetadataLayerToggle";
@@ -46,7 +46,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
         <Box sx={sx.viewControllerContainer}>
           <Box sx={sx.viewControllerContentWrapper}>
             <Box sx={sx.viewControllerHeaderWrapper}>
-              <ScLogo version="dark" />
+              <GxLogo version="dark" />
               <Typography sx={sx.viewControllerHeaderText}>
                 G4X Viewer
               </Typography>
@@ -61,7 +61,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
             </Box>
             {isViewerLoading ? (
               <Box sx={sx.viewControllerLoaderWrapper}>
-                <ScLoader />
+                <GxLoader />
               </Box>
             ) : (
               <Box sx={sx.viewControllerSectionsWrapper}>

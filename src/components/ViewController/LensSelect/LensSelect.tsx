@@ -1,9 +1,9 @@
 import { Grid, MenuItem, Typography } from "@mui/material";
-import { ScSelect } from "../../../shared/components/ScSelect/ScSelect";
+import { GxSelect } from "../../../shared/components/GxSelect/GxSelect";
 import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
 import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
-import { ScCheckbox } from "../../../shared/components/ScCheckbox";
+import { GxCheckbox } from "../../../shared/components/GxCheckbox";
 
 export const LensSelect = () => {
   const selections = useChannelsStore((store) => store.selections);
@@ -26,7 +26,7 @@ export const LensSelect = () => {
       alignItems="center"
     >
       <Grid item xs={2}>
-        <ScCheckbox
+        <GxCheckbox
           onChange={toggleLens}
           checked={isLensOn}
           disableTouchRipple
@@ -37,7 +37,7 @@ export const LensSelect = () => {
       </Grid>
       <Grid item xs={6}>
         {isLensOn && (
-          <ScSelect
+          <GxSelect
             value={lensSelection}
             fullWidth
             onChange={(e) =>
@@ -58,7 +58,7 @@ export const LensSelect = () => {
                 </Typography>
               </MenuItem>
             ))}
-          </ScSelect>
+          </GxSelect>
         )}
       </Grid>
     </Grid>

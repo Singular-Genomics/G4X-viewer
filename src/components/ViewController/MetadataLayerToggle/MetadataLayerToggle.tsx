@@ -1,7 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
 import { useViewerStore } from "../../../stores/ViewerStore";
 import { Grid } from "@mui/material";
-import { ScCheckbox } from "../../../shared/components/ScCheckbox";
+import { GxCheckbox } from "../../../shared/components/GxCheckbox";
 
 export const MetadataLayerToggle = () => {
   const [isMetadataLayerOn, toggleMetadataLayer] = useViewerStore(
@@ -16,7 +16,7 @@ export const MetadataLayerToggle = () => {
       alignItems="center"
     >
       <Grid item xs={2}>
-        <ScCheckbox
+        <GxCheckbox
           onChange={toggleMetadataLayer}
           checked={isMetadataLayerOn}
           disableTouchRipple

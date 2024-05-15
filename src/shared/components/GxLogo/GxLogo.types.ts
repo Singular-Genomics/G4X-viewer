@@ -1,3 +1,3 @@
-export interface ScLogoProps {
+export interface GxLogoProps {
   version?: 'light' | 'dark';
 }

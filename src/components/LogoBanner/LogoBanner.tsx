@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { ScLogo } from "../../shared/components/ScLogo";
+import { GxLogo } from "../../shared/components/GxLogo";
 
 export const LogoBanner = () => (
   <Box sx={sx.logoBannerContainer}>
-    <ScLogo version="light"/>
+    <GxLogo version="light"/>
     <Typography sx={sx.logoText}>
       Singular Connect
     </Typography>
