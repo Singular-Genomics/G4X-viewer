@@ -8,7 +8,7 @@ import {
   Box
 } from "@mui/material";
 import { useFileHandler } from "./useFileHandler";
-import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
+import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 
 export default function BinaryDropzoneButton() {
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();

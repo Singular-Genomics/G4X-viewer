@@ -1,6 +1,6 @@
 import { Button, TextField, Box } from "@mui/material";
-import { useDropzone } from "../../../hooks/useDropzone";
-import { useViewerStore } from "../../../stores/ViewerStore";
+import { useDropzone } from "../../../../hooks/useDropzone";
+import { useViewerStore } from "../../../../stores/ViewerStore";
 
 export default function ImageDropzoneButton() {
   const { getRootProps, getInputProps } = useDropzone();

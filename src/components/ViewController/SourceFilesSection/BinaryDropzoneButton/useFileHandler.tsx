@@ -3,11 +3,11 @@ import { useDropzone } from "react-dropzone";
 import {
   LayerConfig,
   useBinaryFilesStore,
-} from "../../../stores/BinaryFilesStore";
+} from "../../../../stores/BinaryFilesStore";
 import { useSnackbar } from "notistack";
 import ZipWorker from "./zipWorker.js?worker";
 import TarWorker from "./tarWorker.js?worker";
-import { paseJsonFromFile } from "../../../utils/utils";
+import { paseJsonFromFile } from "../../../../utils/utils";
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
