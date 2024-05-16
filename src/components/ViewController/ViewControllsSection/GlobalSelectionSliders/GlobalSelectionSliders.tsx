@@ -1,11 +1,11 @@
 import { Box, Grid, Slider, Typography } from "@mui/material";
-import { useLoader } from "../../../hooks/useLoader.hook";
-import { GLOBAL_SLIDER_DIMENSION_FIELDS, getMultiSelectionStats, range } from "../../../legacy/utils";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
-import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
+import { useLoader } from "../../../../hooks/useLoader.hook";
+import { GLOBAL_SLIDER_DIMENSION_FIELDS, getMultiSelectionStats, range } from "../../../../legacy/utils";
+import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
+import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
 import { unstable_batchedUpdates } from "react-dom";
-import { PropertiesUpdateType } from "../../../stores/ChannelsStore/ChannelsStore.types";
+import { PropertiesUpdateType } from "../../../../stores/ChannelsStore/ChannelsStore.types";
 import { debounce } from "lodash";
 
 export const GlobalSelectionSliders = () => {
@@ -70,10 +70,6 @@ export const GlobalSelectionSliders = () => {
       {globalControlLabels.length ? globalControlLabels.map((label: any) => {
         const size = shape[labels.indexOf(label)];
 
-        if(size <= 1) {
-          return null;
-        }
-
         return (
           <Grid
             key={label}
@@ -83,9 +79,9 @@ export const GlobalSelectionSliders = () => {
             alignItems="center"
           >
             <Grid item xs={1}>
-              <Typography>{label}</Typography>
+              <Typography sx={sx.selectionLabel}>{label}</Typography>
             </Grid>
-            <Grid item xs={11} sx={sx.sliderContainer}>
+            <Grid item xs sx={sx.sliderContainer}>
               <Slider
                 value={globalSelection[label]}
                 onChange={(event, newValue) => {
@@ -106,6 +102,7 @@ export const GlobalSelectionSliders = () => {
                 min={0}
                 max={size - 1}
                 sx={sx.slider}
+                disabled
               />
             </Grid>
           </Grid>
@@ -120,6 +117,10 @@ export const GlobalSelectionSliders = () => {
 };
 
 const sx = {
+  selectionLabel: {
+    textTransform: 'uppercase',
+    marginLeft: '8px',
+  },
   sliderContainer: {
     padding: "0px 15px",
   },
@@ -127,6 +128,10 @@ const sx = {
     marginTop: '3px',
     "&.MuiSlider-root": {
       color: "rgba(0, 177, 164, 1)",
+    },
+    "&.Mui-disabled": {
+      color: '#555',
+      opacity: 0.75,
     },
     "& .MuiSlider-thumb:hover": {
       boxShadow: "0px 0px 0px 8px rgba(0, 177, 164, 0.3)",

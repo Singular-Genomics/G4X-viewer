@@ -1,9 +1,9 @@
 import { Grid, MenuItem, Typography } from "@mui/material";
-import { GxSelect } from "../../../shared/components/GxSelect/GxSelect";
-import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
+import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
+import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
+import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
-import { GxCheckbox } from "../../../shared/components/GxCheckbox";
+import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const LensSelect = () => {
   const selections = useChannelsStore((store) => store.selections);

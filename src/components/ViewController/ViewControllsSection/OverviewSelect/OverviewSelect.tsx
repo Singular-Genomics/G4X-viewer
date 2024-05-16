@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
+import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
-import { GxCheckbox } from "../../../shared/components/GxCheckbox";
+import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const OverviewSelect = () => {
   const [isOverviewOn, toggleOverview] = useViewerStore(
