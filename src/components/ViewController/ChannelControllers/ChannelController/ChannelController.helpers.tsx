@@ -1,6 +1,6 @@
 import { CircularProgress } from "@mui/material";
-import { FILL_PIXEL_VALUE } from "../../../shared/constants";
-import { truncateDecimalNumber } from "../../../legacy/utils";
+import { FILL_PIXEL_VALUE } from "../../../../shared/constants";
+import { truncateDecimalNumber } from "../../../../legacy/utils";
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [0, 177, 164];
 

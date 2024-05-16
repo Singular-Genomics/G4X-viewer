@@ -2,7 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
 import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
-import { ChannelController } from "../ChannelController/ChannelController";
+import { ChannelController } from "./ChannelController/ChannelController";
 import { getSingleSelectionStats } from "../../../legacy/utils";
 import { useLoader } from "../../../hooks/useLoader.hook";
 import { useMetadata } from "../../../hooks/useMetadata.hook";

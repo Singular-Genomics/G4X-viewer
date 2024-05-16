@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
-import { useLoader } from "../../../hooks/useLoader.hook";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
+import { useLoader } from "../../../../hooks/useLoader.hook";
+import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import {
   colormapToRgb,
   getPixelValueDisplay,
@@ -9,9 +9,9 @@ import { ChannelControllerProps } from "./ChannelController.types";
 import { Grid, IconButton, MenuItem, Slider, Tooltip, Typography } from "@mui/material";
 import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { truncateDecimalNumber } from "../../../legacy/utils";
-import { GxSelect } from "../../../shared/components/GxSelect/GxSelect";
-import { GxCheckbox } from "../../../shared/components/GxCheckbox";
+import { truncateDecimalNumber } from "../../../../legacy/utils";
+import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
+import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const ChannelController = ({
   color,

@@ -1,6 +1,6 @@
 import { Box, IconButton } from "@mui/material";
 import LensIcon from '@mui/icons-material/Lens';
-import { COLOR_PALLETE } from "../../../../shared/constants";
+import { COLOR_PALLETE } from "../../../../../shared/constants";
 import { ColorPaletteProps } from "./ColorPalette.types";
 
 export const ColorPalette = ({ handleColorSelect }: ColorPaletteProps) => (
