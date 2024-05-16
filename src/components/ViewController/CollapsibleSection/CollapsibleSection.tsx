@@ -14,6 +14,7 @@ export const CollapsibleSection = ({
   sectionTitle,
   children,
   defultState = "collapsed",
+  unmountOnExit = true,
   customStyles,
   disabled,
 }: React.PropsWithChildren<CollapsibleSectionProps>) => {
@@ -55,19 +56,17 @@ export const CollapsibleSection = ({
           <ExpandMoreIcon fontSize="medium" />
         </IconButton>
       </Button>
-      <Collapse in={expanded}>
-        {expanded && (
-          <Box
-            sx={
-              {
-                ...sx.sectionContentContainer,
-                ...customStyles?.contentContainer,
-              } as SxProps
-            }
-          >
-            {children}
-          </Box>
-        )}
+      <Collapse in={expanded} timeout="auto" unmountOnExit={unmountOnExit}>
+        <Box
+          sx={
+            {
+              ...sx.sectionContentContainer,
+              ...customStyles?.contentContainer,
+            } as SxProps
+          }
+        >
+          {children}
+        </Box>
       </Collapse>
     </Box>
   );

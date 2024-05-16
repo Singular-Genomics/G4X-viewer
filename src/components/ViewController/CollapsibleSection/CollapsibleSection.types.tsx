@@ -5,6 +5,7 @@ export type CollapsibleSectionProps = {
   defultState?: CollapsibleSectionState;
   disabled?: boolean;
   customStyles?: CollapsibleSectionStyles;
+  unmountOnExit?: boolean;
 };
 
 type CollapsibleSectionState = "open" | "collapsed";
