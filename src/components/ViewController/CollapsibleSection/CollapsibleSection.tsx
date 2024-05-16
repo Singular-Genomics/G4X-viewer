@@ -56,16 +56,18 @@ export const CollapsibleSection = ({
         </IconButton>
       </Button>
       <Collapse in={expanded}>
-        <Box
-          sx={
-            {
-              ...sx.sectionContentContainer,
-              ...customStyles?.contentContainer,
-            } as SxProps
-          }
-        >
-          {children}
-        </Box>
+        {expanded && (
+          <Box
+            sx={
+              {
+                ...sx.sectionContentContainer,
+                ...customStyles?.contentContainer,
+              } as SxProps
+            }
+          >
+            {children}
+          </Box>
+        )}
       </Collapse>
     </Box>
   );
