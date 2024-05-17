@@ -54,15 +54,13 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               >
                 <ViewControllsSection />
               </CollapsibleSection>
-              {!isRgb && (
-                <CollapsibleSection
-                  sectionTitle="Channels Settings"
-                  disabled={!imageLoaded}
-                >
-                  <ChannelControllers />
-                  {!isRgb && <AddChannel />}
-                </CollapsibleSection>
-              )}
+              <CollapsibleSection
+                sectionTitle="Channels Settings"
+                disabled={!imageLoaded || isRgb}
+              >
+                <ChannelControllers />
+                <AddChannel />
+              </CollapsibleSection>
             </Box>
           </Box>
         </Box>
@@ -116,6 +114,7 @@ const sx = {
   viewControllerSectionsWrapper: {
     display: "flex",
     flexDirection: "column",
+    gap: '8px',
   },
   viewControllerLoaderWrapper: {
     display: "flex",
