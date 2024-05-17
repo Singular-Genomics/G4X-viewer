@@ -3,6 +3,8 @@ import { LayerConfig } from "../stores/BinaryFilesStore";
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
   pointSize: number;
+  showBoundries: boolean;
+  showData: boolean;
 };
 
 export type LayerDataItem = {
@@ -18,6 +20,8 @@ export type MetadataLayerProps = CompositeLayerProps & {
   files: File[];
   config: LayerConfig;
   pointSize: number;
+  showTilesBoundries: boolean;
+  showTilesData: boolean;
 };
 
 export type getTileDataProps = {

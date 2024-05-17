@@ -64,10 +64,12 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [isMetadataLayerOn, pointSize] = useMetadataLayerStore(
+  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] = useMetadataLayerStore(
     useShallow((store) => [
       store.isMetadataLayerOn,
-      store.pointSize
+      store.pointSize,
+      store.showTilesBoundries,
+      store.showTilesData
     ])
   )
 
@@ -81,7 +83,9 @@ export const PictureInPictureViewerAdapter = () => {
     files,
     config: config,
     visible: (!!files.length && isMetadataLayerOn),
-    pointSize
+    pointSize,
+    showTilesBoundries,
+    showTilesData
   });
 
   const deckProps = {

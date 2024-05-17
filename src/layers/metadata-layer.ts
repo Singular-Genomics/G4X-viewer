@@ -28,6 +28,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       getLineWidth: 5,
       lineWidthMaxPixels: 5,
       getLineColor: [255, 255, 255],
+      visible: this.props.showBoundries
     });
 
     // @ INFO TEXT LAYER
@@ -54,6 +55,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       background: true,
       backgroundPadding: [5, 5],
       getBackgroundColor: [0, 0, 0, 150],
+      visible: this.props.showData
     });
 
     // @ POINTS LAYER
@@ -69,7 +71,6 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
     });
 
     return [boundingBoxLayer, textLayer, pointsLayer];
-    // return [pointsLayer];
   }
 }
 
@@ -165,6 +166,8 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
           id,
           layerData: data,
           pointSize: this.props.pointSize,
+          showBoundries: this.props.showTilesBoundries,
+          showData: this.props.showTilesData,
         }),
     });
     return [tiledLayer];
