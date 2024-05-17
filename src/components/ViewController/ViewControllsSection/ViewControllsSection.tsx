@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { ColormapSelector } from "./ColormapSelector";
-import { OverviewSelect } from "./OverviewSelect";
+import { OverviewToggle } from "./OverviewToggle";
 import { MetadataLayerToggle } from "./MetadataLayerToggle";
 import { LensSelect } from "./LensSelect";
 import { useViewerStore } from "../../../stores/ViewerStore";
@@ -27,7 +27,7 @@ export const ViewControllsSection = () => {
       </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
-        <OverviewSelect />
+        <OverviewToggle />
         {!!files.length && <MetadataLayerToggle />}
         {!colormap && shape[labels.indexOf("c")] > 1 && <LensSelect />}
       </Box>

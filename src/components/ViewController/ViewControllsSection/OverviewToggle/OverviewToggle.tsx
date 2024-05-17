@@ -3,7 +3,7 @@ import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
-export const OverviewSelect = () => {
+export const OverviewToggle = () => {
   const [isOverviewOn, toggleOverview] = useViewerStore(
     useShallow((store) => [store.isOverviewOn, store.toggleOverview])
   );
