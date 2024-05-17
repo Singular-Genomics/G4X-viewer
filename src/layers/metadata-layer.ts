@@ -10,7 +10,6 @@ import {
   ScatterplotLayer,
 } from "@deck.gl/layers/typed";
 import { TileLayer } from "@deck.gl/geo-layers/typed";
-import { useBinaryFilesStore } from "../stores/BinaryFilesStore";
 
 import * as protobuf from "protobufjs";
 import { MetadataSchema } from "./metadata-schema";
@@ -64,9 +63,8 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       data: points,
       getPosition: (d) => d.position,
       getFillColor: (d) => d.color,
+      getRadius: this.props.pointSize,
       radiusUnits: "pixels",
-      radiusMaxPixels: 5,
-      radiusMinPixels: 5,
       pickable: true,
     });
 
@@ -79,18 +77,15 @@ SingleTileLayer.layerName = "SingleTileLayer";
 
 class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
   protoRoot: protobuf.Root;
-  useStore: typeof useBinaryFilesStore;
 
   constructor(props: MetadataLayerProps) {
     super(props);
     this.protoRoot = protobuf.Root.fromJSON(MetadataSchema);
-    this.useStore = useBinaryFilesStore;
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {
-    const state = this.useStore.getState();
     const suffix = `/${zoom}/${tileX}/${tileY}.bin`;
-    const file = state.files.find((f: File) => f.name.endsWith(suffix));
+    const file = this.props.files.find((f: File) => f.name.endsWith(suffix));
 
     if (!file) return Promise.resolve([]);
 
@@ -164,11 +159,12 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: "never",
       getTileData,
-      updateTriggers: { getTileData: [this.props.files] },
+      updateTriggers: { getTileData: [this.props.files, this.props.visible] },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
           id,
           layerData: data,
+          pointSize: this.props.pointSize,
         }),
     });
     return [tiledLayer];

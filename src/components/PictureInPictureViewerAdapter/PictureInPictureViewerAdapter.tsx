@@ -15,6 +15,7 @@ import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
 import { getVivId } from "../../utils/utils";
 import { getCutomTooltp } from "./PictureInPictureViewerAdapter.helpers";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
+import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -52,17 +53,23 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isMetadataLayerOn, isOverviewOn, lensSelection, onViewportLoad] =
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
     useViewerStore(
       useShallow((store) => [
         store.colormap,
         store.isLensOn,
-        store.isMetadataLayerOn,
         store.isOverviewOn,
         store.lensSelection,
         store.onViewportLoad,
       ])
     );
+
+  const [isMetadataLayerOn, pointSize] = useMetadataLayerStore(
+    useShallow((store) => [
+      store.isMetadataLayerOn,
+      store.pointSize
+    ])
+  )
 
   const loader = useLoader();
 
@@ -71,13 +78,14 @@ export const PictureInPictureViewerAdapter = () => {
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
-    files: files,
+    files,
     config: config,
-    visible: !!files.length,
+    visible: (!!files.length && isMetadataLayerOn),
+    pointSize
   });
 
   const deckProps = {
-    layers: isMetadataLayerOn ? [metadataLayer] : [],
+    layers: [metadataLayer],
     getTooltip: getCutomTooltp,
   };
 

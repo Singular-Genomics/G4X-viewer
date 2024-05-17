@@ -1,5 +1,10 @@
 import { LayerConfig } from "../stores/BinaryFilesStore";
 
+export type SingleTileLayerProps = CompositeLayerProps & {
+  layerData: LayerDataItem[];
+  pointSize: number;
+};
+
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
@@ -8,14 +13,11 @@ export type LayerDataItem = {
   boundingBox: number[];
 };
 
-export type SingleTileLayerProps = CompositeLayerProps & {
-  layerData: LayerDataItem[];
-};
-
 export type MetadataLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
   config: LayerConfig;
+  pointSize: number;
 };
 
 export type getTileDataProps = {
