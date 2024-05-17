@@ -11,15 +11,18 @@ import { ViewControllerProps } from "./ViewController.types";
 import { CollapsibleSection } from "./CollapsibleSection/CollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
+import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
+import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
+  const metadataFiles = useBinaryFilesStore(store => store.files);
+  const metadata = useMetadata();
 
   useEffect(() => {
     window.dispatchEvent(new Event("onControllerToggle"));
   }, [isControllerOn]);
 
-  const metadata = useMetadata();
   const isRgb = metadata && guessRgb(metadata);
 
   return (
@@ -60,6 +63,12 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               >
                 <ChannelControllers />
                 <AddChannel />
+              </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="Metadata Layer Settings"
+                disabled={!imageLoaded || !metadataFiles}
+              >
+                <MetadataLayerSection/>
               </CollapsibleSection>
             </Box>
           </Box>
