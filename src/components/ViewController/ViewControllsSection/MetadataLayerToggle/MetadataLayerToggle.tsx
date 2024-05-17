@@ -1,10 +1,10 @@
 import { useShallow } from "zustand/react/shallow";
-import { useViewerStore } from "../../../../stores/ViewerStore";
 import { Grid } from "@mui/material";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
+import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
 
 export const MetadataLayerToggle = () => {
-  const [isMetadataLayerOn, toggleMetadataLayer] = useViewerStore(
+  const [isMetadataLayerOn, toggleMetadataLayer] = useMetadataLayerStore(
     useShallow((store) => [store.isMetadataLayerOn, store.toggleMetadataLayer])
   );
 
