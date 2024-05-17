@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
-import { useDropzone } from "../../../../hooks/useDropzone";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 import { DropzoneButton } from "../DropzoneButton";
+import { useImageHandler } from "./useImageHandler";
 
 export default function ImageDropzoneButton() {
-  const { getRootProps, getInputProps } = useDropzone();
+  const { getRootProps, getInputProps } = useImageHandler();
   const imageName = useViewerStore((store) => store.source?.description);
 
   return (
