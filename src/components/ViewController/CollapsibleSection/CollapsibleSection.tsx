@@ -78,6 +78,7 @@ const sx = {
     display: "flex",
     alignItems: "center",
     position: "relative",
+    padding: '8px',
     color: "#000",
     width: "100%",
     borderRadius: 0,
