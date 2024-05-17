@@ -66,7 +66,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </CollapsibleSection>
               <CollapsibleSection
                 sectionTitle="Metadata Layer Settings"
-                disabled={!imageLoaded || !metadataFiles}
+                disabled={!imageLoaded || !metadataFiles.length}
               >
                 <MetadataLayerSection/>
               </CollapsibleSection>
