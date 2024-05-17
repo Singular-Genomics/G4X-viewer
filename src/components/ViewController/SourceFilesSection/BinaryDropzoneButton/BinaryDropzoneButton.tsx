@@ -1,65 +1,50 @@
 import {
-  Button,
-  Dialog,
-  DialogContent,
   LinearProgress,
-  TextField,
-  Typography,
-  Box
+  Box,
 } from "@mui/material";
 import { useFileHandler } from "./useFileHandler";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
+import { DropzoneButton } from "../DropzoneButton/DropzoneButton";
+import { useViewerStore } from "../../../../stores/ViewerStore";
 
 export default function BinaryDropzoneButton() {
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();
-  const fileName = useBinaryFilesStore(store => store.fileName);
+  const fileName = useBinaryFilesStore((store) => store.fileName);
+  const source = useViewerStore((store) => store.source);
 
   return (
     <Box>
-      <TextField
-        variant="filled"
-        label="Transcript File Name"
-        size="small"
-        fullWidth
-        inputProps={{ readOnly: true }}
-        value={fileName || " "}
-        sx={sx.textField}
+      <DropzoneButton
+        getRootProps={getRootProps}
+        getInputProps={getInputProps}
+        labelTitle="Transcript File Name"
+        labelText={fileName}
+        buttonText="Upload points file"
+        disabled={!source}
       />
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={sx.dropDownButton}
-        size="small"
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        Upload points file
-      </Button>
-      <Dialog open={loading}>
-        <DialogContent>
-          <LinearProgress
-            sx={sx.progressBar}
-            variant="determinate"
-            value={progress}
-          />
-          <Typography sx={sx.loadingText} variant="h2">
-            Loading and unpacking files... ({progress}%)
-          </Typography>
-        </DialogContent>
-      </Dialog>
+      {loading && (
+        <LinearProgress
+          sx={sx.progressBar}
+          variant="determinate"
+          value={progress}
+        />
+      )}
     </Box>
   );
 }
 
 const sx = {
   textField: {
-    marginBottom: '8px',
-    '& .MuiFormLabel-root.Mui-focused': {
+    marginBottom: "8px",
+    "& .MuiFormLabel-root.Mui-focused": {
       color: "rgba(0, 177, 164, 1)",
     },
-    '& .MuiInputBase-root::after': {
-      borderBottom: '2px solid rgba(0, 177, 164, 1)',
-    }
+    "& .MuiInputBase-input": {
+      cursor: "auto",
+    },
+    "& .MuiInputBase-root::after": {
+      borderBottom: "2px solid rgba(0, 177, 164, 1)",
+    },
   },
   dropDownButton: {
     borderStyle: "dashed",

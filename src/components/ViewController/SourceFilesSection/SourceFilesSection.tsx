@@ -4,15 +4,15 @@ import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 
 export const SourceFilesSection = () => (
   <Box sx={sx.sourceFilesSectionContainer}>
-    <ImageDropzoneButton/>
-    <BinaryDropzoneButton/>
+    <ImageDropzoneButton />
+    <BinaryDropzoneButton />
   </Box>
-)
+);
 
 const sx = {
   sourceFilesSectionContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-  }
-}
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+};
