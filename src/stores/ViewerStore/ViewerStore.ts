@@ -6,7 +6,6 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isViewerLoading: false,
   isOverviewOn: true,
   isLensOn: false,
-  isMetadataLayerOn: true,
   useColorMap: false,
   colormap: "",
   globalSelection: { c: 0, t: 0, z: 0 },
@@ -22,7 +21,6 @@ export const useViewerStore = create<ViewerStore>((set) => ({
   ...DEFAULT_VIEWER_STORE_STATE,
   toggleOverview: () => set((store) => ({ isOverviewOn: !store.isOverviewOn })),
   toggleLens: () => set((store) => ({ isLensOn: !store.isLensOn })),
-  toggleMetadataLayer: () => set((store) => ({ isMetadataLayerOn: !store.isMetadataLayerOn })),
   onViewportLoad: () => {},
   setIsChannelLoading: (index: number, val: boolean) =>
     set((state) => {
