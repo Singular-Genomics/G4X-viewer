@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Collapse,
-  IconButton,
   SxProps,
   Typography,
 } from "@mui/material";
@@ -46,15 +45,14 @@ export const CollapsibleSection = ({
         <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText }}>
           {sectionTitle}
         </Typography>
-        <IconButton
+        <ExpandMoreIcon
           style={{
             transform: `rotate(${expanded ? "180deg" : "0deg"})`,
             transition: "transform 300ms ease-in-out",
           }}
           sx={sx.collapseIcon}
-        >
-          <ExpandMoreIcon fontSize="medium" />
-        </IconButton>
+          fontSize="medium"
+        />
       </Button>
       <Collapse in={expanded} timeout="auto" unmountOnExit={unmountOnExit}>
         <Box
