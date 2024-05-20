@@ -76,12 +76,12 @@ export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
 
   const files = useBinaryFilesStore((state) => state.files);
-  const config = useBinaryFilesStore((state) => state.config);
+  const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
     files,
-    config: config,
+    config: layerConfig,
     visible: (!!files.length && isMetadataLayerOn),
     pointSize,
     showTilesBoundries,
