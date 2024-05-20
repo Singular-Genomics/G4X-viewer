@@ -67,6 +67,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <CollapsibleSection
                 sectionTitle="Metadata Layer Settings"
                 disabled={!imageLoaded || !metadataFiles.length}
+                unmountOnExit={false}
               >
                 <MetadataLayerSection/>
               </CollapsibleSection>
@@ -93,7 +94,7 @@ const sx = {
   viewControllerContainer: {
     backgroundColor: "#8E9092",
     padding: "10px 0 0 10px",
-    width: "450px",
+    width: "550px",
     height: "100vh",
   },
   viewControllerHeaderWrapper: {
@@ -124,6 +125,9 @@ const sx = {
     display: "flex",
     flexDirection: "column",
     gap: '8px',
+    paddingRight: '8px',
+    overflowY: 'scroll',
+    scrollbarColor: '#8E9092 transparent',
   },
   viewControllerLoaderWrapper: {
     display: "flex",
