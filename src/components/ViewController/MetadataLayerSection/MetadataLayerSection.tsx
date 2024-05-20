@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { PointSizeSlider } from "./PointSizeSlider";
 import { ExperimentalToggles } from "./ExperimentalToggles";
+import { PointFilter } from "./PointsFilter/PointFilter";
 
 export const MetadataLayerSection = () => (
   <Box sx={sx.sectionContainer}>
@@ -11,6 +12,10 @@ export const MetadataLayerSection = () => (
     <Box>
       <Typography sx={sx.subsectionTitle}>Experimental Options</Typography>
       <ExperimentalToggles />
+    </Box>
+    <Box>
+      <Typography sx={sx.subsectionTitle}>Point Filters</Typography>
+      <PointFilter/>
     </Box>
   </Box>
 );
