@@ -1,4 +1,5 @@
 import { LayerConfig } from "../stores/BinaryFilesStore";
+import { GeneNameFilterType } from "../stores/MetadataLayerStore";
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -19,9 +20,11 @@ export type MetadataLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
   config: LayerConfig;
+  geneFilters: GeneNameFilterType;
   pointSize: number;
   showTilesBoundries: boolean;
   showTilesData: boolean;
+  showDiscardedPoints: boolean;
 };
 
 export type getTileDataProps = {

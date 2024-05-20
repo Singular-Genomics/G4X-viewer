@@ -77,15 +77,18 @@ export const PictureInPictureViewerAdapter = () => {
 
   const files = useBinaryFilesStore((state) => state.files);
   const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
+  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] = useMetadataLayerStore(useShallow((state) => [state.geneNameFilters, state.isGeneNameFilterActive, state.showFilteredPoints]));
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
     files,
     config: layerConfig,
     visible: (!!files.length && isMetadataLayerOn),
+    geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,
-    showTilesData
+    showTilesData,
+    showDiscardedPoints: showFilteredPoints,
   });
 
   const deckProps = {

@@ -28,7 +28,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       getLineWidth: 5,
       lineWidthMaxPixels: 5,
       getLineColor: [255, 255, 255],
-      visible: this.props.showBoundries
+      visible: this.props.showBoundries,
     });
 
     // @ INFO TEXT LAYER
@@ -55,7 +55,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       background: true,
       backgroundPadding: [5, 5],
       getBackgroundColor: [0, 0, 0, 150],
-      visible: this.props.showData
+      visible: this.props.showData,
     });
 
     // @ POINTS LAYER
@@ -120,6 +120,22 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
           index.y
         )) as any;
 
+        let pointsData;
+
+        if (this.props.geneFilters === "all") {
+          pointsData = metadata.pointsData;
+        } else {
+          pointsData = this.props.showDiscardedPoints
+            ? metadata.pointsData.map((item: any) =>
+                this.props.geneFilters.includes(item.geneName)
+                  ? item
+                  : { ...item, color: [128, 128, 128] }
+              )
+            : metadata.pointsData.filter((item: any) =>
+                this.props.geneFilters.includes(item.geneName)
+              );
+        }
+
         return [
           {
             index,
@@ -138,7 +154,7 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
               bbox.bottom,
               0,
             ],
-            points: metadata.pointsData || [],
+            points: pointsData || [],
             tileData: {
               width: bbox.right - bbox.left,
               height: bbox.bottom - bbox.top,
@@ -160,7 +176,14 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: "never",
       getTileData,
-      updateTriggers: { getTileData: [this.props.files, this.props.visible] },
+      updateTriggers: {
+        getTileData: [
+          this.props.files,
+          this.props.visible,
+          this.props.geneFilters,
+          this.props.showDiscardedPoints,
+        ],
+      },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
           id,
