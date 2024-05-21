@@ -3,18 +3,19 @@ import { usePointFiltersTableColumns } from "./usePointFiltersTableColumns";
 import { Box } from "@mui/material";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
+import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
+import { PointFiltersSearch } from "../PointFiltersSearch";
 import { PointFiltersTableRowEntry } from "./PointFiltersTable.types";
 import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
-import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
 
 export const PointFiltersTable = () => {
   const rowData: PointFiltersTableRowEntry[] = useBinaryFilesStore
-  .getState()
-  .colorMapConfig.map((item) => ({
-    id: item.gene_name,
-    visible: true,
-    ...item,
-  }));
+    .getState()
+    .colorMapConfig.map((item) => ({
+      id: item.gene_name,
+      visible: true,
+      ...item,
+    }));
 
   const columns = usePointFiltersTableColumns();
   const [setGeneNamesFilter, clearGeneNameFilters] = useMetadataLayerStore(
@@ -29,20 +30,30 @@ export const PointFiltersTable = () => {
       <DataGrid
         rows={rowData ?? []}
         columns={columns}
+        density="compact"
         disableColumnMenu
-        disableColumnSorting
         disableColumnResize
+        disableColumnSorting
         pageSizeOptions={[]}
         onRowSelectionModelChange={(newSelection) => {
-          if (newSelection.length === 0 || newSelection.length === rowData.length) {
+          if (
+            newSelection.length === 0 ||
+            newSelection.length === rowData.length
+          ) {
             clearGeneNameFilters();
           }
 
-          setGeneNamesFilter(newSelection as string[])
+          setGeneNamesFilter(newSelection as string[]);
         }}
         checkboxSelection
         slots={{
-          baseCheckbox: GxCheckbox
+          baseCheckbox: GxCheckbox,
+          toolbar: PointFiltersSearch,
+        }}
+        slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+          },
         }}
         hideFooterSelectedRowCount={true}
         sx={sx.filtersTable}
@@ -54,26 +65,33 @@ export const PointFiltersTable = () => {
 const sx = {
   tableContainer: {
     maxHeight: "400px",
-    '&.MuiDataGrid-root': {
-      backgroundColor: '#FFF',
+    "& .MuiDataGrid-root": {
+      borderWidth: '0px',
     },
-    '& .MuiDataGrid-row': {
+    '& .MuiDataGrid-virtualScroller': {
+      borderRadius: '0px !important',
+    },
+    "& .MuiDataGrid-row": {
       backgroundColor: "#FFF",
-      cursor: 'pointer',
-      '&.Mui-selected': {
-        backgroundColor: 'rgba(0, 177, 164, 0.3)',
-      }
+      cursor: "pointer",
+      "&.Mui-selected": {
+        backgroundColor: "rgba(0, 177, 164, 0.4)",
+      },
     },
-    '& .MuiDataGrid-header': {
-      backgroundColor:'#EEE',
+    '& .MuiDataGrid-container--top [role=row]': {
+      background: '#EEE !important',
     },
-    '& .MuiDataGrid-columnHeaderTitle': {
+    "& .MuiDataGrid-columnHeaderTitle": {
       color: "#626668",
-      textTransform: 'uppercase',
+      textTransform: "uppercase",
+      fontWeight: 700,
     },
+    "& .MuiDataGrid-footerContainer": {
+      background: '#EEE',
+    }
   },
   filtersTable: {
-    height: '400px',
+    height: "400px",
     "& .MuiDataGrid-cell": {
       display: "flex",
       alignItems: "center",
