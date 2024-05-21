@@ -6,7 +6,7 @@ import {
   getPixelValueDisplay,
 } from "./ChannelController.helpers";
 import { ChannelControllerProps } from "./ChannelController.types";
-import { Grid, IconButton, MenuItem, Slider, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, MenuItem, Slider, Theme, Tooltip, Typography, alpha, useTheme } from "@mui/material";
 import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { truncateDecimalNumber } from "../../../../legacy/utils";
@@ -27,6 +27,9 @@ export const ChannelController = ({
   handleRemoveChannel,
   handleSliderChange,
 }: ChannelControllerProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const loader = useLoader();
   const [colormap, channelOptions] = useViewerStore(
     useShallow((store) => [store.colormap, store.channelOptions])
@@ -125,23 +128,23 @@ export const ChannelController = ({
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   removeChannelButton: {
     "&:hover": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
       backgroundColor: "unset",
     },
   },
   slider: {
     marginTop: "3px",
     "&.MuiSlider-root": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
     },
     "& .MuiSlider-thumb:hover": {
-      boxShadow: "0px 0px 0px 8px rgba(0, 177, 164, 0.3)",
+      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
     },
   },
   channelSelect: {
     width: '200px'
   }
-};
+});

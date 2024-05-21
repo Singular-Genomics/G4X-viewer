@@ -42,7 +42,6 @@ const sx = {
     gap: '8px',
   },
   subsectionTitle: {
-    // textTransform: 'uppercase',
     fontWeight: 700,
     paddingLeft: '8px',
     marginBottom: '8px'

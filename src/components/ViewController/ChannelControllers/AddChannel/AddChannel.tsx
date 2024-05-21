@@ -6,11 +6,14 @@ import { useMetadata } from "../../../../hooks/useMetadata.hook";
 import { useCallback } from "react";
 import { getSingleSelectionStats } from "../../../../legacy/utils";
 import { COLOR_PALLETE } from "../../../../shared/constants";
-import { Button } from "@mui/material";
+import { Button, Theme, alpha, useTheme } from "@mui/material";
 import { MAX_CHANNELS } from "@hms-dbmi/viv";
 import AddIcon from '@mui/icons-material/Add';
 
 export const AddChannel = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const [
     globalSelection,
     isViewerLoading,
@@ -98,16 +101,15 @@ export const AddChannel = () => {
   )
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   addChannelButton: {
-    marginTop: '20px',
-    color: "rgba(0, 177, 164, 1)",
-    border: '1px solid rgba(0, 177, 164, 1)',
-    fontWeight: 700,
+    marginTop: '16px',
+    color: theme.palette.gx.accent.greenBlue,
+    border: '1px solid',
+    borderColor: theme.palette.gx.accent.greenBlue,
     borderRadius: '8px',
     '&:hover': {
-      color: '#FFF',
-      backgroundColor: "rgba(0, 177, 164, 1)",
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.3),
     }
   }
-}
+});

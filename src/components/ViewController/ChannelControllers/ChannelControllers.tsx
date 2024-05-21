@@ -131,8 +131,9 @@ const sx = {
   channelControllersContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '15px',
-    paddingRight: '10px',
+    gap: '16px',
+    paddingRight: '8px',
+    paddingTop: '8px',
     overflowY: 'auto',
   }
 }

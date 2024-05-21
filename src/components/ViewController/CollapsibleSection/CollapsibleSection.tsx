@@ -5,6 +5,7 @@ import {
   Button,
   Collapse,
   SxProps,
+  Theme,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -79,11 +80,11 @@ const sx = {
     alignItems: "center",
     position: "relative",
     padding: '8px',
-    color: "#000",
+    color: (theme: Theme) => theme.palette.gx.primary.black,
     width: "100%",
     borderRadius: 0,
     "&:after": {
-      background: "#000",
+      background: (theme: Theme) => theme.palette.gx.primary.black,
       bottom: 0,
       content: '""',
       display: "block",
@@ -105,7 +106,8 @@ const sx = {
     marginLeft: "auto",
   },
   sectionContentContainer: {
-    borderBottom: "1px solid #8E9092",
+    borderBottom: "1px solid",
+    borderColor: (theme: Theme) => theme.palette.gx.mediumGrey[300],
     padding: "8px 0px 16px",
   },
 };

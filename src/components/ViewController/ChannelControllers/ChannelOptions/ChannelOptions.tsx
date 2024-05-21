@@ -4,7 +4,10 @@ import {
   MenuList,
   Paper,
   Popper,
+  Theme,
   Tooltip,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { ChannelOptionsProps } from "./ChannelOption.types";
 import { useRef, useState } from "react";
@@ -15,6 +18,9 @@ export const ChannelOptions = ({
   handleColorSelect,
   disabled,
 }: ChannelOptionsProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const [isOpen, setIsOpen] = useState(false);
   const anchorRef = useRef(null);
 
@@ -44,15 +50,15 @@ export const ChannelOptions = ({
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   channelOptionsPaper: {
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
-    padding: "10px",
+    backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
+    padding: "8px",
   },
   channelOptionsButton: {
     "&:hover": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
       backgroundColor: "unset",
     },
   },
-};
+});

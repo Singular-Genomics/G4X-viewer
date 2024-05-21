@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Theme, Typography, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
 import { ChannelControllers } from "./ChannelControllers";
@@ -13,6 +13,9 @@ import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const [isControllerOn, setIsControllerOn] = useState(true);
 
   useEffect(() => {
@@ -70,7 +73,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
             size="large"
             disableTouchRipple
             onClick={() => setIsControllerOn(true)}
-            style={{ color: "#FFF" }}
+            style={{ color: theme.palette.gx.primary.white }}
           >
             <MenuIcon fontSize="large" />
           </IconButton>
@@ -80,18 +83,18 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   viewControllerContainer: {
-    backgroundColor: "#8E9092",
-    padding: "10px 0 0 10px",
+    backgroundColor: theme.palette.gx.mediumGrey[300],
+    padding: "8px 0 0 8px",
     width: "450px",
     height: "100vh",
   },
   viewControllerHeaderWrapper: {
     display: "flex",
-    gap: "10px",
+    gap: "16px",
     alignItems: "center",
-    marginBottom: "10px",
+    marginBottom: "16px",
   },
   viewControllerHeaderText: {
     fontWeight: 700,
@@ -101,13 +104,12 @@ const sx = {
     marginLeft: "auto",
   },
   viewControllerContentWrapper: {
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    borderTopLeftRadius: "20px",
-    padding: "20px 10px 20px 20px",
+    backgroundColor: theme.palette.gx.lightGrey[100],
+    borderTopLeftRadius: "32px",
+    padding: "16px 8px 16px 16px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     overflow: "auto",
     scrollbarWidth: "thin",
   },
@@ -127,4 +129,4 @@ const sx = {
     top: 0,
     right: 10,
   },
-};
+});

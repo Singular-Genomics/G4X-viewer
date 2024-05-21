@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography, alpha, useTheme } from "@mui/material";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 import { PictureInPictureViewerAdapter } from "./PictureInPictureViewerAdapter/PictureInPictureViewerAdapter";
 
@@ -10,6 +10,9 @@ import { useImage } from "../hooks/useImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 
 export default function G4XViewer() {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
@@ -45,9 +48,9 @@ export default function G4XViewer() {
   );
 }
 
-const sx = {
+const styles = (theme: Theme) => ({
   mainContainer: {
-    background: "linear-gradient(0deg, #3F4447, #1E1E1E)",
+    background: `linear-gradient(0deg, ${theme.palette.gx.darkGrey[500]}, ${theme.palette.gx.darkGrey[100]})`,
     minHeight: "100vh",
     display: "flex",
   },
@@ -59,13 +62,13 @@ const sx = {
     position: "relative",
   },
   loaderContainer: {
-    background: "rgba(190, 190, 190, 0.1)",
+    background: alpha(theme.palette.gx.lightGrey[100], 0.2),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "20px",
-    padding: "30px",
-    borderRadius: "30px",
+    gap: "16px",
+    padding: "32px",
+    borderRadius: "32px",
   },
   loadingText: {
     fontSize: "30px",
@@ -78,7 +81,7 @@ const sx = {
     justifyContent: "space-between",
   },
   infoText: {
-    color: "rgb(248, 248, 248)",
+    color: theme.palette.gx.lightGrey[900],
     fontSize: "16px",
   },
-};
+});

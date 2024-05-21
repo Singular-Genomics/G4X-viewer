@@ -1,4 +1,4 @@
-import { Box, Grid, Slider, Typography } from "@mui/material";
+import { Box, Grid, Slider, Theme, Typography, alpha, useTheme } from "@mui/material";
 import { useLoader } from "../../../../hooks/useLoader.hook";
 import { GLOBAL_SLIDER_DIMENSION_FIELDS, getMultiSelectionStats, range } from "../../../../legacy/utils";
 import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
@@ -9,6 +9,9 @@ import { PropertiesUpdateType } from "../../../../stores/ChannelsStore/ChannelsS
 import { debounce } from "lodash";
 
 export const GlobalSelectionSliders = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const loader = useLoader();
   const globalSelection = useViewerStore(store => store.globalSelection);
   const [selections, setPropertiesForChannel] = useChannelsStore(
@@ -116,25 +119,24 @@ export const GlobalSelectionSliders = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   selectionLabel: {
     textTransform: 'uppercase',
     marginLeft: '8px',
   },
   sliderContainer: {
-    padding: "0px 15px",
+    padding: "0px 16px",
   },
   slider: {
-    marginTop: '3px',
     "&.MuiSlider-root": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
     },
     "&.Mui-disabled": {
-      color: '#555',
+      color: theme.palette.gx.darkGrey[700],
       opacity: 0.75,
     },
     "& .MuiSlider-thumb:hover": {
-      boxShadow: "0px 0px 0px 8px rgba(0, 177, 164, 0.3)",
+      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
     }
   },
-};
+});
