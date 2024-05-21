@@ -1,8 +1,10 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography, alpha, useTheme } from "@mui/material";
 import { useLoader } from "../../hooks/useLoader.hook";
 import { useViewerStore } from "../../stores/ViewerStore";
 
 export const ImageInfo = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const pyramidResolution = useViewerStore((store) => store.pyramidResolution);
   const loader = useLoader();
   const level = loader[pyramidResolution];
@@ -19,18 +21,18 @@ export const ImageInfo = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   footerWrapper: {
     position: 'absolute',
     right: 0,
     bottom: 0,
     display: 'flex',
     gap: '8px',
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
     padding: '8px 20px 10px',
     borderTopLeftRadius: '16px',
   },
   footerText: {
-    color: '#FFF',
+    color: theme.palette.gx.primary.white,
   }
-}
+});

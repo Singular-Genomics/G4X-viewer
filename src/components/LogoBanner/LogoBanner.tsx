@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography } from "@mui/material";
 import { GxLogo } from "../../shared/components/GxLogo";
 
 export const LogoBanner = () => (
@@ -21,7 +21,7 @@ const sx = {
     gap: '10px'
   },
   logoText: {
-    color: '#FFF',
+    color: (theme: Theme) => theme.palette.gx.primary.white,
     fontWeight: 700,
     fontSize: '20px',
   }

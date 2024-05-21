@@ -1,5 +1,7 @@
+import { ThemeProvider } from "@mui/material";
 import G4XViewer from "./components/G4XViewer";
 import { SnackbarProvider } from "notistack";
+import { gxTheme } from "./themes/theme";
 
 export const App = () => {
   return (
@@ -11,7 +13,9 @@ export const App = () => {
       autoHideDuration={3000}
       maxSnack={3}
     >
-      <G4XViewer />
+      <ThemeProvider theme={gxTheme}>
+        <G4XViewer />
+      </ThemeProvider>
     </SnackbarProvider>
   );
 };

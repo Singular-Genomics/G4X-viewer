@@ -1,6 +1,9 @@
 import {
   LinearProgress,
   Box,
+  Theme,
+  alpha,
+  useTheme,
 } from "@mui/material";
 import { useFileHandler } from "./useFileHandler";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
@@ -8,6 +11,8 @@ import { DropzoneButton } from "../DropzoneButton/DropzoneButton";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 
 export default function BinaryDropzoneButton() {
+  const theme = useTheme();
+  const sx = styles(theme);
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();
   const fileName = useBinaryFilesStore((store) => store.fileName);
   const source = useViewerStore((store) => store.source);
@@ -33,36 +38,13 @@ export default function BinaryDropzoneButton() {
   );
 }
 
-const sx = {
-  textField: {
-    marginBottom: "8px",
-    "& .MuiFormLabel-root.Mui-focused": {
-      color: "rgba(0, 177, 164, 1)",
-    },
-    "& .MuiInputBase-input": {
-      cursor: "auto",
-    },
-    "& .MuiInputBase-root::after": {
-      borderBottom: "2px solid rgba(0, 177, 164, 1)",
-    },
-  },
-  dropDownButton: {
-    borderStyle: "dashed",
-    width: "100%",
-    height: "40px",
-    borderColor: "rgba(0, 177, 164, 1)",
-    color: "rgba(0, 177, 164, 1)",
-    "&:hover": {
-      borderColor: "rgba(0, 177, 164, 1)",
-      backgroundColor: "rgba(0, 177, 164, 0.2)",
-    },
-  },
+const styles = (theme: Theme) => ({
   progressBar: {
     "& .MuiLinearProgress-barColorPrimary": {
-      backgroundColor: "rgba(0, 177, 164, 1) !important",
+      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
     },
     "&.MuiLinearProgress-root": {
-      backgroundColor: "rgba(0, 177, 164, 0.2) !important",
+      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`,
     },
   },
   loadingText: {
@@ -70,4 +52,4 @@ const sx = {
     fontSize: "16px",
     fontWeight: 500,
   },
-};
+});
