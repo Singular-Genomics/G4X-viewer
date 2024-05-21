@@ -1,4 +1,4 @@
-import { Box, Tooltip, Typography, tooltipClasses } from "@mui/material";
+import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
 import { PointSizeSlider } from "./PointSizeSlider";
 import { ExperimentalToggles } from "./ExperimentalToggles";
 import { PointFilter } from "./PointsFilter/PointFilter";
@@ -76,7 +76,7 @@ const sx = {
     marginBottom: "8px",
   },
   warningIcon: {
-    color: "#b19218",
+    color: (theme: Theme) => theme.palette.gx.accent.darkGold,
     border: "",
   },
   warningTooltip: {

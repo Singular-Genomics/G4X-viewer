@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { Grid, Input, Slider } from "@mui/material";
+import { Grid, Input, Slider, Theme, alpha, useTheme } from "@mui/material";
 import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
 
 const MIN_POINT_SIZE = 1;
@@ -7,6 +7,8 @@ const MAX_POINT_SIZE = 10;
 const POINT_SIZE_STEP = 0.1;
 
 export const PointSizeSlider = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const [pointSize, setPointSize] = useMetadataLayerStore(
     useShallow((store) => [store.pointSize, store.setPointSize])
   );
@@ -73,7 +75,7 @@ export const PointSizeSlider = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   sliderInputContainer: {
     paddingLeft: '8px',
   },
@@ -83,19 +85,20 @@ const sx = {
   slider: {
     marginTop: "3px",
     "&.MuiSlider-root": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
     },
     "& .MuiSlider-thumb:hover": {
-      boxShadow: "0px 0px 0px 8px rgba(0, 177, 164, 0.3)",
+      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
     },
   },
   textField: {
     marginBottom: "8px",
     "& .MuiFormLabel-root.Mui-focused": {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
     },
     "&.MuiInputBase-root::after": {
-      borderBottom: "2px solid rgba(0, 177, 164, 1)",
+      borderBottom: "2px solid",
+      borderColor: theme.palette.gx.accent.greenBlue,
     },
     "& .MuiInputBase-input": {
       textAlign: "center",
@@ -109,4 +112,4 @@ const sx = {
       MozAppearance: "textfield",
     },
   },
-};
+});

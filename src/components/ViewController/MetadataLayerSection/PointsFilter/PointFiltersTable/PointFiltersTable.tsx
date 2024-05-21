@@ -1,6 +1,6 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { usePointFiltersTableColumns } from "./usePointFiltersTableColumns";
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Typography, alpha, useTheme } from "@mui/material";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
@@ -10,6 +10,8 @@ import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
 import { useState } from "react";
 
 export const PointFiltersTable = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const [activeOnly, setActiveOnly] = useState<boolean>(false);
 
   const columns = usePointFiltersTableColumns();
@@ -80,7 +82,7 @@ export const PointFiltersTable = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   tableContainer: {
     "& .MuiDataGrid-root": {
       borderWidth: "0px",
@@ -89,22 +91,22 @@ const sx = {
       borderRadius: "0px !important",
     },
     "& .MuiDataGrid-row": {
-      backgroundColor: "#FFF",
+      backgroundColor: theme.palette.gx.primary.white,
       cursor: "pointer",
       "&.Mui-selected": {
-        backgroundColor: "rgba(0, 177, 164, 0.4)",
+        backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.4),
       },
     },
     "& .MuiDataGrid-container--top [role=row]": {
-      background: "#EEE !important",
+      background: `${theme.palette.gx.lightGrey[900]} !important`,
     },
     "& .MuiDataGrid-columnHeaderTitle": {
-      color: "#626668",
+      color: theme.palette.gx.darkGrey[900],
       textTransform: "uppercase",
       fontWeight: 700,
     },
     "& .MuiDataGrid-footerContainer": {
-      background: "#EEE",
+      background: theme.palette.gx.lightGrey[900],
     },
   },
   filtersTable: {
@@ -121,4 +123,4 @@ const sx = {
     justifyContent: "flex-end",
     alignItems: "center",
   },
-};
+});

@@ -1,19 +1,23 @@
-import { Switch, SwitchProps } from "@mui/material";
+import { Switch, SwitchProps, Theme, alpha, useTheme } from "@mui/material";
 
-export const GxSwitch = (props: SwitchProps) => (
+export const GxSwitch = (props: SwitchProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
+  return(
   <Switch sx={sx.switch} {...props}/>
-)
+)}
 
-const sx = {
+const styles = (theme: Theme) => ({
   switch: {
     '& .MuiSwitch-switchBase.Mui-checked': {
-      color: "rgba(0, 177, 164, 1)",
+      color: theme.palette.gx.accent.greenBlue,
       '&:hover': {
-        backgroundColor: 'rgba(0, 177, 164, 0.3)',
+        backgroundColor: alpha(theme.palette.gx.accent.greenBlue ,0.3),
       },
     },
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-      backgroundColor: "rgba(0, 177, 164, 1)",
+      backgroundColor: theme.palette.gx.accent.greenBlue,
     },
   }
-}
+})
