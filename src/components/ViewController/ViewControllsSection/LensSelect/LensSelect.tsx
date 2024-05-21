@@ -35,7 +35,7 @@ export const LensSelect = () => {
       <Grid item xs={2}>
         Lens
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         {isLensOn && (
           <GxSelect
             value={lensSelection}
