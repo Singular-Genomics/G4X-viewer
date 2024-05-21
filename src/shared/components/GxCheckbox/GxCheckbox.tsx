@@ -1,11 +1,12 @@
 import { Checkbox, CheckboxProps } from "@mui/material";
+import React from "react";
 
-export const GxCheckbox = (props: CheckboxProps) => (
+export const GxCheckbox = React.forwardRef((props: CheckboxProps) => (
   <Checkbox 
     sx={sx.checkbox}
     {...props}
   />
-)
+))
 
 const sx = {
   checkbox: {
