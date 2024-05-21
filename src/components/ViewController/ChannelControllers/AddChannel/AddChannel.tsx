@@ -106,8 +106,7 @@ const sx = {
     fontWeight: 700,
     borderRadius: '8px',
     '&:hover': {
-      color: '#FFF',
-      backgroundColor: "rgba(0, 177, 164, 1)",
+      backgroundColor: "rgba(0, 177, 164, 0.2)",
     }
   }
 }
