@@ -21,4 +21,5 @@ export interface GxTonalGreyColor {
 
 export interface GxAccentColor {
   greenBlue: string;
+  darkGold: string;
 }

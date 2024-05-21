@@ -29,6 +29,7 @@ export const colors: GxPalette = {
   },
   accent: {
     greenBlue: 'rgb(0, 177, 164)',
+    darkGold: 'rgb(177, 146, 24)',
   }
 }
 
