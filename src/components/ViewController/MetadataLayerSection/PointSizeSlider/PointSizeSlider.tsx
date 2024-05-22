@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
-import { Grid, Input, Slider, Theme, alpha, useTheme } from "@mui/material";
+import { Grid, Input, Theme, useTheme } from "@mui/material";
 import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
+import { GxSlider } from "../../../../shared/components/GxSlider";
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
@@ -58,17 +59,14 @@ export const PointSizeSlider = () => {
           />
         </Grid>
         <Grid item xs sx={sx.sliderInputItem}>
-          <Slider
+          <GxSlider
             value={pointSize}
-            size="small"
             onChange={(_, newValue) => {
               setPointSize(Array.isArray(newValue) ? newValue[0] : newValue);
             }}
-            valueLabelDisplay="auto"
             step={0.1}
             min={MIN_POINT_SIZE}
             max={MAX_POINT_SIZE}
-            sx={sx.slider}
           />
         </Grid>
       </Grid>
@@ -81,15 +79,6 @@ const styles = (theme: Theme) => ({
   },
   sliderInputItem: {
     padding: "0px 8px 0px 16px",
-  },
-  slider: {
-    marginTop: "3px",
-    "&.MuiSlider-root": {
-      color: theme.palette.gx.accent.greenBlue,
-    },
-    "& .MuiSlider-thumb:hover": {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
-    },
   },
   textField: {
     marginBottom: "8px",
