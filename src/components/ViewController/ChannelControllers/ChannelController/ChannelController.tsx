@@ -6,12 +6,13 @@ import {
   getPixelValueDisplay,
 } from "./ChannelController.helpers";
 import { ChannelControllerProps } from "./ChannelController.types";
-import { Grid, IconButton, MenuItem, Slider, Theme, Tooltip, Typography, alpha, useTheme } from "@mui/material";
+import { Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from "@mui/material";
 import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { truncateDecimalNumber } from "../../../../legacy/utils";
 import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
+import { GxSlider } from "../../../../shared/components/GxSlider";
 
 export const ChannelController = ({
   color,
@@ -101,7 +102,7 @@ export const ChannelController = ({
           />
         </Grid>
         <Grid item xs={7}>
-          <Slider
+          <GxSlider
             disabled={isLoading}
             value={slider}
             onChange={(_, newValue) =>
@@ -109,18 +110,12 @@ export const ChannelController = ({
                 Array.isArray(newValue) ? newValue : [newValue]
               )
             }
-            valueLabelDisplay="auto"
-            getAriaLabel={() => `${name}-${color}-${slider}`}
             valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
             min={minValue}
             max={maxValue}
             step={stepSize}
             orientation="horizontal"
-            sx={sx.slider}
-            style={{
-              color: rgbColor,
-              marginTop: "3px",
-            }}
+            style={{color: rgbColor}}
           />
         </Grid>
       </Grid>
@@ -133,15 +128,6 @@ const styles = (theme: Theme) => ({
     "&:hover": {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: "unset",
-    },
-  },
-  slider: {
-    marginTop: "3px",
-    "&.MuiSlider-root": {
-      color: theme.palette.gx.accent.greenBlue,
-    },
-    "& .MuiSlider-thumb:hover": {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
     },
   },
   channelSelect: {
