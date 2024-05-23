@@ -1,1 +1,1 @@
-export * from './LensSelect';
+export * from './LensToggle';
