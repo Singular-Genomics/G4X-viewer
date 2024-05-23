@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { ColormapSelector } from "./ColormapSelector";
 import { OverviewToggle } from "./OverviewToggle";
 import { MetadataLayerToggle } from "./MetadataLayerToggle";
-import { LensSelect } from "./LensSelect";
+import { LensToggle } from "./LensToggle";
 import { useViewerStore } from "../../../stores/ViewerStore";
 import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 import { useLoader } from "../../../hooks/useLoader.hook";
@@ -27,9 +27,11 @@ export const ViewControllsSection = () => {
       </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
-        <OverviewToggle />
-        {!!files.length && <MetadataLayerToggle />}
-        {!colormap && shape[labels.indexOf("c")] > 1 && <LensSelect />}
+        <Box sx={sx.togglesSubSection}>
+          <OverviewToggle />
+          {!!files.length && <MetadataLayerToggle />}
+          {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
+        </Box>
       </Box>
     </Box>
   );
@@ -37,13 +39,19 @@ export const ViewControllsSection = () => {
 
 const sx = {
   sectionContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
   },
   subsectionTitle: {
     fontWeight: 700,
-    paddingLeft: '8px',
-    marginBottom: '8px'
-  }
-}
+    paddingLeft: "8px",
+    marginBottom: "8px",
+  },
+  togglesSubSection: {
+    display: "flex",
+    flexDirection: "column",
+    gap: '8px',
+    paddingLeft: "8px",
+  },
+};

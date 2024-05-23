@@ -1,11 +1,11 @@
-import { Grid, MenuItem, Typography } from "@mui/material";
+import { FormControlLabel, Grid, MenuItem, Typography } from "@mui/material";
 import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
 import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
 import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
-export const LensSelect = () => {
+export const LensToggle = () => {
   const selections = useChannelsStore((store) => store.selections);
   const [isLensOn, lensSelection, channelOptions, toggleLens] = useViewerStore(
     useShallow((store) => [
@@ -25,17 +25,19 @@ export const LensSelect = () => {
       justifyContent="flex-start"
       alignItems="center"
     >
-      <Grid item xs={2}>
-        <GxCheckbox
-          onChange={toggleLens}
-          checked={isLensOn}
-          disableTouchRipple
+      <Grid item xs={3}>
+        <FormControlLabel
+          label="Lens"
+          control={
+            <GxCheckbox
+              onChange={toggleLens}
+              checked={isLensOn}
+              disableTouchRipple
+            />
+          }
         />
       </Grid>
-      <Grid item xs={2}>
-        Lens
-      </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={7}>
         {isLensOn && (
           <GxSelect
             value={lensSelection}
