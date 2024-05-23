@@ -1,6 +1,6 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { usePointFiltersTableColumns } from "./usePointFiltersTableColumns";
-import { Box, Theme, Typography, alpha, useTheme } from "@mui/material";
+import { Box, FormControlLabel, Theme, alpha, useTheme } from "@mui/material";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
@@ -39,46 +39,53 @@ export const PointFiltersTable = () => {
   }
 
   return (
-    <Box sx={sx.tableContainer}>
-      <DataGrid
-        rows={rowData ?? []}
-        columns={columns}
-        density="compact"
-        disableColumnMenu
-        disableColumnResize
-        disableColumnSorting
-        pageSizeOptions={[]}
-        onRowSelectionModelChange={(newSelection) => {
-          if (
-            newSelection.length === 0 ||
-            newSelection.length === rowData.length
-          ) {
-            clearGeneNameFilters();
-          }
+    <>
+      <Box sx={sx.tableContainer}>
+        <DataGrid
+          rows={rowData ?? []}
+          columns={columns}
+          density="compact"
+          disableColumnMenu
+          disableColumnResize
+          disableColumnSorting
+          pageSizeOptions={[]}
+          onRowSelectionModelChange={(newSelection) => {
+            if (
+              newSelection.length === 0 ||
+              newSelection.length === rowData.length
+            ) {
+              clearGeneNameFilters();
+            }
 
-          setGeneNamesFilter(newSelection as string[]);
-        }}
-        checkboxSelection
-        slots={{
-          baseCheckbox: GxCheckbox,
-          toolbar: PointFiltersSearch,
-        }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
-        hideFooterSelectedRowCount={true}
-        sx={sx.filtersTable}
-      />
-      <Box sx={sx.activeFiltersSwitchWrapper}>
-        <Typography>Show active filters only</Typography>
-        <GxCheckbox
-          onChange={() => setActiveOnly((prev) => !prev)}
-          checked={activeOnly}
+            setGeneNamesFilter(newSelection as string[]);
+          }}
+          checkboxSelection
+          slots={{
+            baseCheckbox: GxCheckbox,
+            toolbar: PointFiltersSearch,
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
+          hideFooterSelectedRowCount={true}
+          sx={sx.filtersTable}
         />
       </Box>
-    </Box>
+      <FormControlLabel
+        label="Show active filters only"
+        labelPlacement="start"
+        sx={sx.activeFiltersSwitchWrapper}
+        control={
+          <GxCheckbox
+            onChange={() => setActiveOnly((prev) => !prev)}
+            checked={activeOnly}
+            disableTouchRipple
+          />
+        }
+      />
+    </>
   );
 };
 
@@ -118,9 +125,6 @@ const styles = (theme: Theme) => ({
     },
   },
   activeFiltersSwitchWrapper: {
-    marginTop: "8px",
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
+    float: 'right'
   },
 });

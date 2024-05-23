@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box, FormControlLabel } from "@mui/material";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
@@ -19,27 +19,36 @@ export const ExperimentalToggles = () => {
   );
 
   return (
-    <Grid container justifyContent="flex-start" alignItems="center">
-      <Grid item xs={2}>
-        <GxCheckbox 
-          disableTouchRipple
-          onChange={toggleTileBoundries}
-          checked={showTilesBoundries} 
-        />
-      </Grid>
-      <Grid item xs={10}>
-        Show Tiles Boundries
-      </Grid>
-      <Grid item xs={2}>
-        <GxCheckbox 
-          disableTouchRipple 
-          onChange={toggleTileData}
-          checked={showTilesData}
-        />
-      </Grid>
-      <Grid item xs={10}>
-        Show Tiles Data
-      </Grid>
-    </Grid>
+    <Box sx={sx.experimentalTogglesWrapper}>
+      <FormControlLabel
+        label="Show Tiles Boundries"
+        control={
+          <GxCheckbox
+            disableTouchRipple
+            onChange={toggleTileBoundries}
+            checked={showTilesBoundries}
+          />
+        }
+      />
+      <FormControlLabel
+        label="Show Tiles Data"
+        control={
+          <GxCheckbox
+            disableTouchRipple
+            onChange={toggleTileData}
+            checked={showTilesData}
+          />
+        }
+      />
+    </Box>
   );
 };
+
+const sx = {
+  experimentalTogglesWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    paddingLeft: '8px',
+  }
+}
