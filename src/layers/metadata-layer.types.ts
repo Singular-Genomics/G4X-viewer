@@ -6,12 +6,14 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   pointSize: number;
   showBoundries: boolean;
   showData: boolean;
+  showDiscardedPoints: boolean;
 };
 
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
   points: any[];
+  outlierPoints: any[];
   tileData: { width: number; height: number };
   boundingBox: number[];
 };

@@ -13,6 +13,7 @@ import { TileLayer } from "@deck.gl/geo-layers/typed";
 
 import * as protobuf from "protobufjs";
 import { MetadataSchema } from "./metadata-schema";
+import { partition } from "lodash";
 
 // ======================== DATA TILE LAYER ==================
 
@@ -32,7 +33,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
     });
 
     // @ INFO TEXT LAYER
-    const { index, textPosition, points, tileData } = this.props.layerData[0];
+    const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
 
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
@@ -58,7 +59,19 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showData,
     });
 
-    // @ POINTS LAYER
+    // @ POINTS LAYERS
+    const discardedPointsLayer = new ScatterplotLayer({
+      id: `sub-discarded-point-layer-${this.props.id}`,
+      data: outlierPoints,
+      getPosition: (d) => d.position,
+      getLineColor: [238, 238, 238],
+      getLineWidth: 0.2,
+      getRadius: this.props.pointSize,
+      radiusUnits: "pixels",
+      filled: false,
+      stroked: true,
+      visible: this.props.showDiscardedPoints,
+    });
 
     const pointsLayer = new ScatterplotLayer({
       id: `sub-point-layer-${this.props.id}`,
@@ -70,7 +83,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       pickable: true,
     });
 
-    return [boundingBoxLayer, textLayer, pointsLayer];
+    return [boundingBoxLayer, textLayer, discardedPointsLayer, pointsLayer];
   }
 }
 
@@ -120,20 +133,16 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
           index.y
         )) as any;
 
-        let pointsData;
+        let pointsData = [];
+        let outlierPointsData = [];
 
         if (this.props.geneFilters === "all") {
           pointsData = metadata.pointsData;
         } else {
-          pointsData = this.props.showDiscardedPoints
-            ? metadata.pointsData.map((item: any) =>
-                this.props.geneFilters.includes(item.geneName)
-                  ? item
-                  : { ...item, color: [128, 128, 128] }
-              )
-            : metadata.pointsData.filter((item: any) =>
-                this.props.geneFilters.includes(item.geneName)
-              );
+          [pointsData, outlierPointsData] = partition(
+            metadata.pointsData,
+            (data) => this.props.geneFilters.includes(data.geneName)
+          );
         }
 
         return [
@@ -154,7 +163,8 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
               bbox.bottom,
               0,
             ],
-            points: pointsData || [],
+            points: pointsData,
+            outlierPoints: outlierPointsData,
             tileData: {
               width: bbox.right - bbox.left,
               height: bbox.bottom - bbox.top,
@@ -191,6 +201,7 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
           pointSize: this.props.pointSize,
           showBoundries: this.props.showTilesBoundries,
           showData: this.props.showTilesData,
+          showDiscardedPoints: this.props.showDiscardedPoints,
         }),
     });
     return [tiledLayer];
