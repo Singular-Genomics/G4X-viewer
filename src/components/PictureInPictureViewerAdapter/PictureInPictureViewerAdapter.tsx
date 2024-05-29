@@ -10,12 +10,14 @@ import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import MetadataLayer from "../../layers/metadata-layer";
+import MetadataLayer from "../../layers/metadata-layer/metadata-layer";
 import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
 import { getVivId } from "../../utils/utils";
-import { getCutomTooltp } from "./PictureInPictureViewerAdapter.helpers";
+import { getCustomTooltp } from "./PictureInPictureViewerAdapter.helpers";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
+import { useCellMasksLayerStore } from "../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 
 export const PictureInPictureViewerAdapter = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -91,9 +93,19 @@ export const PictureInPictureViewerAdapter = () => {
     showDiscardedPoints: showFilteredPoints,
   });
 
+  const [cellMasksData, isCellLayerOn] = useCellMasksLayerStore(
+    useShallow((state) => [state.cellMasksData, state.isCellLayerOn])
+  );
+
+  const cellMasksLayer = new CellMasksLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
+    masksData: cellMasksData || new Uint8Array(),
+    visible: (!!cellMasksData && isCellLayerOn)
+  })
+
   const deckProps = {
-    layers: [metadataLayer],
-    getTooltip: getCutomTooltp,
+    layers: [cellMasksLayer, metadataLayer],
+    getTooltip: getCustomTooltp,
   };
 
   return (
