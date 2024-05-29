@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+message PointData {
+  repeated double position = 1 [packed = true];
+  repeated uint32 color = 2 [packed = true];
+  string geneName = 3;
+  string cellId = 4;
+}
+
+message TileData {
+  repeated PointData pointsData = 1;
+  uint32 numberOfPoints = 2;
+}
+
+message ColumnData {
+  repeated TileData columnTiles = 1;
+}
+
+message LevelData {
+  repeated ColumnData levelColumns = 1;
+}
+
+message Metadata {
+  repeated LevelData level = 1;
+}
