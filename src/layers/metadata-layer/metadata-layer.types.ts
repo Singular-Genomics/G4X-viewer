@@ -1,5 +1,5 @@
-import { LayerConfig } from "../stores/BinaryFilesStore";
-import { GeneNameFilterType } from "../stores/MetadataLayerStore";
+import { LayerConfig } from "../../stores/BinaryFilesStore";
+import { GeneNameFilterType } from "../../stores/MetadataLayerStore";
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
