@@ -13,6 +13,8 @@ import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
 import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
+import { useCellMasksLayerStore } from "../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { CellMasksLayerSection } from "./CellMasksLayerSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -20,6 +22,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
 
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore(store => store.files);
+  const cellMasksFiles = useCellMasksLayerStore(store => store.cellMasksData);
   const metadata = useMetadata();
 
   useEffect(() => {
@@ -73,6 +76,12 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 unmountOnExit={false}
               >
                 <MetadataLayerSection/>
+              </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="Cell Masks Layer Settings"
+                disabled={!imageLoaded || !cellMasksFiles?.length}
+              >
+                <CellMasksLayerSection/>
               </CollapsibleSection>
             </Box>
           </Box>
