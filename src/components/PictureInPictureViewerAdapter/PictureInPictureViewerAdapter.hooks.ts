@@ -37,8 +37,8 @@ export const useResizableContainer = () => {
   return {
     containerRef,
     containerSize,
-  }
-}
+  };
+};
 
 export const useMetadataLayer = () => {
   const [files, layerConfig] = useBinaryFilesStore(
@@ -78,18 +78,26 @@ export const useMetadataLayer = () => {
   });
 
   return metadataLayer;
-}
+};
 
 export const useCellMasksLayer = () => {
-  const [cellMasksData, isCellLayerOn] = useCellMasksLayerStore(
-    useShallow((state) => [state.cellMasksData, state.isCellLayerOn])
-  );
+  const [cellMasksData, isCellLayerOn, isCellStrokeOn, cellStrokeWidth] =
+    useCellMasksLayerStore(
+      useShallow((store) => [
+        store.cellMasksData,
+        store.isCellLayerOn,
+        store.isCellStrokeOn,
+        store.cellStrokeWidth,
+      ])
+    );
 
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     masksData: cellMasksData || new Uint8Array(),
     visible: !!cellMasksData && isCellLayerOn,
+    showCellStroke: isCellStrokeOn,
+    cellStrokeWidth,
   });
 
   return cellMasksLayer;
-}
+};

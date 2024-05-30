@@ -103,6 +103,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
+    marginBottom: '8px',
   },
   toggleSwitch: {
     paddingLeft: '8px',

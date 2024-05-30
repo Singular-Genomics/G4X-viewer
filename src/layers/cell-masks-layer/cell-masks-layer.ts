@@ -22,10 +22,11 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     const polygonLayer = new PolygonLayer({
       data: cellMasksData,
       positionFormat: "XY",
+      stroked: this.props.showCellStroke,
       getPolygon: d => d.vertices,
       getLineColor: d => d.color,
       getFillColor: d => [d.color[0], d.color[1], d.color[2], 128],
-      getLineWidth: 10,
+      getLineWidth: this.props.cellStrokeWidth,
       pickable: true,
     });
 
