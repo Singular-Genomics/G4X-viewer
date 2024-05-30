@@ -19,7 +19,7 @@ export const PointSizeSlider = () => {
     inputValue = inputValue.replace(",", ".");
 
     if (inputValue === "") {
-      setPointSize(0);
+      setPointSize(MIN_POINT_SIZE);
       return;
     }
 
