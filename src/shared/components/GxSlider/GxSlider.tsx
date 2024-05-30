@@ -21,5 +21,8 @@ const styles = (theme: Theme) => ({
         0.3
       )}`,
     },
+    "&.MuiSlider-root.Mui-disabled": {
+      color: theme.palette.gx.mediumGrey[100],
+    },
   },
 });

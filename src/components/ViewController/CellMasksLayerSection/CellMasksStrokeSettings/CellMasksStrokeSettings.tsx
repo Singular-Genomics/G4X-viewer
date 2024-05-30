@@ -80,6 +80,7 @@ export const CellMasksStrokeSettings = () => {
               min: MIN_STROKE_WIDTH.toString(),
             }}
             sx={sx.textField}
+            disabled={!isCellStrokeOn}
           />
         </Grid>
         <Grid item xs sx={sx.sliderInputItem}>
@@ -91,6 +92,7 @@ export const CellMasksStrokeSettings = () => {
             step={0.1}
             min={MIN_STROKE_WIDTH}
             max={MAX_STROKE_WIDTH}
+            disabled={!isCellStrokeOn}
           />
         </Grid>
       </Grid>
