@@ -2,6 +2,7 @@ import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useCellMasksLayerStore } from "../../../stores/CellMasksLayerStore/CellMasksLayerStore";
 import { useShallow } from "zustand/react/shallow";
+import { CellMasksStrokeSettings } from "./CellMasksStrokeSettings/CellMasksStrokeSettings";
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -30,6 +31,7 @@ export const CellMasksLayerSection = () => {
           <Typography sx={sx.subsectionTitle}>Cell Stroke</Typography>
           {!isCellLayerOn && isCellStrokeOn && <DisabledLayerWarning />}
         </Box>
+        <CellMasksStrokeSettings />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
