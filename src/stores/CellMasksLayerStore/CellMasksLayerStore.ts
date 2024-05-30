@@ -16,4 +16,6 @@ export const useCellMasksLayerStore = create<CellMasksLayerStore>((set) => ({
   toggleCellLayer: () => set((store) => ({isCellLayerOn: !store.isCellLayerOn})),
   toggleCellFill: () => set((store) => ({isCellFillOn: !store.isCellFillOn})),
   toggleCellStroke: () => set((store) => ({isCellStrokeOn: !store.isCellStrokeOn})),
+  setCellStrokeWidth: (newWidth) => set({cellStrokeWidth: newWidth}),
+  setCellFillOpacity: (newOpacity) => set({cellFillOpacity: newOpacity}),
 }))

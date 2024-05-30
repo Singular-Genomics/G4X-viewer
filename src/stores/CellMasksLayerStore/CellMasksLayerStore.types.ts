@@ -14,4 +14,6 @@ export type CellMasksLayerStoreMethods = {
   toggleCellLayer: () => void;
   toggleCellStroke: () => void;
   toggleCellFill: () => void;
+  setCellStrokeWidth: (newWidth: number) => void;
+  setCellFillOpacity: (newOpacity: number) => void;
 }
