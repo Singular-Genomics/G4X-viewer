@@ -9,41 +9,14 @@ import { useLoader } from "../../hooks/useLoader.hook";
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
-import MetadataLayer from "../../layers/metadata-layer/metadata-layer";
-import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
-import { getVivId } from "../../utils/utils";
 import { getCustomTooltp } from "./PictureInPictureViewerAdapter.helpers";
-import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
-import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
-import { useCellMasksLayerStore } from "../../stores/CellMasksLayerStore/CellMasksLayerStore";
-import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
+import { useCellMasksLayer, useMetadataLayer, useResizableContainer } from "./PictureInPictureViewerAdapter.hooks";
 
 export const PictureInPictureViewerAdapter = () => {
-  const containerRef = useRef<HTMLDivElement>();
-  const [containerSize, setContainerSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
-
-  const handleResize = useCallback(() => {
-    if (containerRef.current) {
-      setContainerSize({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
-      });
-    }
-  }, [containerRef]);
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("onControllerToggle", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("onControllerToggle", handleResize);
-    };
-  }, [handleResize]);
+  const loader = useLoader();
+  const { containerRef, containerSize } = useResizableContainer()
+  const cellMasksLayer = useCellMasksLayer();
+  const metadataLayer = useMetadataLayer();
 
   const [colors, contrastLimits, channelsVisible, selections] =
     useChannelsStore(
@@ -65,53 +38,6 @@ export const PictureInPictureViewerAdapter = () => {
         store.onViewportLoad,
       ])
     );
-
-  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] =
-    useMetadataLayerStore(
-      useShallow((store) => [
-        store.isMetadataLayerOn,
-        store.pointSize,
-        store.showTilesBoundries,
-        store.showTilesData,
-      ])
-    );
-
-  const loader = useLoader();
-
-  const [files, layerConfig] = useBinaryFilesStore(
-    useShallow((store) => [store.files, store.layerConfig])
-  );
-  
-  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] =
-    useMetadataLayerStore(
-      useShallow((state) => [
-        state.geneNameFilters,
-        state.isGeneNameFilterActive,
-        state.showFilteredPoints,
-      ])
-    );
-
-  const metadataLayer = new MetadataLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
-    files,
-    config: layerConfig,
-    visible: !!files.length && isMetadataLayerOn,
-    geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
-    pointSize,
-    showTilesBoundries,
-    showTilesData,
-    showDiscardedPoints: showFilteredPoints,
-  });
-
-  const [cellMasksData, isCellLayerOn] = useCellMasksLayerStore(
-    useShallow((state) => [state.cellMasksData, state.isCellLayerOn])
-  );
-
-  const cellMasksLayer = new CellMasksLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
-    masksData: cellMasksData || new Uint8Array(),
-    visible: !!cellMasksData && isCellLayerOn,
-  });
 
   const deckProps = {
     layers: [cellMasksLayer, metadataLayer],
