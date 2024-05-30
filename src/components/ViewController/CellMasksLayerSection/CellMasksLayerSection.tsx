@@ -3,6 +3,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import { useCellMasksLayerStore } from "../../../stores/CellMasksLayerStore/CellMasksLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { CellMasksStrokeSettings } from "./CellMasksStrokeSettings/CellMasksStrokeSettings";
+import { CellMasksFillSettings } from "./CellMasksFillSettings";
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -38,6 +39,7 @@ export const CellMasksLayerSection = () => {
           <Typography sx={sx.subsectionTitle}>Cell Fill</Typography>
           {!isCellLayerOn && isCellFillOn && <DisabledLayerWarning />}
         </Box>
+        <CellMasksFillSettings />
       </Box>
     </Box>
   );
