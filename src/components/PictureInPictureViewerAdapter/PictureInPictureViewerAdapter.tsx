@@ -66,27 +66,37 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] = useMetadataLayerStore(
-    useShallow((store) => [
-      store.isMetadataLayerOn,
-      store.pointSize,
-      store.showTilesBoundries,
-      store.showTilesData
-    ])
-  )
+  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] =
+    useMetadataLayerStore(
+      useShallow((store) => [
+        store.isMetadataLayerOn,
+        store.pointSize,
+        store.showTilesBoundries,
+        store.showTilesData,
+      ])
+    );
 
   const loader = useLoader();
 
-  const files = useBinaryFilesStore((state) => state.files);
-  const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
-  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] = useMetadataLayerStore(useShallow((state) => [state.geneNameFilters, state.isGeneNameFilterActive, state.showFilteredPoints]));
+  const [files, layerConfig] = useBinaryFilesStore(
+    useShallow((store) => [store.files, store.layerConfig])
+  );
+  
+  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] =
+    useMetadataLayerStore(
+      useShallow((state) => [
+        state.geneNameFilters,
+        state.isGeneNameFilterActive,
+        state.showFilteredPoints,
+      ])
+    );
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
     files,
     config: layerConfig,
-    visible: (!!files.length && isMetadataLayerOn),
-    geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
+    visible: !!files.length && isMetadataLayerOn,
+    geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
     pointSize,
     showTilesBoundries,
     showTilesData,
@@ -100,8 +110,8 @@ export const PictureInPictureViewerAdapter = () => {
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     masksData: cellMasksData || new Uint8Array(),
-    visible: (!!cellMasksData && isCellLayerOn)
-  })
+    visible: !!cellMasksData && isCellLayerOn,
+  });
 
   const deckProps = {
     layers: [cellMasksLayer, metadataLayer],
