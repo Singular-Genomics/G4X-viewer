@@ -17,15 +17,16 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       .lookupType("CellMasks")
       .decode(this.props.masksData) as any).cellMasks;
 
-      console.log(cellMasksData[0].color)
+    const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
     const polygonLayer = new PolygonLayer({
       data: cellMasksData,
       positionFormat: "XY",
       stroked: this.props.showCellStroke,
+      filled: this.props.showCellFill,
       getPolygon: d => d.vertices,
       getLineColor: d => d.color,
-      getFillColor: d => [d.color[0], d.color[1], d.color[2], 128],
+      getFillColor: d => ([...d.color, opacityValue] as any),
       getLineWidth: this.props.cellStrokeWidth,
       pickable: true,
     });

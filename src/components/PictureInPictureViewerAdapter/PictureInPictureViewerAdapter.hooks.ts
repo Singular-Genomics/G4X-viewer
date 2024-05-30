@@ -81,13 +81,15 @@ export const useMetadataLayer = () => {
 };
 
 export const useCellMasksLayer = () => {
-  const [cellMasksData, isCellLayerOn, isCellStrokeOn, cellStrokeWidth] =
+  const [cellMasksData, isCellLayerOn, isCellStrokeOn, isCellFillOn, cellStrokeWidth, cellFillOpacity] =
     useCellMasksLayerStore(
       useShallow((store) => [
         store.cellMasksData,
         store.isCellLayerOn,
         store.isCellStrokeOn,
+        store.isCellFillOn,
         store.cellStrokeWidth,
+        store.cellFillOpacity,
       ])
     );
 
@@ -96,7 +98,9 @@ export const useCellMasksLayer = () => {
     masksData: cellMasksData || new Uint8Array(),
     visible: !!cellMasksData && isCellLayerOn,
     showCellStroke: isCellStrokeOn,
+    showCellFill: isCellFillOn,
     cellStrokeWidth,
+    cellFillOpacity,
   });
 
   return cellMasksLayer;
