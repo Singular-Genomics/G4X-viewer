@@ -22,7 +22,7 @@ export type MetadataLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
   config: LayerConfig;
-  geneFilters: GeneNameFilterType;
+  geneFilters: GeneNameFilterType | 'all';
   pointSize: number;
   showTilesBoundries: boolean;
   showTilesData: boolean;

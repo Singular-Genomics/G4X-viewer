@@ -10,7 +10,7 @@ export type MetadataLayerStoreValues = {
   geneNameFilters: GeneNameFilterType;
 }
 
-export type GeneNameFilterType = string[] | 'all';
+export type GeneNameFilterType = string[];
 
 export type MetadataLayerStoreMethods = {
   toggleMetadataLayer: () => void;
