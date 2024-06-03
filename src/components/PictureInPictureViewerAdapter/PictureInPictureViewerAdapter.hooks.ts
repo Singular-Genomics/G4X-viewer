@@ -81,17 +81,30 @@ export const useMetadataLayer = () => {
 };
 
 export const useCellMasksLayer = () => {
-  const [cellMasksData, isCellLayerOn, isCellStrokeOn, isCellFillOn, cellStrokeWidth, cellFillOpacity] =
-    useCellMasksLayerStore(
-      useShallow((store) => [
-        store.cellMasksData,
-        store.isCellLayerOn,
-        store.isCellStrokeOn,
-        store.isCellFillOn,
-        store.cellStrokeWidth,
-        store.cellFillOpacity,
-      ])
-    );
+  const [
+    cellMasksData,
+    isCellLayerOn,
+    isCellStrokeOn,
+    isCellFillOn,
+    isCellNameFilterOn,
+    cellStrokeWidth,
+    cellFillOpacity,
+    showFilteredCells,
+    cellNameFilters
+
+  ] = useCellMasksLayerStore(
+    useShallow((store) => [
+      store.cellMasksData,
+      store.isCellLayerOn,
+      store.isCellStrokeOn,
+      store.isCellFillOn,
+      store.isCellNameFilterOn,
+      store.cellStrokeWidth,
+      store.cellFillOpacity,
+      store.showFilteredCells,
+      store.cellNameFilters
+    ])
+  );
 
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
@@ -99,6 +112,8 @@ export const useCellMasksLayer = () => {
     visible: !!cellMasksData && isCellLayerOn,
     showCellStroke: isCellStrokeOn,
     showCellFill: isCellFillOn,
+    showDiscardedPoints: showFilteredCells,
+    cellFilters: isCellNameFilterOn ? cellNameFilters : 'all',
     cellStrokeWidth,
     cellFillOpacity,
   });

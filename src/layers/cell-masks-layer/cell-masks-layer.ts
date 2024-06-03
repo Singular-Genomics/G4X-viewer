@@ -3,6 +3,7 @@ import { CellMasksLayerProps } from "./cell-masks-layer.types";
 import { PolygonLayer } from "@deck.gl/layers/typed";
 import * as protobuf from "protobufjs";
 import { CellMasksSchema } from "./cell-masks-schema";
+import { partition } from "lodash";
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
@@ -17,10 +18,34 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       .lookupType("CellMasks")
       .decode(this.props.masksData) as any).cellMasks;
 
+    let cellsData = [];
+    let outlierCellsData = [];
+
+    if(this.props.cellFilters === 'all') {
+      cellsData = cellMasksData;
+    } else {
+      [cellsData, outlierCellsData] = partition(
+        cellMasksData,
+        (data) => this.props.cellFilters.includes(data.cellName)
+      )
+    }
+
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
+    const outliersPolygonLayer = new PolygonLayer({
+      data: outlierCellsData,
+      positionFormat: "XY",
+      stroked: this.props.showCellStroke,
+      filled: this.props.showCellFill,
+      getPolygon: d => d.vertices,
+      getLineColor: [238, 238, 238],
+      getFillColor: [238, 238, 238, opacityValue],
+      getLineWidth: this.props.cellStrokeWidth,
+      visible: this.props.showDiscardedPoints,
+    })
+
     const polygonLayer = new PolygonLayer({
-      data: cellMasksData,
+      data: cellsData,
       positionFormat: "XY",
       stroked: this.props.showCellStroke,
       filled: this.props.showCellFill,
@@ -31,7 +56,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       pickable: true,
     });
 
-    return [polygonLayer];
+    return [outliersPolygonLayer, polygonLayer];
   }
 }
 

@@ -1,18 +1,18 @@
 export const CellMasksSchema = {
   nested: {
-   SingleMask: {
-     fields: {
-       vertices: {
-         rule: "repeated",
-         type: "double",
-         id: 1
-       },
-       color: {
-         rule: "repeated",
+    SingleMask: {
+      fields: {
+        vertices: {
+          rule: "repeated",
+          type: "double",
+          id: 1
+        },
+        color: {
+          rule: "repeated",
           type: "uint32",
           id: 2,
           options: {
-            packed: true
+            packed: "true"
           }
         },
         cellName: {
@@ -25,6 +25,22 @@ export const CellMasksSchema = {
         }
       }
     },
+    ColormapEntry: {
+      fields: {
+        cellName: {
+          type: "string",
+          id: 1
+        },
+        color: {
+          rule: "repeated",
+          type: "uint32",
+          id: 2,
+          options: {
+            packed: "true"
+          }
+        }
+      }
+    },
     CellMasks: {
       fields: {
         cellMasks: {
@@ -32,11 +48,17 @@ export const CellMasksSchema = {
           type: "SingleMask",
           id: 1
         },
+        colormap: {
+          rule: "repeated",
+          type: "ColormapEntry",
+          id: 2
+        },
         numberOfCells: {
           type: "uint32",
-          id: 2
+          id: 3
         }
       }
     }
   }
 }
+

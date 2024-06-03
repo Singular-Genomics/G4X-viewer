@@ -4,6 +4,7 @@ import { useCellMasksLayerStore } from "../../../stores/CellMasksLayerStore/Cell
 import { useShallow } from "zustand/react/shallow";
 import { CellMasksStrokeSettings } from "./CellMasksStrokeSettings/CellMasksStrokeSettings";
 import { CellMasksFillSettings } from "./CellMasksFillSettings";
+import { CellsFilter } from "./CellsFilter";
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -17,11 +18,12 @@ const DisabledLayerWarning = () => (
 );
 
 export const CellMasksLayerSection = () => {
-  const [isCellLayerOn, isCellFillOn, isCellStrokeOn] = useCellMasksLayerStore(
+  const [isCellLayerOn, isCellFillOn, isCellStrokeOn, isCellNameFilterOn] = useCellMasksLayerStore(
     useShallow((store) => [
       store.isCellLayerOn,
       store.isCellFillOn,
       store.isCellStrokeOn,
+      store.isCellNameFilterOn,
     ])
   );
 
@@ -40,6 +42,13 @@ export const CellMasksLayerSection = () => {
           {!isCellLayerOn && isCellFillOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
+      </Box>
+      <Box>
+        <Box sx={sx.subsectionWrapper}>
+          <Typography sx={sx.subsectionTitle}>Cell Filters</Typography>
+          {!isCellLayerOn && isCellNameFilterOn && <DisabledLayerWarning />}
+        </Box>
+        <CellsFilter />
       </Box>
     </Box>
   );
