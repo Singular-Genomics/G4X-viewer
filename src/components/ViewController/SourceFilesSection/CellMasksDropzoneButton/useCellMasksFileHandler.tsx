@@ -1,5 +1,7 @@
 import { useDropzone } from "react-dropzone"
 import { useCellMasksLayerStore } from "../../../../stores/CellMasksLayerStore/CellMasksLayerStore"
+import * as protobuf from "protobufjs";
+import { CellMasksSchema } from "../../../../layers/cell-masks-layer/cell-masks-schema";
 
 export const useCellMasksFileHandler = () => {
   const onDrop = (files: File[]) => {
@@ -9,13 +11,16 @@ export const useCellMasksFileHandler = () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-        const cellDataBuffer = reader.result as ArrayBuffer;
+        const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
+        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+
 
         useCellMasksLayerStore.setState({
-          cellMasksData: new Uint8Array(cellDataBuffer)
+          cellMasksData: cellDataBuffer,
+          cellColormapConfig: (protoRoot.lookupType("CellMasks").decode(cellDataBuffer) as any).colormap,
         })
     }
-    reader.onerror = () => console.error("Reader is fucked!");
+    reader.onerror = () => console.error("Something went wrong during file laod!");
     reader.readAsArrayBuffer(files[0]);
 
     useCellMasksLayerStore.setState({ 
