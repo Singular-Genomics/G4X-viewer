@@ -1,6 +1,14 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { usePointFiltersTableColumns } from "./usePointFiltersTableColumns";
-import { Box, FormControlLabel, Theme, alpha, useTheme } from "@mui/material";
+import {
+  Box,
+  FormControlLabel,
+  Theme,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
+import ErrorIcon from "@mui/icons-material/Error";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
@@ -24,13 +32,15 @@ export const PointFiltersTable = () => {
       ])
     );
 
-  let rowData: PointFiltersTableRowEntry[] = useBinaryFilesStore
-    .getState()
-    .colorMapConfig.map((item) => ({
-      id: item.gene_name,
-      visible: true,
-      ...item,
-    }));
+  const colorMapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+
+  let rowData: PointFiltersTableRowEntry[] = colorMapConfig
+    ? colorMapConfig.map((item) => ({
+        id: item.gene_name,
+        visible: true,
+        ...item,
+      }))
+    : [];
 
   if (activeOnly) {
     rowData = rowData.filter((item) =>
@@ -41,6 +51,12 @@ export const PointFiltersTable = () => {
   return (
     <>
       <Box sx={sx.tableContainer}>
+        {!colorMapConfig && (
+          <Box sx={sx.errorContainer}>
+            <ErrorIcon sx={sx.errorIcon}/>
+            <Typography sx={sx.errorText}>Missing colormap config data.</Typography>
+          </Box>
+        )}
         <DataGrid
           rows={rowData ?? []}
           columns={columns}
@@ -125,6 +141,18 @@ const styles = (theme: Theme) => ({
     },
   },
   activeFiltersSwitchWrapper: {
-    float: 'right'
+    float: "right",
   },
+  errorContainer: {
+    display: 'flex',
+    marginBottom: '8px',
+  },
+  errorIcon: {
+    color: theme.palette.gx.accent.error,
+    marginRight: '8px',
+  },
+  errorText: {
+    color: theme.palette.gx.accent.error,
+    fontWeight: 700,
+  }
 });
