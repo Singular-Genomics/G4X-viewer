@@ -238,11 +238,11 @@ def GeneratePyramidData(parsed_csv_data: dict, levels, image_resolution, tile_si
   return parsed_csv_data
 
 
-def save_multi_files(outputMetadataValues, outputDirPath, outputDirName):
+def SaveMultiFiles(outputMetadataValues: dict, outputDirPath: str, outputDirName: str):
   if not os.path.isdir(outputDirPath):
     return False, "Given output directory is invalid"
   
-  fullOutputDirPath = f"{outputDirPath}/{outputDirName}"
+  fullOutputDirPath = os.path.join(outputDirPath, outputDirName)
 
   for level, level_data in outputMetadataValues.items():
     for y_coord, y_coord_data in level_data.items():
@@ -262,60 +262,31 @@ def save_multi_files(outputMetadataValues, outputDirPath, outputDirName):
             except:
               continue
 
-          tileOutputDirPath = f"{fullOutputDirPath}/{level}/{y_coord}/"
+          tileOutputDirPath = os.path.join(fullOutputDirPath, f"{level}", f"{y_coord}")
           os.makedirs(tileOutputDirPath, exist_ok=True)
-          with open(f"{tileOutputDirPath}/{x_coord}.bin", "wb") as file:
+          with open(os.path.join(tileOutputDirPath, f"{x_coord}.bin"), "wb") as file:
             file.write(outputTileData.SerializeToString())
 
         except:
           continue
 
 
-def save_single_file(outputMetadataValues, outputDirPath, outputDirName):
-  if not os.path.isdir(outputDirPath):
-    return False, "Given output directory is invalid"
-  
-  fullOutputDirPath = f"{outputDirPath}/{outputDirName}"
-  os.makedirs(fullOutputDirPath, exist_ok=True)
-  
-  outputMetadata = MetadataSchema.Metadata()
-  for level_data in outputMetadataValues.values():
-    outputLevelData = outputMetadata.level.add()
-    for y_coord_data in level_data.values():
-      outputColumData = outputLevelData.levelColumns.add()
-      for x_coord_data in y_coord_data.values():
-        try:
-          points = x_coord_data['points']
-          outputTileData = outputColumData.columnTiles.add()
-
-          for point in points:
-            outputPointData = outputTileData.pointsData.add()
-            outputPointData.position.extend(point['position'])
-            outputPointData.color.extend(point['color'])
-            outputPointData.geneName = point['gene_name']
-            outputPointData.cellId = point['cell_id']
-        except:
-          continue
-        
-  with open(f"{fullOutputDirPath}/{outputDirName}.bin", "wb") as file:
-    file.write(outputMetadata.SerializeToString())
-
-
-def save_configuration_file(outputDirPath, image_resolution , min_tile_size, number_of_levels):
+def SaveConfigurationFile(outputDirPath: str, image_resolution: tuple[int, int] , min_tile_size: int, number_of_levels: int, colorMap: dict):
   start_tile_size = min_tile_size * pow(2, number_of_levels)
   
   config_data = {
     "layer_height": image_resolution[0],
     "layer_width": image_resolution[1],
     "layers": number_of_levels,
-    "tile_size": start_tile_size
+    "tile_size": start_tile_size,
+    "color_map": [{"gene_name": key, "color": value} for key, value in colorMap.items()]
   }
   
   if not os.path.exists(outputDirPath):
     os.makedirs(outputDirPath)
   
-  with open(f"{outputDirPath}/config.json", 'w') as json_file:
-        json.dump(config_data, json_file, indent=2)
+  with open(os.path.join(outputDirPath, 'config.json'), 'w') as json_file:
+        json.dump(config_data, json_file)
   
 
 def main() -> None:
@@ -391,7 +362,7 @@ def main() -> None:
     exit(1)
     
   input_file_name = os.path.basename(INPUT_CSV_FILE_PATH).split('.')[0]
-  save_configuration_file(f"{OUTPUT_DIR_PATH}/{input_file_name}", IMAGE_RESOLUTION, MIN_TILE_SIZE, NUMBER_OF_LEVELS)
+  SaveConfigurationFile(os.path.join(OUTPUT_DIR_PATH, input_file_name), IMAGE_RESOLUTION, MIN_TILE_SIZE, NUMBER_OF_LEVELS, custom_color_map)
   
   logger.info("Parsing and classyfing tiles...")
   parsed_points_data = GenerateInitialTiles(num_tiles_x, num_tiles_y, MIN_TILE_SIZE, NUMBER_OF_LEVELS, csv_data, custom_color_map)
@@ -400,7 +371,7 @@ def main() -> None:
   pyramid_data = GeneratePyramidData(parsed_points_data, NUMBER_OF_LEVELS, IMAGE_RESOLUTION, MIN_TILE_SIZE)
   
   logger.info("Saving data...")
-  save_multi_files(pyramid_data, OUTPUT_DIR_PATH, input_file_name)
+  SaveMultiFiles(pyramid_data, OUTPUT_DIR_PATH, input_file_name)
   
   logger.info("Script ended successfully")
   exit(0)
