@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import {
-  LayerConfig,
+  ConfigFileData,
   useBinaryFilesStore,
 } from "../../../../stores/BinaryFilesStore";
 import { useSnackbar } from "notistack";
@@ -15,7 +15,8 @@ export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
-  const { setFiles, setConfig, setFileName } = useBinaryFilesStore();
+  const { setFiles, setLayerConfig, setFileName, setColormapConfig } =
+    useBinaryFilesStore();
 
   const handleWorkerProgress = async (e: any) => {
     if (e.data.progress) {
@@ -27,8 +28,14 @@ export const useFileHandler = () => {
       );
 
       if (configFile) {
-        const configData = (await paseJsonFromFile(configFile)) as LayerConfig;
-        setConfig(configData);
+        const parsedConfig = (await paseJsonFromFile(configFile)) as ConfigFileData;
+        const {color_map, ...layerConfig} = parsedConfig;
+        if(!color_map) {
+          enqueueSnackbar({ message: "Deprecated config file - Missing colormap config, metadata filtering will be unavailable", variant: 'error'});
+        }
+
+        setLayerConfig(layerConfig);
+        setColormapConfig(color_map);
       }
 
       setFiles(e.data.files);

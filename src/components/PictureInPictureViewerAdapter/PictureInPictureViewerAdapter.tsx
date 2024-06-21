@@ -15,6 +15,7 @@ import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
 import { getVivId } from "../../utils/utils";
 import { getCutomTooltp } from "./PictureInPictureViewerAdapter.helpers";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
+import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -52,32 +53,46 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isMetadataLayerOn, isOverviewOn, lensSelection, onViewportLoad] =
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
     useViewerStore(
       useShallow((store) => [
         store.colormap,
         store.isLensOn,
-        store.isMetadataLayerOn,
         store.isOverviewOn,
         store.lensSelection,
         store.onViewportLoad,
       ])
     );
 
+  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] = useMetadataLayerStore(
+    useShallow((store) => [
+      store.isMetadataLayerOn,
+      store.pointSize,
+      store.showTilesBoundries,
+      store.showTilesData
+    ])
+  )
+
   const loader = useLoader();
 
   const files = useBinaryFilesStore((state) => state.files);
-  const config = useBinaryFilesStore((state) => state.config);
+  const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
+  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] = useMetadataLayerStore(useShallow((state) => [state.geneNameFilters, state.isGeneNameFilterActive, state.showFilteredPoints]));
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
-    files: files,
-    config: config,
-    visible: !!files.length,
+    files,
+    config: layerConfig,
+    visible: (!!files.length && isMetadataLayerOn),
+    geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
+    pointSize,
+    showTilesBoundries,
+    showTilesData,
+    showDiscardedPoints: showFilteredPoints,
   });
 
   const deckProps = {
-    layers: isMetadataLayerOn ? [metadataLayer] : [],
+    layers: [metadataLayer],
     getTooltip: getCutomTooltp,
   };
 

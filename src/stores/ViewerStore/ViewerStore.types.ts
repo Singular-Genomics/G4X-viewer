@@ -8,7 +8,6 @@ export type ViewerStoreValues = {
   isViewerLoading: boolean;
   isOverviewOn: boolean;
   isLensOn: boolean;
-  isMetadataLayerOn: boolean;
   useColorMap: boolean;
   colormap: string;
   globalSelection: SelectionsType;
@@ -23,7 +22,6 @@ export type ViewerStoreValues = {
 export type ViewerStoreMethods = {
   toggleOverview: () => void;
   toggleLens: () => void;
-  toggleMetadataLayer: () => void;
   onViewportLoad: () => void;
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;

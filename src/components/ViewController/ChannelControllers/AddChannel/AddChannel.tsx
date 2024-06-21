@@ -109,7 +109,7 @@ const styles = (theme: Theme) => ({
     borderColor: theme.palette.gx.accent.greenBlue,
     borderRadius: '8px',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.3),
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
     }
   }
 });

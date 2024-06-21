@@ -11,18 +11,21 @@ import { ViewControllerProps } from "./ViewController.types";
 import { CollapsibleSection } from "./CollapsibleSection/CollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
+import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
+import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   const [isControllerOn, setIsControllerOn] = useState(true);
+  const metadataFiles = useBinaryFilesStore(store => store.files);
+  const metadata = useMetadata();
 
   useEffect(() => {
     window.dispatchEvent(new Event("onControllerToggle"));
   }, [isControllerOn]);
 
-  const metadata = useMetadata();
   const isRgb = metadata && guessRgb(metadata);
 
   return (
@@ -64,6 +67,13 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <ChannelControllers />
                 <AddChannel />
               </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="Metadata Layer Settings"
+                disabled={!imageLoaded || !metadataFiles.length}
+                unmountOnExit={false}
+              >
+                <MetadataLayerSection/>
+              </CollapsibleSection>
             </Box>
           </Box>
         </Box>
@@ -87,7 +97,7 @@ const styles = (theme: Theme) => ({
   viewControllerContainer: {
     backgroundColor: theme.palette.gx.mediumGrey[300],
     padding: "8px 0 0 8px",
-    width: "450px",
+    width: "550px",
     height: "100vh",
   },
   viewControllerHeaderWrapper: {
@@ -117,6 +127,9 @@ const styles = (theme: Theme) => ({
     display: "flex",
     flexDirection: "column",
     gap: '8px',
+    paddingRight: '8px',
+    overflowY: 'scroll',
+    scrollbarColor: '#8E9092 transparent',
   },
   viewControllerLoaderWrapper: {
     display: "flex",

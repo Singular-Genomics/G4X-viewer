@@ -13,6 +13,8 @@ export const useBinaryFilesStore = create<FilesState>((set) => ({
   fileName: '',
   setFiles: (files) => set({ files }),
   setFileName: (newFileName) => set({ fileName: newFileName}),
-  config: defaultLayerConfig,
-  setConfig: (config) => set({ config }),
+  layerConfig: defaultLayerConfig,
+  colorMapConfig: [],
+  setLayerConfig: (layerConfig) => set({ layerConfig }),
+  setColormapConfig: (colorMapConfig) => set({ colorMapConfig }),
 }));

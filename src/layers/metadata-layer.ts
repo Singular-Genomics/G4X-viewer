@@ -10,10 +10,10 @@ import {
   ScatterplotLayer,
 } from "@deck.gl/layers/typed";
 import { TileLayer } from "@deck.gl/geo-layers/typed";
-import { useBinaryFilesStore } from "../stores/BinaryFilesStore";
 
 import * as protobuf from "protobufjs";
 import { MetadataSchema } from "./metadata-schema";
+import { partition } from "lodash";
 
 // ======================== DATA TILE LAYER ==================
 
@@ -29,10 +29,11 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       getLineWidth: 5,
       lineWidthMaxPixels: 5,
       getLineColor: [255, 255, 255],
+      visible: this.props.showBoundries,
     });
 
     // @ INFO TEXT LAYER
-    const { index, textPosition, points, tileData } = this.props.layerData[0];
+    const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
 
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
@@ -55,23 +56,34 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       background: true,
       backgroundPadding: [5, 5],
       getBackgroundColor: [0, 0, 0, 150],
+      visible: this.props.showData,
     });
 
-    // @ POINTS LAYER
+    // @ POINTS LAYERS
+    const discardedPointsLayer = new ScatterplotLayer({
+      id: `sub-discarded-point-layer-${this.props.id}`,
+      data: outlierPoints,
+      getPosition: (d) => d.position,
+      getLineColor: [238, 238, 238],
+      getLineWidth: 0.2,
+      getRadius: this.props.pointSize,
+      radiusUnits: "pixels",
+      filled: false,
+      stroked: true,
+      visible: this.props.showDiscardedPoints,
+    });
 
     const pointsLayer = new ScatterplotLayer({
       id: `sub-point-layer-${this.props.id}`,
       data: points,
       getPosition: (d) => d.position,
       getFillColor: (d) => d.color,
+      getRadius: this.props.pointSize,
       radiusUnits: "pixels",
-      radiusMaxPixels: 5,
-      radiusMinPixels: 5,
       pickable: true,
     });
 
-    return [boundingBoxLayer, textLayer, pointsLayer];
-    // return [pointsLayer];
+    return [boundingBoxLayer, textLayer, discardedPointsLayer, pointsLayer];
   }
 }
 
@@ -79,18 +91,15 @@ SingleTileLayer.layerName = "SingleTileLayer";
 
 class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
   protoRoot: protobuf.Root;
-  useStore: typeof useBinaryFilesStore;
 
   constructor(props: MetadataLayerProps) {
     super(props);
     this.protoRoot = protobuf.Root.fromJSON(MetadataSchema);
-    this.useStore = useBinaryFilesStore;
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {
-    const state = this.useStore.getState();
     const suffix = `/${zoom}/${tileX}/${tileY}.bin`;
-    const file = state.files.find((f: File) => f.name.endsWith(suffix));
+    const file = this.props.files.find((f: File) => f.name.endsWith(suffix));
 
     if (!file) return Promise.resolve([]);
 
@@ -124,6 +133,18 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
           index.y
         )) as any;
 
+        let pointsData = [];
+        let outlierPointsData = [];
+
+        if (this.props.geneFilters === "all") {
+          pointsData = metadata.pointsData;
+        } else {
+          [pointsData, outlierPointsData] = partition(
+            metadata.pointsData,
+            (data) => this.props.geneFilters.includes(data.geneName)
+          );
+        }
+
         return [
           {
             index,
@@ -142,7 +163,8 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
               bbox.bottom,
               0,
             ],
-            points: metadata.pointsData || [],
+            points: pointsData,
+            outlierPoints: outlierPointsData,
             tileData: {
               width: bbox.right - bbox.left,
               height: bbox.bottom - bbox.top,
@@ -164,11 +186,22 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: "never",
       getTileData,
-      updateTriggers: { getTileData: [this.props.files] },
+      updateTriggers: {
+        getTileData: [
+          this.props.files,
+          this.props.visible,
+          this.props.geneFilters,
+          this.props.showDiscardedPoints,
+        ],
+      },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
           id,
           layerData: data,
+          pointSize: this.props.pointSize,
+          showBoundries: this.props.showTilesBoundries,
+          showData: this.props.showTilesData,
+          showDiscardedPoints: this.props.showDiscardedPoints,
         }),
     });
     return [tiledLayer];
