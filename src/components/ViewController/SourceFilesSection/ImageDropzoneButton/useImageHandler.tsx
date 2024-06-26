@@ -1,7 +1,9 @@
 import { useDropzone } from "react-dropzone";
 import { useViewerStore } from "../../../../stores/ViewerStore";
+import { useSnackbar } from "notistack";
 
 export const useImageHandler = () => {
+  const { enqueueSnackbar } = useSnackbar();
   
   const onDrop = (files: File[]) => {
     let newSource;
@@ -16,6 +18,11 @@ export const useImageHandler = () => {
         description: "data.zarr",
       };
     }
+    if(!/^.+\.(ome\.tiff | zarr)$/.test(newSource.description)) {
+      enqueueSnackbar({ message: "Invalid input file name. Only .ome.tiff and .zarr extensions allowed", variant: 'error'});
+      return
+    }
+
     useViewerStore.setState({ source: newSource });
   };
 
