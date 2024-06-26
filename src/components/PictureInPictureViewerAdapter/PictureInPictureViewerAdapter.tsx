@@ -6,7 +6,7 @@ import {
 import { useChannelsStore } from "../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
 import { useLoader } from "../../hooks/useLoader.hook";
-import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
+import { DEFAULT_OVERVIEW } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -127,9 +127,7 @@ export const PictureInPictureViewerAdapter = () => {
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) =>
-                  value ? value.toString() : FILL_PIXEL_VALUE
-                ),
+                pixelValues: values.map((value) => value.toFixed(1).toString()),
               }),
             handleCoordinate: () => {},
           }}
