@@ -4,11 +4,9 @@ import {
   Box,
   FormControlLabel,
   Theme,
-  Typography,
   alpha,
   useTheme,
 } from "@mui/material";
-import ErrorIcon from "@mui/icons-material/Error";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
@@ -51,12 +49,6 @@ export const PointFiltersTable = () => {
   return (
     <>
       <Box sx={sx.tableContainer}>
-        {!colorMapConfig && (
-          <Box sx={sx.errorContainer}>
-            <ErrorIcon sx={sx.errorIcon}/>
-            <Typography sx={sx.errorText}>Missing colormap config data.</Typography>
-          </Box>
-        )}
         <DataGrid
           rows={rowData ?? []}
           columns={columns}
@@ -142,17 +134,5 @@ const styles = (theme: Theme) => ({
   },
   activeFiltersSwitchWrapper: {
     float: "right",
-  },
-  errorContainer: {
-    display: 'flex',
-    marginBottom: '8px',
-  },
-  errorIcon: {
-    color: theme.palette.gx.accent.error,
-    marginRight: '8px',
-  },
-  errorText: {
-    color: theme.palette.gx.accent.error,
-    fontWeight: 700,
   }
 });
