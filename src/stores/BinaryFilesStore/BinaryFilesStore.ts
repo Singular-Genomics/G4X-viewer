@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { FilesState, LayerConfig } from "./BinaryFilesStore.types";
+import { BinaryFilesStore, BinaryFilesStoreValues, LayerConfig } from "./BinaryFilesStore.types";
 
 const defaultLayerConfig: LayerConfig = {
   layer_width: 16000,
@@ -8,13 +8,20 @@ const defaultLayerConfig: LayerConfig = {
   tile_size: 4096,
 };
 
-export const useBinaryFilesStore = create<FilesState>((set) => ({
+const DEFAULT_BINARY_FILE_STORE_VALUES: BinaryFilesStoreValues = {
   files: [],
   fileName: '',
+  layerConfig: defaultLayerConfig,
+  colorMapConfig: [],
+}
+
+export const useBinaryFilesStore = create<BinaryFilesStore>((set) => ({
+  ...DEFAULT_BINARY_FILE_STORE_VALUES,
   setFiles: (files) => set({ files }),
   setFileName: (newFileName) => set({ fileName: newFileName}),
   layerConfig: defaultLayerConfig,
   colorMapConfig: [],
   setLayerConfig: (layerConfig) => set({ layerConfig }),
   setColormapConfig: (colorMapConfig) => set({ colorMapConfig }),
+  reset: () => set({...DEFAULT_BINARY_FILE_STORE_VALUES})
 }));

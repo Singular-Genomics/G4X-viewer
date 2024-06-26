@@ -1,6 +1,8 @@
 import { useDropzone } from "react-dropzone";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 import { useSnackbar } from "notistack";
+import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
+import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
 
 export const useImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -25,6 +27,8 @@ export const useImageHandler = () => {
     }
 
     useViewerStore.setState({ source: newSource });
+    useBinaryFilesStore.getState().reset();
+    useMetadataLayerStore.getState().reset();
   };
 
   const { getRootProps, getInputProps } = useDropzone({
