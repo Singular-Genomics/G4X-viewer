@@ -62,6 +62,7 @@ export const MetadataLayerSection = () => {
 
 const sx = {
   sectionContainer: {
+    overflowX: 'hidden',
     display: "flex",
     flexDirection: "column",
     gap: "8px",
