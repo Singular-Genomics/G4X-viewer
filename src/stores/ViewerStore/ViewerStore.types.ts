@@ -13,6 +13,7 @@ export type ViewerStoreValues = {
   globalSelection: SelectionsType;
   lensSelection: number;
   pixelValues: string[];
+  hoverCoordinates: ViewerHoverCoordinates;
   channelOptions: string[];
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
@@ -32,4 +33,9 @@ export type ViewerSourceType = {
   description: string;
   isDemoImage?: boolean;
   urlOrFile: string | File | File[];
+}
+
+export type ViewerHoverCoordinates = {
+  x: string;
+  y: string;
 }

@@ -6,7 +6,7 @@ import {
 import { useChannelsStore } from "../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
 import { useLoader } from "../../hooks/useLoader.hook";
-import { DEFAULT_OVERVIEW } from "../../shared/constants";
+import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -64,27 +64,35 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] = useMetadataLayerStore(
-    useShallow((store) => [
-      store.isMetadataLayerOn,
-      store.pointSize,
-      store.showTilesBoundries,
-      store.showTilesData
-    ])
-  )
+  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] =
+    useMetadataLayerStore(
+      useShallow((store) => [
+        store.isMetadataLayerOn,
+        store.pointSize,
+        store.showTilesBoundries,
+        store.showTilesData,
+      ])
+    );
 
   const loader = useLoader();
 
   const files = useBinaryFilesStore((state) => state.files);
   const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
-  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] = useMetadataLayerStore(useShallow((state) => [state.geneNameFilters, state.isGeneNameFilterActive, state.showFilteredPoints]));
+  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] =
+    useMetadataLayerStore(
+      useShallow((state) => [
+        state.geneNameFilters,
+        state.isGeneNameFilterActive,
+        state.showFilteredPoints,
+      ])
+    );
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
     files,
     config: layerConfig,
-    visible: (!!files.length && isMetadataLayerOn),
-    geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
+    visible: !!files.length && isMetadataLayerOn,
+    geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
     pointSize,
     showTilesBoundries,
     showTilesData,
@@ -127,9 +135,18 @@ export const PictureInPictureViewerAdapter = () => {
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) => value.toFixed(1).toString()),
+                pixelValues: values.map((value) => Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE),
               }),
-            handleCoordinate: () => {},
+            // @ts-expect-error Error in Viv jsDOC declaration.
+            // TODO: Fix when issue has beeen resolved and new version has been released.
+            handleCoordnate: (coords: number[]) =>
+              coords &&
+              useViewerStore.setState({
+                hoverCoordinates: {
+                  x: coords[0].toFixed(0).toString(),
+                  y: coords[1].toFixed(0).toString(),
+                },
+              }),
           }}
         />
       )}
