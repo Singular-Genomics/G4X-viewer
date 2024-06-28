@@ -31,7 +31,7 @@ export const useFileHandler = () => {
         const parsedConfig = (await paseJsonFromFile(configFile)) as ConfigFileData;
         const {color_map, ...layerConfig} = parsedConfig;
         if(!color_map) {
-          enqueueSnackbar({ message: "Deprecated config file - Missing colormap config, metadata filtering will be unavailable", variant: 'error'});
+          enqueueSnackbar({ message: "Deprecated transcript file config - Missing colormap config, transcript metadata filtering will be unavailable", variant: 'error'});
         }
 
         setLayerConfig(layerConfig);
