@@ -14,7 +14,7 @@ import {
 } from "./../legacy/utils";
 import { unstable_batchedUpdates } from "react-dom";
 import { isInterleaved } from "@hms-dbmi/viv";
-import { COLOR_PALLETE, FILL_PIXEL_VALUE } from "../shared/constants";
+import { COLOR_PALLETE } from "../shared/constants";
 
 export const useImage = (source: ViewerSourceType | null) => {
   const loader = useLoader();
@@ -141,7 +141,7 @@ export const useImage = (source: ViewerSourceType | null) => {
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
         isViewerLoading: false,
-        pixelValues: new Array(newSelections.length).fill(FILL_PIXEL_VALUE),
+        pixelValues: new Array(newSelections.length).fill('0'),
         // Set the global selections (needed for the UI). All selections have the same global selection.
         globalSelection: newSelections[0],
         channelOptions,

@@ -8,12 +8,12 @@ export type ViewerStoreValues = {
   isViewerLoading: boolean;
   isOverviewOn: boolean;
   isLensOn: boolean;
-  isMetadataLayerOn: boolean;
   useColorMap: boolean;
   colormap: string;
   globalSelection: SelectionsType;
   lensSelection: number;
   pixelValues: string[];
+  hoverCoordinates: ViewerHoverCoordinates;
   channelOptions: string[];
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
@@ -23,7 +23,6 @@ export type ViewerStoreValues = {
 export type ViewerStoreMethods = {
   toggleOverview: () => void;
   toggleLens: () => void;
-  toggleMetadataLayer: () => void;
   onViewportLoad: () => void;
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;
@@ -34,4 +33,9 @@ export type ViewerSourceType = {
   description: string;
   isDemoImage?: boolean;
   urlOrFile: string | File | File[];
+}
+
+export type ViewerHoverCoordinates = {
+  x: string;
+  y: string;
 }

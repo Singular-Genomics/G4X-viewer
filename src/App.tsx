@@ -1,24 +1,9 @@
-import AvivatorTs from "./components/AvivatorTs";
+import { ThemeProvider } from "@mui/material";
+import G4XViewer from "./components/G4XViewer";
 import { SnackbarProvider } from "notistack";
-
-// const resolveSource = (sourceQueryParam: string): ViewerSourceType => {
-//   if (sourceQueryParam) {
-//     return {
-//       urlOrFile: sourceQueryParam,
-//       description: sourceQueryParam.split("?")[0].split("/").slice(-1)[0],
-//     };
-//   }
-
-//   return {
-//     ...demoSources[6],
-//     isDemoImage: true,
-//   };
-// };
+import { gxTheme } from "./themes/theme";
 
 export const App = () => {
-  // const query = new URLSearchParams(window.location.search);
-  // const source = resolveSource(query.get("image_url") ?? "");
-
   return (
     <SnackbarProvider
       anchorOrigin={{
@@ -28,7 +13,9 @@ export const App = () => {
       autoHideDuration={3000}
       maxSnack={3}
     >
-      <AvivatorTs />
+      <ThemeProvider theme={gxTheme}>
+        <G4XViewer />
+      </ThemeProvider>
     </SnackbarProvider>
   );
 };

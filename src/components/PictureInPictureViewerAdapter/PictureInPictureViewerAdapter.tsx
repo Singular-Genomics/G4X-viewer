@@ -15,6 +15,7 @@ import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
 import { getVivId } from "../../utils/utils";
 import { getCutomTooltp } from "./PictureInPictureViewerAdapter.helpers";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
+import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -52,32 +53,54 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isMetadataLayerOn, isOverviewOn, lensSelection, onViewportLoad] =
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
     useViewerStore(
       useShallow((store) => [
         store.colormap,
         store.isLensOn,
-        store.isMetadataLayerOn,
         store.isOverviewOn,
         store.lensSelection,
         store.onViewportLoad,
       ])
     );
 
+  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] =
+    useMetadataLayerStore(
+      useShallow((store) => [
+        store.isMetadataLayerOn,
+        store.pointSize,
+        store.showTilesBoundries,
+        store.showTilesData,
+      ])
+    );
+
   const loader = useLoader();
 
   const files = useBinaryFilesStore((state) => state.files);
-  const config = useBinaryFilesStore((state) => state.config);
+  const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
+  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] =
+    useMetadataLayerStore(
+      useShallow((state) => [
+        state.geneNameFilters,
+        state.isGeneNameFilterActive,
+        state.showFilteredPoints,
+      ])
+    );
 
   const metadataLayer = new MetadataLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
-    files: files,
-    config: config,
-    visible: !!files.length,
+    files,
+    config: layerConfig,
+    visible: !!files.length && isMetadataLayerOn,
+    geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
+    pointSize,
+    showTilesBoundries,
+    showTilesData,
+    showDiscardedPoints: showFilteredPoints,
   });
 
   const deckProps = {
-    layers: isMetadataLayerOn ? [metadataLayer] : [],
+    layers: [metadataLayer],
     getTooltip: getCutomTooltp,
   };
 
@@ -112,11 +135,18 @@ export const PictureInPictureViewerAdapter = () => {
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) =>
-                  value ? value.toString() : FILL_PIXEL_VALUE
-                ),
+                pixelValues: values.map((value) => Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE),
               }),
-            handleCoordinate: () => {},
+            // @ts-expect-error Error in Viv jsDOC declaration.
+            // TODO: Fix when issue has beeen resolved and new version has been released.
+            handleCoordnate: (coords: number[]) =>
+              coords &&
+              useViewerStore.setState({
+                hoverCoordinates: {
+                  x: coords[0].toFixed(0).toString(),
+                  y: coords[1].toFixed(0).toString(),
+                },
+              }),
           }}
         />
       )}

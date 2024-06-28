@@ -1,44 +1,32 @@
-import { useShallow } from "zustand/react/shallow";
-import { Box, IconButton, Typography } from "@mui/material";
-import { ColormapSelector } from "./ColormapSelector/ColormapSelector";
-import { GlobalSelectionSliders } from "./GlobalSelectionSliders/GlobalSelectionSliders";
-import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
+import { Box, IconButton, Theme, Typography, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
 import { ChannelControllers } from "./ChannelControllers";
-import { useLoader } from "../../hooks/useLoader.hook";
-import { LensSelect } from "./LensSelect/LensSelect";
-import { AddChannel } from "./AddChannel/AddChannel";
+import { AddChannel } from "./ChannelControllers/AddChannel/AddChannel";
 import CloseIcon from "@mui/icons-material/Close";
-import { OverviewSelect } from "./OverviewSelect/OverviewSelect";
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { ScLogo } from "../../shared/components/ScLogo";
-import { ScLoader } from "../../shared/components/ScLoader";
-import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
+import { GxLogo } from "../../shared/components/GxLogo";
 import { ViewControllerProps } from "./ViewController.types";
-import { MetadataLayerToggle } from "./MetadataLayerToggle";
+import { CollapsibleSection } from "./CollapsibleSection/CollapsibleSection";
+import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
+import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
+import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
-import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   const [isControllerOn, setIsControllerOn] = useState(true);
-
-  const [isViewerLoading, colormap] = useViewerStore(
-    useShallow((store) => [store.isViewerLoading, store.colormap])
-  );
-
-  const files = useBinaryFilesStore((store) => store.files);
+  const metadataFiles = useBinaryFilesStore(store => store.files);
+  const metadata = useMetadata();
 
   useEffect(() => {
     window.dispatchEvent(new Event("onControllerToggle"));
   }, [isControllerOn]);
 
-  const metadata = useMetadata();
-  const loader = useLoader();
-
   const isRgb = metadata && guessRgb(metadata);
-  const { shape, labels } = loader[0];
 
   return (
     <>
@@ -46,7 +34,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
         <Box sx={sx.viewControllerContainer}>
           <Box sx={sx.viewControllerContentWrapper}>
             <Box sx={sx.viewControllerHeaderWrapper}>
-              <ScLogo version="dark" />
+              <GxLogo version="dark" />
               <Typography sx={sx.viewControllerHeaderText}>
                 G4X Viewer
               </Typography>
@@ -59,55 +47,34 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <CloseIcon />
               </IconButton>
             </Box>
-            {isViewerLoading ? (
-              <Box sx={sx.viewControllerLoaderWrapper}>
-                <ScLoader />
-              </Box>
-            ) : (
-              <Box sx={sx.viewControllerSectionsWrapper}>
-                <ImageDropzoneButton />
-                <Box
-                  sx={{
-                    ...sx.viewControllerSectionsWrapper,
-                    opacity: imageLoaded ? 1 : 0.25,
-                    pointerEvents: imageLoaded ? "auto" : "none",
-                  }}
-                >
-                  <BinaryDropzoneButton />
-                  <Box>
-                    <Typography sx={sx.viewControllerSectionHeader}>
-                      Colormap
-                    </Typography>
-                    <ColormapSelector />
-                  </Box>
-                  <Box>
-                    <Typography sx={sx.viewControllerSectionHeader}>
-                      Global Selection
-                    </Typography>
-                    <GlobalSelectionSliders />
-                  </Box>
-                  <Box>
-                    <Typography sx={sx.viewControllerSectionHeader}>
-                      View Controlls
-                    </Typography>
-                    <OverviewSelect />
-                    {!!files.length && <MetadataLayerToggle />}
-                    {!colormap && shape[labels.indexOf("c")] > 1 && (
-                      <LensSelect />
-                    )}
-                  </Box>
-                  {!isViewerLoading && !isRgb && (
-                    <Box>
-                      <Typography sx={sx.viewControllerSectionHeader}>
-                        Channels Settings
-                      </Typography>
-                      <ChannelControllers />
-                      {!isRgb && <AddChannel />}
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            )}
+            <Box sx={sx.viewControllerSectionsWrapper}>
+              <CollapsibleSection
+                sectionTitle="Source Files"
+                defultState="open"
+              >
+                <SourceFilesSection />
+              </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="View Controlls"
+                disabled={!imageLoaded}
+              >
+                <ViewControllsSection />
+              </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="Channels Settings"
+                disabled={!imageLoaded || isRgb}
+              >
+                <ChannelControllers />
+                <AddChannel />
+              </CollapsibleSection>
+              <CollapsibleSection
+                sectionTitle="Metadata Layer Settings"
+                disabled={!imageLoaded || !metadataFiles.length}
+                unmountOnExit={false}
+              >
+                <MetadataLayerSection/>
+              </CollapsibleSection>
+            </Box>
           </Box>
         </Box>
       ) : (
@@ -116,7 +83,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
             size="large"
             disableTouchRipple
             onClick={() => setIsControllerOn(true)}
-            style={{ color: "#FFF" }}
+            style={{ color: theme.palette.gx.primary.white }}
           >
             <MenuIcon fontSize="large" />
           </IconButton>
@@ -126,18 +93,18 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   viewControllerContainer: {
-    backgroundColor: "#8E9092",
-    padding: "10px 0 0 10px",
-    width: "450px",
+    backgroundColor: theme.palette.gx.mediumGrey[300],
+    padding: "8px 0 0 8px",
+    width: "550px",
     height: "100vh",
   },
   viewControllerHeaderWrapper: {
     display: "flex",
-    gap: "10px",
+    gap: "16px",
     alignItems: "center",
-    marginBottom: "10px",
+    marginBottom: "16px",
   },
   viewControllerHeaderText: {
     fontWeight: 700,
@@ -147,25 +114,22 @@ const sx = {
     marginLeft: "auto",
   },
   viewControllerContentWrapper: {
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    borderTopLeftRadius: "20px",
-    padding: "20px 10px 20px 20px",
+    backgroundColor: theme.palette.gx.lightGrey[100],
+    borderTopLeftRadius: "32px",
+    padding: "16px 8px 16px 16px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     overflow: "auto",
     scrollbarWidth: "thin",
-  },
-  viewControllerSectionHeader: {
-    fontWeight: 700,
-    color: "#000",
-    marginBottom: "8px",
   },
   viewControllerSectionsWrapper: {
     display: "flex",
     flexDirection: "column",
-    gap: "20px",
+    gap: '8px',
+    paddingRight: '8px',
+    overflowY: 'scroll',
+    scrollbarColor: '#8E9092 transparent',
   },
   viewControllerLoaderWrapper: {
     display: "flex",
@@ -178,4 +142,4 @@ const sx = {
     top: 0,
     right: 10,
   },
-};
+});
