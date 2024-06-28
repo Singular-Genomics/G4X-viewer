@@ -15,7 +15,7 @@ export const PointFilter = () => {
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
           <Typography sx={sx.errorText}>
-            Missing colormap config data.
+            Missing colormap config data - filtering disabled.
           </Typography>
         </Box>
       )}
