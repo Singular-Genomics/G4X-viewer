@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GxCollapsibleSectionProps } from "./GxCollapsibleSection.types";
 import {
   Box,
@@ -20,6 +20,12 @@ export const GxCollapsibleSection = ({
 }: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
   const [expanded, setExpanded] = useState<boolean>(defultState === "open");
 
+  useEffect(() => {
+    if (disabled && expanded) {
+      setExpanded(false);
+    }
+  }, [disabled, expanded]);
+  
   const handleIconClick = () => {
     setExpanded((previousState) => !previousState);
   };
@@ -79,7 +85,7 @@ const sx = {
     display: "flex",
     alignItems: "center",
     position: "relative",
-    padding: '8px',
+    padding: "8px",
     color: (theme: Theme) => theme.palette.gx.primary.black,
     width: "100%",
     borderRadius: 0,
