@@ -1,14 +1,14 @@
 import { Box, Button, TextField, Theme, alpha, useTheme } from "@mui/material";
-import { DropzoneButtonProps } from "./DropzoneButton.types";
+import { GxDropzoneButtonProps } from "./GxDropzoneButton.types";
 
-export const DropzoneButton = ({
+export const GxDropzoneButton = ({
   getRootProps,
   getInputProps,
   labelTitle,
   labelText,
   buttonText,
   disabled = false,
-}: DropzoneButtonProps) => {
+}: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 

@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useViewerStore } from "../../../../stores/ViewerStore"
-import { DropzoneButton } from "../DropzoneButton";
+import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
 import { useCellMasksFileHandler } from "./useCellMasksFileHandler";
 import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
@@ -11,7 +11,7 @@ export const CellMasksDropzoneButton = () => {
 
   return (
     <Box>
-      <DropzoneButton
+      <GxDropzoneButton
         getRootProps={getRootProps}
         getInputProps={getInputProps}
         labelTitle="Cell Transcript File Name"

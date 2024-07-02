@@ -1,13 +1,7 @@
-import {
-  LinearProgress,
-  Box,
-  Theme,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { LinearProgress, Box, Theme, alpha, useTheme } from "@mui/material";
 import { useFileHandler } from "./useFileHandler";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
-import { DropzoneButton } from "../DropzoneButton/DropzoneButton";
+import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 
 export default function BinaryDropzoneButton() {
@@ -19,7 +13,7 @@ export default function BinaryDropzoneButton() {
 
   return (
     <Box>
-      <DropzoneButton
+      <GxDropzoneButton
         getRootProps={getRootProps}
         getInputProps={getInputProps}
         labelTitle="Transcript File Name"
@@ -44,7 +38,10 @@ const styles = (theme: Theme) => ({
       backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
     },
     "&.MuiLinearProgress-root": {
-      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`,
+      backgroundColor: `${alpha(
+        theme.palette.gx.accent.greenBlue,
+        0.2
+      )} !important`,
     },
   },
   loadingText: {
