@@ -75,11 +75,18 @@ export const PictureInPictureViewerAdapter = () => {
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) =>
-                  value ? value.toString() : FILL_PIXEL_VALUE
-                ),
+                pixelValues: values.map((value) => Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE),
               }),
-            handleCoordinate: () => {},
+            // @ts-expect-error Error in Viv jsDOC declaration.
+            // TODO: Fix when issue has beeen resolved and new version has been released.
+            handleCoordnate: (coords: number[]) =>
+              coords &&
+              useViewerStore.setState({
+                hoverCoordinates: {
+                  x: coords[0].toFixed(0).toString(),
+                  y: coords[1].toFixed(0).toString(),
+                },
+              }),
           }}
         />
       )}

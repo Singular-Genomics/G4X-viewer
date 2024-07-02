@@ -21,4 +21,5 @@ export type MetadataLayerStoreMethods = {
   setPointSize: (newPointSize: number) => void;
   setGeneNamesFilter: (geneNames: GeneNameFilterType) => void;
   clearGeneNameFilters: () => void;
+  reset: () => void;
 }

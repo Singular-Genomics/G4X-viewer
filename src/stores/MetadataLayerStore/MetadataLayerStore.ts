@@ -21,4 +21,5 @@ export const useMetadataLayerStore = create<MetadataLayerStore>((set) => ({
   setPointSize: (newPointSize) => set({ pointSize: newPointSize }),
   setGeneNamesFilter: (geneNames) => set({geneNameFilters: geneNames}),
   clearGeneNameFilters: () => set({geneNameFilters: []}),
+  reset: () => set({...DEFAULT_METADATA_LAYER_STORE_VALUES})
 }))

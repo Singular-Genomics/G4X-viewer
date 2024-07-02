@@ -16,10 +16,11 @@ export const PointFiltersTable = () => {
       ])
     );
 
-  const rowData: PointFiltersTableRowEntry[] = useBinaryFilesStore
+  let rowData: PointFiltersTableRowEntry[] = useBinaryFilesStore
     .getState()
     .colorMapConfig.map((item) => ({
       id: item.gene_name,
+      visible: true,
       ...item,
     }));
 
