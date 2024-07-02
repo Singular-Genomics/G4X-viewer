@@ -13,7 +13,7 @@ import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
 import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
-import { useCellMasksLayerStore } from "../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
@@ -22,7 +22,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
 
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore(store => store.files);
-  const cellMasksFiles = useCellMasksLayerStore(store => store.cellMasksData);
+  const cellMasksFiles = useCellSegmentationLayerStore(store => store.cellMasksData);
   const metadata = useMetadata();
 
   useEffect(() => {

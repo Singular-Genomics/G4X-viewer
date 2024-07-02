@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useCellMasksLayerStore } from "../../../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from "@mui/material";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { GxSlider } from "../../../../shared/components/GxSlider";
@@ -17,7 +17,7 @@ export const CellMasksStrokeSettings = () => {
     cellStrokeWidth,
     toggleCellStroke,
     setCellStrokeWidth,
-  ] = useCellMasksLayerStore(
+  ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.isCellStrokeOn,
       store.cellStrokeWidth,

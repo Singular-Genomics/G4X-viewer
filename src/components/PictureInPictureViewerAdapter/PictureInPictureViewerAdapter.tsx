@@ -10,12 +10,12 @@ import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import { getCustomTooltp } from "./PictureInPictureViewerAdapter.helpers";
-import { useCellMasksLayer, useMetadataLayer, useResizableContainer } from "./PictureInPictureViewerAdapter.hooks";
+import { useCellSegmentationLayer, useMetadataLayer, useResizableContainer } from "./PictureInPictureViewerAdapter.hooks";
 
 export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
   const { containerRef, containerSize } = useResizableContainer()
-  const cellMasksLayer = useCellMasksLayer();
+  const cellMasksLayer = useCellSegmentationLayer();
   const metadataLayer = useMetadataLayer();
 
   const [colors, contrastLimits, channelsVisible, selections] =

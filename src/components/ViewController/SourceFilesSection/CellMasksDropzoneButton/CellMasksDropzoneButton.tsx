@@ -2,11 +2,11 @@ import { Box } from "@mui/material";
 import { useViewerStore } from "../../../../stores/ViewerStore"
 import { DropzoneButton } from "../DropzoneButton";
 import { useCellMasksFileHandler } from "./useCellMasksFileHandler";
-import { useCellMasksLayerStore } from "../../../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
 export const CellMasksDropzoneButton = () => {
   const source = useViewerStore((store) => store.source);
-  const fileName = useCellMasksLayerStore((store) => store.fileName);
+  const fileName = useCellSegmentationLayerStore((store) => store.fileName);
   const { getInputProps, getRootProps } = useCellMasksFileHandler();
 
   return (

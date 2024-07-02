@@ -1,6 +1,6 @@
 import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning";
-import { useCellMasksLayerStore } from "../../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { CellMasksStrokeSettings } from "./CellMasksStrokeSettings/CellMasksStrokeSettings";
 import { CellMasksFillSettings } from "./CellMasksFillSettings";
@@ -18,7 +18,7 @@ const DisabledLayerWarning = () => (
 );
 
 export const CellMasksLayerSection = () => {
-  const [isCellLayerOn, isCellFillOn, isCellStrokeOn, isCellNameFilterOn] = useCellMasksLayerStore(
+  const [isCellLayerOn, isCellFillOn, isCellStrokeOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.isCellLayerOn,
       store.isCellFillOn,

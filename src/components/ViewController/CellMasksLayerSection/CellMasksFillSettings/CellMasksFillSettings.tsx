@@ -1,5 +1,5 @@
 import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from "@mui/material";
-import { useCellMasksLayerStore } from "../../../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { GxSlider } from "../../../../shared/components/GxSlider";
@@ -13,7 +13,7 @@ export const CellMasksFillSettings = () => {
   const sx = styles(theme);
 
   const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] =
-    useCellMasksLayerStore(
+    useCellSegmentationLayerStore(
       useShallow((store) => [
         store.isCellFillOn,
         store.cellFillOpacity,

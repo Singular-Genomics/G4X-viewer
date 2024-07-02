@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useCellMasksLayerStore } from "../../../../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { GxFilterTableOptions } from "../../../../../shared/components/GxFilterTable/GxFilterTableOptions";
 
 export const CellsFilterOptions = () => {
@@ -8,7 +8,7 @@ export const CellsFilterOptions = () => {
     showFilteredCells,
     toggleCellNameFilter,
     toggleShowFilteredCells,
-  ] = useCellMasksLayerStore(
+  ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.isCellNameFilterOn,
       store.showFilteredCells,

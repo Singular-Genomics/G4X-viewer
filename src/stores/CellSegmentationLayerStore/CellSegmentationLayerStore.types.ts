@@ -1,6 +1,6 @@
-export type CellMasksLayerStore = CellMasksLayerStoreValues & CellMasksLayerStoreMethods
+export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods
 
-export type CellMasksLayerStoreValues = {
+export type CellSegmentationLayerStoreValues = {
   cellMasksData: Uint8Array | null;
   fileName: string;
   isCellLayerOn: boolean;
@@ -10,11 +10,11 @@ export type CellMasksLayerStoreValues = {
   showFilteredCells: boolean;
   cellStrokeWidth: number;
   cellFillOpacity: number;
-  cellColormapConfig: CellMasksColormapEntry[];
+  cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
 }
 
-export type CellMasksLayerStoreMethods = {
+export type CellSegmentationLayerStoreMethods = {
   toggleCellLayer: () => void;
   toggleCellStroke: () => void;
   toggleCellFill: () => void;
@@ -22,12 +22,12 @@ export type CellMasksLayerStoreMethods = {
   toggleShowFilteredCells: () => void;
   setCellStrokeWidth: (newWidth: number) => void;
   setCellFillOpacity: (newOpacity: number) => void;
-  setCellColormapConfig: (config: CellMasksColormapEntry[]) => void;
+  setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
 }
 
-export type CellMasksColormapEntry = {
+export type CellSegmentationColormapEntry = {
   cellName: string;
   color: number[];
 }

@@ -1,4 +1,4 @@
 import { GxFilterTableRowPropBase } from "../../../../../shared/components/GxFilterTable";
-import { CellMasksColormapEntry } from "../../../../../stores/CellMasksLayerStore/CellMasksLayerStore.types";
+import { CellSegmentationColormapEntry } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types";
 
-export type CellsFilterTableRowEntry = GxFilterTableRowPropBase & CellMasksColormapEntry;
+export type CellsFilterTableRowEntry = GxFilterTableRowPropBase & CellSegmentationColormapEntry;

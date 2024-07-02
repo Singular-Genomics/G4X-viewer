@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone"
-import { useCellMasksLayerStore } from "../../../../stores/CellMasksLayerStore/CellMasksLayerStore"
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore"
 import * as protobuf from "protobufjs";
 import { CellMasksSchema } from "../../../../layers/cell-masks-layer/cell-masks-schema";
 
@@ -15,7 +15,7 @@ export const useCellMasksFileHandler = () => {
         const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
 
 
-        useCellMasksLayerStore.setState({
+        useCellSegmentationLayerStore.setState({
           cellMasksData: cellDataBuffer,
           cellColormapConfig: (protoRoot.lookupType("CellMasks").decode(cellDataBuffer) as any).colormap,
         })
@@ -23,7 +23,7 @@ export const useCellMasksFileHandler = () => {
     reader.onerror = () => console.error("Something went wrong during file laod!");
     reader.readAsArrayBuffer(files[0]);
 
-    useCellMasksLayerStore.setState({ 
+    useCellSegmentationLayerStore.setState({ 
       fileName: files[0].name,
     })
   }

@@ -4,7 +4,7 @@ import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
 import MetadataLayer from "../../layers/metadata-layer/metadata-layer";
 import { getVivId } from "../../utils/utils";
-import { useCellMasksLayerStore } from "../../stores/CellMasksLayerStore/CellMasksLayerStore";
+import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -80,7 +80,7 @@ export const useMetadataLayer = () => {
   return metadataLayer;
 };
 
-export const useCellMasksLayer = () => {
+export const useCellSegmentationLayer = () => {
   const [
     cellMasksData,
     isCellLayerOn,
@@ -92,7 +92,7 @@ export const useCellMasksLayer = () => {
     showFilteredCells,
     cellNameFilters
 
-  ] = useCellMasksLayerStore(
+  ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
       store.isCellLayerOn,
