@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CollapsibleSectionProps } from "./CollapsibleSection.types";
+import { GxCollapsibleSectionProps } from "./GxCollapsibleSection.types";
 import {
   Box,
   Button,
@@ -10,14 +10,14 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-export const CollapsibleSection = ({
+export const GxCollapsibleSection = ({
   sectionTitle,
   children,
   defultState = "collapsed",
   unmountOnExit = true,
   customStyles,
   disabled,
-}: React.PropsWithChildren<CollapsibleSectionProps>) => {
+}: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
   const [expanded, setExpanded] = useState<boolean>(defultState === "open");
 
   const handleIconClick = () => {
