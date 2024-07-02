@@ -1,4 +1,5 @@
-export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods
+export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues &
+  CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: Uint8Array | null;
@@ -12,7 +13,7 @@ export type CellSegmentationLayerStoreValues = {
   cellFillOpacity: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
-}
+};
 
 export type CellSegmentationLayerStoreMethods = {
   toggleCellLayer: () => void;
@@ -25,9 +26,10 @@ export type CellSegmentationLayerStoreMethods = {
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
-}
+  reset: () => void;
+};
 
 export type CellSegmentationColormapEntry = {
   cellName: string;
   color: number[];
-}
+};

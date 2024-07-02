@@ -37,5 +37,6 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
     setCellColormapConfig: (config) => set({ cellColormapConfig: config }),
     setCellNameFilter: (cellNames) => set({ cellNameFilters: cellNames }),
     clearCellNameFilter: () => set({ cellNameFilters: [] }),
+    reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES }),
   })
 );
