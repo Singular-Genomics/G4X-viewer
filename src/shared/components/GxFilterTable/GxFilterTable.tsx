@@ -47,7 +47,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase, >({
           disableColumnMenu
           disableColumnResize
           disableColumnSorting
-          pageSizeOptions={[]}
+          pageSizeOptions={[100]}
           onRowSelectionModelChange={(newSelection) => {
             if (
               newSelection.length === 0 ||

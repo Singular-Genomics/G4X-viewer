@@ -15,9 +15,9 @@ export const CellsFilterTable = () => {
         store.cellColormapConfig,
       ])
     );
-
-  const rowData: CellsFilterTableRowEntry[] = colorMapConfig.map((item) => ({
-    id: item.cellName,
+  
+  const rowData: CellsFilterTableRowEntry[] = colorMapConfig.map((item, index) => ({
+    id: `${item.cellName}_${index}`,
     ...item,
   }));
 

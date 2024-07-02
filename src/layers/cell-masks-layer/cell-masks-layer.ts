@@ -33,6 +33,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
     const outliersPolygonLayer = new PolygonLayer({
+      id: `sub-discarded-cells-layer-${this.props.id}`,
       data: outlierCellsData,
       positionFormat: "XY",
       stroked: this.props.showCellStroke,
@@ -45,6 +46,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     })
 
     const polygonLayer = new PolygonLayer({
+      id: `sub-cells-layer-${this.props.id}`,
       data: cellsData,
       positionFormat: "XY",
       stroked: this.props.showCellStroke,
