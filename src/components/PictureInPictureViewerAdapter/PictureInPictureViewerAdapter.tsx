@@ -15,6 +15,7 @@ import {
   useResizableContainer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
+import { Tooltip } from "../Tooltip";
 
 export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
@@ -108,6 +109,7 @@ export const PictureInPictureViewerAdapter = () => {
           }}
         />
       )}
+      <Tooltip />
     </Box>
   );
 };

@@ -7,7 +7,7 @@ import { getVivId } from "../../utils/utils";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getCustomTooltip } from "./PictureInPictureViewerAdapter.helpers";
+import { useTooltipStore } from "../../stores/TooltipStore";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -76,7 +76,11 @@ export const useMetadataLayer = () => {
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
-    onHover: getCustomTooltip,
+    onHover: (pickingInfo) =>
+      useTooltipStore.setState({
+        position: { x: pickingInfo.x, y: pickingInfo.y },
+        object: pickingInfo.object,
+      }),
   });
 
   return metadataLayer;
@@ -117,7 +121,11 @@ export const useCellSegmentationLayer = () => {
     cellFilters: isCellNameFilterOn ? cellNameFilters : "all",
     cellStrokeWidth,
     cellFillOpacity,
-    onHover: getCustomTooltip,
+    onHover: (pickingInfo) =>
+      useTooltipStore.setState({
+        position: { x: pickingInfo.x, y: pickingInfo.y },
+        object: pickingInfo.object,
+      }),
   });
 
   return cellMasksLayer;
