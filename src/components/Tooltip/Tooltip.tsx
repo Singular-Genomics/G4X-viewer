@@ -1,8 +1,25 @@
-import { Box, Typography } from "@mui/material";
-import { useTooltipStore } from "../../stores/TooltipStore";
+import { Box } from "@mui/material";
+import { TooltipType, useTooltipStore } from "../../stores/TooltipStore";
 import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useViewerStore } from "../../stores/ViewerStore";
+import {
+  TooltipCellMaskContent,
+  TooltipTranscriptConent,
+} from "./Tooltip.helpers";
+import {
+  CellMaskDatapointType,
+  TranscriptDatapointType,
+} from "./Tooltip.types";
+
+function getTooltipContent(type: TooltipType | undefined, object: any) {
+  if (type === "Transcript") {
+    return <TooltipTranscriptConent data={object as TranscriptDatapointType} />;
+  } else if (type === "CellMask") {
+    return <TooltipCellMaskContent data={object as CellMaskDatapointType} />;
+  }
+  return null;
+}
 
 export function Tooltip() {
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -10,8 +27,8 @@ export function Tooltip() {
     useShallow((store) => [store.viewportWidth, store.viewportHeight])
   );
 
-  const [{ x, y }, object] = useTooltipStore(
-    useShallow((store) => [store.position, store.object, store.visible])
+  const [{ x, y }, object, type] = useTooltipStore(
+    useShallow((store) => [store.position, store.object, store.type])
   );
 
   const tooltipElement = tooltipRef.current;
@@ -48,27 +65,7 @@ export function Tooltip() {
       }}
     >
       <Box sx={sx.tooltipContainer}>
-        <Box sx={sx.tooltipLabelsWrapper}>
-          <Typography>Position:</Typography>
-          <Typography>Color:</Typography>
-          <Typography>Gene Name:</Typography>
-          <Typography>Cell ID:</Typography>
-        </Box>
-        <Box>
-          {object && (
-            <>
-              <Typography sx={sx.textBold}>
-                {`X: ${object.position[0].toFixed(2)} 
-                Y: ${object.position[1].toFixed(2)}`}
-              </Typography>
-              <Typography sx={sx.textBold}>
-                R {object.color[0]} G {object.color[1]} B {object.color[2]}
-              </Typography>
-              <Typography sx={sx.textBold}>{object.geneName}</Typography>
-              <Typography sx={sx.textBold}>{object.cellId}</Typography>
-            </>
-          )}
-        </Box>
+        {object && getTooltipContent(type, object)}
       </Box>
     </Box>
   );
@@ -83,12 +80,5 @@ const sx = {
     display: "flex",
     gap: "10px",
     cursor: "crosshair",
-  },
-  tooltipLabelsWrapper: {
-    textAlign: "end",
-  },
-  textBold: {
-    fontWeight: "700",
-    textWrap: "nowrap",
   },
 };

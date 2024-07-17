@@ -3,15 +3,11 @@ export type TooltipStore = TooltipStoreValues;
 export type TooltipStoreValues = {
   position: Position;
   visible: boolean;
-  object?: TranscriptDatapointType;
+  type?: TooltipType;
+  object?: any;
 }
 
-export type TranscriptDatapointType = {
-  position: number[];
-  color: number[];
-  geneName: string;
-  cellId: string;
-}
+export type TooltipType = 'Transcript' | 'CellMask';
 
 type Position = {
   x: number,

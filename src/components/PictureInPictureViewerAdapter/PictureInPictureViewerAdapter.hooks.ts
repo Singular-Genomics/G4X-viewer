@@ -80,6 +80,7 @@ export const useMetadataLayer = () => {
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
         object: pickingInfo.object,
+        type: "Transcript",
       }),
   });
 
@@ -125,6 +126,7 @@ export const useCellSegmentationLayer = () => {
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
         object: pickingInfo.object,
+        type: "CellMask",
       }),
   });
 
