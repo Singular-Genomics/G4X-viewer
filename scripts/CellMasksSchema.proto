@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+message SingleMask {
+  repeated double vertices = 1;
+  repeated uint32 color = 2 [packed = true];
+  string area = 3;
+  string totalCounts = 4;
+  string totalGenes = 5;
+  string cellId = 6;
+}
+
+message ColormapEntry {
+  string cellName = 1;
+  repeated uint32 color = 2 [packed = true];
+}
+
+message CellMasks {
+  repeated SingleMask cellMasks = 1;
+  repeated ColormapEntry colormap = 2;
+  uint32 numberOfCells = 3;
+}
