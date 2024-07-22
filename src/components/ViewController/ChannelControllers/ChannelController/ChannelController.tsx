@@ -1,5 +1,4 @@
 import { useShallow } from "zustand/react/shallow";
-import { useLoader } from "../../../../hooks/useLoader.hook";
 import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import {
   colormapToRgb,
@@ -16,7 +15,6 @@ import { GxSlider } from "../../../../shared/components/GxSlider";
 
 export const ChannelController = ({
   color,
-  domain,
   name,
   isLoading,
   pixelValue,
@@ -31,18 +29,14 @@ export const ChannelController = ({
   const theme = useTheme();
   const sx = styles(theme);
 
-  const loader = useLoader();
   const [colormap, channelOptions] = useViewerStore(
     useShallow((store) => [store.colormap, store.channelOptions])
   );
   const rgbColor = colormapToRgb(!!colormap, color);
 
-  const [minValue, maxValue] = domain;
-  const stepSize =
-    maxValue - minValue < 500 &&
-    (loader[0] === "Float32" || loader[0] === "Float64")
-      ? (maxValue - minValue) / 500
-      : 1;
+  const minValue = 0;
+  const maxValue = 65535;
+  const stepSize = 500;
 
   return (
     <Grid container direction="column" justifyContent="center">
