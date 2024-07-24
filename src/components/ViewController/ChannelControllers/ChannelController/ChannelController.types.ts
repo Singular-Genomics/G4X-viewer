@@ -1,6 +1,5 @@
 export type ChannelControllerProps = {
   color: number[];
-  domain: number[];
   name: string;
   isLoading: boolean;
   pixelValue: string;

@@ -13,7 +13,6 @@ export const ChannelControllers = () => {
     selections,
     channelsVisible,
     colors,
-    domains,
     contrastLimits,
     toggleIsOnSetter,
     removeChannel,
@@ -24,7 +23,6 @@ export const ChannelControllers = () => {
       store.selections,
       store.channelsVisible,
       store.colors,
-      store.domains,
       store.contrastLimits,
       store.toggleIsOn,
       store.removeChannel,
@@ -112,7 +110,6 @@ export const ChannelControllers = () => {
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
-              domain={domains[index]}
               color={colors[index]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}

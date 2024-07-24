@@ -1,8 +1,16 @@
 import { useShallow } from "zustand/react/shallow";
 import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from "@mui/material";
+import {
+  Box,
+  FormControlLabel,
+  Grid,
+  Input,
+  Theme,
+  useTheme,
+} from "@mui/material";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { GxSlider } from "../../../../shared/components/GxSlider";
+import { useState } from "react";
 
 const MIN_STROKE_WIDTH = 1;
 const MAX_STROKE_WIDTH = 10;
@@ -26,27 +34,7 @@ export const CellMasksStrokeSettings = () => {
     ])
   );
 
-  const handleChange = (event: any) => {
-    let inputValue = event.target.value;
-    inputValue = inputValue.replace(",", ".");
-
-    if (inputValue === "") {
-      setCellStrokeWidth(MIN_STROKE_WIDTH);
-      return;
-    }
-
-    if (/^\d*\.?\d{0,1}$/.test(inputValue)) {
-      let newValue = parseFloat(inputValue);
-
-      if (newValue > MAX_STROKE_WIDTH) {
-        newValue = MAX_STROKE_WIDTH;
-      } else if (newValue < MIN_STROKE_WIDTH) {
-        newValue = MIN_STROKE_WIDTH;
-      }
-
-      setCellStrokeWidth(newValue);
-    }
-  };
+  const [sliderValue, setSliderValue] = useState<number>(cellStrokeWidth);
 
   return (
     <Box sx={sx.strokeSettingsContainer}>
@@ -72,22 +60,27 @@ export const CellMasksStrokeSettings = () => {
           <Input
             value={cellStrokeWidth.toString()}
             size="small"
-            onChange={handleChange}
             type="number"
             inputProps={{
               step: STROKE_WIDTH_STEP.toString(),
               max: MAX_STROKE_WIDTH.toString(),
               min: MIN_STROKE_WIDTH.toString(),
             }}
-            sx={sx.textField}
-            disabled={!isCellStrokeOn}
+            sx={{
+              ...sx.textFieldBase,
+              ...(isCellStrokeOn && sx.textFieldEnabled),
+            }}
+            disabled
           />
         </Grid>
         <Grid item xs sx={sx.sliderInputItem}>
           <GxSlider
-            value={cellStrokeWidth}
+            value={sliderValue}
             onChange={(_, newValue) => {
-              setCellStrokeWidth(Array.isArray(newValue) ? newValue[0] : newValue);
+              setSliderValue(Array.isArray(newValue) ? newValue[0] : newValue);
+            }}
+            onChangeCommitted={() => {
+              setCellStrokeWidth(sliderValue);
             }}
             step={0.1}
             min={MIN_STROKE_WIDTH}
@@ -102,13 +95,13 @@ export const CellMasksStrokeSettings = () => {
 
 const styles = (theme: Theme) => ({
   strokeSettingsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    marginBottom: '8px',
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    marginBottom: "8px",
   },
   toggleSwitch: {
-    paddingLeft: '8px',
+    paddingLeft: "8px",
   },
   sliderInputContainer: {
     paddingLeft: "8px",
@@ -116,14 +109,10 @@ const styles = (theme: Theme) => ({
   sliderInputItem: {
     padding: "0px 8px 0px 16px",
   },
-  textField: {
+  textFieldBase: {
     marginBottom: "8px",
-    "& .MuiFormLabel-root.Mui-focused": {
-      color: theme.palette.gx.accent.greenBlue,
-    },
     "&.MuiInputBase-root::after": {
       borderBottom: "2px solid",
-      borderColor: theme.palette.gx.accent.greenBlue,
     },
     "& .MuiInputBase-input": {
       textAlign: "center",
@@ -135,6 +124,16 @@ const styles = (theme: Theme) => ({
       },
     "& .MuiInputBase-input[type=number]": {
       MozAppearance: "textfield",
+    },
+  },
+  textFieldEnabled: {
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+      WebkitTextFillColor: theme.palette.gx.primary.black,
+    },
+    "&.MuiInputBase-root::before": {
+      borderColor: `${theme.palette.gx.primary.black}`,
+      borderBottomStyle: "solid",
     },
   },
 });

@@ -44,9 +44,4 @@ const styles = (theme: Theme) => ({
       )} !important`,
     },
   },
-  loadingText: {
-    marginTop: "16px",
-    fontSize: "16px",
-    fontWeight: 500,
-  },
 });
