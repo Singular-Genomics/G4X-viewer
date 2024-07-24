@@ -15,13 +15,21 @@ export const CellMasksSchema = {
             packed: "true"
           }
         },
-        cellName: {
+        area: {
           type: "string",
           id: 3
         },
-        cellId: {
+        totalCounts: {
           type: "string",
           id: 4
+        }, 
+        totalGenes: {
+          type: "string",
+          id: 5
+        },
+        cellId: {
+          type: "string",
+          id: 6
         }
       }
     },

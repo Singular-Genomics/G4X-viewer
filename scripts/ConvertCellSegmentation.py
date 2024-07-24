@@ -38,11 +38,12 @@ def SaveCellSegmentation(data, outputDirPath: str, outputFileName: str):
   
   for index in tqdm(range(len(data['cell_id']))):
     try:
-      cellPolygonPoints = [coord for pair in zip(data['xs'][index], data['ys'][index]) for coord in pair]
+      cellPolygonPoints = [coord for pair in zip(data['ys'][index], data['xs'][index]) for coord in pair]
       cellPolygonColor = data['colors'][index]
       cellId = data['cell_id'][index]
       cellTotalCounts = data['total_tx'][index]
       cellTotalGenes = data['total_genes'][index]
+      cellArea = data['area'][index]
     except Exception as e:
       logger.error(e)
       
@@ -50,6 +51,7 @@ def SaveCellSegmentation(data, outputDirPath: str, outputFileName: str):
     outputMaskData.vertices.extend(cellPolygonPoints + cellPolygonPoints[:2])
     outputMaskData.color.extend(ConvertHexToRGB(cellPolygonColor))
     outputMaskData.cellId = str(cellId)
+    outputMaskData.area = str(cellArea)
     outputMaskData.totalCounts = str(cellTotalCounts)
     outputMaskData.totalGenes = str(cellTotalGenes)
       
@@ -66,15 +68,15 @@ def main():
   OUTPUT_PATH = "./"
   # Name of the output file.
   # DEFAULT: The name of the input file.
-  OUTPUT_NAME = ""
+  OUTPUT_NAME = None
 
-  if not OUTPUT_NAME or len(OUTPUT_NAME) == 0:
-    OUTPUT_NAME = os.path.basename(PKL_FILE_PATH).split('.')[0]
-    
   logger.info("Parsing input file data...")
   pkl_data = pandas.read_pickle(PKL_FILE_PATH)
   
   logger.info("Converting data to protobuff format...")
+  if not OUTPUT_NAME or len(OUTPUT_NAME.strip()) == 0:
+    OUTPUT_NAME = os.path.basename(PKL_FILE_PATH).split(".", 1)[0]
+    
   SaveCellSegmentation(pkl_data, OUTPUT_PATH, OUTPUT_NAME)
   
   logger.info("Script ended succesfully")

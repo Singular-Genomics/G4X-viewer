@@ -11,11 +11,13 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   globalSelection: { c: 0, t: 0, z: 0 },
   lensSelection: 0,
   pixelValues: [],
-  hoverCoordinates: {x: '', y: ''},
+  hoverCoordinates: { x: "", y: "" },
   channelOptions: [],
   metadata: null,
   source: null,
   pyramidResolution: 0,
+  viewportWidth: 0,
+  viewportHeight: 0,
 };
 
 export const useViewerStore = create<ViewerStore>((set) => ({

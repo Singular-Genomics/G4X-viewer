@@ -7,6 +7,7 @@ import { getVivId } from "../../utils/utils";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTooltipStore } from "../../stores/TooltipStore";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -75,6 +76,12 @@ export const useMetadataLayer = () => {
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
+    onHover: (pickingInfo) =>
+      useTooltipStore.setState({
+        position: { x: pickingInfo.x, y: pickingInfo.y },
+        object: pickingInfo.object,
+        type: "Transcript",
+      }),
   });
 
   return metadataLayer;
@@ -90,8 +97,7 @@ export const useCellSegmentationLayer = () => {
     cellStrokeWidth,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters
-
+    cellNameFilters,
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -102,7 +108,7 @@ export const useCellSegmentationLayer = () => {
       store.cellStrokeWidth,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters
+      store.cellNameFilters,
     ])
   );
 
@@ -113,9 +119,15 @@ export const useCellSegmentationLayer = () => {
     showCellStroke: isCellStrokeOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
-    cellFilters: isCellNameFilterOn ? cellNameFilters : 'all',
+    cellFilters: isCellNameFilterOn ? cellNameFilters : "all",
     cellStrokeWidth,
     cellFillOpacity,
+    onHover: (pickingInfo) =>
+      useTooltipStore.setState({
+        position: { x: pickingInfo.x, y: pickingInfo.y },
+        object: pickingInfo.object,
+        type: "CellMask",
+      }),
   });
 
   return cellMasksLayer;

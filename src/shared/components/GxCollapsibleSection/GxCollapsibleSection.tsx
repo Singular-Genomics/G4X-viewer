@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GxCollapsibleSectionProps } from "./GxCollapsibleSection.types";
 import {
   Box,
@@ -18,6 +18,7 @@ export const GxCollapsibleSection = ({
   customStyles,
   disabled,
 }: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState<boolean>(defultState === "open");
 
   useEffect(() => {
@@ -25,10 +26,20 @@ export const GxCollapsibleSection = ({
       setExpanded(false);
     }
   }, [disabled, expanded]);
-  
-  const handleIconClick = () => {
+
+  const handleIconClick = useCallback(() => {
     setExpanded((previousState) => !previousState);
-  };
+  }, []);
+
+  const handleExpandScroll = useCallback(() => {
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
+  }, []);
 
   return (
     <Box
@@ -61,7 +72,13 @@ export const GxCollapsibleSection = ({
           fontSize="medium"
         />
       </Button>
-      <Collapse in={expanded} timeout="auto" unmountOnExit={unmountOnExit}>
+      <Collapse
+        onEntered={handleExpandScroll}
+        in={expanded}
+        ref={sectionRef}
+        timeout="auto"
+        unmountOnExit={unmountOnExit}
+      >
         <Box
           sx={
             {
