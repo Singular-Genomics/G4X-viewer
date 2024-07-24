@@ -1,3 +1,5 @@
+import { PickingInfo } from "@deck.gl/core/typed";
+
 export type CellMasksLayerProps = CompositeLayerProps & {
   masksData: Uint8Array;
   showCellStroke: boolean;
@@ -5,8 +7,9 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   cellStrokeWidth: number;
   cellFillOpacity: number;
-  cellFilters: string[] | 'all';
-}
+  cellFilters: string[] | "all";
+  onHover?: (pikingInfo: PickingInfo) => void;
+};
 
 type CompositeLayerProps = {
   id?: string;

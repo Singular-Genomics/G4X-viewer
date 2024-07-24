@@ -9,14 +9,28 @@ import { useLoader } from "../../hooks/useLoader.hook";
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
-import { getCustomTooltp } from "./PictureInPictureViewerAdapter.helpers";
-import { useCellSegmentationLayer, useMetadataLayer, useResizableContainer } from "./PictureInPictureViewerAdapter.hooks";
+import {
+  useCellSegmentationLayer,
+  useMetadataLayer,
+  useResizableContainer,
+} from "./PictureInPictureViewerAdapter.hooks";
+import { useEffect } from "react";
+import { Tooltip } from "../Tooltip";
 
 export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
-  const { containerRef, containerSize } = useResizableContainer()
+  const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const metadataLayer = useMetadataLayer();
+
+  useEffect(
+    () =>
+      useViewerStore.setState({
+        viewportWidth: containerSize.width,
+        viewportHeight: containerSize.height,
+      }),
+    [containerSize]
+  );
 
   const [colors, contrastLimits, channelsVisible, selections] =
     useChannelsStore(
@@ -41,7 +55,6 @@ export const PictureInPictureViewerAdapter = () => {
 
   const deckProps = {
     layers: [cellMasksLayer, metadataLayer],
-    getTooltip: getCustomTooltp,
   };
 
   return (
@@ -65,17 +78,23 @@ export const PictureInPictureViewerAdapter = () => {
           deckProps={deckProps}
           colormap={colormap}
           onViewportLoad={onViewportLoad}
-          onViewStateChange={({ viewState }) => {
+          onViewStateChange={({ viewState }: any) => {
             const z = Math.min(
               Math.max(Math.round(-(viewState as any).zoom), 0),
               loader.length - 1
             );
-            useViewerStore.setState({ pyramidResolution: z });
+            useViewerStore.setState({
+              pyramidResolution: z,
+            });
           }}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) => Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE),
+                pixelValues: values.map((value) =>
+                  Number.isInteger(value)
+                    ? value.toFixed(1).toString()
+                    : FILL_PIXEL_VALUE
+                ),
               }),
             // @ts-expect-error Error in Viv jsDOC declaration.
             // TODO: Fix when issue has beeen resolved and new version has been released.
@@ -90,6 +109,7 @@ export const PictureInPictureViewerAdapter = () => {
           }}
         />
       )}
+      <Tooltip />
     </Box>
   );
 };
