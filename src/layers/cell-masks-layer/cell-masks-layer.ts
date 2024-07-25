@@ -26,7 +26,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     } else {
       [cellsData, outlierCellsData] = partition(
         cellMasksData,
-        (data) => this.props.cellFilters.includes(data.cellName)
+        (data) => this.props.cellFilters.includes(data.cellName) //TODO: Update the key name.
       )
     }
 
