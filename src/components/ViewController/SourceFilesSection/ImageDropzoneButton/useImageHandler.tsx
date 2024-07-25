@@ -22,7 +22,7 @@ export const useImageHandler = () => {
       };
     }
 
-    if (!/^.+\.(ome\.tiff|zarr)$/.test(newSource.description)) {
+    if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(newSource.description)) {
       enqueueSnackbar({
         message:
           "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
