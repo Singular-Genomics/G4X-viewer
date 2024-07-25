@@ -16,19 +16,23 @@ export const PointFiltersTable = () => {
       ])
     );
 
-  let rowData: PointFiltersTableRowEntry[] = useBinaryFilesStore
-    .getState()
-    .colorMapConfig.map((item) => ({
-      id: item.gene_name,
-      visible: true,
-      ...item,
-    }));
+  const colorMapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
 
-  return <GxFilterTable<PointFiltersTableRowEntry> 
-    columns={columns}
-    rows={rowData}
-    activeFilters={geneNameFilters}
-    onClearFilteres={clearGeneNameFilters}
-    onSetFilter={(filters) => setGeneNamesFilter(filters)}
-  />;
+  const rowData: PointFiltersTableRowEntry[] = colorMapConfig
+    ? colorMapConfig.map((item) => ({
+        id: item.gene_name,
+        visible: true,
+        ...item,
+      }))
+    : [];
+
+  return (
+    <GxFilterTable<PointFiltersTableRowEntry>
+      columns={columns}
+      rows={rowData}
+      activeFilters={geneNameFilters}
+      onClearFilteres={clearGeneNameFilters}
+      onSetFilter={(filters) => setGeneNamesFilter(filters)}
+    />
+  );
 };
