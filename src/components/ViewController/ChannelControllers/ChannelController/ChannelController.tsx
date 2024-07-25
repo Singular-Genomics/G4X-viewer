@@ -36,7 +36,7 @@ export const ChannelController = ({
 
   const minValue = 0;
   const maxValue = 65535;
-  const stepSize = 500;
+  const stepSize = 1;
 
   return (
     <Grid container direction="column" justifyContent="center">
