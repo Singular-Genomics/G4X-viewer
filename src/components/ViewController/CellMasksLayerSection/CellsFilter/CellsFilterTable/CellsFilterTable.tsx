@@ -6,26 +6,34 @@ import { GxFilterTable } from "../../../../../shared/components/GxFilterTable";
 
 export const CellsFilterTable = () => {
   const columns = useCellsFilterTableColumns();
-  const [setCellNameFilter, clearCellNameFilter, cellNameFilters, colorMapConfig] =
-    useCellSegmentationLayerStore(
-      useShallow((store) => [
-        store.setCellNameFilter,
-        store.clearCellNameFilter,
-        store.cellNameFilters,
-        store.cellColormapConfig,
-      ])
-    );
-  
-  const rowData: CellsFilterTableRowEntry[] = colorMapConfig.map((item, index) => ({
-    id: `${item.cellName}_${index}`,
-    ...item,
-  }));
+  const [
+    setCellNameFilter,
+    clearCellNameFilter,
+    cellNameFilters,
+    colorMapConfig,
+  ] = useCellSegmentationLayerStore(
+    useShallow((store) => [
+      store.setCellNameFilter,
+      store.clearCellNameFilter,
+      store.cellNameFilters,
+      store.cellColormapConfig,
+    ])
+  );
 
-  return <GxFilterTable<CellsFilterTableRowEntry>
+  const rowData: CellsFilterTableRowEntry[] = colorMapConfig
+    ? colorMapConfig.map((item, index) => ({
+        id: `${item.cellName}_${index}`,
+        ...item,
+      }))
+    : [];
+
+  return (
+    <GxFilterTable<CellsFilterTableRowEntry>
       columns={columns}
       rows={rowData}
       activeFilters={cellNameFilters}
       onClearFilteres={clearCellNameFilter}
       onSetFilter={(filters) => setCellNameFilter(filters)}
     />
+  );
 };
