@@ -4,10 +4,10 @@ export type ChannelControllerProps = {
   isLoading: boolean;
   pixelValue: string;
   channelVisible: boolean;
-  slider: any; // <--- Adjust this
+  slider: number[];
   toggleIsOn: () => void;
   onSelectionChange: (newValue: string) => void;
   handleColorSelect: (newColor: number[]) => void;
   handleSliderChange: (newValue: number[]) => void;
   handleRemoveChannel: () => void;
-}
+};
