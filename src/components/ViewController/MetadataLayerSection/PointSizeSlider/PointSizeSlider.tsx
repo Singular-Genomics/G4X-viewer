@@ -74,14 +74,6 @@ const styles = (theme: Theme) => ({
     "& .MuiInputBase-input": {
       textAlign: "center",
       WebkitTextFillColor: theme.palette.gx.primary.black,
-    },
-    "& .MuiInputBase-input::-webkit-outer-spin-button, & .MuiInputBase-input::-webkit-inner-spin-button":
-      {
-        WebkitAppearance: "none",
-        margin: 0,
-      },
-    "& .MuiInputBase-input[type=number]": {
-      MozAppearance: "textfield",
-    },
+    }
   },
 });

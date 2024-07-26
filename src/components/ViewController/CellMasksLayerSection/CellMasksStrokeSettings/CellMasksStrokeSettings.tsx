@@ -117,14 +117,6 @@ const styles = (theme: Theme) => ({
     "& .MuiInputBase-input": {
       textAlign: "center",
     },
-    "& .MuiInputBase-input::-webkit-outer-spin-button, & .MuiInputBase-input::-webkit-inner-spin-button":
-      {
-        WebkitAppearance: "none",
-        margin: 0,
-      },
-    "& .MuiInputBase-input[type=number]": {
-      MozAppearance: "textfield",
-    },
   },
   textFieldEnabled: {
     "& .MuiInputBase-input": {
