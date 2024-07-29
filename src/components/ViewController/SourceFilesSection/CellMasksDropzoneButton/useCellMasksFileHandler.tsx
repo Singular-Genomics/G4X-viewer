@@ -3,10 +3,12 @@ import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentati
 import * as protobuf from "protobufjs";
 import { CellMasksSchema } from "../../../../layers/cell-masks-layer/cell-masks-schema";
 import { useState } from "react";
+import { useSnackbar } from "notistack";
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
@@ -17,12 +19,21 @@ export const useCellMasksFileHandler = () => {
     reader.onload = () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
       const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+      const colormapConfig = (
+        protoRoot.lookupType("CellMasks").decode(cellDataBuffer) as any
+      ).colormap;
+
+      if (!colormapConfig || !colormapConfig.length) {
+        enqueueSnackbar({
+          message:
+            "Missing colormap config, transcript metadata filtering will be unavailable",
+          variant: "warning",
+        });
+      }
 
       useCellSegmentationLayerStore.setState({
         cellMasksData: cellDataBuffer,
-        cellColormapConfig: (
-          protoRoot.lookupType("CellMasks").decode(cellDataBuffer) as any
-        ).colormap,
+        cellColormapConfig: colormapConfig,
       });
     };
     reader.onerror = () =>
