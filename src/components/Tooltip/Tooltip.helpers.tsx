@@ -19,8 +19,8 @@ export function TooltipTranscriptConent({
       label: "color",
       value: `R ${data.color[0]} G ${data.color[1]} B ${data.color[2]}`,
     },
-    { label: "area", value: data.geneName },
-    { label: "total counts", value: data.cellId },
+    { label: "gene name", value: data.geneName },
+    { label: "cell id", value: data.cellId },
   ];
 
   return <TooltipContent data={tooltipItems} />;
