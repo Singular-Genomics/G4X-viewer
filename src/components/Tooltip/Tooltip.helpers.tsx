@@ -38,7 +38,7 @@ export function TooltipCellMaskContent({
       value: `R ${data.color[0]} G ${data.color[1]} B ${data.color[2]}`,
     },
     { label: "area", value: data.area },
-    { label: "total counts", value: data.totalGenes },
+    { label: "total counts", value: data.totalCounts },
     { label: "total genes", value: data.totalGenes },
   ];
 
