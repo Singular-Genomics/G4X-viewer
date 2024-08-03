@@ -1,16 +1,16 @@
 import { SxProps, Theme } from "@mui/material";
 
-export type CollapsibleSectionProps = {
+export type GxCollapsibleSectionProps = {
   sectionTitle: string;
-  defultState?: CollapsibleSectionState;
+  defultState?: GxCollapsibleSectionState;
   disabled?: boolean;
-  customStyles?: CollapsibleSectionStyles;
+  customStyles?: GxCollapsibleSectionStyles;
   unmountOnExit?: boolean;
 };
 
-type CollapsibleSectionState = "open" | "collapsed";
+type GxCollapsibleSectionState = "open" | "collapsed";
 
-type CollapsibleSectionStyles = {
+type GxCollapsibleSectionStyles = {
   sectionContainer?: SxProps<Theme>;
   headerContainer?: SxProps<Theme>;
   titleText?: SxProps<Theme>;

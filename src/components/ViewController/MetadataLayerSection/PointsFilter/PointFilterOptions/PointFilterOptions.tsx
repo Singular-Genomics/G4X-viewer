@@ -1,7 +1,6 @@
-import { Box, FormControlLabel } from "@mui/material";
-import { GxSwitch } from "../../../../../shared/components/GxSwitch";
 import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
 import { useShallow } from "zustand/react/shallow";
+import { GxFilterTableOptions } from "../../../../../shared/components/GxFilterTable/GxFilterTableOptions";
 
 export const PointFilterOptions = () => {
   const [
@@ -19,38 +18,11 @@ export const PointFilterOptions = () => {
   );
 
   return (
-    <Box sx={sx.optionsContainer}>
-      <FormControlLabel
-        label="Enable Filter"
-        control={
-          <GxSwitch
-            disableTouchRipple
-            onChange={toggleGeneNameFilter}
-            checked={isGeneNameFilterActive}
-          />
-        }
-      />
-      <FormControlLabel
-        label="Show Discarded"
-        control={
-          <GxSwitch
-            disableTouchRipple
-            onChange={toggleShowFilteredPoints}
-            checked={showFilteredPoints}
-            disabled={!isGeneNameFilterActive}
-          />
-        }
-      />
-    </Box>
+    <GxFilterTableOptions
+      isFilterEnabled={isGeneNameFilterActive}
+      isShowDiscardedEnabled={showFilteredPoints}
+      onToggleFilter={toggleGeneNameFilter}
+      onToggleShowDiscarded={toggleShowFilteredPoints}
+    />
   );
-};
-
-const sx = {
-  optionsContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    paddingLeft: "8px",
-    marginBottom: "8px",
-  },
 };

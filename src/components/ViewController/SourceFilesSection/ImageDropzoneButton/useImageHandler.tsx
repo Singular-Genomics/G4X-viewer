@@ -3,10 +3,11 @@ import { useViewerStore } from "../../../../stores/ViewerStore";
 import { useSnackbar } from "notistack";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
 export const useImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const onDrop = (files: File[]) => {
     let newSource;
     if (files.length === 1) {
@@ -20,15 +21,20 @@ export const useImageHandler = () => {
         description: "data.zarr",
       };
     }
-    
-    if(!/^.+\.(ome\.tiff|zarr)$/.test(newSource.description)) {
-      enqueueSnackbar({ message: "Invalid input file name. Only .ome.tiff and .zarr extensions allowed", variant: 'error'});
-      return
+
+    if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(newSource.description)) {
+      enqueueSnackbar({
+        message:
+          "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
+        variant: "error",
+      });
+      return;
     }
 
     useViewerStore.setState({ source: newSource });
     useBinaryFilesStore.getState().reset();
     useMetadataLayerStore.getState().reset();
+    useCellSegmentationLayerStore.getState().reset();
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -40,6 +46,6 @@ export const useImageHandler = () => {
 
   return {
     getRootProps,
-    getInputProps
+    getInputProps,
   };
 };

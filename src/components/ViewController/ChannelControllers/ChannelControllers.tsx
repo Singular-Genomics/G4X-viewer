@@ -1,19 +1,19 @@
 import { useShallow } from "zustand/react/shallow";
 import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
 import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
-import { Box } from "@mui/material";
+import { Box, Theme, useTheme } from "@mui/material";
 import { ChannelController } from "./ChannelController/ChannelController";
 import { getSingleSelectionStats } from "../../../legacy/utils";
 import { useLoader } from "../../../hooks/useLoader.hook";
 import { useMetadata } from "../../../hooks/useMetadata.hook";
 
 export const ChannelControllers = () => {
+  const theme = useTheme();
   const [
     ids,
     selections,
     channelsVisible,
     colors,
-    domains,
     contrastLimits,
     toggleIsOnSetter,
     removeChannel,
@@ -24,7 +24,6 @@ export const ChannelControllers = () => {
       store.selections,
       store.channelsVisible,
       store.colors,
-      store.domains,
       store.contrastLimits,
       store.toggleIsOn,
       store.removeChannel,
@@ -50,6 +49,7 @@ export const ChannelControllers = () => {
 
   const loader = useLoader();
   const metadata = useMetadata();
+  const sx = styles(theme);
 
   return (
     <Box sx={sx.channelControllersContainer}>
@@ -71,9 +71,9 @@ export const ChannelControllers = () => {
               Pixels: { Channels },
             } = metadata;
             const { c } = selection;
-            
+
             // Can this be done differently ?
-            const newProps: {[k: string]: any} = {
+            const newProps: { [k: string]: any } = {
               contrastLimits: newContrastLimit,
               domains: domain,
             };
@@ -100,19 +100,18 @@ export const ChannelControllers = () => {
           setPropertiesForChannel(index, { colors: color });
         };
 
-        const handleSliderChange = (newValue: number[]) => { 
-          setPropertiesForChannel(index, { contrastLimits: newValue })
+        const handleSliderChange = (newValue: number[]) => {
+          setPropertiesForChannel(index, { contrastLimits: newValue });
         };
 
         return (
-          <Box key={id}>
+          <Box key={id} sx={sx.channelControlerWrapper}>
             <ChannelController
               name={name}
               onSelectionChange={onSelectionChange}
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
-              domain={domains[index]}
               color={colors[index]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}
@@ -127,13 +126,17 @@ export const ChannelControllers = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   channelControllersContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px',
-    paddingRight: '8px',
-    paddingTop: '8px',
-    overflowY: 'auto',
-  }
-}
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+    paddingTop: "8px",
+    overflowY: "auto",
+  },
+  channelControlerWrapper: {
+    padding: "8px",
+    background: theme.palette.gx.lightGrey[900],
+    borderRadius: "4px",
+  },
+});

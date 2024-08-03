@@ -164,7 +164,7 @@ export async function createLoader(
   handleOffsetsNotFound,
   handleLoaderError
 ) {
-  // If the loader fails to load, handle the error (show an error snackbar).
+  // If the loader fails to load, handle the error (show an error snackbar)
   // Otherwise load.
   try {
     // OME-TIFF

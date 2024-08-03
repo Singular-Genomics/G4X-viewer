@@ -9,39 +9,28 @@ import { useLoader } from "../../hooks/useLoader.hook";
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
-import MetadataLayer from "../../layers/metadata-layer";
-import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
-import { getVivId } from "../../utils/utils";
-import { getCutomTooltp } from "./PictureInPictureViewerAdapter.helpers";
-import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
-import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
+import {
+  useCellSegmentationLayer,
+  useMetadataLayer,
+  useResizableContainer,
+} from "./PictureInPictureViewerAdapter.hooks";
+import { useEffect } from "react";
+import { Tooltip } from "../Tooltip";
 
 export const PictureInPictureViewerAdapter = () => {
-  const containerRef = useRef<HTMLDivElement>();
-  const [containerSize, setContainerSize] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
+  const loader = useLoader();
+  const { containerRef, containerSize } = useResizableContainer();
+  const cellMasksLayer = useCellSegmentationLayer();
+  const metadataLayer = useMetadataLayer();
 
-  const handleResize = useCallback(() => {
-    if (containerRef.current) {
-      setContainerSize({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight,
-      });
-    }
-  }, [containerRef]);
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("onControllerToggle", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("onControllerToggle", handleResize);
-    };
-  }, [handleResize]);
+  useEffect(
+    () =>
+      useViewerStore.setState({
+        viewportWidth: containerSize.width,
+        viewportHeight: containerSize.height,
+      }),
+    [containerSize]
+  );
 
   const [colors, contrastLimits, channelsVisible, selections] =
     useChannelsStore(
@@ -64,44 +53,8 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [isMetadataLayerOn, pointSize, showTilesBoundries, showTilesData] =
-    useMetadataLayerStore(
-      useShallow((store) => [
-        store.isMetadataLayerOn,
-        store.pointSize,
-        store.showTilesBoundries,
-        store.showTilesData,
-      ])
-    );
-
-  const loader = useLoader();
-
-  const files = useBinaryFilesStore((state) => state.files);
-  const layerConfig = useBinaryFilesStore((state) => state.layerConfig);
-  const [geneNameFilters, isGeneNameFilterActive, showFilteredPoints] =
-    useMetadataLayerStore(
-      useShallow((state) => [
-        state.geneNameFilters,
-        state.isGeneNameFilterActive,
-        state.showFilteredPoints,
-      ])
-    );
-
-  const metadataLayer = new MetadataLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
-    files,
-    config: layerConfig,
-    visible: !!files.length && isMetadataLayerOn,
-    geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
-    pointSize,
-    showTilesBoundries,
-    showTilesData,
-    showDiscardedPoints: showFilteredPoints,
-  });
-
   const deckProps = {
-    layers: [metadataLayer],
-    getTooltip: getCutomTooltp,
+    layers: [cellMasksLayer, metadataLayer],
   };
 
   return (
@@ -125,17 +78,23 @@ export const PictureInPictureViewerAdapter = () => {
           deckProps={deckProps}
           colormap={colormap}
           onViewportLoad={onViewportLoad}
-          onViewStateChange={({ viewState }) => {
+          onViewStateChange={({ viewState }: any) => {
             const z = Math.min(
               Math.max(Math.round(-(viewState as any).zoom), 0),
               loader.length - 1
             );
-            useViewerStore.setState({ pyramidResolution: z });
+            useViewerStore.setState({
+              pyramidResolution: z,
+            });
           }}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
-                pixelValues: values.map((value) => Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE),
+                pixelValues: values.map((value) =>
+                  Number.isInteger(value)
+                    ? value.toFixed(1).toString()
+                    : FILL_PIXEL_VALUE
+                ),
               }),
             // @ts-expect-error Error in Viv jsDOC declaration.
             // TODO: Fix when issue has beeen resolved and new version has been released.
@@ -150,6 +109,7 @@ export const PictureInPictureViewerAdapter = () => {
           }}
         />
       )}
+      <Tooltip />
     </Box>
   );
 };

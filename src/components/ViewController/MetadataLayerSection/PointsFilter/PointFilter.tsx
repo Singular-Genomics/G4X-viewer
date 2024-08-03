@@ -7,11 +7,13 @@ import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 export const PointFilter = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const colorMapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+  const colormapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+
+  const isColormapConfigValid = colormapConfig && colormapConfig.length;
 
   return (
-    <Box sx={{ ...(!colorMapConfig ? sx.disabledWrapper : {}) }}>
-      {!colorMapConfig && (
+    <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledWrapper) }}>
+      {!isColormapConfigValid && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
           <Typography sx={sx.errorText}>
@@ -19,7 +21,7 @@ export const PointFilter = () => {
           </Typography>
         </Box>
       )}
-      <Box sx={{ ...(!colorMapConfig ? sx.disabledSection : {}) }}>
+      <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <PointFilterOptions />
         <PointFiltersTable />
       </Box>

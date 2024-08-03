@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { CollapsibleSectionProps } from "./CollapsibleSection.types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { GxCollapsibleSectionProps } from "./GxCollapsibleSection.types";
 import {
   Box,
   Button,
@@ -10,19 +10,36 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-export const CollapsibleSection = ({
+export const GxCollapsibleSection = ({
   sectionTitle,
   children,
   defultState = "collapsed",
   unmountOnExit = true,
   customStyles,
   disabled,
-}: React.PropsWithChildren<CollapsibleSectionProps>) => {
+}: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState<boolean>(defultState === "open");
 
-  const handleIconClick = () => {
+  useEffect(() => {
+    if (disabled && expanded) {
+      setExpanded(false);
+    }
+  }, [disabled, expanded]);
+
+  const handleIconClick = useCallback(() => {
     setExpanded((previousState) => !previousState);
-  };
+  }, []);
+
+  const handleExpandScroll = useCallback(() => {
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest",
+      });
+    }
+  }, []);
 
   return (
     <Box
@@ -55,7 +72,13 @@ export const CollapsibleSection = ({
           fontSize="medium"
         />
       </Button>
-      <Collapse in={expanded} timeout="auto" unmountOnExit={unmountOnExit}>
+      <Collapse
+        onEntered={handleExpandScroll}
+        in={expanded}
+        ref={sectionRef}
+        timeout="auto"
+        unmountOnExit={unmountOnExit}
+      >
         <Box
           sx={
             {
@@ -79,7 +102,7 @@ const sx = {
     display: "flex",
     alignItems: "center",
     position: "relative",
-    padding: '8px',
+    padding: "8px",
     color: (theme: Theme) => theme.palette.gx.primary.black,
     width: "100%",
     borderRadius: 0,

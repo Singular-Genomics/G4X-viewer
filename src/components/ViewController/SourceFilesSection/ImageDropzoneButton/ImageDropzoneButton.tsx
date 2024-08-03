@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useViewerStore } from "../../../../stores/ViewerStore";
-import { DropzoneButton } from "../DropzoneButton";
+import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
 import { useImageHandler } from "./useImageHandler";
 
 export default function ImageDropzoneButton() {
@@ -9,7 +9,7 @@ export default function ImageDropzoneButton() {
 
   return (
     <Box>
-      <DropzoneButton
+      <GxDropzoneButton
         getRootProps={getRootProps}
         getInputProps={getInputProps}
         labelTitle="Image File Name"

@@ -1,7 +1,7 @@
-import { } from '@hms-dbmi/viv';
-import { SelectionsType } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types';
+import {} from "@hms-dbmi/viv";
+import { SelectionsType } from "../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types";
 
-export type ViewerStore = ViewerStoreValues & ViewerStoreMethods
+export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 
 export type ViewerStoreValues = {
   isChannelLoading: boolean[];
@@ -18,6 +18,8 @@ export type ViewerStoreValues = {
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
   pyramidResolution: number;
+  viewportWidth: number;
+  viewportHeight: number;
 };
 
 export type ViewerStoreMethods = {
@@ -26,16 +28,16 @@ export type ViewerStoreMethods = {
   onViewportLoad: () => void;
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;
-  removeIsChannelLoading: (index: number) => void
-}
+  removeIsChannelLoading: (index: number) => void;
+};
 
 export type ViewerSourceType = {
   description: string;
   isDemoImage?: boolean;
   urlOrFile: string | File | File[];
-}
+};
 
 export type ViewerHoverCoordinates = {
   x: string;
   y: string;
-}
+};
