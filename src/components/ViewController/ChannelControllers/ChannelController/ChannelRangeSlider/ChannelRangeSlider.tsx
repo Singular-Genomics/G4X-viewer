@@ -4,7 +4,8 @@ import { colormapToRgb } from "../ChannelController.helpers";
 import { truncateDecimalNumber } from "../../../../../legacy/utils";
 import { ChannelRangeSliderProps } from "./ChannelRangeSlider.types";
 import { useViewerStore } from "../../../../../stores/ViewerStore";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash";
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -31,32 +32,52 @@ export const ChannelRangeSlider = ({
   const colormap = useViewerStore((store) => store.colormap);
   const rgbColor = colormapToRgb(!!colormap, color);
 
+  const debouncedMinInputChange = useMemo(
+    () =>
+      debounce((currentValue: string) => {
+        if (currentValue === "") return;
+        const newValue =
+          +currentValue >= currentMaxValue
+            ? currentMaxValue
+            : +currentValue < CHANNEL_MIN
+            ? CHANNEL_MIN
+            : +currentValue;
+        setMinInputValue(newValue.toString());
+        handleSliderChange([newValue, currentMaxValue]);
+      }, 300),
+    [currentMaxValue, handleSliderChange]
+  );
+
   const handleMinInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const newValue =
-        +e.target.value > currentMaxValue
-          ? currentMaxValue
-          : +e.target.value < CHANNEL_MIN
-          ? CHANNEL_MIN
-          : +e.target.value;
-      setMinInputValue(newValue.toString());
-      handleSliderChange([newValue, currentMaxValue]);
+      setMinInputValue(e.target.value);
+      debouncedMinInputChange(e.target.value);
     },
-    [handleSliderChange, currentMaxValue]
+    [debouncedMinInputChange]
+  );
+
+  const debouncedMaxInputChange = useMemo(
+    () =>
+      debounce((currentValue: string) => {
+        if (currentValue === "") return;
+        const newValue =
+          +currentValue <= currentMinValue
+            ? currentMinValue
+            : +currentValue > CHANNEL_MAX
+            ? CHANNEL_MAX
+            : +currentValue;
+        setMaxInputValue(newValue.toString());
+        handleSliderChange([currentMinValue, newValue]);
+      }, 300),
+    [currentMinValue, handleSliderChange]
   );
 
   const handleMaxInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const newValue =
-        +e.target.value < currentMinValue
-          ? currentMinValue
-          : +e.target.value > CHANNEL_MAX
-          ? CHANNEL_MAX
-          : +e.target.value;
-      setMaxInputValue(newValue.toString());
-      handleSliderChange([currentMinValue, newValue]);
+      setMaxInputValue(e.target.value);
+      debouncedMaxInputChange(e.target.value);
     },
-    [handleSliderChange, currentMinValue]
+    [debouncedMaxInputChange]
   );
 
   return (
