@@ -10,6 +10,7 @@ import { debounce } from "lodash";
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
 const CHANNEL_STEP = 1;
+const DEBOUNCE_TIME_MS = 300;
 
 export const ChannelRangeSlider = ({
   color,
@@ -44,7 +45,7 @@ export const ChannelRangeSlider = ({
             : +currentValue;
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue]);
-      }, 300),
+      }, DEBOUNCE_TIME_MS),
     [currentMaxValue, handleSliderChange]
   );
 
@@ -68,7 +69,7 @@ export const ChannelRangeSlider = ({
             : +currentValue;
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue]);
-      }, 300),
+      }, DEBOUNCE_TIME_MS),
     [currentMinValue, handleSliderChange]
   );
 
