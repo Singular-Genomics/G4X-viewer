@@ -1,12 +1,11 @@
-import { Box, IconButton, Theme, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Theme, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
 import { ChannelControllers } from "./ChannelControllers";
 import { AddChannel } from "./ChannelControllers/AddChannel/AddChannel";
-import CloseIcon from "@mui/icons-material/Close";
+
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { GxLogo } from "../../shared/components/GxLogo";
 import { ViewControllerProps } from "./ViewController.types";
 import { GxCollapsibleSection } from "../../shared/components/GxCollapsibleSection/GxCollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
@@ -15,14 +14,17 @@ import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSectio
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
+import { ControllerHeader } from "./ControllerHeader";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   const [isControllerOn, setIsControllerOn] = useState(true);
-  const metadataFiles = useBinaryFilesStore(store => store.files);
-  const cellMasksFiles = useCellSegmentationLayerStore(store => store.cellMasksData);
+  const metadataFiles = useBinaryFilesStore((store) => store.files);
+  const cellMasksFiles = useCellSegmentationLayerStore(
+    (store) => store.cellMasksData
+  );
   const metadata = useMetadata();
 
   useEffect(() => {
@@ -36,20 +38,9 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
       {isControllerOn ? (
         <Box sx={sx.viewControllerContainer}>
           <Box sx={sx.viewControllerContentWrapper}>
-            <Box sx={sx.viewControllerHeaderWrapper}>
-              <GxLogo version="dark" />
-              <Typography sx={sx.viewControllerHeaderText}>
-                G4X Viewer
-              </Typography>
-              <IconButton
-                sx={sx.viewControllerHeaderButton}
-                onClick={() => {
-                  setIsControllerOn(false);
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
+            <ControllerHeader
+              onCloseController={() => setIsControllerOn(false)}
+            />
             <Box sx={sx.viewControllerSectionsWrapper}>
               <GxCollapsibleSection
                 sectionTitle="Source Files"
@@ -75,13 +66,13 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 disabled={!imageLoaded || !metadataFiles.length}
                 unmountOnExit={false}
               >
-                <MetadataLayerSection/>
+                <MetadataLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Cell Masks Layer Settings"
                 disabled={!imageLoaded || !cellMasksFiles?.length}
               >
-                <CellMasksLayerSection/>
+                <CellMasksLayerSection />
               </GxCollapsibleSection>
             </Box>
           </Box>
@@ -109,19 +100,7 @@ const styles = (theme: Theme) => ({
     width: "550px",
     height: "100vh",
   },
-  viewControllerHeaderWrapper: {
-    display: "flex",
-    gap: "16px",
-    alignItems: "center",
-    marginBottom: "16px",
-  },
-  viewControllerHeaderText: {
-    fontWeight: 700,
-    fontSize: "20px",
-  },
-  viewControllerHeaderButton: {
-    marginLeft: "auto",
-  },
+ 
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
     borderTopLeftRadius: "32px",
@@ -135,10 +114,10 @@ const styles = (theme: Theme) => ({
   viewControllerSectionsWrapper: {
     display: "flex",
     flexDirection: "column",
-    gap: '8px',
-    paddingRight: '8px',
-    overflowY: 'scroll',
-    scrollbarColor: '#8E9092 transparent',
+    gap: "8px",
+    paddingRight: "8px",
+    overflowY: "scroll",
+    scrollbarColor: "#8E9092 transparent",
   },
   viewControllerLoaderWrapper: {
     display: "flex",
