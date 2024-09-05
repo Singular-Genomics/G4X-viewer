@@ -6,6 +6,7 @@ import { ChannelController } from "./ChannelController/ChannelController";
 import { getSingleSelectionStats } from "../../../legacy/utils";
 import { useLoader } from "../../../hooks/useLoader.hook";
 import { useMetadata } from "../../../hooks/useMetadata.hook";
+import { PropertiesUpdateType } from "../../../stores/ChannelsStore";
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -15,6 +16,7 @@ export const ChannelControllers = () => {
     channelsVisible,
     colors,
     contrastLimits,
+    channelsSettings,
     toggleIsOnSetter,
     removeChannel,
     setPropertiesForChannel,
@@ -25,6 +27,7 @@ export const ChannelControllers = () => {
       store.channelsVisible,
       store.colors,
       store.contrastLimits,
+      store.channelsSettings,
       store.toggleIsOn,
       store.removeChannel,
       store.setPropertiesForChannel,
@@ -57,12 +60,13 @@ export const ChannelControllers = () => {
         const toggleIsOn = () => toggleIsOnSetter(index);
         const name = channelOptions[(selections as any)[index].c];
 
-        const onSelectionChange = (newValue: string) => {
+        const onSelectionChange = (channelName: string) => {
           const selection = {
             ...selections[index],
-            c: channelOptions.indexOf(newValue),
+            c: channelOptions.indexOf(channelName),
           };
           setIsChannelLoading(index, true);
+
           getSingleSelectionStats({
             loader,
             selection,
@@ -72,14 +76,32 @@ export const ChannelControllers = () => {
             } = metadata;
             const { c } = selection;
 
-            // Can this be done differently ?
-            const newProps: { [k: string]: any } = {
-              contrastLimits: newContrastLimit,
-              domains: domain,
-            };
-            if (Channels[c].Color) {
+            const newProps: Partial<PropertiesUpdateType> = {};
+            if (
+              channelName in channelsSettings &&
+              channelsSettings[channelName].minValue &&
+              channelsSettings[channelName].maxValue
+            ) {
+              const settings = channelsSettings[channelName];
+              newProps.contrastLimits = [
+                settings.minValue,
+                settings.maxValue,
+              ] as number[];
+            } else {
+              newProps.contrastLimits = newContrastLimit;
+            }
+
+            if (
+              channelName in channelsSettings &&
+              channelsSettings[channelName].color
+            ) {
+              newProps.colors = channelsSettings[channelName].color;
+            } else if (Channels[c].Color) {
               newProps.colors = Channels[c].Color.slice(0, -1);
             }
+
+            newProps.domains = domain;
+
             setPropertiesForChannel(index, newProps);
             useViewerStore.setState({
               onViewportLoad: () => {
@@ -97,10 +119,17 @@ export const ChannelControllers = () => {
         };
 
         const handleColorSelect = (color: number[]) => {
+          if (name in channelsSettings) {
+            channelsSettings[name].color = color;
+          }
           setPropertiesForChannel(index, { colors: color });
         };
 
         const handleSliderChange = (newValue: number[]) => {
+          if (name in channelsSettings) {
+            channelsSettings[name].minValue = newValue[0];
+            channelsSettings[name].maxValue = newValue[1];
+          }
           setPropertiesForChannel(index, { contrastLimits: newValue });
         };
 
