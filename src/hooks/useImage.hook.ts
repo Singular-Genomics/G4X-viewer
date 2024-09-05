@@ -15,6 +15,7 @@ import {
 import { unstable_batchedUpdates } from "react-dom";
 import { isInterleaved } from "@hms-dbmi/viv";
 import { COLOR_PALLETE } from "../shared/constants";
+import { ChannelsSettings } from "../stores/ChannelsStore";
 
 export const useImage = (source: ViewerSourceType | null) => {
   const loader = useLoader();
@@ -130,19 +131,31 @@ export const useImage = (source: ViewerSourceType | null) => {
           useColorMap: true,
         });
       }
+
+      const channelsIds = newDomains.map(() => String(Math.random()));
+      const channelsSettings: ChannelsSettings = {};
+
+      channelOptions.forEach((channelName: any) => {
+        channelsSettings[`${channelName}`] = {
+          color: undefined,
+          maxValue: undefined,
+          minValue: undefined,
+        };
+      });
+
       useChannelsStore.setState({
-        ids: newDomains.map(() => String(Math.random())),
+        ids: channelsIds,
         selections: newSelections,
         domains: newDomains,
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
+        channelsSettings,
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
         isViewerLoading: false,
-        pixelValues: new Array(newSelections.length).fill('0'),
-        // Set the global selections (needed for the UI). All selections have the same global selection.
+        pixelValues: new Array(newSelections.length).fill("0"),
         globalSelection: newSelections[0],
         channelOptions,
       });
