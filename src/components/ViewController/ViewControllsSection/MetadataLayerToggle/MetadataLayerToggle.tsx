@@ -44,7 +44,8 @@ export const MetadataLayerToggle = () => {
   }, [oldViewState, toggleDisableTiledView]);
 
   const handleClick = useCallback(() => {
-    if (!disableTiledView) {
+    const disableModal = localStorage.getItem("disableTiledLayerWarnign_DSA");
+    if (!disableTiledView && !disableModal) {
       setIsModalOpen(true);
     } else {
       handleToggleChange();

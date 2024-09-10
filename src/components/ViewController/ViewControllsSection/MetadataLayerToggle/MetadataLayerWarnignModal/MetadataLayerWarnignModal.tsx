@@ -19,9 +19,12 @@ export const MetadataLayerWarnignModal = ({
 }: MetadataLayerWarningModalProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  const checkboxRef = useRef<HTMLButtonElement>(null);
+  const checkboxRef = useRef<HTMLInputElement>(null);
 
   const handleContinue = useCallback(() => {
+    if (checkboxRef.current?.checked) {
+      localStorage.setItem("disableTiledLayerWarnign_DSA", "true");
+    }
     onContinue();
   }, [onContinue]);
 
@@ -64,7 +67,7 @@ export const MetadataLayerWarnignModal = ({
           <FormControlLabel
             sx={sx.chechboxWrapper}
             label="Don't ask me again"
-            control={<GxCheckbox ref={checkboxRef} />}
+            control={<GxCheckbox inputRef={checkboxRef} />}
           />
         </Box>
       </Box>
