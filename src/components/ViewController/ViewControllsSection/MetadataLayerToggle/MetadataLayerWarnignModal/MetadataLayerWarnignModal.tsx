@@ -9,15 +9,24 @@ import {
 } from "@mui/material";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
+import { MetadataLayerWarningModalProps } from "./MetadataLayerWarnignModal.types";
 
-export const MetadataLayerWarnignModal = () => {
+export const MetadataLayerWarnignModal = ({
+  isOpen,
+  onContinue,
+  handleClose,
+}: MetadataLayerWarningModalProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const checkboxRef = useRef<HTMLButtonElement>(null);
 
+  const handleContinue = useCallback(() => {
+    onContinue();
+  }, [onContinue]);
+
   return (
-    <Modal open={true}>
+    <Modal open={isOpen} onClose={handleClose}>
       <Box sx={sx.modalContainer}>
         <Box sx={sx.headerWrapper}>
           <WarningRoundedIcon sx={sx.warningIcon} />
@@ -38,10 +47,16 @@ export const MetadataLayerWarnignModal = () => {
             </ul>
           </Typography>
           <Box sx={sx.modalButtonsWrapper}>
-            <Button sx={{ ...sx.modalButtonBase, ...sx.continueButton }}>
+            <Button
+              sx={{ ...sx.modalButtonBase, ...sx.continueButton }}
+              onClick={handleContinue}
+            >
               Confirm
             </Button>
-            <Button sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}>
+            <Button
+              sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
+              onClick={handleClose}
+            >
               Cancel
             </Button>
           </Box>

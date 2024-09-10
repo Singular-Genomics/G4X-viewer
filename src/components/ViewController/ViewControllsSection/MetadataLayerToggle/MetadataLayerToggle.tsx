@@ -9,12 +9,14 @@ import {
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useViewerStore } from "../../../../stores/ViewerStore";
+import { MetadataLayerWarnignModal } from "./MetadataLayerWarnignModal";
 
 export const MetadataLayerToggle = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [
     isMetadataLayerOn,
     disableTiledView,
@@ -31,7 +33,7 @@ export const MetadataLayerToggle = () => {
 
   const { viewState: oldViewState } = useViewerStore();
 
-  const handleClick = useCallback(() => {
+  const handleToggleChange = useCallback(() => {
     toggleDisableTiledView();
     useViewerStore.setState({
       viewState: {
@@ -39,29 +41,49 @@ export const MetadataLayerToggle = () => {
         zoom: oldViewState.zoom - 0.000001,
       },
     });
-  }, [toggleDisableTiledView, oldViewState]);
+  }, [oldViewState, toggleDisableTiledView]);
+
+  const handleClick = useCallback(() => {
+    if (!disableTiledView) {
+      setIsModalOpen(true);
+    } else {
+      handleToggleChange();
+    }
+  }, [disableTiledView, handleToggleChange]);
+
+  const handleContinue = useCallback(() => {
+    handleToggleChange();
+    setIsModalOpen(false);
+  }, [handleToggleChange]);
 
   return (
-    <Box>
-      <FormControlLabel
-        label="Metadata Layer"
-        control={
-          <GxCheckbox
-            onChange={toggleMetadataLayer}
-            checked={isMetadataLayerOn}
-            disableTouchRipple
-          />
-        }
-      />
-      <Collapse in={isMetadataLayerOn} sx={sx.subSectionWrapper}>
+    <>
+      <Box>
         <FormControlLabel
-          label="Disable tiled view"
+          label="Metadata Layer"
           control={
-            <GxSwitch checked={disableTiledView} onChange={handleClick} />
+            <GxCheckbox
+              onChange={toggleMetadataLayer}
+              checked={isMetadataLayerOn}
+              disableTouchRipple
+            />
           }
         />
-      </Collapse>
-    </Box>
+        <Collapse in={isMetadataLayerOn} sx={sx.subSectionWrapper}>
+          <FormControlLabel
+            label="Disable tiled view"
+            control={
+              <GxSwitch checked={disableTiledView} onChange={handleClick} />
+            }
+          />
+        </Collapse>
+      </Box>
+      <MetadataLayerWarnignModal
+        onContinue={handleContinue}
+        isOpen={isModalOpen}
+        handleClose={() => setIsModalOpen(false)}
+      />
+    </>
   );
 };
 
