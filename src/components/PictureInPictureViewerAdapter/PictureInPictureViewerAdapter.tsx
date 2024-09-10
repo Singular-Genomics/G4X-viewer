@@ -16,6 +16,7 @@ import {
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
 import { Tooltip } from "../Tooltip";
+import { debounce } from "lodash";
 
 export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
@@ -42,16 +43,23 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
-    useViewerStore(
-      useShallow((store) => [
-        store.colormap,
-        store.isLensOn,
-        store.isOverviewOn,
-        store.lensSelection,
-        store.onViewportLoad,
-      ])
-    );
+  const [
+    colormap,
+    isLensOn,
+    isOverviewOn,
+    lensSelection,
+    onViewportLoad,
+    viewState,
+  ] = useViewerStore(
+    useShallow((store) => [
+      store.colormap,
+      store.isLensOn,
+      store.isOverviewOn,
+      store.lensSelection,
+      store.onViewportLoad,
+      store.viewState,
+    ])
+  );
 
   const deckProps = {
     layers: [cellMasksLayer, metadataLayer],
@@ -78,15 +86,33 @@ export const PictureInPictureViewerAdapter = () => {
           deckProps={deckProps}
           colormap={colormap}
           onViewportLoad={onViewportLoad}
-          onViewStateChange={({ viewState }: any) => {
-            const z = Math.min(
-              Math.max(Math.round(-(viewState as any).zoom), 0),
-              loader.length - 1
-            );
-            useViewerStore.setState({
-              pyramidResolution: z,
-            });
-          }}
+          viewStates={viewState ? [viewState] : []}
+          onViewStateChange={debounce(
+            ({ viewState: newViewState, viewId }) => {
+              const z = Math.min(
+                Math.max(Math.round(-(newViewState as any).zoom), 0),
+                loader.length - 1
+              );
+              useViewerStore.setState({
+                pyramidResolution: z,
+                viewState: { ...newViewState, id: viewId },
+              });
+              // useViewerStore.setState({
+              //   viewState: { ...newViewState, id: viewId },
+              // });
+            },
+            250,
+            { trailing: true }
+          )}
+          // onViewStateChange={({ viewState }: any) => {
+          //   const z = Math.min(
+          //     Math.max(Math.round(-(viewState as any).zoom), 0),
+          //     loader.length - 1
+          //   );
+          //   useViewerStore.setState({
+          //     pyramidResolution: z,
+          //   });
+          // }}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({
