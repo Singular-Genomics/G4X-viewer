@@ -33,7 +33,8 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
     });
 
     // @ INFO TEXT LAYER
-    const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
+    const { index, textPosition, points, outlierPoints, tileData } =
+      this.props.layerData[0];
 
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
@@ -181,8 +182,8 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
       id: "tiled_layer",
       tileSize: tile_size,
       maxZoom: layers,
-      minZoom: 0,
-      zoomOffset: 2,
+      minZoom: this.props.disabledTiledView ? layers : 0,
+      zoomOffset: this.props.disabledTiledView ? 0 : 2,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: "never",
       getTileData,

@@ -8,6 +8,7 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showBoundries: boolean;
   showData: boolean;
   showDiscardedPoints: boolean;
+  disabledTiledView: boolean;
 };
 
 export type LayerDataItem = {
@@ -28,6 +29,7 @@ export type MetadataLayerProps = CompositeLayerProps & {
   showTilesBoundries: boolean;
   showTilesData: boolean;
   showDiscardedPoints: boolean;
+  disabledTiledView: boolean;
   onHover?: (pikingInfo: PickingInfo) => void;
 };
 
