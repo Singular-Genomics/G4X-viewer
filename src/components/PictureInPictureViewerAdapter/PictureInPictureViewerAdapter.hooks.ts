@@ -54,6 +54,7 @@ export const useMetadataLayer = () => {
     geneNameFilters,
     isGeneNameFilterActive,
     showFilteredPoints,
+    disableTiledView,
   ] = useMetadataLayerStore(
     useShallow((store) => [
       store.isMetadataLayerOn,
@@ -63,6 +64,7 @@ export const useMetadataLayer = () => {
       store.geneNameFilters,
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
+      store.disableTiledView,
     ])
   );
 
@@ -76,6 +78,7 @@ export const useMetadataLayer = () => {
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
+    disabledTiledView: disableTiledView,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
