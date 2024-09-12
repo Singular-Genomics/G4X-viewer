@@ -7,26 +7,26 @@ import {
   useTheme,
 } from "@mui/material";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
-import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { useCallback, useState } from "react";
 import { useViewerStore } from "../../../../stores/ViewerStore";
-import { MetadataLayerWarnignModal } from "./MetadataLayerWarnignModal";
+import { TranscriptLayerWarningModal } from "./TranscriptLayerWarningModal";
 
-export const MetadataLayerToggle = () => {
+export const TranscriptLayerToggle = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [
-    isMetadataLayerOn,
+    isTranscriptLayerOn,
     disableTiledView,
-    toggleMetadataLayer,
+    toggleTranscriptLayer,
     toggleDisableTiledView,
-  ] = useMetadataLayerStore(
+  ] = useTranscriptLayerStore(
     useShallow((store) => [
-      store.isMetadataLayerOn,
+      store.isTranscriptLayerOn,
       store.disableTiledView,
-      store.toggleMetadataLayer,
+      store.toggleTranscriptLayer,
       store.toggleDisableTiledView,
     ])
   );
@@ -61,16 +61,16 @@ export const MetadataLayerToggle = () => {
     <>
       <Box>
         <FormControlLabel
-          label="Metadata Layer"
+          label="Transcript Layer"
           control={
             <GxCheckbox
-              onChange={toggleMetadataLayer}
-              checked={isMetadataLayerOn}
+              onChange={toggleTranscriptLayer}
+              checked={isTranscriptLayerOn}
               disableTouchRipple
             />
           }
         />
-        <Collapse in={isMetadataLayerOn} sx={sx.subSectionWrapper}>
+        <Collapse in={isTranscriptLayerOn} sx={sx.subSectionWrapper}>
           <FormControlLabel
             label="Disable tiled view"
             control={
@@ -79,7 +79,7 @@ export const MetadataLayerToggle = () => {
           />
         </Collapse>
       </Box>
-      <MetadataLayerWarnignModal
+      <TranscriptLayerWarningModal
         onContinue={handleContinue}
         isOpen={isModalOpen}
         handleClose={() => setIsModalOpen(false)}

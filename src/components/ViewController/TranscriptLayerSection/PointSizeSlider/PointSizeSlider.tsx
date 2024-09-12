@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 import { Grid, Input, Theme, useTheme } from "@mui/material";
-import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { GxSlider } from "../../../../shared/components/GxSlider";
 import { useState } from "react";
 
@@ -11,7 +11,7 @@ const POINT_SIZE_STEP = 0.1;
 export const PointSizeSlider = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [pointSize, setPointSize] = useMetadataLayerStore(
+  const [pointSize, setPointSize] = useTranscriptLayerStore(
     useShallow((store) => [store.pointSize, store.setPointSize])
   );
 
@@ -74,6 +74,6 @@ const styles = (theme: Theme) => ({
     "& .MuiInputBase-input": {
       textAlign: "center",
       WebkitTextFillColor: theme.palette.gx.primary.black,
-    }
+    },
   },
 });

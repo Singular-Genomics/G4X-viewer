@@ -11,7 +11,7 @@ import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import {
   useCellSegmentationLayer,
-  useMetadataLayer,
+  useTranscriptLayer,
   useResizableContainer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
@@ -22,7 +22,7 @@ export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
-  const metadataLayer = useMetadataLayer();
+  const transcriptLayer = useTranscriptLayer();
 
   useEffect(
     () =>
@@ -62,7 +62,7 @@ export const PictureInPictureViewerAdapter = () => {
   );
 
   const deckProps = {
-    layers: [cellMasksLayer, metadataLayer],
+    layers: [cellMasksLayer, transcriptLayer],
   };
 
   return (
@@ -97,22 +97,10 @@ export const PictureInPictureViewerAdapter = () => {
                 pyramidResolution: z,
                 viewState: { ...newViewState, id: viewId },
               });
-              // useViewerStore.setState({
-              //   viewState: { ...newViewState, id: viewId },
-              // });
             },
             250,
             { trailing: true }
           )}
-          // onViewStateChange={({ viewState }: any) => {
-          //   const z = Math.min(
-          //     Math.max(Math.round(-(viewState as any).zoom), 0),
-          //     loader.length - 1
-          //   );
-          //   useViewerStore.setState({
-          //     pyramidResolution: z,
-          //   });
-          // }}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({

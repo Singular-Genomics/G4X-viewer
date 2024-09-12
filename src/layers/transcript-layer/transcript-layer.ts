@@ -1,8 +1,8 @@
 import {
   SingleTileLayerProps,
-  MetadataLayerProps,
+  TranscriptLayerProps,
   getTileDataProps,
-} from "./metadata-layer.types";
+} from "./transcript-layer.types";
 import { CompositeLayer } from "@deck.gl/core/typed";
 import {
   PolygonLayer,
@@ -12,7 +12,7 @@ import {
 import { TileLayer } from "@deck.gl/geo-layers/typed";
 
 import * as protobuf from "protobufjs";
-import { MetadataSchema } from "./metadata-schema";
+import { TranscriptSchema } from "./transcript-schema";
 import { partition } from "lodash";
 
 // ======================== DATA TILE LAYER ==================
@@ -90,12 +90,12 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
 
 SingleTileLayer.layerName = "SingleTileLayer";
 
-class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
+class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   protoRoot: protobuf.Root;
 
-  constructor(props: MetadataLayerProps) {
+  constructor(props: TranscriptLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(MetadataSchema);
+    this.protoRoot = protobuf.Root.fromJSON(TranscriptSchema);
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {
@@ -209,5 +209,5 @@ class MetadataLayer extends CompositeLayer<MetadataLayerProps> {
   }
 }
 
-MetadataLayer.layerName = "MetadataLayer";
-export default MetadataLayer;
+TranscriptLayer.layerName = "TranscriptLayer";
+export default TranscriptLayer;

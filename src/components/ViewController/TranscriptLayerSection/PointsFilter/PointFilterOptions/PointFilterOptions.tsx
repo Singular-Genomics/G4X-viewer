@@ -1,4 +1,4 @@
-import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { GxFilterTableOptions } from "../../../../../shared/components/GxFilterTable/GxFilterTableOptions";
 
@@ -8,7 +8,7 @@ export const PointFilterOptions = () => {
     showFilteredPoints,
     toggleGeneNameFilter,
     toggleShowFilteredPoints,
-  ] = useMetadataLayerStore(
+  ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isGeneNameFilterActive,
       store.showFilteredPoints,

@@ -10,13 +10,13 @@ import {
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
 import { useCallback, useRef } from "react";
-import { MetadataLayerWarningModalProps } from "./MetadataLayerWarnignModal.types";
+import { TranscriptLayerWarningModalProps } from "./TranscriptLayerWarningModal.types";
 
-export const MetadataLayerWarnignModal = ({
+export const TranscriptLayerWarningModal = ({
   isOpen,
   onContinue,
   handleClose,
-}: MetadataLayerWarningModalProps) => {
+}: TranscriptLayerWarningModalProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const checkboxRef = useRef<HTMLInputElement>(null);

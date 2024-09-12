@@ -4,7 +4,7 @@ import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 
-export default function BinaryDropzoneButton() {
+export default function TranscriptDropzoneButton() {
   const theme = useTheme();
   const sx = styles(theme);
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();

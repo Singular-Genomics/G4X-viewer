@@ -1,5 +1,5 @@
 import { usePointFiltersTableColumns } from "./usePointFiltersTableColumns";
-import { useMetadataLayerStore } from "../../../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { PointFiltersTableRowEntry } from "./PointFiltersTable.types";
 import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
@@ -8,7 +8,7 @@ import { GxFilterTable } from "../../../../../shared/components/GxFilterTable";
 export const PointFiltersTable = () => {
   const columns = usePointFiltersTableColumns();
   const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters] =
-    useMetadataLayerStore(
+    useTranscriptLayerStore(
       useShallow((store) => [
         store.setGeneNamesFilter,
         store.clearGeneNameFilters,

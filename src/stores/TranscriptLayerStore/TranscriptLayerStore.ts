@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import {
-  MetadataLayerStore,
-  MetadataLayerStoreValues,
-} from "./MetadataLayerStore.types";
+  TranscriptLayerStore,
+  TranscriptLayerStoreValues,
+} from "./TranscriptLayerStore.types";
 
-const DEFAULT_METADATA_LAYER_STORE_VALUES: MetadataLayerStoreValues = {
-  isMetadataLayerOn: true,
+const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
+  isTranscriptLayerOn: true,
   isGeneNameFilterActive: false,
   showFilteredPoints: false,
   showTilesBoundries: false,
@@ -15,10 +15,10 @@ const DEFAULT_METADATA_LAYER_STORE_VALUES: MetadataLayerStoreValues = {
   geneNameFilters: [],
 };
 
-export const useMetadataLayerStore = create<MetadataLayerStore>((set) => ({
-  ...DEFAULT_METADATA_LAYER_STORE_VALUES,
-  toggleMetadataLayer: () =>
-    set((store) => ({ isMetadataLayerOn: !store.isMetadataLayerOn })),
+export const useTranscriptLayerStore = create<TranscriptLayerStore>((set) => ({
+  ...DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES,
+  toggleTranscriptLayer: () =>
+    set((store) => ({ isTranscriptLayerOn: !store.isTranscriptLayerOn })),
   toggleTileBoundries: () =>
     set((store) => ({ showTilesBoundries: !store.showTilesBoundries })),
   toggleTileData: () =>
@@ -32,5 +32,5 @@ export const useMetadataLayerStore = create<MetadataLayerStore>((set) => ({
   setPointSize: (newPointSize) => set({ pointSize: newPointSize }),
   setGeneNamesFilter: (geneNames) => set({ geneNameFilters: geneNames }),
   clearGeneNameFilters: () => set({ geneNameFilters: [] }),
-  reset: () => set({ ...DEFAULT_METADATA_LAYER_STORE_VALUES }),
+  reset: () => set({ ...DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES }),
 }));

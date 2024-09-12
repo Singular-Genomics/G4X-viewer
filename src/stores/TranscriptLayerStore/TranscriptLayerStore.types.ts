@@ -1,8 +1,8 @@
-export type MetadataLayerStore = MetadataLayerStoreValues &
-  MetadataLayerStoreMethods;
+export type TranscriptLayerStore = TranscriptLayerStoreValues &
+  TranscriptLayerStoreMethods;
 
-export type MetadataLayerStoreValues = {
-  isMetadataLayerOn: boolean;
+export type TranscriptLayerStoreValues = {
+  isTranscriptLayerOn: boolean;
   isGeneNameFilterActive: boolean;
   showFilteredPoints: boolean;
   showTilesBoundries: boolean;
@@ -14,8 +14,8 @@ export type MetadataLayerStoreValues = {
 
 export type GeneNameFilterType = string[];
 
-export type MetadataLayerStoreMethods = {
-  toggleMetadataLayer: () => void;
+export type TranscriptLayerStoreMethods = {
+  toggleTranscriptLayer: () => void;
   toggleTileBoundries: () => void;
   toggleTileData: () => void;
   toggleGeneNameFilter: () => void;

@@ -3,12 +3,12 @@ import { PointSizeSlider } from "./PointSizeSlider";
 import { ExperimentalToggles } from "./ExperimentalToggles";
 import { PointFilter } from "./PointsFilter/PointFilter";
 import WarningIcon from "@mui/icons-material/Warning";
-import { useMetadataLayerStore } from "../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 
 const DisabledLayerWarning = () => (
   <Tooltip
-    title="Metadata layer is disabled"
+    title="Transcript layer is disabled"
     placement="top"
     arrow
     slotProps={{ popper: { sx: sx.warningTooltip } }}
@@ -17,15 +17,15 @@ const DisabledLayerWarning = () => (
   </Tooltip>
 );
 
-export const MetadataLayerSection = () => {
+export const TranscriptLayerSection = () => {
   const [
-    isMetadataLayerOn,
+    isTranscriptLayerOn,
     isGeneNameFilterActive,
     showTilesBoundries,
     showTilesData,
-  ] = useMetadataLayerStore(
+  ] = useTranscriptLayerStore(
     useShallow((store) => [
-      store.isMetadataLayerOn,
+      store.isTranscriptLayerOn,
       store.isGeneNameFilterActive,
       store.showTilesBoundries,
       store.showTilesData,
@@ -41,7 +41,7 @@ export const MetadataLayerSection = () => {
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>Experimental Options</Typography>
-          {!isMetadataLayerOn && (showTilesBoundries || showTilesData) && (
+          {!isTranscriptLayerOn && (showTilesBoundries || showTilesData) && (
             <DisabledLayerWarning />
           )}
         </Box>
@@ -50,7 +50,7 @@ export const MetadataLayerSection = () => {
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>Point Filters</Typography>
-          {!isMetadataLayerOn && isGeneNameFilterActive && (
+          {!isTranscriptLayerOn && isGeneNameFilterActive && (
             <DisabledLayerWarning />
           )}
         </Box>
@@ -62,7 +62,7 @@ export const MetadataLayerSection = () => {
 
 const sx = {
   sectionContainer: {
-    overflowX: 'hidden',
+    overflowX: "hidden",
     display: "flex",
     flexDirection: "column",
     gap: "8px",
