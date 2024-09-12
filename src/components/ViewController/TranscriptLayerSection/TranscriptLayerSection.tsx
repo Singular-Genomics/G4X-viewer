@@ -5,6 +5,7 @@ import { PointFilter } from "./PointsFilter/PointFilter";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useTranscriptLayerStore } from "../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
+import { AdvanedViewOptions } from "./AdvancedViewOptions";
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -34,6 +35,10 @@ export const TranscriptLayerSection = () => {
 
   return (
     <Box sx={sx.sectionContainer}>
+      <Box>
+        <Typography sx={sx.subsectionTitle}>Advanced Options</Typography>
+        <AdvanedViewOptions />
+      </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Point Size</Typography>
         <PointSizeSlider />

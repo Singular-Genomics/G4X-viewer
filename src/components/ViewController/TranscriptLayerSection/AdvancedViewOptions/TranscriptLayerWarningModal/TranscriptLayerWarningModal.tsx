@@ -41,6 +41,8 @@ export const TranscriptLayerWarningModal = ({
             <br />
             This operation demands significant computational resources and might
             cause the application to crash. Perform this operation if:
+          </Typography>
+          <Typography component={"span"} sx={sx.modalContentText}>
             <ul>
               <li>
                 Your PC is equiped with high-end components (mainly GPU and CPU)
@@ -49,6 +51,7 @@ export const TranscriptLayerWarningModal = ({
               <li>Your transcript dataset contains less than 50,000 points.</li>
             </ul>
           </Typography>
+
           <Box sx={sx.modalButtonsWrapper}>
             <Button
               sx={{ ...sx.modalButtonBase, ...sx.continueButton }}
