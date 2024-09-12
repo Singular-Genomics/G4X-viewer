@@ -18,11 +18,10 @@ export const AdvanedViewOptions = () => {
 
   const handleToggleChange = useCallback(() => {
     toggleDisableTiledView();
-    console.log(oldViewState);
     useViewerStore.setState({
       viewState: {
         ...oldViewState,
-        zoom: oldViewState.zoom + 1,
+        zoom: oldViewState.zoom + 0.0001,
       },
     });
   }, [oldViewState, toggleDisableTiledView]);
@@ -44,7 +43,7 @@ export const AdvanedViewOptions = () => {
   return (
     <Box sx={sx.optionsToggleWrapper}>
       <FormControlLabel
-        label="Disable tiled view"
+        label="Show all transcripts"
         control={<GxSwitch checked={disableTiledView} onChange={handleClick} />}
       />
       <TranscriptLayerWarningModal
