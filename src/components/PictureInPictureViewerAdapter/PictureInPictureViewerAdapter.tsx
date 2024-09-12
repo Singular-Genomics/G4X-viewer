@@ -1,5 +1,7 @@
 import {
   AdditiveColormapExtension,
+  DETAIL_VIEW_ID,
+  getDefaultInitialViewState,
   LensExtension,
   PictureInPictureViewer,
 } from "@hms-dbmi/viv";
@@ -60,6 +62,22 @@ export const PictureInPictureViewerAdapter = () => {
       store.viewState,
     ])
   );
+
+  useEffect(() => {
+    if (!viewState && containerSize.width && containerSize.height) {
+      const width = containerSize.width;
+      const height = containerSize.height;
+      const defualtViewerState = getDefaultInitialViewState(
+        loader,
+        { width, height },
+        0.5
+      );
+      useViewerStore.setState({
+        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loader, containerSize.width, containerSize.height]);
 
   const deckProps = {
     layers: [cellMasksLayer, transcriptLayer],
