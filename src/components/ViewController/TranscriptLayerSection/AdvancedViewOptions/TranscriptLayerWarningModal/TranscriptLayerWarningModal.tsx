@@ -48,7 +48,7 @@ export const TranscriptLayerWarningModal = ({
                 Your PC is equiped with high-end components (mainly GPU and CPU)
                 and allows for hardwere acceleration.
               </li>
-              <li>Your transcript dataset contains less than 50,000 points.</li>
+              <li>Your transcript dataset contains less than 5 million points.</li>
             </ul>
           </Typography>
 
