@@ -58,6 +58,7 @@ export const PointSizeSlider = () => {
 const styles = (theme: Theme) => ({
   sliderInputContainer: {
     paddingLeft: "8px",
+    paddingRight: "16px",
   },
   sliderInputItem: {
     padding: "0px 8px 0px 16px",
