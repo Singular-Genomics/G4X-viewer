@@ -55,6 +55,8 @@ export const useTranscriptLayer = () => {
     isGeneNameFilterActive,
     showFilteredPoints,
     disableTiledView,
+    overrideLayers,
+    maxVisibleLayers,
   ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isTranscriptLayerOn,
@@ -65,6 +67,8 @@ export const useTranscriptLayer = () => {
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
       store.disableTiledView,
+      store.overrideLayers,
+      store.maxVisibleLayers,
     ])
   );
 
@@ -79,6 +83,8 @@ export const useTranscriptLayer = () => {
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
     disabledTiledView: disableTiledView,
+    overrideLayers: overrideLayers,
+    maxVisibleLayers: maxVisibleLayers,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },

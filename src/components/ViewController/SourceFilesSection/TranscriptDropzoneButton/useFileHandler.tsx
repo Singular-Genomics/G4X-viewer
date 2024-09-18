@@ -8,6 +8,7 @@ import { useSnackbar } from "notistack";
 import ZipWorker from "./zipWorker.js?worker";
 import TarWorker from "./tarWorker.js?worker";
 import { paseJsonFromFile } from "../../../../utils/utils";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
@@ -42,6 +43,9 @@ export const useFileHandler = () => {
 
         setLayerConfig(layerConfig);
         setColormapConfig(color_map);
+        useTranscriptLayerStore.setState({
+          maxVisibleLayers: layerConfig.layers,
+        });
       }
 
       setFiles(e.data.files);
