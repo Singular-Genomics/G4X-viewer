@@ -8,6 +8,8 @@ export type TranscriptLayerStoreValues = {
   showTilesBoundries: boolean;
   showTilesData: boolean;
   disableTiledView: boolean;
+  maxVisibleLayers: number;
+  overrideLayers: boolean;
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
 };
@@ -21,6 +23,7 @@ export type TranscriptLayerStoreMethods = {
   toggleGeneNameFilter: () => void;
   toggleShowFilteredPoints: () => void;
   toggleDisableTiledView: () => void;
+  toggleOverrideLayer: () => void;
   setPointSize: (newPointSize: number) => void;
   setGeneNamesFilter: (geneNames: GeneNameFilterType) => void;
   clearGeneNameFilters: () => void;
