@@ -37,10 +37,10 @@ export const TranscriptLayerWarningModal = ({
         </Box>
         <Box sx={sx.modalContentWrapper}>
           <Typography sx={sx.modalContentText}>
-            You are about to disable the tiled layer view.
+            You are about to override the number of visible transcript layers.
             <br />
-            This operation demands significant computational resources and might
-            cause the application to crash. Perform this operation if:
+            These operations demand significant computational resources and
+            might cause the application to crash. Perform these operations if:
           </Typography>
           <Typography component={"span"} sx={sx.modalContentText}>
             <ul>
@@ -48,7 +48,9 @@ export const TranscriptLayerWarningModal = ({
                 Your PC is equiped with high-end components (mainly GPU and CPU)
                 and allows for hardwere acceleration.
               </li>
-              <li>Your transcript dataset contains less than 5 million points.</li>
+              <li>
+                Your transcript dataset contains less than 5 million points.
+              </li>
             </ul>
           </Typography>
 
