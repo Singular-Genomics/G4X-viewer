@@ -2,56 +2,49 @@ import { useCallback, useState } from "react";
 import { TranscriptLayerWarningModal } from "./TranscriptLayerWarningModal";
 import { Box, FormControlLabel } from "@mui/material";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
+import { MaxLayerSlider } from "./MaxLayerSlider";
+import { DisableLayersSwitch } from "./DisableLayersSwitch/DisableLayersSwitch";
 import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
-import { useViewerStore } from "../../../../stores/ViewerStore";
 
 export const AdvanedViewOptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [disableTiledView, toggleDisableTiledView] = useTranscriptLayerStore(
-    useShallow((store) => [
-      store.disableTiledView,
-      store.toggleDisableTiledView,
-    ])
+  const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
   );
-  const { viewState: oldViewState } = useViewerStore();
 
-  const handleToggleChange = useCallback(() => {
-    toggleDisableTiledView();
-    useViewerStore.setState({
-      viewState: {
-        ...oldViewState,
-        zoom: oldViewState.zoom + 0.0001,
-      },
-    });
-  }, [oldViewState, toggleDisableTiledView]);
-
-  const handleContinue = useCallback(() => {
-    handleToggleChange();
-    setIsModalOpen(false);
-  }, [handleToggleChange]);
-
-  const handleClick = useCallback(() => {
+  const toggleLayerControls = useCallback(() => {
     const disableModal = localStorage.getItem("disableTiledLayerWarnign_DSA");
-    if (!disableTiledView && !disableModal) {
-      setIsModalOpen(true);
+    if (disableModal || overrideLayers) {
+      toggleOverrideLayer();
     } else {
-      handleToggleChange();
+      setIsModalOpen(true);
     }
-  }, [disableTiledView, handleToggleChange]);
+  }, [toggleOverrideLayer, overrideLayers]);
+
+  const onContinue = useCallback(() => {
+    setIsModalOpen(false);
+    useTranscriptLayerStore.setState({ overrideLayers: true });
+  }, []);
 
   return (
-    <Box sx={sx.optionsToggleWrapper}>
-      <FormControlLabel
-        label="Show all transcripts"
-        control={<GxSwitch checked={disableTiledView} onChange={handleClick} />}
-      />
+    <>
+      <Box sx={sx.optionsToggleWrapper}>
+        <FormControlLabel
+          label="Enable layers controls"
+          control={
+            <GxSwitch checked={overrideLayers} onChange={toggleLayerControls} />
+          }
+        />
+        <DisableLayersSwitch disabled={!overrideLayers} />
+        <MaxLayerSlider disabled={!overrideLayers} />
+      </Box>
       <TranscriptLayerWarningModal
-        onContinue={handleContinue}
+        onContinue={onContinue}
         isOpen={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
       />
-    </Box>
+    </>
   );
 };
 
