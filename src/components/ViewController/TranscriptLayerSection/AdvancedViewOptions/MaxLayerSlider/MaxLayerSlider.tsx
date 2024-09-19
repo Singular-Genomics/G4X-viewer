@@ -49,15 +49,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const disableControls = disabled || disableTiledView;
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "24px",
-        paddingRight: "24px",
-      }}
-    >
+    <Box sx={sx.sliderWrapper}>
       <Typography
         sx={{
           ...(disableControls ? { color: "rgb(128, 128, 128)" } : {}),
@@ -79,4 +71,14 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
       />
     </Box>
   );
+};
+
+const sx = {
+  sliderWrapper: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "24px",
+    paddingRight: "24px",
+  },
 };
