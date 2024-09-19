@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Theme, Tooltip, tooltipClasses, Typography } from "@mui/material";
 import { GxSlider } from "../../../../../shared/components/GxSlider";
 import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
 import {
@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { triggerViewerRerender } from "../AdvancedViewOptions.helpers";
+import InfoIcon from "@mui/icons-material/Info";
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const [sliderValuer, setSliderValue] = useState(0);
@@ -41,13 +42,30 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 
   return (
     <Box sx={sx.sliderWrapper}>
-      <Typography
-        sx={{
-          ...(disableControls ? { color: "rgb(128, 128, 128)" } : {}),
-        }}
-      >
-        Max visble layers
-      </Typography>
+      <Box sx={sx.textWrapper}>
+        <Typography
+          sx={{
+            ...(disableControls ? { color: "rgb(128, 128, 128)" } : {}),
+          }}
+        >
+          Max visble layers
+        </Typography>
+        <Tooltip
+          title="Control the resolution of the min zoom layer"
+          placement="top"
+          arrow
+          slotProps={{ popper: { sx: sx.infoTooltip } }}
+          disableHoverListener={disableControls}
+        >
+          <InfoIcon
+            sx={{
+              ...(disableControls
+                ? { color: "rgb(128, 128, 128)" }
+                : sx.infoIcon),
+            }}
+          />
+        </Tooltip>
+      </Box>
       <GxSlider
         max={layers}
         min={0}
@@ -66,10 +84,20 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 
 const sx = {
   sliderWrapper: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
     gap: "24px",
     paddingRight: "24px",
+  },
+  textWrapper: {
+    display: "flex",
+    gap: "8px",
+  },
+  infoTooltip: {
+    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+      {
+        marginBottom: "0px",
+      },
+  },
+  infoIcon: {
+    color: (theme: Theme) => theme.palette.gx.accent.info,
   },
 };
