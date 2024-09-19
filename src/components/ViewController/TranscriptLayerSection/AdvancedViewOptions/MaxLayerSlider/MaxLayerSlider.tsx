@@ -1,8 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { GxSlider } from "../../../../../shared/components/GxSlider";
 import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
-import { MaxLayerSliderProps } from "./MaxLayerSlider.types";
-import { useCallback, useEffect, useState } from "react";
+import {
+  MaxLayerSliderMark,
+  MaxLayerSliderProps,
+} from "./MaxLayerSlider.types";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { useViewerStore } from "../../../../../stores/ViewerStore";
@@ -20,6 +23,15 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
       setSliderValue(maxVisibleLayers);
     }
   }, [maxVisibleLayers]);
+
+  const sliderMarks: MaxLayerSliderMark[] = useMemo(
+    () =>
+      Array.from({ length: layers }, (_, i) => ({
+        value: i,
+        label: i.toString(),
+      })),
+    [layers]
+  );
 
   const onMaxLayerChange = useCallback(
     (newValue: number) => {
@@ -48,18 +60,17 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     >
       <Typography
         sx={{
-          textWrap: "nowrap",
           ...(disableControls ? { color: "rgb(128, 128, 128)" } : {}),
         }}
       >
-        Max layer
+        Max visble layers
       </Typography>
       <GxSlider
         max={layers}
         min={0}
         step={1}
+        marks={sliderMarks}
         value={sliderValuer}
-        marks
         disabled={disableControls}
         onChangeCommitted={(_, newValue) =>
           onMaxLayerChange(newValue as number)
