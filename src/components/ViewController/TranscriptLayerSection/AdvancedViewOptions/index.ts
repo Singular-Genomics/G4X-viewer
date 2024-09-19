@@ -1,1 +1,2 @@
-export * from "./AdvanedViewOptions";
+export * from "./AdvancedViewOptions";
+export * from "./AdvancedViewOptions.helpers";

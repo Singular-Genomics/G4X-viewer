@@ -8,12 +8,11 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
-import { useViewerStore } from "../../../../../stores/ViewerStore";
+import { triggerViewerRerender } from "../AdvancedViewOptions.helpers";
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const [sliderValuer, setSliderValue] = useState(0);
   const { layers } = useBinaryFilesStore((store) => store.layerConfig);
-  const { viewState: oldViewState } = useViewerStore();
   const [maxVisibleLayers, disableTiledView] = useTranscriptLayerStore(
     useShallow((store) => [store.maxVisibleLayers, store.disableTiledView])
   );
@@ -33,18 +32,10 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     [layers]
   );
 
-  const onMaxLayerChange = useCallback(
-    (newValue: number) => {
-      useTranscriptLayerStore.setState({ maxVisibleLayers: newValue });
-      useViewerStore.setState({
-        viewState: {
-          ...oldViewState,
-          zoom: oldViewState.zoom + 0.0001,
-        },
-      });
-    },
-    [oldViewState]
-  );
+  const onMaxLayerChange = useCallback((newValue: number) => {
+    useTranscriptLayerStore.setState({ maxVisibleLayers: newValue });
+    triggerViewerRerender();
+  }, []);
 
   const disableControls = disabled || disableTiledView;
 

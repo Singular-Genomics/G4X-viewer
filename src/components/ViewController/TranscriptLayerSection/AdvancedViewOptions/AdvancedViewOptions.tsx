@@ -6,8 +6,9 @@ import { MaxLayerSlider } from "./MaxLayerSlider";
 import { DisableLayersSwitch } from "./DisableLayersSwitch/DisableLayersSwitch";
 import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
+import { triggerViewerRerender } from "./AdvancedViewOptions.helpers";
 
-export const AdvanedViewOptions = () => {
+export const AdvancedViewOptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
@@ -17,6 +18,7 @@ export const AdvanedViewOptions = () => {
     const disableModal = localStorage.getItem("disableTiledLayerWarnign_DSA");
     if (disableModal || overrideLayers) {
       toggleOverrideLayer();
+      triggerViewerRerender();
     } else {
       setIsModalOpen(true);
     }
@@ -24,6 +26,7 @@ export const AdvanedViewOptions = () => {
 
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
+    triggerViewerRerender();
     useTranscriptLayerStore.setState({ overrideLayers: true });
   }, []);
 
