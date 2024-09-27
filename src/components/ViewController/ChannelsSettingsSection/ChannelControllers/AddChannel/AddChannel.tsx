@@ -1,14 +1,14 @@
 import { useShallow } from "zustand/react/shallow";
-import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
-import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
-import { useLoader } from "../../../../hooks/useLoader.hook";
-import { useMetadata } from "../../../../hooks/useMetadata.hook";
 import { useCallback } from "react";
-import { getSingleSelectionStats } from "../../../../legacy/utils";
-import { COLOR_PALLETE } from "../../../../shared/constants";
 import { Button, Theme, alpha, useTheme } from "@mui/material";
 import { MAX_CHANNELS } from "@hms-dbmi/viv";
 import AddIcon from '@mui/icons-material/Add';
+import { useViewerStore } from "../../../../../stores/ViewerStore";
+import { useChannelsStore } from "../../../../../stores/ChannelsStore";
+import { useLoader } from "../../../../../hooks/useLoader.hook";
+import { useMetadata } from "../../../../../hooks/useMetadata.hook";
+import { getSingleSelectionStats } from "../../../../../legacy/utils";
+import { COLOR_PALLETE } from "../../../../../shared/constants";
 
 export const AddChannel = () => {
   const theme = useTheme();
