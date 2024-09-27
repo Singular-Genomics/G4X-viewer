@@ -1,12 +1,12 @@
 import { useShallow } from "zustand/react/shallow";
-import { useChannelsStore } from "../../../stores/ChannelsStore/ChannelsStore";
-import { useViewerStore } from "../../../stores/ViewerStore/ViewerStore";
 import { Box, Theme, useTheme } from "@mui/material";
 import { ChannelController } from "./ChannelController/ChannelController";
-import { getSingleSelectionStats } from "../../../legacy/utils";
-import { useLoader } from "../../../hooks/useLoader.hook";
-import { useMetadata } from "../../../hooks/useMetadata.hook";
-import { PropertiesUpdateType } from "../../../stores/ChannelsStore";
+import { PropertiesUpdateType, useChannelsStore } from "../../../../stores/ChannelsStore";
+import { useViewerStore } from "../../../../stores/ViewerStore";
+import { useLoader } from "../../../../hooks/useLoader.hook";
+import { useMetadata } from "../../../../hooks/useMetadata.hook";
+import { getSingleSelectionStats } from "../../../../legacy/utils";
+
 
 export const ChannelControllers = () => {
   const theme = useTheme();

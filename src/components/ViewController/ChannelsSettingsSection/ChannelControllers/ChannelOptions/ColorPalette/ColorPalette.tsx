@@ -1,7 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import LensIcon from '@mui/icons-material/Lens';
-import { COLOR_PALLETE } from "../../../../../shared/constants";
 import { ColorPaletteProps } from "./ColorPalette.types";
+import { COLOR_PALLETE } from "../../../../../../shared/constants";
 
 export const ColorPalette = ({ handleColorSelect }: ColorPaletteProps) => (
     <Box sx={sx.container}>

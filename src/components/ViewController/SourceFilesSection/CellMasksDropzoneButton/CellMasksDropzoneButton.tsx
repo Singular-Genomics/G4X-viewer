@@ -18,7 +18,7 @@ export const CellMasksDropzoneButton = () => {
       <GxDropzoneButton
         getRootProps={getRootProps}
         getInputProps={getInputProps}
-        labelTitle="Cell Transcript File Name"
+        labelTitle="Cell Masks File Name"
         labelText={fileName}
         buttonText="Upload cells masks"
         disabled={!source}

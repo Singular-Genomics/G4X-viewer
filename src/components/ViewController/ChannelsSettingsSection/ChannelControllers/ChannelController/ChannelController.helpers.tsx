@@ -1,5 +1,5 @@
 import { CircularProgress } from "@mui/material";
-import { FILL_PIXEL_VALUE } from "../../../../shared/constants";
+import { FILL_PIXEL_VALUE } from "../../../../../shared/constants";
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [0, 177, 164];
 

@@ -1,9 +1,6 @@
 import { Box, IconButton, Theme, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
-import { ChannelControllers } from "./ChannelControllers";
-import { AddChannel } from "./ChannelControllers/AddChannel/AddChannel";
-
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ViewControllerProps } from "./ViewController.types";
@@ -15,11 +12,11 @@ import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
+import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
   const cellMasksFiles = useCellSegmentationLayerStore(
@@ -49,7 +46,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <SourceFilesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="View Controlls"
+                sectionTitle="View Settings"
                 disabled={!imageLoaded}
               >
                 <ViewControllsSection />
@@ -58,8 +55,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle="Protein Channels Settings"
                 disabled={!imageLoaded || isRgb}
               >
-                <ChannelControllers />
-                <AddChannel />
+                <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Transcript Layer Settings"
