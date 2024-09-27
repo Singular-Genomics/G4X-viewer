@@ -1,22 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { ColormapSelector } from "./ColormapSelector";
-import { OverviewToggle } from "./OverviewToggle";
-import { MetadataLayerToggle } from "./MetadataLayerToggle";
-import { LensToggle } from "./LensToggle";
-import { useViewerStore } from "../../../stores/ViewerStore";
-import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
-import { useLoader } from "../../../hooks/useLoader.hook";
+
 import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
-import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
+
 
 export const ViewControllsSection = () => {
-  const loader = useLoader();
-  const [colormap] = useViewerStore((store) => store.colormap);
-  const files = useBinaryFilesStore((store) => store.files);
-  const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
-  const { shape, labels } = loader[0];
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -29,13 +18,7 @@ export const ViewControllsSection = () => {
         <GlobalSelectionSliders />
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
-        <Box sx={sx.togglesSubSection}>
-          <OverviewToggle />
-          {!!files.length && <MetadataLayerToggle />}
-          {!!cellsData && <CellMaskLayerToggle/> }
-          {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
-        </Box>
+
       </Box>
     </Box>
   );
