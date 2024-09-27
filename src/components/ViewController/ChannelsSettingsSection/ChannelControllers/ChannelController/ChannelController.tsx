@@ -1,4 +1,3 @@
-import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { getPixelValueDisplay } from "./ChannelController.helpers";
 import { ChannelControllerProps } from "./ChannelController.types";
 import {
@@ -13,9 +12,10 @@ import {
 } from "@mui/material";
 import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
-import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 import { ChannelRangeSlider } from "./ChannelRangeSlider/ChannelRangeSlider";
+import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
+import { GxSelect } from "../../../../../shared/components/GxSelect";
+import { useViewerStore } from "../../../../../stores/ViewerStore";
 
 export const ChannelController = ({
   color,

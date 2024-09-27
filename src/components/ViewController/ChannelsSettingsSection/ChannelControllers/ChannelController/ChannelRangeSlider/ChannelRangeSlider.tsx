@@ -1,11 +1,11 @@
 import { Box, Input, Theme, useTheme } from "@mui/material";
-import { GxSlider } from "../../../../../shared/components/GxSlider";
 import { colormapToRgb } from "../ChannelController.helpers";
-import { truncateDecimalNumber } from "../../../../../legacy/utils";
 import { ChannelRangeSliderProps } from "./ChannelRangeSlider.types";
-import { useViewerStore } from "../../../../../stores/ViewerStore";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { debounce } from "lodash";
+import { useViewerStore } from "../../../../../../stores/ViewerStore";
+import { GxSlider } from "../../../../../../shared/components/GxSlider";
+import { truncateDecimalNumber } from "../../../../../../legacy/utils";
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;

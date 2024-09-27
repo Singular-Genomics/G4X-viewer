@@ -1,9 +1,6 @@
 import { Box, IconButton, Theme, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
-import { ChannelControllers } from "./ChannelControllers";
-import { AddChannel } from "./ChannelControllers/AddChannel/AddChannel";
-
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ViewControllerProps } from "./ViewController.types";
@@ -15,19 +12,11 @@ import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
-import { OverviewToggle } from "../../components/ViewController/ViewControllsSection/OverviewToggle";
-import { useLoader } from "../../hooks/useLoader.hook";
-import { useViewerStore } from "../../stores/ViewerStore";
-import { LensToggle } from "../../components/ViewController/ViewControllsSection/LensToggle";
+import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  const loader = useLoader();
-  const [colormap] = useViewerStore((store) => store.colormap);
-
-
-  const { shape, labels } = loader[0];
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
   const cellMasksFiles = useCellSegmentationLayerStore(
@@ -66,10 +55,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle="Channels Settings"
                 disabled={!imageLoaded || isRgb}
               >
-                 <OverviewToggle />
-                  {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
-                  <ChannelControllers />
-                <AddChannel />
+                <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Metadata Layer Settings"
@@ -110,7 +96,7 @@ const styles = (theme: Theme) => ({
     width: "550px",
     height: "100vh",
   },
- 
+
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
     borderTopLeftRadius: "32px",
