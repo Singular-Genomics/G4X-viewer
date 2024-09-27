@@ -3,7 +3,6 @@ import { TranscriptLayerWarningModal } from "./TranscriptLayerWarningModal";
 import { Box, FormControlLabel } from "@mui/material";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { MaxLayerSlider } from "./MaxLayerSlider";
-import { DisableLayersSwitch } from "./DisableLayersSwitch/DisableLayersSwitch";
 import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { useShallow } from "zustand/react/shallow";
 import { triggerViewerRerender } from "./AdvancedViewOptions.helpers";
@@ -39,7 +38,6 @@ export const AdvancedViewOptions = () => {
             <GxSwitch checked={overrideLayers} onChange={toggleLayerControls} />
           }
         />
-        <DisableLayersSwitch disabled={!overrideLayers} />
         <MaxLayerSlider disabled={!overrideLayers} />
       </Box>
       <TranscriptLayerWarningModal

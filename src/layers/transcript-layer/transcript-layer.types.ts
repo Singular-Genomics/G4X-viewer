@@ -29,7 +29,6 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showTilesBoundries: boolean;
   showTilesData: boolean;
   showDiscardedPoints: boolean;
-  disabledTiledView: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
   onHover?: (pikingInfo: PickingInfo) => void;

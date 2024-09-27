@@ -10,7 +10,6 @@ const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
   showFilteredPoints: false,
   showTilesBoundries: false,
   showTilesData: false,
-  disableTiledView: false,
   overrideLayers: false,
   pointSize: 1.5,
   geneNameFilters: [],
@@ -29,8 +28,6 @@ export const useTranscriptLayerStore = create<TranscriptLayerStore>((set) => ({
     set((store) => ({ isGeneNameFilterActive: !store.isGeneNameFilterActive })),
   toggleShowFilteredPoints: () =>
     set((store) => ({ showFilteredPoints: !store.showFilteredPoints })),
-  toggleDisableTiledView: () =>
-    set((store) => ({ disableTiledView: !store.disableTiledView })),
   toggleOverrideLayer: () =>
     set((store) => ({ overrideLayers: !store.overrideLayers })),
   setPointSize: (newPointSize) => set({ pointSize: newPointSize }),

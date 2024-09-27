@@ -54,7 +54,6 @@ export const useTranscriptLayer = () => {
     geneNameFilters,
     isGeneNameFilterActive,
     showFilteredPoints,
-    disableTiledView,
     overrideLayers,
     maxVisibleLayers,
   ] = useTranscriptLayerStore(
@@ -66,7 +65,6 @@ export const useTranscriptLayer = () => {
       store.geneNameFilters,
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
-      store.disableTiledView,
       store.overrideLayers,
       store.maxVisibleLayers,
     ])
@@ -82,7 +80,6 @@ export const useTranscriptLayer = () => {
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
-    disabledTiledView: disableTiledView,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
     onHover: (pickingInfo) =>

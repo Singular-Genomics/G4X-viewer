@@ -179,9 +179,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     const { layer_height, layer_width, layers, tile_size } = this.props.config;
 
     let minZoom = 0;
-    if (this.props.disabledTiledView) {
-      minZoom = layers;
-    } else if (this.props.overrideLayers) {
+    if (this.props.overrideLayers) {
       minZoom = layers - this.props.maxVisibleLayers;
     }
 
@@ -190,7 +188,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       tileSize: tile_size,
       maxZoom: layers,
       minZoom,
-      zoomOffset: this.props.disabledTiledView ? 0 : 2,
+      zoomOffset: 2,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: "never",
       getTileData,

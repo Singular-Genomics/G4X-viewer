@@ -14,8 +14,8 @@ import InfoIcon from "@mui/icons-material/Info";
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const [sliderValuer, setSliderValue] = useState(0);
   const { layers } = useBinaryFilesStore((store) => store.layerConfig);
-  const [maxVisibleLayers, disableTiledView] = useTranscriptLayerStore(
-    useShallow((store) => [store.maxVisibleLayers, store.disableTiledView])
+  const [maxVisibleLayers] = useTranscriptLayerStore(
+    useShallow((store) => [store.maxVisibleLayers])
   );
 
   useEffect(() => {
@@ -38,14 +38,12 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     triggerViewerRerender();
   }, []);
 
-  const disableControls = disabled || disableTiledView;
-
   return (
     <Box sx={sx.sliderWrapper}>
       <Box sx={sx.textWrapper}>
         <Typography
           sx={{
-            ...(disableControls ? { color: "rgb(128, 128, 128)" } : {}),
+            ...(disabled ? { color: "rgb(128, 128, 128)" } : {}),
           }}
         >
           Max visble layers
@@ -55,13 +53,11 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
           placement="top"
           arrow
           slotProps={{ popper: { sx: sx.infoTooltip } }}
-          disableHoverListener={disableControls}
+          disableHoverListener={disabled}
         >
           <InfoIcon
             sx={{
-              ...(disableControls
-                ? { color: "rgb(128, 128, 128)" }
-                : sx.infoIcon),
+              ...(disabled ? { color: "rgb(128, 128, 128)" } : sx.infoIcon),
             }}
           />
         </Tooltip>
@@ -72,7 +68,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
         step={1}
         marks={sliderMarks}
         value={sliderValuer}
-        disabled={disableControls}
+        disabled={disabled}
         onChangeCommitted={(_, newValue) =>
           onMaxLayerChange(newValue as number)
         }
