@@ -49,7 +49,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <SourceFilesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="View Controlls"
+                sectionTitle="View Settings"
                 disabled={!imageLoaded}
               >
                 <ViewControllsSection />
