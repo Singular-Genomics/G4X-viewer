@@ -2,10 +2,16 @@ import { Box, Typography } from "@mui/material";
 import { ColormapSelector } from "./ColormapSelector";
 
 import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
-
+import { MetadataLayerToggle } from "./MetadataLayerToggle";
+import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
+import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 
 export const ViewControllsSection = () => {
-
+  const files = useBinaryFilesStore((store) => store.files);
+  const cellsData = useCellSegmentationLayerStore(
+    (store) => store.cellMasksData
+  );
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -18,7 +24,11 @@ export const ViewControllsSection = () => {
         <GlobalSelectionSliders />
       </Box>
       <Box>
-
+        <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
+        <Box sx={sx.togglesSubSection}>
+          {!!files.length && <MetadataLayerToggle />}
+          {!!cellsData && <CellMaskLayerToggle />}
+        </Box>
       </Box>
     </Box>
   );
@@ -38,7 +48,7 @@ const sx = {
   togglesSubSection: {
     display: "flex",
     flexDirection: "column",
-    gap: '8px',
+    gap: "8px",
     paddingLeft: "8px",
   },
 };

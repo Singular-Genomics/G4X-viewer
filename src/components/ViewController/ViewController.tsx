@@ -18,18 +18,14 @@ import { ControllerHeader } from "./ControllerHeader";
 import { OverviewToggle } from "../../components/ViewController/ViewControllsSection/OverviewToggle";
 import { useLoader } from "../../hooks/useLoader.hook";
 import { useViewerStore } from "../../stores/ViewerStore";
-
-import { MetadataLayerToggle } from "../../components/ViewController/ViewControllsSection/MetadataLayerToggle";
 import { LensToggle } from "../../components/ViewController/ViewControllsSection/LensToggle";
-import { CellMaskLayerToggle } from "../../components/ViewController/ViewControllsSection/CellMaskLayerToggle";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const loader = useLoader();
   const [colormap] = useViewerStore((store) => store.colormap);
-  const files = useBinaryFilesStore((store) => store.files);
-  const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
+
 
   const { shape, labels } = loader[0];
   const [isControllerOn, setIsControllerOn] = useState(true);
@@ -71,8 +67,6 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 disabled={!imageLoaded || isRgb}
               >
                  <OverviewToggle />
-                  {!!files.length && <MetadataLayerToggle />}
-                  {!!cellsData && <CellMaskLayerToggle/> }
                   {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
                   <ChannelControllers />
                 <AddChannel />
