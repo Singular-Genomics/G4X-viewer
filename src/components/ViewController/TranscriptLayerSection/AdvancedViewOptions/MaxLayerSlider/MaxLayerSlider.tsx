@@ -26,9 +26,9 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 
   const sliderMarks: MaxLayerSliderMark[] = useMemo(
     () =>
-      Array.from({ length: layers }, (_, i) => ({
+      Array.from({ length: layers + 1 }, (_, i) => ({
         value: i,
-        label: i.toString(),
+        label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`,
       })),
     [layers]
   );
@@ -46,7 +46,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
             ...(disabled ? { color: "rgb(128, 128, 128)" } : {}),
           }}
         >
-          Max visble layers
+          Percent of transcripts shown
         </Typography>
         <Tooltip
           title="Control the resolution of the min zoom layer"
@@ -81,7 +81,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 const sx = {
   sliderWrapper: {
     gap: "24px",
-    paddingRight: "24px",
+    padding: "0 24px 0 16px",
   },
   textWrapper: {
     display: "flex",
