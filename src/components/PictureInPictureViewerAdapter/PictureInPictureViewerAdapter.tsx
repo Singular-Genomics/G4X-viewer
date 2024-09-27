@@ -1,5 +1,7 @@
 import {
   AdditiveColormapExtension,
+  DETAIL_VIEW_ID,
+  getDefaultInitialViewState,
   LensExtension,
   PictureInPictureViewer,
 } from "@hms-dbmi/viv";
@@ -11,17 +13,18 @@ import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
 import {
   useCellSegmentationLayer,
-  useMetadataLayer,
+  useTranscriptLayer,
   useResizableContainer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
 import { Tooltip } from "../Tooltip";
+import { debounce } from "lodash";
 
 export const PictureInPictureViewerAdapter = () => {
   const loader = useLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
-  const metadataLayer = useMetadataLayer();
+  const transcriptLayer = useTranscriptLayer();
 
   useEffect(
     () =>
@@ -42,19 +45,42 @@ export const PictureInPictureViewerAdapter = () => {
       ])
     );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad] =
-    useViewerStore(
-      useShallow((store) => [
-        store.colormap,
-        store.isLensOn,
-        store.isOverviewOn,
-        store.lensSelection,
-        store.onViewportLoad,
-      ])
-    );
+  const [
+    colormap,
+    isLensOn,
+    isOverviewOn,
+    lensSelection,
+    onViewportLoad,
+    viewState,
+  ] = useViewerStore(
+    useShallow((store) => [
+      store.colormap,
+      store.isLensOn,
+      store.isOverviewOn,
+      store.lensSelection,
+      store.onViewportLoad,
+      store.viewState,
+    ])
+  );
+
+  useEffect(() => {
+    if (!viewState && containerSize.width && containerSize.height) {
+      const width = containerSize.width;
+      const height = containerSize.height;
+      const defualtViewerState = getDefaultInitialViewState(
+        loader,
+        { width, height },
+        0.5
+      );
+      useViewerStore.setState({
+        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loader, containerSize.width, containerSize.height]);
 
   const deckProps = {
-    layers: [cellMasksLayer, metadataLayer],
+    layers: [cellMasksLayer, transcriptLayer],
   };
 
   return (
@@ -78,15 +104,21 @@ export const PictureInPictureViewerAdapter = () => {
           deckProps={deckProps}
           colormap={colormap}
           onViewportLoad={onViewportLoad}
-          onViewStateChange={({ viewState }: any) => {
-            const z = Math.min(
-              Math.max(Math.round(-(viewState as any).zoom), 0),
-              loader.length - 1
-            );
-            useViewerStore.setState({
-              pyramidResolution: z,
-            });
-          }}
+          viewStates={viewState ? [viewState] : []}
+          onViewStateChange={debounce(
+            ({ viewState: newViewState, viewId }) => {
+              const z = Math.min(
+                Math.max(Math.round(-(newViewState as any).zoom), 0),
+                loader.length - 1
+              );
+              useViewerStore.setState({
+                pyramidResolution: z,
+                viewState: { ...newViewState, id: viewId },
+              });
+            },
+            250,
+            { trailing: true }
+          )}
           hoverHooks={{
             handleValue: (values) =>
               useViewerStore.setState({

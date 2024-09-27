@@ -2,10 +2,10 @@ import { Box, Typography } from "@mui/material";
 import { ColormapSelector } from "./ColormapSelector";
 
 import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
-import { MetadataLayerToggle } from "./MetadataLayerToggle";
 import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
+import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
 
 export const ViewControllsSection = () => {
   const files = useBinaryFilesStore((store) => store.files);
@@ -26,7 +26,7 @@ export const ViewControllsSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
         <Box sx={sx.togglesSubSection}>
-          {!!files.length && <MetadataLayerToggle />}
+          {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
         </Box>
       </Box>

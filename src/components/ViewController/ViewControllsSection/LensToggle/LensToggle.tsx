@@ -1,4 +1,12 @@
-import { FormControlLabel, Grid, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  Collapse,
+  FormControlLabel,
+  MenuItem,
+  Theme,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { GxSelect } from "../../../../shared/components/GxSelect/GxSelect";
 import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
 import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
@@ -6,6 +14,8 @@ import { useShallow } from "zustand/react/shallow";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const LensToggle = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const selections = useChannelsStore((store) => store.selections);
   const [isLensOn, lensSelection, channelOptions, toggleLens] = useViewerStore(
     useShallow((store) => [
@@ -19,50 +29,51 @@ export const LensToggle = () => {
   const currentChannelIndices = selections.map((sel) => sel.c);
 
   return (
-    <Grid
-      container
-      direction="row"
-      justifyContent="flex-start"
-      alignItems="center"
-    >
-      <Grid item xs={3}>
-        <FormControlLabel
-          label="Lens"
-          control={
-            <GxCheckbox
-              onChange={toggleLens}
-              checked={isLensOn}
-              disableTouchRipple
-            />
+    <Box>
+      <FormControlLabel
+        label="Lens"
+        control={
+          <GxCheckbox
+            onChange={toggleLens}
+            checked={isLensOn}
+            disableTouchRipple
+          />
+        }
+      />
+      <Collapse in={isLensOn} sx={sx.subSectionWrapper}>
+        <Typography sx={sx.selectTitle}>Highlighted Channel: </Typography>
+        <GxSelect
+          value={lensSelection}
+          fullWidth
+          onChange={(e) =>
+            useViewerStore.setState({
+              lensSelection: e.target.value as number,
+            })
           }
-        />
-      </Grid>
-      <Grid item xs={7}>
-        {isLensOn && (
-          <GxSelect
-            value={lensSelection}
-            fullWidth
-            onChange={(e) =>
-              useViewerStore.setState({
-                lensSelection: e.target.value as number,
-              })
-            }
-          >
-            {currentChannelIndices.map((channelIndex, relativeIndex) => (
-              <MenuItem
-                key={
-                  channelOptions[channelIndex as number] + String(relativeIndex)
-                }
-                value={relativeIndex}
-              >
-                <Typography>
-                  {channelOptions[channelIndex as number]}
-                </Typography>
-              </MenuItem>
-            ))}
-          </GxSelect>
-        )}
-      </Grid>
-    </Grid>
+        >
+          {currentChannelIndices.map((channelIndex, relativeIndex) => (
+            <MenuItem
+              key={
+                channelOptions[channelIndex as number] + String(relativeIndex)
+              }
+              value={relativeIndex}
+            >
+              <Typography>{channelOptions[channelIndex as number]}</Typography>
+            </MenuItem>
+          ))}
+        </GxSelect>
+      </Collapse>
+    </Box>
   );
 };
+
+const styles = (theme: Theme) => ({
+  subSectionWrapper: {
+    marginLeft: "32px",
+    borderLeft: `5px solid ${theme.palette.gx.mediumGrey[100]}`,
+    paddingLeft: "8px",
+  },
+  selectTitle: {
+    marginBottom: "4px",
+  },
+});

@@ -2,7 +2,7 @@ import { useDropzone } from "react-dropzone";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 import { useSnackbar } from "notistack";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
-import { useMetadataLayerStore } from "../../../../stores/MetadataLayerStore";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
 export const useImageHandler = () => {
@@ -33,7 +33,7 @@ export const useImageHandler = () => {
 
     useViewerStore.setState({ source: newSource });
     useBinaryFilesStore.getState().reset();
-    useMetadataLayerStore.getState().reset();
+    useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
   };
 

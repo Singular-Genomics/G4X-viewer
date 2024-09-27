@@ -7,7 +7,7 @@ import { ViewControllerProps } from "./ViewController.types";
 import { GxCollapsibleSection } from "../../shared/components/GxCollapsibleSection/GxCollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
-import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
+import { TranscriptLayerSection } from "./TranscriptLayerSection/TranscriptLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
@@ -52,20 +52,20 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <ViewControllsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Channels Settings"
+                sectionTitle="Protein Channels Settings"
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Metadata Layer Settings"
+                sectionTitle="Transcript Layer Settings"
                 disabled={!imageLoaded || !metadataFiles.length}
                 unmountOnExit={false}
               >
-                <MetadataLayerSection />
+                <TranscriptLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Cell Masks Layer Settings"
+                sectionTitle="Segmentation Layer Settings"
                 disabled={!imageLoaded || !cellMasksFiles?.length}
               >
                 <CellMasksLayerSection />
