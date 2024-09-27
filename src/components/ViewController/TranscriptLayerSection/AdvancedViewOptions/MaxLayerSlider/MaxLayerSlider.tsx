@@ -49,7 +49,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
           Percent of transcripts shown
         </Typography>
         <Tooltip
-          title="Control the resolution of the min zoom layer"
+          title="We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling"
           placement="top"
           arrow
           slotProps={{ popper: { sx: sx.infoTooltip } }}
