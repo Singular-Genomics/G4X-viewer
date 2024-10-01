@@ -1,6 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { ColormapSelector } from "./ColormapSelector";
-
 import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
 import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
@@ -15,10 +13,6 @@ export const ViewControllsSection = () => {
 
   return (
     <Box sx={sx.sectionContainer}>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>Colormap</Typography>
-        <ColormapSelector />
-      </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Global Selection</Typography>
         <GlobalSelectionSliders />

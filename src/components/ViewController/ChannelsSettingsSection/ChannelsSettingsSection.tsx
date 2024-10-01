@@ -5,6 +5,7 @@ import { useViewerStore } from "../../../stores/ViewerStore";
 import { LensToggle } from "../ViewControllsSection/LensToggle";
 import { ChannelControllers } from "./ChannelControllers";
 import { AddChannel } from "./ChannelControllers/AddChannel";
+import { ColormapSelector } from "../ViewControllsSection/ColormapSelector";
 
 export const ChannelsSettingsSection = () => {
   const loader = useLoader();
@@ -13,6 +14,10 @@ export const ChannelsSettingsSection = () => {
 
   return (
     <Box>
+       <Box>
+        <Typography sx={sx.controlsTitle}>Proteomics Colormap</Typography>
+        <ColormapSelector />
+      </Box>
       <Box sx={sx.togglesWrapper}>
         <OverviewToggle />
         {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
