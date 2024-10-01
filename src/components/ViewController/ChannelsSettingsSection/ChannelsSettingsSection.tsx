@@ -18,7 +18,7 @@ export const ChannelsSettingsSection = () => {
         {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
       </Box>
       <Box>
-        <Typography sx={sx.controlsTitle}>Channels Controls</Typography>
+        <Typography sx={sx.controlsTitle}>Channel Controls</Typography>
         <ChannelControllers />
         <AddChannel />
       </Box>
