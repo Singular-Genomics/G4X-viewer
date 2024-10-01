@@ -3,7 +3,7 @@ export interface GxPalette {
   darkGrey: GxTonalGreyColor;
   mediumGrey: GxTonalGreyColor;
   lightGrey: GxTonalGreyColor;
-  accent: GxAccentColor
+  accent: GxAccentColor;
 }
 
 export interface GxPrimaryColor {
@@ -11,7 +11,7 @@ export interface GxPrimaryColor {
   black: string;
 }
 
-export interface GxTonalGreyColor { 
+export interface GxTonalGreyColor {
   100: string;
   300: string;
   500: string;
@@ -23,4 +23,5 @@ export interface GxAccentColor {
   greenBlue: string;
   darkGold: string;
   error: string;
+  info: string;
 }

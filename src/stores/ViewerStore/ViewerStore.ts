@@ -18,6 +18,7 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   pyramidResolution: 0,
   viewportWidth: 0,
   viewportHeight: 0,
+  viewState: null,
 };
 
 export const useViewerStore = create<ViewerStore>((set) => ({

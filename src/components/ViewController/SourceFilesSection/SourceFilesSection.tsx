@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
-import BinaryDropzoneButton from "./BinaryDropzoneButton/BinaryDropzoneButton";
+import TranscriptDropzoneButton from "./TranscriptDropzoneButton/TranscriptDropzoneButton";
 import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 import { CellMasksDropzoneButton } from "./CellMasksDropzoneButton";
 
 export const SourceFilesSection = () => (
   <Box sx={sx.sourceFilesSectionContainer}>
     <ImageDropzoneButton />
-    <BinaryDropzoneButton />
+    <TranscriptDropzoneButton />
     <CellMasksDropzoneButton />
   </Box>
 );

@@ -5,7 +5,7 @@ export const LogoBanner = () => (
   <Box sx={sx.logoBannerContainer}>
     <GxLogo version="light"/>
     <Typography sx={sx.logoText}>
-      Singular Connect
+      G4X Viewer
     </Typography>
   </Box>
 )

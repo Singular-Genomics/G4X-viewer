@@ -1,25 +1,22 @@
 import { Box, IconButton, Theme, useTheme } from "@mui/material";
 import { useMetadata } from "../../hooks/useMetadata.hook";
 import { guessRgb } from "../../legacy/utils";
-import { ChannelControllers } from "./ChannelControllers";
-import { AddChannel } from "./ChannelControllers/AddChannel/AddChannel";
-
 import { useEffect, useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { ViewControllerProps } from "./ViewController.types";
 import { GxCollapsibleSection } from "../../shared/components/GxCollapsibleSection/GxCollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
 import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
-import { MetadataLayerSection } from "./MetadataLayerSection/MetadataLayerSection";
+import { TranscriptLayerSection } from "./TranscriptLayerSection/TranscriptLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
+import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
   const cellMasksFiles = useCellSegmentationLayerStore(
@@ -49,27 +46,26 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <SourceFilesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="View Controlls"
+                sectionTitle="View Settings"
                 disabled={!imageLoaded}
               >
                 <ViewControllsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Channels Settings"
+                sectionTitle="Protein Channel Settings"
                 disabled={!imageLoaded || isRgb}
               >
-                <ChannelControllers />
-                <AddChannel />
+                <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Metadata Layer Settings"
+                sectionTitle="Transcript Layer Settings"
                 disabled={!imageLoaded || !metadataFiles.length}
                 unmountOnExit={false}
               >
-                <MetadataLayerSection />
+                <TranscriptLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Cell Masks Layer Settings"
+                sectionTitle="Segmentation Layer Settings"
                 disabled={!imageLoaded || !cellMasksFiles?.length}
               >
                 <CellMasksLayerSection />
@@ -100,7 +96,7 @@ const styles = (theme: Theme) => ({
     width: "550px",
     height: "100vh",
   },
- 
+
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
     borderTopLeftRadius: "32px",

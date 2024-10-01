@@ -1,26 +1,24 @@
-import { alpha, Box, LinearProgress, Theme, useTheme } from "@mui/material";
+import { LinearProgress, Box, Theme, alpha, useTheme } from "@mui/material";
+import { useFileHandler } from "./useFileHandler";
+import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
+import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
 import { useViewerStore } from "../../../../stores/ViewerStore";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
-import { useCellMasksFileHandler } from "./useCellMasksFileHandler";
-import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
-export const CellMasksDropzoneButton = () => {
+export default function TranscriptDropzoneButton() {
   const theme = useTheme();
   const sx = styles(theme);
-  
+  const { getRootProps, getInputProps, loading, progress } = useFileHandler();
+  const fileName = useBinaryFilesStore((store) => store.fileName);
   const source = useViewerStore((store) => store.source);
-  const fileName = useCellSegmentationLayerStore((store) => store.fileName);
-  const { getInputProps, getRootProps, loading, progress } =
-    useCellMasksFileHandler();
 
   return (
     <Box>
       <GxDropzoneButton
         getRootProps={getRootProps}
         getInputProps={getInputProps}
-        labelTitle="Cell Masks File Name"
+        labelTitle="Transcript File Name"
         labelText={fileName}
-        buttonText="Upload cells masks"
+        buttonText="Upload points file"
         disabled={!source}
       />
       {loading && (
@@ -32,7 +30,7 @@ export const CellMasksDropzoneButton = () => {
       )}
     </Box>
   );
-};
+}
 
 const styles = (theme: Theme) => ({
   progressBar: {

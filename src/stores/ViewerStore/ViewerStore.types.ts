@@ -20,6 +20,7 @@ export type ViewerStoreValues = {
   pyramidResolution: number;
   viewportWidth: number;
   viewportHeight: number;
+  viewState?: any;
 };
 
 export type ViewerStoreMethods = {

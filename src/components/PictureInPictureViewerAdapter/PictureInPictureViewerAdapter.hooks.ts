@@ -1,13 +1,13 @@
 import { useShallow } from "zustand/react/shallow";
 import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
-import { useMetadataLayerStore } from "../../stores/MetadataLayerStore";
-import MetadataLayer from "../../layers/metadata-layer/metadata-layer";
+import { useTranscriptLayerStore } from "../../stores/TranscriptLayerStore";
 import { getVivId } from "../../utils/utils";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTooltipStore } from "../../stores/TooltipStore";
+import TranscriptLayer from "../../layers/transcript-layer/transcript-layer";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -41,41 +41,47 @@ export const useResizableContainer = () => {
   };
 };
 
-export const useMetadataLayer = () => {
+export const useTranscriptLayer = () => {
   const [files, layerConfig] = useBinaryFilesStore(
     useShallow((store) => [store.files, store.layerConfig])
   );
 
   const [
-    isMetadataLayerOn,
+    isTranscriptLayerOn,
     pointSize,
     showTilesBoundries,
     showTilesData,
     geneNameFilters,
     isGeneNameFilterActive,
     showFilteredPoints,
-  ] = useMetadataLayerStore(
+    overrideLayers,
+    maxVisibleLayers,
+  ] = useTranscriptLayerStore(
     useShallow((store) => [
-      store.isMetadataLayerOn,
+      store.isTranscriptLayerOn,
       store.pointSize,
       store.showTilesBoundries,
       store.showTilesData,
       store.geneNameFilters,
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
+      store.overrideLayers,
+      store.maxVisibleLayers,
     ])
   );
 
-  const metadataLayer = new MetadataLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-metadata-layer`,
+  const metadataLayer = new TranscriptLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
     files,
     config: layerConfig,
-    visible: !!files.length && isMetadataLayerOn,
+    visible: !!files.length && isTranscriptLayerOn,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : "all",
     pointSize,
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
+    overrideLayers: overrideLayers,
+    maxVisibleLayers: maxVisibleLayers,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
