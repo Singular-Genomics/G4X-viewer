@@ -22,14 +22,10 @@ export const TranscriptLayerSection = () => {
   const [
     isTranscriptLayerOn,
     isGeneNameFilterActive,
-    showTilesBoundries,
-    showTilesData,
   ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isTranscriptLayerOn,
       store.isGeneNameFilterActive,
-      store.showTilesBoundries,
-      store.showTilesData,
     ])
   );
 
@@ -42,15 +38,6 @@ export const TranscriptLayerSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Point Size</Typography>
         <PointSizeSlider />
-      </Box>
-      <Box>
-        <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Experimental Options</Typography>
-          {!isTranscriptLayerOn && (showTilesBoundries || showTilesData) && (
-            <DisabledLayerWarning />
-          )}
-        </Box>
-        <ExperimentalToggles />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
