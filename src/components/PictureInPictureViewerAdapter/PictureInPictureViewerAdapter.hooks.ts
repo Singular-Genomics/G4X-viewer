@@ -141,14 +141,16 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useHEImageLayer = () => {
-  const [selections, contrastLimits, opacity, getLoader] = useHEImageStore(
-    useShallow((store) => [
-      store.selections,
-      store.contrastLimits,
-      store.opacity,
-      store.getLoader,
-    ])
-  );
+  const [selections, contrastLimits, opacity, isLayerVisible, getLoader] =
+    useHEImageStore(
+      useShallow((store) => [
+        store.selections,
+        store.contrastLimits,
+        store.opacity,
+        store.isLayerVisible,
+        store.getLoader,
+      ])
+    );
 
   const loader = getLoader();
   const { dtype } = loader[0];
@@ -160,7 +162,7 @@ export const useHEImageLayer = () => {
     contrastLimits: contrastLimits as any,
     loader: loader as any,
     dtype: dtype,
-    opacity: opacity,
+    opacity: isLayerVisible ? opacity : 0,
   });
 
   return heImageLayer;
