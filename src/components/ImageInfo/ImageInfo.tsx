@@ -17,7 +17,9 @@ export const ImageInfo = () => {
       {level && (
         <Box sx={sx.footerWrapper}>
           <Typography sx={sx.footerText}>
-            {`Mouse Pos: [${hoverCoordinates.x || '--'}, ${hoverCoordinates.y || '--'}]`}
+            {`Mouse Pos: [${hoverCoordinates.x || "--"}, ${
+              hoverCoordinates.y || "--"
+            }]`}
           </Typography>
           <Typography sx={sx.footerText}>
             {`Layer: ${pyramidResolution + 1}/${loader.length}`}

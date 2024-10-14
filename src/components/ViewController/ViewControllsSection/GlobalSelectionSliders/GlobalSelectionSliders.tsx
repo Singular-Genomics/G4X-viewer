@@ -1,6 +1,17 @@
-import { Box, Grid, Slider, Theme, Typography, alpha, useTheme } from "@mui/material";
-import { useLoader } from "../../../../hooks/useLoader.hook";
-import { GLOBAL_SLIDER_DIMENSION_FIELDS, getMultiSelectionStats, range } from "../../../../legacy/utils";
+import {
+  Box,
+  Grid,
+  Slider,
+  Theme,
+  Typography,
+  alpha,
+  useTheme,
+} from "@mui/material";
+import {
+  GLOBAL_SLIDER_DIMENSION_FIELDS,
+  getMultiSelectionStats,
+  range,
+} from "../../../../legacy/utils";
 import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
 import { useChannelsStore } from "../../../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
@@ -27,7 +38,7 @@ export const GlobalSelectionSliders = () => {
   const changeSelection = debounce(
     (_event, newValue, label) => {
       useViewerStore.setState({
-        isChannelLoading: selections.map(() => true)
+        isChannelLoading: selections.map(() => true),
       });
       const newSelections = [...selections].map((selection) => ({
         ...selection,
@@ -38,23 +49,23 @@ export const GlobalSelectionSliders = () => {
       getMultiSelectionStats({
         loader,
         selections: newSelections,
-      }).then(({ domains, contrastLimits}) => {
+      }).then(({ domains, contrastLimits }) => {
         unstable_batchedUpdates(() => {
-          range(newSelections.length).forEach((channel, j) => 
+          range(newSelections.length).forEach((channel, j) =>
             setPropertiesForChannel(channel, {
               domains: domains[j],
-              contrastLimits: contrastLimits[j]
+              contrastLimits: contrastLimits[j],
             } as PropertiesUpdateType)
-          )
+          );
         });
         unstable_batchedUpdates(() => {
           useViewerStore.setState({
             onViewportLoad: () => {
               useViewerStore.setState({
                 onViewportLoad: () => {},
-                isChannelLoading: selections.map(() => false)
+                isChannelLoading: selections.map(() => false),
               });
-            }
+            },
           });
           range(newSelections.length).forEach((channel, j) =>
             setPropertiesForChannel(channel, {
@@ -66,51 +77,55 @@ export const GlobalSelectionSliders = () => {
     },
     50,
     { leading: true }
-  )
+  );
 
   return (
     <Box>
-      {globalControlLabels.length ? globalControlLabels.map((label: any) => {
-        const size = shape[labels.indexOf(label)];
+      {globalControlLabels.length ? (
+        globalControlLabels.map((label: any) => {
+          const size = shape[labels.indexOf(label)];
 
-        return (
-          <Grid
-            key={label}
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={1}>
-              <Typography sx={sx.selectionLabel}>{label}</Typography>
-            </Grid>
-            <Grid item xs sx={sx.sliderContainer}>
-              <Slider
-                value={globalSelection[label]}
-                onChange={(event, newValue) => {
-                  useViewerStore.setState({
-                    globalSelection: {
-                      ...globalSelection,
-                      [label]: newValue,
+          return (
+            <Grid
+              key={label}
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid item xs={1}>
+                <Typography sx={sx.selectionLabel}>{label}</Typography>
+              </Grid>
+              <Grid item xs sx={sx.sliderContainer}>
+                <Slider
+                  value={globalSelection[label]}
+                  onChange={(event, newValue) => {
+                    useViewerStore.setState({
+                      globalSelection: {
+                        ...globalSelection,
+                        [label]: newValue,
+                      },
+                    });
+                    if (event.type === "keydown") {
+                      changeSelection(event, newValue, label);
                     }
-                  })
-                  if (event.type === 'keydown') {
-                    changeSelection(event, newValue, label);
+                  }}
+                  onChangeCommitted={(event, newValue) =>
+                    changeSelection(event, newValue, label)
                   }
-                }}
-                onChangeCommitted={(event, newValue) => changeSelection(event, newValue, label)}
-                size="small"
-                valueLabelDisplay="auto"
-                step={1}
-                min={0}
-                max={size - 1}
-                sx={sx.slider}
-                disabled
-              />
+                  size="small"
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={0}
+                  max={size - 1}
+                  sx={sx.slider}
+                  disabled
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        );
-      }) : (
+          );
+        })
+      ) : (
         <Box>
           <Typography textAlign="center">No global selection data</Typography>
         </Box>
@@ -121,8 +136,8 @@ export const GlobalSelectionSliders = () => {
 
 const styles = (theme: Theme) => ({
   selectionLabel: {
-    textTransform: 'uppercase',
-    marginLeft: '8px',
+    textTransform: "uppercase",
+    marginLeft: "8px",
   },
   sliderContainer: {
     padding: "0px 16px",
@@ -136,7 +151,10 @@ const styles = (theme: Theme) => ({
       opacity: 0.75,
     },
     "& .MuiSlider-thumb:hover": {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`,
-    }
+      boxShadow: `0px 0px 0px 8px ${alpha(
+        theme.palette.gx.accent.greenBlue,
+        0.3
+      )}`,
+    },
   },
 });
