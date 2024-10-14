@@ -1,20 +1,20 @@
 import { Box, Typography } from "@mui/material";
 import { OverviewToggle } from "../ViewControllsSection/OverviewToggle";
-import { useLoader } from "../../../hooks/useLoader.hook";
 import { useViewerStore } from "../../../stores/ViewerStore";
 import { LensToggle } from "../ViewControllsSection/LensToggle";
 import { ChannelControllers } from "./ChannelControllers";
 import { AddChannel } from "./ChannelControllers/AddChannel";
 import { ColormapSelector } from "../ViewControllsSection/ColormapSelector";
+import { useChannelsStore } from "../../../stores/ChannelsStore";
 
 export const ChannelsSettingsSection = () => {
-  const loader = useLoader();
+  const loader = useChannelsStore().getLoader();
   const [colormap] = useViewerStore((store) => store.colormap);
   const { shape, labels } = loader[0];
 
   return (
     <Box>
-       <Box>
+      <Box>
         <Typography sx={sx.controlsTitle}>Proteomics Colormap</Typography>
         <ColormapSelector />
       </Box>
