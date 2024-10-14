@@ -33,7 +33,7 @@ export const ChannelsSettingsSection = () => {
 
 const sx = {
   togglesWrapper: {
-    padding: "0px 0px 8px 8px",
+    padding: "8px",
   },
   controlsTitle: {
     fontWeight: 700,
