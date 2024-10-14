@@ -6,7 +6,7 @@ import { ViewController } from "./ViewController";
 import { LogoBanner } from "./LogoBanner/LogoBanner";
 import { useShallow } from "zustand/react/shallow";
 import { GxLoader } from "../shared/components/GxLoader";
-import { useImage } from "../hooks/useImage.hook";
+import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 
 export default function G4XViewer() {
@@ -17,7 +17,7 @@ export default function G4XViewer() {
     useShallow((store) => [store.source, store.isViewerLoading])
   );
 
-  useImage(source);
+  useProteinImage(source);
 
   return (
     <Box sx={sx.mainContainer}>
