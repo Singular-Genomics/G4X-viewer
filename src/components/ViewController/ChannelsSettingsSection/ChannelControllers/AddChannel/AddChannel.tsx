@@ -5,7 +5,6 @@ import { MAX_CHANNELS } from "@hms-dbmi/viv";
 import AddIcon from '@mui/icons-material/Add';
 import { useViewerStore } from "../../../../../stores/ViewerStore";
 import { useChannelsStore } from "../../../../../stores/ChannelsStore";
-import { useLoader } from "../../../../../hooks/useLoader.hook";
 import { useMetadata } from "../../../../../hooks/useMetadata.hook";
 import { getSingleSelectionStats } from "../../../../../legacy/utils";
 import { COLOR_PALLETE } from "../../../../../shared/constants";
@@ -28,15 +27,17 @@ export const AddChannel = () => {
     ])
   );
 
-  const [selections, setPropertiesForChannel, addChannel] = useChannelsStore(
-    useShallow((store) => [
-      store.selections,
-      store.setPropertiesForChannel,
-      store.addChannel,
-    ])
-  );
+  const [selections, setPropertiesForChannel, addChannel, getLoader] =
+    useChannelsStore(
+      useShallow((store) => [
+        store.selections,
+        store.setPropertiesForChannel,
+        store.addChannel,
+        store.getLoader,
+      ])
+    );
 
-  const loader = useLoader();
+  const loader = getLoader();
   const metadata = useMetadata();
   const { labels } = loader[0];
 

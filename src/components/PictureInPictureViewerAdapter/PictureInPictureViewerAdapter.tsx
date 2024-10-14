@@ -7,7 +7,6 @@ import {
 } from "@hms-dbmi/viv";
 import { useChannelsStore } from "../../stores/ChannelsStore/ChannelsStore";
 import { useShallow } from "zustand/react/shallow";
-import { useLoader } from "../../hooks/useLoader.hook";
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
 import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
 import { Box } from "@mui/material";
@@ -21,7 +20,8 @@ import { Tooltip } from "../Tooltip";
 import { debounce } from "lodash";
 
 export const PictureInPictureViewerAdapter = () => {
-  const loader = useLoader();
+  const getLoader = useChannelsStore((store) => store.getLoader);
+  const loader = getLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();

@@ -23,12 +23,16 @@ export const GlobalSelectionSliders = () => {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const loader = useLoader();
-  const globalSelection = useViewerStore(store => store.globalSelection);
-  const [selections, setPropertiesForChannel] = useChannelsStore(
-    useShallow((store) => [store.selections, store.setPropertiesForChannel])
-  )
+  const globalSelection = useViewerStore((store) => store.globalSelection);
+  const [selections, setPropertiesForChannel, getLoader] = useChannelsStore(
+    useShallow((store) => [
+      store.selections,
+      store.setPropertiesForChannel,
+      store.getLoader,
+    ])
+  );
 
+  const loader = getLoader();
   const { shape, labels } = loader[0];
 
   const globalControlLabels = labels.filter((label: any) =>

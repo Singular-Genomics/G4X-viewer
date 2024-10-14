@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useChannelsStore } from "../stores/ChannelsStore/ChannelsStore";
 import { ViewerSourceType } from "../stores/ViewerStore/ViewerStore.types";
-import { useLoader } from "./useLoader.hook";
 import { useMetadata } from "./useMetadata.hook";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 
@@ -18,7 +17,7 @@ import { COLOR_PALLETE } from "../shared/constants";
 import { ChannelsSettings } from "../stores/ChannelsStore";
 
 export const useImage = (source: ViewerSourceType | null) => {
-  const loader = useLoader();
+  const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
 
   useEffect(() => {
