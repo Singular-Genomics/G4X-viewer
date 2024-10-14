@@ -1,10 +1,10 @@
 import { Box, Typography } from "@mui/material";
-import { OverviewToggle } from "../ViewControllsSection/OverviewToggle";
+import { OverviewToggle } from "./OverviewToggle";
 import { useViewerStore } from "../../../stores/ViewerStore";
-import { LensToggle } from "../ViewControllsSection/LensToggle";
+import { LensToggle } from "./LensToggle";
 import { ChannelControllers } from "./ChannelControllers";
 import { AddChannel } from "./ChannelControllers/AddChannel";
-import { ColormapSelector } from "../ViewControllsSection/ColormapSelector";
+import { ColormapSelector } from "./ColormapSelector";
 import { useChannelsStore } from "../../../stores/ChannelsStore";
 
 export const ChannelsSettingsSection = () => {
