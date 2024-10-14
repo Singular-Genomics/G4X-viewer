@@ -51,7 +51,7 @@ export const HEImageLayerToggle = () => {
             }}
             onChangeCommitted={() =>
               useHEImageStore.setState({
-                opacity: +(opacitySliderValue / 100).toFixed(1),
+                opacity: +(opacitySliderValue / 100).toFixed(2),
               })
             }
             min={0}
