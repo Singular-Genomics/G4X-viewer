@@ -14,17 +14,23 @@ import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
+  useHEImageLayer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
 import { Tooltip } from "../Tooltip";
 import { debounce } from "lodash";
+import { useHEImageStore } from "../../stores/HEImageStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
+  const [heImageSource, isImageLoading] = useHEImageStore(
+    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  );
   const loader = getLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
+  const heImageLayer = useHEImageLayer();
 
   useEffect(
     () =>
@@ -82,6 +88,10 @@ export const PictureInPictureViewerAdapter = () => {
   const deckProps = {
     layers: [cellMasksLayer, transcriptLayer],
   };
+
+  if (heImageSource && !isImageLoading) {
+    deckProps.layers = [heImageLayer, ...deckProps.layers];
+  }
 
   return (
     <Box sx={sx.viewerContainer} ref={containerRef}>

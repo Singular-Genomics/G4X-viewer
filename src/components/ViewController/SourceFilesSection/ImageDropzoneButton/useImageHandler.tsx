@@ -4,6 +4,7 @@ import { useSnackbar } from "notistack";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { useHEImageStore } from "../../../../stores/HEImageStore";
 
 export const useImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -35,6 +36,7 @@ export const useImageHandler = () => {
     useBinaryFilesStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
+    useHEImageStore.getState().reset();
   };
 
   const { getRootProps, getInputProps } = useDropzone({
