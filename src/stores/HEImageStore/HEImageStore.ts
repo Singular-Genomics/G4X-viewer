@@ -9,6 +9,7 @@ const DEFAULT_VALUES: HEImageStoreValues = {
   selections: [{ z: 0, c: 0, t: 0 }],
   opacity: 1,
   isImageLoading: false,
+  isLayerVisible: true,
 };
 
 export const useHEImageStore = create<HEImageStore>((set, get) => ({
@@ -18,4 +19,6 @@ export const useHEImageStore = create<HEImageStore>((set, get) => ({
     const { loader, image } = get();
     return Array.isArray(loader[0]) ? loader[image] : loader;
   },
+  toggleImageLayer: () =>
+    set((store) => ({ isLayerVisible: !store.isLayerVisible })),
 }));

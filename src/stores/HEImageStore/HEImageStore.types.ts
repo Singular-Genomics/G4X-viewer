@@ -11,9 +11,11 @@ export type HEImageStoreValues = {
   opacity: number;
   contrastLimits: number[][];
   isImageLoading: boolean;
+  isLayerVisible: boolean;
 };
 
 export type HEImageStoreMethods = {
   reset: () => void;
   getLoader: () => any;
+  toggleImageLayer: () => void;
 };
