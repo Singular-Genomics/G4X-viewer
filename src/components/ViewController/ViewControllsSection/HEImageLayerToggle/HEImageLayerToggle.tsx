@@ -9,7 +9,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
-import { useState } from "react";
 import { GxSlider } from "../../../../shared/components/GxSlider";
 
 export const HEImageLayerToggle = () => {
@@ -21,10 +20,6 @@ export const HEImageLayerToggle = () => {
       store.toggleImageLayer,
       store.opacity,
     ])
-  );
-
-  const [opacitySliderValue, setOpacitySliderValue] = useState<number>(
-    opacity * 100
   );
 
   return (
@@ -43,17 +38,15 @@ export const HEImageLayerToggle = () => {
         <Typography sx={sx.sliderTitle}>Layer opacity:</Typography>
         <Box sx={{ padding: "0 16px" }}>
           <GxSlider
-            value={opacitySliderValue}
+            value={opacity * 100}
             onChange={(_, newValue) => {
-              setOpacitySliderValue(
-                Array.isArray(newValue) ? newValue[0] : newValue
-              );
-            }}
-            onChangeCommitted={() =>
+              const parsedValue = Array.isArray(newValue)
+                ? newValue[0]
+                : newValue;
               useHEImageStore.setState({
-                opacity: +(opacitySliderValue / 100).toFixed(2),
-              })
-            }
+                opacity: +(parsedValue / 100).toFixed(2),
+              });
+            }}
             min={0}
             max={100}
             step={1}
