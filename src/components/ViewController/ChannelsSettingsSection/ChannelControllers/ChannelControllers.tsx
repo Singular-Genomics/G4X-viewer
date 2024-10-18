@@ -3,7 +3,6 @@ import { Box, Theme, useTheme } from "@mui/material";
 import { ChannelController } from "./ChannelController/ChannelController";
 import { PropertiesUpdateType, useChannelsStore } from "../../../../stores/ChannelsStore";
 import { useViewerStore } from "../../../../stores/ViewerStore";
-import { useLoader } from "../../../../hooks/useLoader.hook";
 import { useMetadata } from "../../../../hooks/useMetadata.hook";
 import { getSingleSelectionStats } from "../../../../legacy/utils";
 
@@ -20,6 +19,7 @@ export const ChannelControllers = () => {
     toggleIsOnSetter,
     removeChannel,
     setPropertiesForChannel,
+    getLoader,
   ] = useChannelsStore(
     useShallow((store) => [
       store.ids,
@@ -31,6 +31,7 @@ export const ChannelControllers = () => {
       store.toggleIsOn,
       store.removeChannel,
       store.setPropertiesForChannel,
+      store.getLoader,
     ])
   );
 
@@ -50,7 +51,7 @@ export const ChannelControllers = () => {
     ])
   );
 
-  const loader = useLoader();
+  const loader = getLoader();
   const metadata = useMetadata();
   const sx = styles(theme);
 
