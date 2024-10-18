@@ -4,8 +4,11 @@ import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
+import { useHEImageStore } from "../../../stores/HEImageStore";
+import { HEImageLayerToggle } from "./HEImageLayerToggle/HEImageLayerToggle";
 
 export const ViewControllsSection = () => {
+  const heImageSource = useHEImageStore((store) => store.heImageSource);
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore(
     (store) => store.cellMasksData
@@ -22,6 +25,7 @@ export const ViewControllsSection = () => {
         <Box sx={sx.togglesSubSection}>
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
+          {!!heImageSource && <HEImageLayerToggle />}
         </Box>
       </Box>
     </Box>
