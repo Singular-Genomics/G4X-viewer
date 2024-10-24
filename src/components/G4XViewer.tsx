@@ -6,8 +6,10 @@ import { ViewController } from "./ViewController";
 import { LogoBanner } from "./LogoBanner/LogoBanner";
 import { useShallow } from "zustand/react/shallow";
 import { GxLoader } from "../shared/components/GxLoader";
-import { useImage } from "../hooks/useImage.hook";
+import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
+import { useHEImageStore } from "../stores/HEImageStore";
+import { useHEImage } from "../hooks/useHEImage.hook";
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -16,26 +18,29 @@ export default function G4XViewer() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
+  const [heImageSource, isImageLoading] = useHEImageStore(
+    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  );
 
-  useImage(source);
+  useProteinImage(source);
+  useHEImage(heImageSource);
 
   return (
     <Box sx={sx.mainContainer}>
       <LogoBanner />
       <Box sx={sx.viewerWrapper}>
         <>
-          {!isViewerLoading ? (
-            source ? (
-              <>
-                <PictureInPictureViewerAdapter />
-                <ImageInfo />
-              </>
-            ) : (
-              <Typography sx={sx.infoText} variant="h2">
-                Please upload an image file to view.
-              </Typography>
-            )
+          {source && !isViewerLoading ? (
+            <>
+              <PictureInPictureViewerAdapter />
+              <ImageInfo />
+            </>
           ) : (
+            <Typography sx={sx.infoText} variant="h2">
+              Please upload an image file to view.
+            </Typography>
+          )}
+          {(isViewerLoading || isImageLoading) && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
@@ -62,7 +67,8 @@ const styles = (theme: Theme) => ({
     position: "relative",
   },
   loaderContainer: {
-    background: alpha(theme.palette.gx.lightGrey[100], 0.2),
+    position: "absolute",
+    background: alpha(theme.palette.gx.darkGrey[700], 0.8),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

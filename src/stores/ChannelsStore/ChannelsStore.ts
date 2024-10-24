@@ -22,7 +22,7 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   channelsSettings: {},
 };
 
-export const useChannelsStore = create<ChannelsStore>((set) => ({
+export const useChannelsStore = create<ChannelsStore>((set, get) => ({
   ...DEFAULT_CHANNEL_STORE_STATE,
   toggleIsOn: (index) =>
     set((store) => {
@@ -76,5 +76,9 @@ export const useChannelsStore = create<ChannelsStore>((set) => ({
       });
       return newStore;
     });
+  },
+  getLoader: () => {
+    const { loader, image } = get();
+    return Array.isArray(loader[0]) ? loader[image] : loader;
   },
 }));
