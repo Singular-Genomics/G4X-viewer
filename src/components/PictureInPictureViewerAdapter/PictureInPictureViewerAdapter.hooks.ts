@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { DETAIL_VIEW_ID } from "@hms-dbmi/viv";
+import { DETAIL_VIEW_ID, MultiscaleImageLayer } from "@hms-dbmi/viv";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useTranscriptLayerStore } from "../../stores/TranscriptLayerStore";
 import { getVivId } from "../../utils/utils";
@@ -8,6 +8,7 @@ import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTooltipStore } from "../../stores/TooltipStore";
 import TranscriptLayer from "../../layers/transcript-layer/transcript-layer";
+import { useHEImageStore } from "../../stores/HEImageStore";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -137,4 +138,32 @@ export const useCellSegmentationLayer = () => {
   });
 
   return cellMasksLayer;
+};
+
+export const useHEImageLayer = () => {
+  const [selections, contrastLimits, opacity, isLayerVisible, getLoader] =
+    useHEImageStore(
+      useShallow((store) => [
+        store.selections,
+        store.contrastLimits,
+        store.opacity,
+        store.isLayerVisible,
+        store.getLoader,
+      ])
+    );
+
+  const loader = getLoader();
+  const { dtype } = loader[0];
+
+  const heImageLayer = new MultiscaleImageLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
+    channelsVisible: [true, true, true],
+    selections: selections as any,
+    contrastLimits: contrastLimits as any,
+    loader: loader as any,
+    dtype: dtype,
+    opacity: isLayerVisible ? opacity : 0,
+  });
+
+  return heImageLayer;
 };

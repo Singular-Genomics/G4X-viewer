@@ -22,6 +22,7 @@ export type ChannelsStoreMethods = {
   ) => void;
   removeChannel: (channel: number) => void;
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;
+  getLoader: () => any;
 };
 
 export type PropertiesUpdateType = {

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useChannelsStore } from "../stores/ChannelsStore/ChannelsStore";
 import { ViewerSourceType } from "../stores/ViewerStore/ViewerStore.types";
-import { useLoader } from "./useLoader.hook";
 import { useMetadata } from "./useMetadata.hook";
 import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 
@@ -11,14 +10,14 @@ import {
   createLoader,
   getMultiSelectionStats,
   guessRgb,
-} from "./../legacy/utils";
+} from "../legacy/utils";
 import { unstable_batchedUpdates } from "react-dom";
 import { isInterleaved } from "@hms-dbmi/viv";
 import { COLOR_PALLETE } from "../shared/constants";
 import { ChannelsSettings } from "../stores/ChannelsStore";
 
-export const useImage = (source: ViewerSourceType | null) => {
-  const loader = useLoader();
+export const useProteinImage = (source: ViewerSourceType | null) => {
+  const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
 
   useEffect(() => {
@@ -61,11 +60,6 @@ export const useImage = (source: ViewerSourceType | null) => {
             metadata: nextMeta,
           });
         });
-
-        const url = new URL(window.location.href);
-        url.search =
-          typeof urlOrFile === "string" ? "?image_url=" + urlOrFile : "";
-        window.history.pushState({}, "", url);
       }
     }
     if (source) changeLoader();

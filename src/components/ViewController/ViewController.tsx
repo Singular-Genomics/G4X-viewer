@@ -52,7 +52,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <ViewControllsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Protein Channels Settings"
+                sectionTitle="Protein Channel Settings"
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
