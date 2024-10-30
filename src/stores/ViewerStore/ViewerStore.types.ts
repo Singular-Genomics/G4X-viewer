@@ -24,6 +24,7 @@ export type ViewerStoreValues = {
 };
 
 export type ViewerStoreMethods = {
+  reset: () => void;
   toggleOverview: () => void;
   toggleLens: () => void;
   onViewportLoad: () => void;
