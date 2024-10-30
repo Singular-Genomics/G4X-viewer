@@ -1,6 +1,6 @@
 import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "notistack";
-import { useHEImageStore } from "../../../../stores/HEImageStore";
+import { useHEImageStore } from "../../../../stores/HEImagesStore";
 
 export const useHEImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();

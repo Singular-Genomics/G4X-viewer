@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 import { GxLoader } from "../shared/components/GxLoader";
 import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
-import { useHEImageStore } from "../stores/HEImageStore";
+import { useHEImagesStore } from "../stores/HEImagesStore";
 import { useHEImage } from "../hooks/useHEImage.hook";
 
 export default function G4XViewer() {
@@ -18,7 +18,7 @@ export default function G4XViewer() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
-  const [heImageSource, isImageLoading] = useHEImageStore(
+  const [heImageSource, isImageLoading] = useHEImagesStore(
     useShallow((store) => [store.heImageSource, store.isImageLoading])
   );
 

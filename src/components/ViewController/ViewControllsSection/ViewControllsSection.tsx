@@ -4,11 +4,11 @@ import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
-import { useHEImageStore } from "../../../stores/HEImageStore";
+import { useHEImagesStore } from "../../../stores/HEImagesStore";
 import { HEImageLayerToggle } from "./HEImageLayerToggle/HEImageLayerToggle";
 
 export const ViewControllsSection = () => {
-  const heImageSource = useHEImageStore((store) => store.heImageSource);
+  const heImageSource = useHEImagesStore((store) => store.heImageSource);
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore(
     (store) => store.cellMasksData

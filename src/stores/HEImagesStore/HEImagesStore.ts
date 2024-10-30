@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import { HEImageStore, HEImageStoreValues } from "./HEImageStore.types";
+import { HEImagesStore, HEImagesStoreValues } from "./HEImagesStore.types";
 
-const DEFAULT_VALUES: HEImageStoreValues = {
+const DEFAULT_VALUES: HEImagesStoreValues = {
   heImageSource: null,
   loader: [{ labels: [], shape: [] }],
   image: 0,
@@ -12,7 +12,7 @@ const DEFAULT_VALUES: HEImageStoreValues = {
   isLayerVisible: true,
 };
 
-export const useHEImageStore = create<HEImageStore>((set, get) => ({
+export const useHEImagesStore = create<HEImagesStore>((set, get) => ({
   ...DEFAULT_VALUES,
   reset: () => set({ ...DEFAULT_VALUES }),
   getLoader: () => {

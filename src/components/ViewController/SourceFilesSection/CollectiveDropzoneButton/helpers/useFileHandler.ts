@@ -11,7 +11,7 @@ import {
 import * as protobuf from "protobufjs";
 import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useHEImageStore } from "../../../../../stores/HEImageStore";
+import { useHEImagesStore } from "../../../../../stores/HEImagesStore";
 import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-masks-schema";
 
 type DataSetConfig = {
@@ -236,7 +236,7 @@ export const useFileHandler = () => {
     useBinaryFilesStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
-    useHEImageStore.getState().reset();
+    useHEImagesStore.getState().reset();
     setLoading(true);
     const worker = new TarWorker();
 

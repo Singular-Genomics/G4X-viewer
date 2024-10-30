@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useHEImageStore } from "../../../../stores/HEImageStore";
+import { useHEImagesStore } from "../../../../stores/HEImagesStore";
 import {
   Box,
   Collapse,
@@ -15,7 +15,7 @@ import { GxSlider } from "../../../../shared/components/GxSlider";
 export const HEImageLayerToggle = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [isLayerVisible, toggleImageLayer, opacity] = useHEImageStore(
+  const [isLayerVisible, toggleImageLayer, opacity] = useHEImagesStore(
     useShallow((store) => [
       store.isLayerVisible,
       store.toggleImageLayer,
@@ -50,7 +50,7 @@ export const HEImageLayerToggle = () => {
               );
             }}
             onChangeCommitted={() =>
-              useHEImageStore.setState({
+              useHEImagesStore.setState({
                 opacity: +(opacitySliderValue / 100).toFixed(2),
               })
             }

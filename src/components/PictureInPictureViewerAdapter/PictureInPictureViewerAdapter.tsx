@@ -19,11 +19,11 @@ import {
 import { useEffect } from "react";
 import { Tooltip } from "../Tooltip";
 import { debounce } from "lodash";
-import { useHEImageStore } from "../../stores/HEImageStore";
+import { useHEImagesStore } from "../../stores/HEImagesStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [heImageSource, isImageLoading] = useHEImageStore(
+  const [heImageSource, isImageLoading] = useHEImagesStore(
     useShallow((store) => [store.heImageSource, store.isImageLoading])
   );
   const loader = getLoader();

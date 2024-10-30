@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
 import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
 import { useHEImageHandler } from "./useHEImageDropzoneButton";
-import { useHEImageStore } from "../../../../stores/HEImageStore";
+import { useHEImagesStore } from "../../../../stores/HEImagesStore";
 
 export default function HEImageDropzoneButton() {
   const { getRootProps, getInputProps } = useHEImageHandler();
-  const imageName = useHEImageStore(
+  const imageName = useHEImagesStore(
     (store) => store.heImageSource?.description
   );
 

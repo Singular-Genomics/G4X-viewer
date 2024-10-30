@@ -1,9 +1,9 @@
 import { SelectionsType } from "../../components/PictureInPictureViewerAdapter";
 import { ViewerSourceType } from "../ViewerStore";
 
-export type HEImageStore = HEImageStoreValues & HEImageStoreMethods;
+export type HEImagesStore = HEImagesStoreValues & HEImagesStoreMethods;
 
-export type HEImageStoreValues = {
+export type HEImagesStoreValues = {
   heImageSource: ViewerSourceType | null;
   loader: any; // <- This is quite complicated
   image: number;
@@ -14,7 +14,7 @@ export type HEImageStoreValues = {
   isLayerVisible: boolean;
 };
 
-export type HEImageStoreMethods = {
+export type HEImagesStoreMethods = {
   reset: () => void;
   getLoader: () => any;
   toggleImageLayer: () => void;

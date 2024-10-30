@@ -8,7 +8,7 @@ import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTooltipStore } from "../../stores/TooltipStore";
 import TranscriptLayer from "../../layers/transcript-layer/transcript-layer";
-import { useHEImageStore } from "../../stores/HEImageStore";
+import { useHEImagesStore } from "../../stores/HEImagesStore";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -142,7 +142,7 @@ export const useCellSegmentationLayer = () => {
 
 export const useHEImageLayer = () => {
   const [selections, contrastLimits, opacity, isLayerVisible, getLoader] =
-    useHEImageStore(
+    useHEImagesStore(
       useShallow((store) => [
         store.selections,
         store.contrastLimits,

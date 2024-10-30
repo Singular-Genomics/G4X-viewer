@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHEImageStore } from "../stores/HEImageStore";
+import { useHEImagesStore } from "../stores/HEImagesStore";
 import { ViewerSourceType } from "../stores/ViewerStore";
 import { buildDefaultSelection, createLoader } from "../legacy/utils";
 import { unstable_batchedUpdates } from "react-dom";
@@ -7,13 +7,13 @@ import { isInterleaved } from "@hms-dbmi/viv";
 
 export const useHEImage = (source: ViewerSourceType | null) => {
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
-  const loader = useHEImageStore.getState().getLoader();
+  const loader = useHEImagesStore.getState().getLoader();
 
   useEffect(() => {
     async function changeLoader() {
       if (!source) return null;
 
-      useHEImageStore.setState({ isImageLoading: true });
+      useHEImagesStore.setState({ isImageLoading: true });
 
       const { urlOrFile } = source;
 
@@ -37,7 +37,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
       }
       if (nextLoader) {
         unstable_batchedUpdates(() => {
-          useHEImageStore.setState({ loader: nextLoader });
+          useHEImagesStore.setState({ loader: nextLoader });
         });
         setIsLoaderCreated(true);
       }
@@ -48,7 +48,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
   useEffect(() => {
     if (!source || !isLoaderCreated) return;
 
-    useHEImageStore.setState({ isImageLoading: true });
+    useHEImagesStore.setState({ isImageLoading: true });
     const newSelections = buildDefaultSelection(loader[0]);
 
     let newContrastLimits = [];
@@ -62,7 +62,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
       ];
     }
 
-    useHEImageStore.setState({
+    useHEImagesStore.setState({
       selections: newSelections,
       contrastLimits: newContrastLimits,
       isImageLoading: false,
