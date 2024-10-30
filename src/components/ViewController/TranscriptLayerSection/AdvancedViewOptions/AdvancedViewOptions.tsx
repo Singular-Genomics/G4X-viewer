@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { TranscriptLayerWarningModal } from "./TranscriptLayerWarningModal";
+import { WarningModal } from "./WarningModal";
 import { Box, FormControlLabel } from "@mui/material";
 import { GxSwitch } from "../../../../shared/components/GxSwitch";
 import { MaxLayerSlider } from "./MaxLayerSlider";
@@ -40,7 +40,7 @@ export const AdvancedViewOptions = () => {
         />
         <MaxLayerSlider disabled={!overrideLayers} />
       </Box>
-      <TranscriptLayerWarningModal
+      <WarningModal
         onContinue={onContinue}
         isOpen={isModalOpen}
         handleClose={() => setIsModalOpen(false)}
