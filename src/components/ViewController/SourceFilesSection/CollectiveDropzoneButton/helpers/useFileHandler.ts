@@ -216,6 +216,8 @@ export const useFileHandler = () => {
 
       console.info("Verification successfull");
       parseCollectiveFileData(e.data.files, parsedDatasetConfig);
+      useTranscriptLayerStore.setState({ isTranscriptLayerOn: false });
+      useCellSegmentationLayerStore.setState({ isCellLayerOn: false });
       setLoading(false);
       return;
     }
