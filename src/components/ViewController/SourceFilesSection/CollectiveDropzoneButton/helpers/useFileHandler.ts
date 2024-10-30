@@ -90,7 +90,7 @@ export const useFileHandler = () => {
       reader.addEventListener("loadend", () => setLoading(false));
 
       useCellSegmentationLayerStore.setState({
-        fileName: file.name,
+        fileName: file.name.split("/").pop() || "unknown",
       });
     },
     [enqueueSnackbar]
@@ -98,7 +98,7 @@ export const useFileHandler = () => {
 
   const parseTranscriptFiles = useCallback(
     async (files: File[]) => {
-      const { setFiles, setLayerConfig, setColormapConfig } =
+      const { setFiles, setFileName, setLayerConfig, setColormapConfig } =
         useBinaryFilesStore.getState();
       const configFile = files.find((f: File) =>
         f.name.endsWith("config.json")
@@ -124,7 +124,15 @@ export const useFileHandler = () => {
         });
       }
 
+      let fileName = "unknown";
+      if (files.length) {
+        const nameSegemnts = files[0].name.split("/");
+        fileName =
+          nameSegemnts.length < 2 ? `${nameSegemnts[1]}.tar` : "unknown";
+      }
+
       setFiles(files);
+      setFileName(fileName);
     },
     [enqueueSnackbar]
   );
