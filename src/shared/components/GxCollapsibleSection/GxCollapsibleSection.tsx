@@ -124,6 +124,7 @@ const sx = {
   },
   sectionTitle: {
     fontWeight: 700,
+    textWrap: "nowrap",
   },
   collapseIcon: {
     marginLeft: "auto",

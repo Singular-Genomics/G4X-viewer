@@ -7,7 +7,7 @@ import {
 import { useSnackbar } from "notistack";
 import ZipWorker from "./zipWorker.js?worker";
 import TarWorker from "./tarWorker.js?worker";
-import { paseJsonFromFile } from "../../../../utils/utils";
+import { parseJsonFromFile } from "../../../../utils/utils";
 import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
@@ -29,7 +29,7 @@ export const useFileHandler = () => {
       );
 
       if (configFile) {
-        const parsedConfig = (await paseJsonFromFile(
+        const parsedConfig = (await parseJsonFromFile(
           configFile
         )) as ConfigFileData;
         const { color_map, ...layerConfig } = parsedConfig;

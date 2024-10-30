@@ -2,7 +2,7 @@ export const getVivId = (id: string) => {
   return `-#${id}#`;
 };
 
-export const paseJsonFromFile = (file: File) => {
+export const parseJsonFromFile = (file: File) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
