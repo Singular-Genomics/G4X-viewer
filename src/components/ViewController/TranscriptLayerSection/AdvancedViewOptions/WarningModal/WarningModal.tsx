@@ -23,7 +23,7 @@ export const WarningModal = ({
 
   const handleContinue = useCallback(() => {
     if (checkboxRef.current?.checked) {
-      localStorage.setItem("disableTiledLayerWarnign_DSA", "true");
+      localStorage.setItem("disableTiledLayerWarning_DSA", "true");
     }
     onContinue();
   }, [onContinue]);

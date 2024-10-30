@@ -14,7 +14,7 @@ export const AdvancedViewOptions = () => {
   );
 
   const toggleLayerControls = useCallback(() => {
-    const disableModal = localStorage.getItem("disableTiledLayerWarnign_DSA");
+    const disableModal = localStorage.getItem("disableTiledLayerWarning_DSA");
     if (disableModal || overrideLayers) {
       toggleOverrideLayer();
       triggerViewerRerender();
