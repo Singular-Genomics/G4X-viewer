@@ -60,7 +60,7 @@ export const GxCollapsibleSection = ({
         disabled={disabled}
         onClick={handleIconClick}
       >
-        <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText }}>
+        <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>
           {sectionTitle}
         </Typography>
         <ExpandMoreIcon
