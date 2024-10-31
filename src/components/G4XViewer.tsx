@@ -36,9 +36,11 @@ export default function G4XViewer() {
               <ImageInfo />
             </>
           ) : (
-            <Typography sx={sx.infoText} variant="h2">
-              Please upload an image file to view.
-            </Typography>
+            !isImageLoading && (
+              <Typography sx={sx.infoText} variant="h2">
+                Please upload an image file to view.
+              </Typography>
+            )
           )}
           {(isViewerLoading || isImageLoading) && (
             <Box sx={sx.loaderContainer}>
