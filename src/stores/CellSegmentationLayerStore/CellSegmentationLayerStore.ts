@@ -10,7 +10,7 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
     fileName: "",
     isCellLayerOn: true,
     isCellFillOn: true,
-    isCellStrokeOn: true,
+    isCellStrokeOn: false,
     isCellNameFilterOn: false,
     showFilteredCells: false,
     cellStrokeWidth: 5,
