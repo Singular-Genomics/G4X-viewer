@@ -129,7 +129,7 @@ export const useFileHandler = () => {
       if (files.length) {
         const nameSegemnts = files[0].name.split("/");
         fileName =
-          nameSegemnts.length < 2 ? `${nameSegemnts[1]}.tar` : "unknown";
+          nameSegemnts.length >= 2 ? `${nameSegemnts[1]}.tar` : "unknown";
       }
 
       setFiles(files);
