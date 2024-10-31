@@ -1,11 +1,11 @@
-import { Box, FormControlLabel } from "@mui/material";
+import { Box, FormControlLabel, Typography } from "@mui/material";
 import TranscriptDropzoneButton from "./TranscriptDropzoneButton/TranscriptDropzoneButton";
 import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 import { CellMasksDropzoneButton } from "./CellMasksDropzoneButton";
 import { useCallback, useState } from "react";
 import { GxSwitch } from "../../../shared/components/GxSwitch";
 import CollectiveDropzoneButton from "./CollectiveDropzoneButton/CollectiveDropzoneButton";
-import { WarningModal } from "./WarningModal";
+import { GxModal } from "../../../shared/components/GxModal";
 
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,11 +54,24 @@ export const SourceFilesSection = () => {
           </Box>
         )}
       </Box>
-      <WarningModal
-        onContinue={onContinue}
+      <GxModal
         isOpen={isModalOpen}
-        handleClose={() => setIsModalOpen(false)}
-      />
+        onClose={() => setIsModalOpen(false)}
+        onContinue={onContinue}
+        title="Warning"
+        colorVariant="singular"
+        iconVariant="info"
+        dontShowFlag="disableSingleFileUploadWarning_DSA"
+      >
+        <Typography sx={sx.modalContentText}>
+          You are about use a collective TAR file upload button.
+        </Typography>
+        <Typography sx={sx.modalContentText}>
+          When working using this mode, remember that this option may require
+          significantly more time to load all the contents, depending on their
+          size.
+        </Typography>
+      </GxModal>
     </>
   );
 };
@@ -68,5 +81,8 @@ const sx = {
     display: "flex",
     flexDirection: "column",
     gap: "16px",
+  },
+  modalContentText: {
+    fontWeight: "bold",
   },
 };
