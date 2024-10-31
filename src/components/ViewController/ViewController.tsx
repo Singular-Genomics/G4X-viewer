@@ -13,6 +13,7 @@ import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLaye
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
 import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
+import { HEImagesSections } from "./HEImagesSections/HEImagesSections";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -56,6 +57,12 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
+              </GxCollapsibleSection>
+              <GxCollapsibleSection
+                sectionTitle="H&E Images Settings"
+                disabled={!imageLoaded}
+              >
+                <HEImagesSections />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Transcript Layer Settings"
