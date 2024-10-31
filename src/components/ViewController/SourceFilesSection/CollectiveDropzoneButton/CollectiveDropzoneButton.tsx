@@ -5,7 +5,8 @@ import { useFileHandler } from "./helpers/useFileHandler";
 export default function CollectiveDropzoneButton() {
   const theme = useTheme();
   const sx = styles(theme);
-  const { getInputProps, getRootProps, loading, progress } = useFileHandler();
+  const { getInputProps, getRootProps, loading, progress, collectiveFileName } =
+    useFileHandler();
 
   return (
     <Box>
@@ -14,6 +15,7 @@ export default function CollectiveDropzoneButton() {
         getRootProps={getRootProps}
         labelTitle="Collective file upload"
         buttonText="Upload G4X file"
+        labelText={collectiveFileName}
       />
       {loading && (
         <LinearProgress

@@ -31,6 +31,7 @@ type CollectiveFileOutput = {
 export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [collectiveFileName, setCollectiveFileName] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
 
   const verifyDataSetConfig = useCallback(
@@ -282,6 +283,7 @@ export const useFileHandler = () => {
     }
 
     processFile(file);
+    setCollectiveFileName(file.name);
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -296,5 +298,6 @@ export const useFileHandler = () => {
     getInputProps,
     loading,
     progress,
+    collectiveFileName,
   };
 };
