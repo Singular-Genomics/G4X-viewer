@@ -191,6 +191,16 @@ export const useFileHandler = () => {
       } else {
         parseSegmentationFile(outputFiles.cellSegmentationFile);
       }
+
+      const { setAvailableImages } = useHEImagesStore.getState();
+      if (!outputFiles.heImagesFiles) {
+        enqueueSnackbar({
+          message: "Missing H&E images source",
+          variant: "warning",
+        });
+      } else {
+        setAvailableImages(outputFiles.heImagesFiles);
+      }
     },
     [enqueueSnackbar, parseTranscriptFiles, parseSegmentationFile]
   );
