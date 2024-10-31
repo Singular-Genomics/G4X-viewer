@@ -8,8 +8,8 @@ import { useShallow } from "zustand/react/shallow";
 import { GxLoader } from "../shared/components/GxLoader";
 import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
-import { useHEImagesStore } from "../stores/HEImagesStore";
-import { useHEImage } from "../hooks/useHEImage.hook";
+import { useBrightfieldImage } from "../hooks/useBrightfieldImage.hook";
+import { useBrightfieldImagesStore } from "../stores/BrightfieldImagesStore";
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -18,12 +18,12 @@ export default function G4XViewer() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
-  const [heImageSource, isImageLoading] = useHEImagesStore(
-    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
   );
 
   useProteinImage(source);
-  useHEImage(heImageSource);
+  useBrightfieldImage(brightfieldImageSource);
 
   return (
     <Box sx={sx.mainContainer}>

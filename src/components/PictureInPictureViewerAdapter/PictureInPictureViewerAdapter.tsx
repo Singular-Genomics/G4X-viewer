@@ -14,23 +14,23 @@ import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
-  useHEImageLayer,
+  useBrightfieldImageLayer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect } from "react";
 import { Tooltip } from "../Tooltip";
 import { debounce } from "lodash";
-import { useHEImagesStore } from "../../stores/HEImagesStore";
+import { useBrightfieldImagesStore } from "../../stores/BrightfieldImagesStore";
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [heImageSource, isImageLoading] = useHEImagesStore(
-    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
   );
   const loader = getLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
-  const heImageLayer = useHEImageLayer();
+  const brightfieldImageLayer = useBrightfieldImageLayer();
 
   useEffect(
     () =>
@@ -89,8 +89,8 @@ export const PictureInPictureViewerAdapter = () => {
     layers: [cellMasksLayer, transcriptLayer],
   };
 
-  if (heImageSource && !isImageLoading) {
-    deckProps.layers = [heImageLayer, ...deckProps.layers];
+  if (brightfieldImageSource && !isImageLoading) {
+    deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
   }
 
   return (

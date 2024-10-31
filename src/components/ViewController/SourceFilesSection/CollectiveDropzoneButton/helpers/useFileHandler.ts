@@ -11,7 +11,7 @@ import {
 import * as protobuf from "protobufjs";
 import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useHEImagesStore } from "../../../../../stores/HEImagesStore";
+import { useBrightfieldImagesStore } from "../../../../../stores/BrightfieldImagesStore";
 import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-masks-schema";
 
 type DataSetConfig = {
@@ -25,7 +25,7 @@ type CollectiveFileOutput = {
   proteinImageFile?: File;
   cellSegmentationFile?: File;
   transcriptFiles?: File[];
-  heImagesFiles?: File[];
+  brightfieldImagesFiles?: File[];
 };
 
 export const useFileHandler = () => {
@@ -141,14 +141,14 @@ export const useFileHandler = () => {
     async (inputFiles: File[], datasetConfig: DataSetConfig) => {
       const outputFiles: CollectiveFileOutput = {
         transcriptFiles: [],
-        heImagesFiles: [],
+        brightfieldImagesFiles: [],
       };
 
       inputFiles.forEach((file) => {
         if (file.name.includes(datasetConfig.transcript_src)) {
           outputFiles.transcriptFiles?.push(file);
         } else if (file.name.includes(datasetConfig.he_images_src)) {
-          outputFiles.heImagesFiles?.push(file);
+          outputFiles.brightfieldImagesFiles?.push(file);
         } else if (file.name.endsWith(datasetConfig.cell_segmentation_src)) {
           outputFiles.cellSegmentationFile = file;
         } else if (file.name.endsWith(datasetConfig.protein_image_src)) {
@@ -192,14 +192,14 @@ export const useFileHandler = () => {
         parseSegmentationFile(outputFiles.cellSegmentationFile);
       }
 
-      const { setAvailableImages } = useHEImagesStore.getState();
-      if (!outputFiles.heImagesFiles) {
+      const { setAvailableImages } = useBrightfieldImagesStore.getState();
+      if (!outputFiles.brightfieldImagesFiles) {
         enqueueSnackbar({
           message: "Missing H&E images source",
           variant: "warning",
         });
       } else {
-        setAvailableImages(outputFiles.heImagesFiles);
+        setAvailableImages(outputFiles.brightfieldImagesFiles);
       }
     },
     [enqueueSnackbar, parseTranscriptFiles, parseSegmentationFile]
@@ -246,7 +246,7 @@ export const useFileHandler = () => {
     useBinaryFilesStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
-    useHEImagesStore.getState().reset();
+    useBrightfieldImagesStore.getState().reset();
     setLoading(true);
     const worker = new TarWorker();
 

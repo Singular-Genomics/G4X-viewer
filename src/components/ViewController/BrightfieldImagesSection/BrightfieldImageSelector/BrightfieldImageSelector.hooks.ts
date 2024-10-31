@@ -1,10 +1,10 @@
 import { useDropzone } from "react-dropzone";
 import { useSnackbar } from "notistack";
-import { useHEImagesStore } from "../../../../stores/HEImagesStore";
+import { useBrightfieldImagesStore } from "../../../../stores/BrightfieldImagesStore";
 
-export const useHEImageHandler = () => {
+export const useBrightfieldImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const { addNewFile, availableImages } = useHEImagesStore();
+  const { addNewFile, availableImages } = useBrightfieldImagesStore();
 
   const onDrop = (files: File[]) => {
     if (files.length !== 1) {

@@ -4,11 +4,13 @@ import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
-import { useHEImagesStore } from "../../../stores/HEImagesStore";
-import { HEImageLayerToggle } from "./HEImageLayerToggle/HEImageLayerToggle";
+import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
+import { BrightfieldLayerToggle } from "./BrightfieldLayerToggle/BrightfieldLayerToggle";
 
 export const ViewControllsSection = () => {
-  const heImageSource = useHEImagesStore((store) => store.heImageSource);
+  const brightfieldImageSource = useBrightfieldImagesStore(
+    (store) => store.brightfieldImageSource
+  );
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore(
     (store) => store.cellMasksData
@@ -25,7 +27,7 @@ export const ViewControllsSection = () => {
         <Box sx={sx.togglesSubSection}>
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
-          {!!heImageSource && <HEImageLayerToggle />}
+          {!!brightfieldImageSource && <BrightfieldLayerToggle />}
         </Box>
       </Box>
     </Box>

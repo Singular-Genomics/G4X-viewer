@@ -1,10 +1,10 @@
 import { SelectionsType } from "../../components/PictureInPictureViewerAdapter";
 import { ViewerSourceType } from "../ViewerStore";
 
-export type HEImagesStore = HEImagesStoreValues & HEImagesStoreMethods;
+export type BrightfieldImagesStore = BrightfieldImagesStoreValues & BrightfieldImagesStoreMethods;
 
-export type HEImagesStoreValues = {
-  heImageSource: ViewerSourceType | null;
+export type BrightfieldImagesStoreValues = {
+  brightfieldImageSource: ViewerSourceType | null;
   loader: any; // <- This is quite complicated
   image: number;
   selections: SelectionsType[];
@@ -15,7 +15,7 @@ export type HEImagesStoreValues = {
   availableImages: File[];
 };
 
-export type HEImagesStoreMethods = {
+export type BrightfieldImagesStoreMethods = {
   reset: () => void;
   getLoader: () => any;
   toggleImageLayer: () => void;

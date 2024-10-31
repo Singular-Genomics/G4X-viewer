@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { useHEImagesStore } from "../stores/HEImagesStore";
 import { ViewerSourceType } from "../stores/ViewerStore";
 import { buildDefaultSelection, createLoader } from "../legacy/utils";
 import { unstable_batchedUpdates } from "react-dom";
 import { isInterleaved } from "@hms-dbmi/viv";
+import { useBrightfieldImagesStore } from "../stores/BrightfieldImagesStore";
 
-export const useHEImage = (source: ViewerSourceType | null) => {
+export const useBrightfieldImage = (source: ViewerSourceType | null) => {
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
-  const loader = useHEImagesStore.getState().getLoader();
+  const loader = useBrightfieldImagesStore.getState().getLoader();
 
   useEffect(() => {
     async function changeLoader() {
       if (!source) return null;
 
-      useHEImagesStore.setState({ isImageLoading: true });
+      useBrightfieldImagesStore.setState({ isImageLoading: true });
 
       const { urlOrFile } = source;
 
@@ -37,7 +37,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
       }
       if (nextLoader) {
         unstable_batchedUpdates(() => {
-          useHEImagesStore.setState({ loader: nextLoader });
+          useBrightfieldImagesStore.setState({ loader: nextLoader });
         });
         setIsLoaderCreated(true);
       }
@@ -48,7 +48,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
   useEffect(() => {
     if (!source || !isLoaderCreated) return;
 
-    useHEImagesStore.setState({ isImageLoading: true });
+    useBrightfieldImagesStore.setState({ isImageLoading: true });
     const newSelections = buildDefaultSelection(loader[0]);
 
     let newContrastLimits = [];
@@ -62,7 +62,7 @@ export const useHEImage = (source: ViewerSourceType | null) => {
       ];
     }
 
-    useHEImagesStore.setState({
+    useBrightfieldImagesStore.setState({
       selections: newSelections,
       contrastLimits: newContrastLimits,
       isImageLoading: false,

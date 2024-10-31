@@ -6,16 +6,16 @@ import {
   Theme,
   useTheme,
 } from "@mui/material";
-import { HEImageSelectorEntryProps } from "./HEImageSelectorEntry.types";
+import { BrightfieldImageSelectorEntryProps } from "./BrightfieldImageSelectorEntry.types";
 import ClearIcon from "@mui/icons-material/Clear";
 import { GxRadio } from "../../../../../shared/components/GxRadio";
 
-export const HEImageSelectorEntry = ({
+export const BrightfieldImageSelectorEntry = ({
   imageEntry,
   isActive,
   onSelectImage,
   onRemoveImage,
-}: HEImageSelectorEntryProps) => {
+}: BrightfieldImageSelectorEntryProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 

@@ -13,7 +13,7 @@ import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLaye
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
 import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
-import { HEImagesSections } from "./HEImagesSections/HEImagesSections";
+import { BrightfieldImagesSection } from "./BrightfieldImagesSection/BrightfieldImagesSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -59,10 +59,10 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="H&E Images Settings"
+                sectionTitle="Brightfield Images Settings"
                 disabled={!imageLoaded}
               >
-                <HEImagesSections />
+                <BrightfieldImagesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Transcript Layer Settings"

@@ -11,20 +11,22 @@ import {
 import { useCallback, useState } from "react";
 import {
   MAX_NUMBER_OF_IMAGES,
-  useHEImagesStore,
-} from "../../../../stores/HEImagesStore";
-import { HEImageSelectorEntry } from "./HEImageSelectorEntry/HEImageSelectorEntry";
-import { HEImageSelectorProps } from "./HEImageSelector.types";
-import { useHEImageHandler } from "./HEImageSelector.hooks";
+  useBrightfieldImagesStore,
+} from "../../../../stores/BrightfieldImagesStore";
+import { BrightfieldImageSelectorEntry } from "./BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry";
+import { BrightfieldImageSelectorProps } from "./BrightfieldImageSelector.types";
+import { useBrightfieldImageHandler } from "./BrightfieldImageSelector.hooks";
 
-export const HEImageSelector = ({ images }: HEImageSelectorProps) => {
+export const BrightfieldImageSelector = ({
+  images,
+}: BrightfieldImageSelectorProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   const [activeImageName, setActiveImageName] = useState<string>("");
-  const { setActiveImage, removeFileByName } = useHEImagesStore();
+  const { setActiveImage, removeFileByName } = useBrightfieldImagesStore();
 
-  const { getInputProps, getRootProps } = useHEImageHandler();
+  const { getInputProps, getRootProps } = useBrightfieldImageHandler();
 
   const handleImageRemove = useCallback(
     (imageName: string) => {
@@ -60,7 +62,7 @@ export const HEImageSelector = ({ images }: HEImageSelectorProps) => {
           </Typography>
         ) : (
           images.map((entry, index) => (
-            <HEImageSelectorEntry
+            <BrightfieldImageSelectorEntry
               key={index}
               imageEntry={entry}
               onSelectImage={handleImageSelect}
@@ -104,7 +106,6 @@ const styles = (theme: Theme) => ({
     padding: "8px",
     backgroundColor: theme.palette.gx.primary.white,
     borderRadius: "8px 8px 0 0",
-    maxHeight: "300px",
   },
   imageSelectorEmptyText: {
     textAlign: "center",

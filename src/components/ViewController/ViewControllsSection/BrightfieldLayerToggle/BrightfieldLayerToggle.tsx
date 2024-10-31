@@ -1,10 +1,10 @@
 import { useShallow } from "zustand/react/shallow";
-import { useHEImagesStore } from "../../../../stores/HEImagesStore";
+import { useBrightfieldImagesStore } from "../../../../stores/BrightfieldImagesStore";
 import { Box, FormControlLabel } from "@mui/material";
 import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
-export const HEImageLayerToggle = () => {
-  const [isLayerVisible, toggleImageLayer] = useHEImagesStore(
+export const BrightfieldLayerToggle = () => {
+  const [isLayerVisible, toggleImageLayer] = useBrightfieldImagesStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
 

@@ -1,13 +1,14 @@
 import { Box, Typography } from "@mui/material";
-import { useHEImagesStore } from "../../../stores/HEImagesStore";
+import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
 import { useState } from "react";
 import { GxSlider } from "../../../shared/components/GxSlider";
-import { HEImageSelector } from "./HEImageSelector/HEImageSelector";
+import { BrightfieldImageSelector } from "./BrightfieldImageSelector/BrightfieldImageSelector";
 
-export const HEImagesSections = () => {
+export const BrightfieldImagesSection = () => {
   const sx = styles();
 
-  const { heImageSource, opacity, availableImages } = useHEImagesStore();
+  const { brightfieldImageSource, opacity, availableImages } =
+    useBrightfieldImagesStore();
 
   const [opacitySliderValue, setOpacitySliderValue] = useState<number>(
     opacity * 100
@@ -35,21 +36,21 @@ export const HEImagesSections = () => {
               );
             }}
             onChangeCommitted={() =>
-              useHEImagesStore.setState({
+              useBrightfieldImagesStore.setState({
                 opacity: +(opacitySliderValue / 100).toFixed(2),
               })
             }
             min={0}
             max={100}
             step={1}
-            disabled={!heImageSource}
+            disabled={!brightfieldImageSource}
           />
           <Typography>100%</Typography>
         </Box>
       </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Available H&E Images</Typography>
-        <HEImageSelector images={availableImages} />
+        <BrightfieldImageSelector images={availableImages} />
       </Box>
     </Box>
   );
