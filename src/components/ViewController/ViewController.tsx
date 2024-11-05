@@ -6,7 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { ViewControllerProps } from "./ViewController.types";
 import { GxCollapsibleSection } from "../../shared/components/GxCollapsibleSection/GxCollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
-import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
+import { ViewControlsSection } from "./ViewControlsSection/ViewControlsSection";
 import { TranscriptLayerSection } from "./TranscriptLayerSection/TranscriptLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
@@ -50,7 +50,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle="View Settings"
                 disabled={!imageLoaded}
               >
-                <ViewControllsSection />
+                <ViewControlsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Protein Channel Settings"

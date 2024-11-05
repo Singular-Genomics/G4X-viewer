@@ -7,7 +7,7 @@ import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
 import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
 import { BrightfieldLayerToggle } from "./BrightfieldLayerToggle/BrightfieldLayerToggle";
 
-export const ViewControllsSection = () => {
+export const ViewControlsSection = () => {
   const brightfieldImageSource = useBrightfieldImagesStore(
     (store) => store.brightfieldImageSource
   );
