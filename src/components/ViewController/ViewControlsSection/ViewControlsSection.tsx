@@ -6,6 +6,7 @@ import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
 import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
 import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
 import { BrightfieldLayerToggle } from "./BrightfieldLayerToggle/BrightfieldLayerToggle";
+import { useMemo } from "react";
 
 export const ViewControlsSection = () => {
   const brightfieldImageSource = useBrightfieldImagesStore(
@@ -14,6 +15,11 @@ export const ViewControlsSection = () => {
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore(
     (store) => store.cellMasksData
+  );
+
+  const areLayersAvailable = useMemo(
+    () => files.length || cellsData || brightfieldImageSource,
+    [files, cellsData, brightfieldImageSource]
   );
 
   return (
@@ -25,6 +31,11 @@ export const ViewControlsSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
         <Box sx={sx.togglesSubSection}>
+          {!areLayersAvailable && (
+            <Typography sx={sx.placeholderMessage}>
+              No active layers available
+            </Typography>
+          )}
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
@@ -50,5 +61,8 @@ const sx = {
     flexDirection: "column",
     gap: "8px",
     paddingLeft: "8px",
+  },
+  placeholderMessage: {
+    textAlign: "center",
   },
 };
