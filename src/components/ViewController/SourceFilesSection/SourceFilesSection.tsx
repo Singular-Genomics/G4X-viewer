@@ -10,6 +10,7 @@ import { GxModal } from "../../../shared/components/GxModal";
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSingleFileMode, setIsSingleFileMode] = useState(false);
+  const [isSwitchLocked, setIsSwitchLocked] = useState(false);
 
   const toggleSingleFileUpload = useCallback(() => {
     const disableModal = localStorage.getItem(
@@ -27,6 +28,11 @@ export const SourceFilesSection = () => {
     setIsSingleFileMode(true);
   }, []);
 
+  const handleLockSwitch = useCallback(
+    (lockState: boolean) => setIsSwitchLocked(lockState),
+    []
+  );
+
   return (
     <>
       <Box>
@@ -39,18 +45,19 @@ export const SourceFilesSection = () => {
               disableTouchRipple
               checked={isSingleFileMode}
               onChange={toggleSingleFileUpload}
+              disabled={isSwitchLocked}
             />
           }
         />
         {isSingleFileMode ? (
           <Box>
-            <CollectiveDropzoneButton />
+            <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
         ) : (
           <Box sx={sx.sourceFilesSectionContainer}>
             <ImageDropzoneButton />
-            <TranscriptDropzoneButton />
-            <CellMasksDropzoneButton />
+            <TranscriptDropzoneButton setLockSwitch={handleLockSwitch} />
+            <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
         )}
       </Box>

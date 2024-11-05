@@ -1,12 +1,20 @@
 import { alpha, Box, LinearProgress, Theme, useTheme } from "@mui/material";
 import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
 import { useFileHandler } from "./helpers/useFileHandler";
+import { CollectiveDropzoneButtonProps } from "./CollectiveDropzoneButton.types";
+import { useEffect } from "react";
 
-export default function CollectiveDropzoneButton() {
+export default function CollectiveDropzoneButton({
+  setLockSwitch,
+}: CollectiveDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
   const { getInputProps, getRootProps, loading, progress, collectiveFileName } =
     useFileHandler();
+
+  useEffect(() => {
+    setLockSwitch(loading);
+  }, [loading, setLockSwitch]);
 
   return (
     <Box>

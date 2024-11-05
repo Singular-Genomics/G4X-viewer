@@ -3,12 +3,12 @@ import { useDropzone } from "react-dropzone";
 import {
   ConfigFileData,
   useBinaryFilesStore,
-} from "../../../../stores/BinaryFilesStore";
+} from "../../../../../stores/BinaryFilesStore";
 import { useSnackbar } from "notistack";
 import ZipWorker from "./zipWorker.js?worker";
 import TarWorker from "./tarWorker.js?worker";
-import { parseJsonFromFile } from "../../../../utils/utils";
-import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
+import { parseJsonFromFile } from "../../../../../utils/utils";
+import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 

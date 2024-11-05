@@ -1,10 +1,10 @@
 import { useDropzone } from "react-dropzone";
-import { useViewerStore } from "../../../../stores/ViewerStore";
+import { useViewerStore } from "../../../../../stores/ViewerStore";
 import { useSnackbar } from "notistack";
-import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
-import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
-import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useBrightfieldImagesStore } from "../../../../stores/BrightfieldImagesStore";
+import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
+import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
+import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { useBrightfieldImagesStore } from "../../../../../stores/BrightfieldImagesStore";
 
 export const useImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();

@@ -1,9 +1,9 @@
 import { useDropzone } from "react-dropzone";
-import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import * as protobuf from "protobufjs";
-import { CellMasksSchema } from "../../../../layers/cell-masks-layer/cell-masks-schema";
 import { useState } from "react";
 import { useSnackbar } from "notistack";
+import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-masks-schema";
+import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
