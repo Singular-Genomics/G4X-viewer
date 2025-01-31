@@ -2,7 +2,6 @@ import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useShallow } from "zustand/react/shallow";
-import { CellMasksStrokeSettings } from "./CellMasksStrokeSettings/CellMasksStrokeSettings";
 import { CellMasksFillSettings } from "./CellMasksFillSettings";
 import { CellsFilter } from "./CellsFilter";
 
@@ -18,24 +17,17 @@ const DisabledLayerWarning = () => (
 );
 
 export const CellMasksLayerSection = () => {
-  const [isCellLayerOn, isCellFillOn, isCellStrokeOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [
-      store.isCellLayerOn,
-      store.isCellFillOn,
-      store.isCellStrokeOn,
-      store.isCellNameFilterOn,
-    ])
-  );
+  const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] =
+    useCellSegmentationLayerStore(
+      useShallow((store) => [
+        store.isCellLayerOn,
+        store.isCellFillOn,
+        store.isCellNameFilterOn,
+      ])
+    );
 
   return (
     <Box sx={sx.sectionContainer}>
-      <Box>
-        <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Cell Stroke</Typography>
-          {!isCellLayerOn && isCellStrokeOn && <DisabledLayerWarning />}
-        </Box>
-        <CellMasksStrokeSettings />
-      </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>Cell Fill</Typography>
