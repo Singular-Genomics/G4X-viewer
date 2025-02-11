@@ -13,10 +13,6 @@ export const SourceFilesSection = () => {
   const [isSwitchLocked, setIsSwitchLocked] = useState(false);
   const [uploadMode, setUploadMode] = useState<UploadMode>("multi-file");
 
-  const disableModal = localStorage.getItem(
-    "disableSingleFileUploadWarning_DSA"
-  );
-
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
     setUploadMode("single-file");
@@ -28,6 +24,10 @@ export const SourceFilesSection = () => {
   );
 
   const handleModeChange = useCallback((uploadMode: UploadMode) => {
+    const disableModal = localStorage.getItem(
+      "disableSingleFileUploadWarning_DSA"
+    );
+
     if (!disableModal && uploadMode === "single-file") {
       setIsModalOpen(true);
       return;
