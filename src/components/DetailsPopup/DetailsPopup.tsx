@@ -3,10 +3,14 @@ import InfoIcon from "@mui/icons-material/Info";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { formatDetailsPopupData } from "./DetailsPopup.helpers";
-import { DetailsPopupProps } from "./DetailsPopup.types";
+import { useViewerStore } from "../../stores/ViewerStore";
 
-export const DetailsPopup = ({ data }: DetailsPopupProps) => {
+export const DetailsPopup = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const detailsData = useViewerStore((state) => state.generalDetails);
+
+  if (!detailsData) return null;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -15,8 +19,6 @@ export const DetailsPopup = ({ data }: DetailsPopupProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const open = Boolean(anchorEl);
 
   const renderDataSection = (
     sectionTitle: string,
@@ -43,7 +45,7 @@ export const DetailsPopup = ({ data }: DetailsPopupProps) => {
         <InfoIcon />
       </IconButton>
       <Popover
-        open={open}
+        open={!!anchorEl}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
@@ -60,7 +62,7 @@ export const DetailsPopup = ({ data }: DetailsPopupProps) => {
           <IconButton onClick={handleClose} size="small" sx={sx.closeButton}>
             <CloseIcon />
           </IconButton>
-          {Object.entries(data).map(([sectionKey, sectionData]) => (
+          {Object.entries(detailsData.data).map(([sectionKey, sectionData]) => (
             <Box key={sectionKey}>
               {renderDataSection(
                 sectionKey.split("_").join(" "),

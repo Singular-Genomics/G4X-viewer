@@ -1,7 +1,5 @@
-import { DetailsSectionData } from "./DetailsPopup.types";
-
 export const formatDetailsPopupData = (
-  section: DetailsSectionData
+  section: Record<string, any>
 ): { label: string; value: any }[] => {
   return Object.entries(section).map(([key, value]) => ({
     label: key.split("_").join(" "),
