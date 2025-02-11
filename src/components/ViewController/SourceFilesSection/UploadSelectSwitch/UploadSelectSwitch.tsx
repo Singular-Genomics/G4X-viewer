@@ -14,6 +14,7 @@ import React from "react";
 export function UploadSelectSwitch({
   uploadMode,
   onUploadModeChange,
+  disabled,
 }: UploadSelectSwitchProps) {
   const theme = useTheme();
   const sx = styles(theme);
@@ -31,6 +32,7 @@ export function UploadSelectSwitch({
       fullWidth
       value={uploadMode}
       onChange={handleChange}
+      disabled={disabled}
     >
       <ToggleButton sx={sx.toggleButton} value={"multi-file"}>
         <UploadIcon />
@@ -49,11 +51,16 @@ export function UploadSelectSwitch({
 }
 
 const styles = (theme: Theme) => ({
-  toggleButtonGroup: {},
+  toggleButtonGroup: {
+    marginBottom: "16px",
+  },
   toggleButton: {
     width: "100%",
     display: "flex",
     gap: "8px",
+    "&.Mui-selected.Mui-disabled": {
+      background: theme.palette.gx.mediumGrey[100],
+    },
     "&.Mui-selected": {
       background: theme.palette.gx.gradients.brand,
       color: theme.palette.gx.primary.white,
