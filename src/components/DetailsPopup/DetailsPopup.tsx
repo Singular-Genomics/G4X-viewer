@@ -2,10 +2,10 @@ import { Box, IconButton, Typography, Popover } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-import testData from "../../../testData.json";
 import { formatDetailsPopupData } from "./DetailsPopup.helpers";
+import { DetailsPopupProps } from "./DetailsPopup.types";
 
-export const DetailsPopup = () => {
+export const DetailsPopup = ({ data }: DetailsPopupProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -60,7 +60,7 @@ export const DetailsPopup = () => {
           <IconButton onClick={handleClose} size="small" sx={sx.closeButton}>
             <CloseIcon />
           </IconButton>
-          {Object.entries(testData).map(([sectionKey, sectionData]) => (
+          {Object.entries(data).map(([sectionKey, sectionData]) => (
             <Box key={sectionKey}>
               {renderDataSection(
                 sectionKey.split("_").join(" "),

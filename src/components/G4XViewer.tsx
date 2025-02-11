@@ -10,7 +10,7 @@ import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 import { useHEImageStore } from "../stores/HEImageStore";
 import { useHEImage } from "../hooks/useHEImage.hook";
-import { DetailsPopup } from "./DetailsPopup";
+// import { DetailsPopup } from "./DetailsPopup";
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -47,7 +47,7 @@ export default function G4XViewer() {
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
             </Box>
           )}
-          <DetailsPopup />
+          {/* <DetailsPopup data={jsonData} /> */}
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
