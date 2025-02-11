@@ -1,31 +1,25 @@
-import { Box, FormControlLabel, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import TranscriptDropzoneButton from "./TranscriptDropzoneButton/TranscriptDropzoneButton";
 import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
 import { CellMasksDropzoneButton } from "./CellMasksDropzoneButton";
 import { useCallback, useState } from "react";
-import { GxSwitch } from "../../../shared/components/GxSwitch";
 import CollectiveDropzoneButton from "./CollectiveDropzoneButton/CollectiveDropzoneButton";
+import { UploadSelectSwitch } from "./UploadSelectSwitch/UploadSelectSwitch";
+import { UploadMode } from "./UploadSelectSwitch/UploadSelectSwitch.types";
 import { GxModal } from "../../../shared/components/GxModal";
 
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSingleFileMode, setIsSingleFileMode] = useState(false);
   const [isSwitchLocked, setIsSwitchLocked] = useState(false);
+  const [uploadMode, setUploadMode] = useState<UploadMode>("multi-file");
 
-  const toggleSingleFileUpload = useCallback(() => {
-    const disableModal = localStorage.getItem(
-      "disableSingleFileUploadWarning_DSA"
-    );
-    if (disableModal || isSingleFileMode) {
-      setIsSingleFileMode((prev) => !prev);
-    } else {
-      setIsModalOpen(true);
-    }
-  }, [setIsSingleFileMode, isSingleFileMode]);
+  const disableModal = localStorage.getItem(
+    "disableSingleFileUploadWarning_DSA"
+  );
 
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
-    setIsSingleFileMode(true);
+    setUploadMode("single-file");
   }, []);
 
   const handleLockSwitch = useCallback(
@@ -33,33 +27,44 @@ export const SourceFilesSection = () => {
     []
   );
 
-  return (
-    <>
-      <Box>
-        <FormControlLabel
-          labelPlacement="end"
-          label={isSingleFileMode ? "Multi file uplaod" : "Single file upload"}
-          sx={{ paddingLeft: "8px", marginBottom: "8px" }}
-          control={
-            <GxSwitch
-              disableTouchRipple
-              checked={isSingleFileMode}
-              onChange={toggleSingleFileUpload}
-              disabled={isSwitchLocked}
-            />
-          }
-        />
-        {isSingleFileMode ? (
-          <Box>
-            <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
-          </Box>
-        ) : (
+  const handleModeChange = useCallback((uploadMode: UploadMode) => {
+    if (!disableModal && uploadMode === "single-file") {
+      setIsModalOpen(true);
+      return;
+    }
+    setUploadMode(uploadMode);
+  }, []);
+
+  const getUploadComponents = useCallback((uploadMode: UploadMode) => {
+    switch (uploadMode) {
+      case "multi-file":
+        return (
           <Box sx={sx.sourceFilesSectionContainer}>
             <ImageDropzoneButton />
             <TranscriptDropzoneButton setLockSwitch={handleLockSwitch} />
             <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
-        )}
+        );
+      case "single-file":
+        return (
+          <Box>
+            <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
+          </Box>
+        );
+      case "dir-upload":
+        return null;
+    }
+  }, []);
+
+  return (
+    <>
+      <Box>
+        <UploadSelectSwitch
+          uploadMode={uploadMode}
+          onUploadModeChange={handleModeChange}
+          disabled={isSwitchLocked}
+        />
+        {getUploadComponents(uploadMode)}
       </Box>
       <GxModal
         isOpen={isModalOpen}
