@@ -1,4 +1,12 @@
-import { Box, IconButton, Typography, Popover } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Popover,
+  Theme,
+  useTheme,
+  alpha,
+} from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
@@ -6,6 +14,8 @@ import { formatDetailsPopupData } from "./DetailsPopup.helpers";
 import { useViewerStore } from "../../stores/ViewerStore";
 
 export const DetailsPopup = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const detailsData = useViewerStore((state) => state.generalDetails);
@@ -76,29 +86,29 @@ export const DetailsPopup = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   infoButton: {
     position: "absolute",
     top: "10px",
     right: "10px",
-    color: "#8E9092",
+    color: theme.palette.gx.mediumGrey[300],
     "&:hover": {
-      backgroundColor: "rgba(142, 144, 146, 0.1)",
+      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1),
     },
   },
   closeButton: {
     position: "absolute",
     top: "8px",
     right: "8px",
-    color: "#2F3032",
+    color: theme.palette.gx.darkGrey[300],
     "&:hover": {
-      backgroundColor: "rgba(47, 48, 50, 0.1)",
+      backgroundColor: alpha(theme.palette.gx.darkGrey[300], 0.1),
     },
   },
   popover: {
     "& .MuiPopover-paper": {
-      backgroundColor: "#C9CACB",
-      border: "5px solid #8E9092",
+      backgroundColor: theme.palette.gx.lightGrey[100],
+      border: `5px solid ${theme.palette.gx.mediumGrey[300]}`,
       borderRadius: "10px",
     },
   },
@@ -111,7 +121,7 @@ const sx = {
     position: "relative",
   },
   sectionTitle: {
-    color: "#2F3032",
+    color: theme.palette.gx.darkGrey[100],
     fontWeight: "700",
     marginBottom: "8px",
     textTransform: "capitalize",
@@ -129,17 +139,17 @@ const sx = {
     gap: "16px",
   },
   label: {
-    color: "#2F3032",
+    color: theme.palette.gx.darkGrey[100],
     fontWeight: "500",
     textTransform: "capitalize",
     fontSize: "0.95rem",
   },
   value: {
-    color: "#2F3032",
+    color: theme.palette.gx.darkGrey[100],
     fontWeight: "700",
     textAlign: "right",
     maxWidth: "300px",
     wordWrap: "break-word",
     fontSize: "0.95rem",
   },
-};
+});
