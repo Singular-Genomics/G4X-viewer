@@ -6,20 +6,22 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SingleMask(_message.Message):
-    __slots__ = ("vertices", "color", "area", "totalCounts", "totalGenes", "cellId")
+    __slots__ = ("vertices", "color", "area", "totalCounts", "totalGenes", "cellId", "clusterId")
     VERTICES_FIELD_NUMBER: _ClassVar[int]
     COLOR_FIELD_NUMBER: _ClassVar[int]
     AREA_FIELD_NUMBER: _ClassVar[int]
     TOTALCOUNTS_FIELD_NUMBER: _ClassVar[int]
     TOTALGENES_FIELD_NUMBER: _ClassVar[int]
     CELLID_FIELD_NUMBER: _ClassVar[int]
+    CLUSTERID_FIELD_NUMBER: _ClassVar[int]
     vertices: _containers.RepeatedScalarFieldContainer[float]
     color: _containers.RepeatedScalarFieldContainer[int]
     area: str
     totalCounts: str
     totalGenes: str
     cellId: str
-    def __init__(self, vertices: _Optional[_Iterable[float]] = ..., color: _Optional[_Iterable[int]] = ..., area: _Optional[str] = ..., totalCounts: _Optional[str] = ..., totalGenes: _Optional[str] = ..., cellId: _Optional[str] = ...) -> None: ...
+    clusterId: str
+    def __init__(self, vertices: _Optional[_Iterable[float]] = ..., color: _Optional[_Iterable[int]] = ..., area: _Optional[str] = ..., totalCounts: _Optional[str] = ..., totalGenes: _Optional[str] = ..., cellId: _Optional[str] = ..., clusterId: _Optional[str] = ...) -> None: ...
 
 class ColormapEntry(_message.Message):
     __slots__ = ("cellName", "color")
