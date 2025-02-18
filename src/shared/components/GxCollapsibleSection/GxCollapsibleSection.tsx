@@ -45,7 +45,6 @@ export const GxCollapsibleSection = ({
     <Box
       sx={
         {
-          ...sx.sectionContainer,
           ...customStyles?.sectionContainer,
         } as SxProps
       }
@@ -95,9 +94,6 @@ export const GxCollapsibleSection = ({
 };
 
 const sx = {
-  sectionContainer: {
-    cursor: "pointer",
-  },
   sectionHeader: {
     display: "flex",
     alignItems: "center",
