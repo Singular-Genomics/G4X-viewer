@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatDetailsPopupData } from "./DetailsPopup.helpers";
 import { useViewerStore } from "../../stores/ViewerStore";
 
@@ -17,10 +17,22 @@ export const DetailsPopup = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   const detailsData = useViewerStore((state) => state.generalDetails);
 
-  if (!detailsData) return null;
+  useEffect(() => {
+    const handleControllerToggle = () => {
+      setIsVisible((prev) => !prev);
+    };
+
+    window.addEventListener("onControllerToggle", handleControllerToggle);
+    return () => {
+      window.removeEventListener("onControllerToggle", handleControllerToggle);
+    };
+  }, []);
+
+  if (!detailsData || !isVisible) return null;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
