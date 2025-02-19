@@ -1,4 +1,4 @@
-# <img src="src/assets/img/lightLogo.svg" alt="G4X Viewer Logo" style="margin-right: 10px;" width="50"> G4X Viewer
+# <img src="src/assets/img/lightLogo.svg" alt="G4X Viewer Logo" style="margin-right: 10px;" width="40"> G4X Viewer
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/Singular-Genomics/G4X-viewer)](https://github.com/Singular-Genomics/G4X-viewer/issues)
