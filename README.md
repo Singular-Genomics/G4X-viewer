@@ -1,41 +1,91 @@
-# G4x Viewer - Proof of concpet 
+# <img src="src/assets/img/lightLogo.svg" alt="G4X Viewer Logo" style="vertical-align: middle; margin-right: 10px;" width="50"> G4X Viewer
 
-This repository is a proof concept for the G4X Viewer application based on the 
-[Avivator](https://avivator.gehlenborglab.org/)  viewer created using the [Viv](https://github.com/hms-dbmi/viv) JavaScript library.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/Singular-Genomics/G4X-viewer)](https://github.com/Singular-Genomics/G4X-viewer/issues)
+[![GitHub forks](https://img.shields.io/github/forks/Singular-Genomics/G4X-viewer)](https://github.com/Singular-Genomics/G4X-viewer/network)
+[![GitHub stars](https://img.shields.io/github/stars/Singular-Genomics/G4X-viewer)](https://github.com/Singular-Genomics/G4X-viewer/stargazers)
 
-## Setup
-1. After opening the project directory run:
-	```bash
-    npm install
-	```
-2. Run the application:
-    ```bash
-    npm run dev
-    ```
-> The application will automatically load an example image delivered by the Viv library
+## Table of Contents
 
-## Preparing custom data
-1. Download the `bftools` CLI tools from [OME Website](https://www.openmicroscopy.org/bio-formats/downloads/).
+- [About](#about)
+- [Technologies](#technologies)
+- [Demo](#demo)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
 
-2. Run the following commnad:
-    ```
-    ./bfconvert -tilex 512 -tiley 512 -pyramid-resolutions 4 -pyramid-scale 2 <input_file_path>.tiff <output_file_path>.ome.tiff
-    ```
+## About
 
-    The main neccessary option include
+G4x Viewer is an advanced open source project designed to visualize imaging data using modern web technologies. The project is continuously evolving to provide an intuitive and flexible interface for the analysis and presentation of complex datasets. Inspired by the [Viv](https://github.com/hms-dbmi/viv) library, our goal is to push the boundaries of interactive data visualization in web applications.
 
-    - `-tilex` TILE_X `-tiley` TILE_Y 
+## Technologies
 
-        The TILE_X, TILE_Y values determine the maximum width and height of each tile. Although all images larger than 4096x4096px will be saved as a set of tiles, the default automatically calculated tile size may excced Java heap memory. 
+G4x Viewer is built using:
 
-    - `-pyramid-resolutions` RESOLUTIONS `-pyramid-scale` SCALE
+- **[React](https://reactjs.org/)** – A library for building user interfaces
+- **[Material-UI (MUI)](https://mui.com/)** – A collection of ready-to-use UI components
+- **[DeckGL](https://deck.gl/)** – A framework for large-scale data visualization
+- **[Viv](https://github.com/hms-dbmi/viv)** – A tool for visualizing image data
 
-        The RESOLUTIONS value is used to determine the number subresolution levels that will be calculated fo the image using the SCALE value (e.g. with the values RESOLUTIONS = 4 and SCALE = 2 the output file will contain 4 reoslution layers, each concurent layer scaled down by a factor of 2).
+For a complete list of dependencies, please refer to the `package.json` file.
 
-> [!IMPORTANT] 
-> Remember to always specify the output format to be of `.ome.tiff` file as the `bfconvert` tool requires to specify the output file format in the given output path. 
+## Demo
 
-> [!TIP]
-> More on `bfconvert` tool options can be found [here](https://docs.openmicroscopy.org/bio-formats/6.0.1/users/comlinetools/conversion.html)
+Below is a preview of the application:
 
-3. Load in the converted OME.Tiff file into G4X Viewer using the `Choose file` button in the controller sidebar menu
+![Application Preview](./public/demo-screenshot.png)
+
+## Getting Started
+
+### Prerequisites
+
+- **Node.js** (version 16 or higher)
+- **npm**
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Singular-Genomics/G4X-viewer.git
+   ```
+2. **Navigate to the project directory:**
+   ```bash
+   cd G4X-viewer
+   ```
+3. **Install the dependencies:**
+   ```bash
+   npm install
+   ```
+4. **Start the application:**
+   ```bash
+   npm run dev
+   ```
+   The application will launch on your local server. **Note:** The default Vite development server runs on [http://localhost:5173](http://localhost:5173). If this port is already in use, Vite will automatically select an available port and display it in the console.
+
+## Contributing
+
+We welcome contributions to enhance G4x Viewer!
+
+**How to Contribute:**
+
+- **Reporting Issues:** Use the [Issues](https://github.com/Singular-Genomics/G4X-viewer/issues) section to report bugs or propose new features.
+- **Pull Requests:** Fork the repository, create a new branch for your changes, and submit a pull request with a detailed description of your modifications.
+
+## License
+
+G4x Viewer is licensed under the [MIT License](LICENSE). Please review the license for more details.
+
+## Contact
+
+For questions, support, or collaboration inquiries, please contact:
+
+- **Project Lead:** [Your Name](mailto:your.email@example.com)
+
+## Acknowledgments
+
+Special thanks to:
+
+- The creators of [Viv](https://github.com/hms-dbmi/viv) and other influential open source projects.
+- The open source community for their ongoing support and contributions.
