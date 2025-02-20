@@ -12,16 +12,18 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "type-check": "tsc --noEmit --allowJs"
+    "type-check": "tsc --noEmit"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,js,jsx}": [
+    "src/**/*.{js,jsx,ts,tsx}": [
       "prettier --write --list-different",
-      "eslint --fix --cache",
-      "npm run type-check"
+      "eslint --fix --cache"
     ],
     "src/**/*.{json,css,md}": [
       "prettier --write --list-different"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "bash -c 'tsc --noEmit'"
     ]
   },
   "dependencies": {
