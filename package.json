@@ -12,7 +12,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --allowJs"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,jsx}": [
