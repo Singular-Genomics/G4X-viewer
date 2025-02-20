@@ -9,7 +9,19 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write --list-different",
+      "eslint --fix --cache",
+      "npm run type-check"
+    ],
+    "src/**/*.{json,css,md}": [
+      "prettier --write --list-different"
+    ]
   },
   "dependencies": {
     "@deck.gl/core": "~8.8.27",
@@ -44,6 +56,8 @@
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.5.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.0"
