@@ -3,7 +3,7 @@ export type TranscriptDatapointType = {
   color: number[];
   geneName: string;
   cellId: string;
-}
+};
 
 export type CellMaskDatapointType = {
   cellId: string;
@@ -11,4 +11,4 @@ export type CellMaskDatapointType = {
   area: string;
   totalGenes: string;
   totalCounts: string;
-}
+};

@@ -1,8 +1,8 @@
-import { Box } from "@mui/material";
-import TranscriptDropzoneButton from "./TranscriptDropzoneButton/TranscriptDropzoneButton";
-import ImageDropzoneButton from "./ImageDropzoneButton/ImageDropzoneButton";
-import { CellMasksDropzoneButton } from "./CellMasksDropzoneButton";
-import HEImageDropzoneButton from "./HEImageDropzoneButton/HEImageDropzoneButton";
+import { Box } from '@mui/material';
+import TranscriptDropzoneButton from './TranscriptDropzoneButton/TranscriptDropzoneButton';
+import ImageDropzoneButton from './ImageDropzoneButton/ImageDropzoneButton';
+import { CellMasksDropzoneButton } from './CellMasksDropzoneButton';
+import HEImageDropzoneButton from './HEImageDropzoneButton/HEImageDropzoneButton';
 
 export const SourceFilesSection = () => (
   <Box sx={sx.sourceFilesSectionContainer}>
@@ -15,8 +15,8 @@ export const SourceFilesSection = () => (
 
 const sx = {
   sourceFilesSectionContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  },
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  }
 };

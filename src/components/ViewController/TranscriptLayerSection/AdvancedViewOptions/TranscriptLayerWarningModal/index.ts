@@ -1,1 +1,1 @@
-export * from "./TranscriptLayerWarningModal";
+export * from './TranscriptLayerWarningModal';

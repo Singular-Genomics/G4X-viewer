@@ -1,8 +1,8 @@
-import { LinearProgress, Box, Theme, alpha, useTheme } from "@mui/material";
-import { useFileHandler } from "./useFileHandler";
-import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
-import { useViewerStore } from "../../../../stores/ViewerStore";
+import { LinearProgress, Box, Theme, alpha, useTheme } from '@mui/material';
+import { useFileHandler } from './useFileHandler';
+import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton/GxDropzoneButton';
+import { useViewerStore } from '../../../../stores/ViewerStore';
 
 export default function TranscriptDropzoneButton() {
   const theme = useTheme();
@@ -34,14 +34,11 @@ export default function TranscriptDropzoneButton() {
 
 const styles = (theme: Theme) => ({
   progressBar: {
-    "& .MuiLinearProgress-barColorPrimary": {
-      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
+    '& .MuiLinearProgress-barColorPrimary': {
+      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`
     },
-    "&.MuiLinearProgress-root": {
-      backgroundColor: `${alpha(
-        theme.palette.gx.accent.greenBlue,
-        0.2
-      )} !important`,
-    },
-  },
+    '&.MuiLinearProgress-root': {
+      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`
+    }
+  }
 });
