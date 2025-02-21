@@ -26,6 +26,6 @@ export type CellSegmentationLayerStoreMethods = {
 };
 
 export type CellSegmentationColormapEntry = {
-  cellName: string;
+  clusterId: string;
   color: number[];
 };

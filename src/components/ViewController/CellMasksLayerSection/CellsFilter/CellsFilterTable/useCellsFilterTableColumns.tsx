@@ -32,7 +32,7 @@ export const useCellsFilterTableColumns =
         headerAlign: "center",
         filterable: true,
         flex: 1,
-        renderCell: (params) => <Typography>{params.row.cellName}</Typography>,
+        renderCell: (params) => <Typography>{params.row.clusterId}</Typography>,
       },
       {
         field: "color",

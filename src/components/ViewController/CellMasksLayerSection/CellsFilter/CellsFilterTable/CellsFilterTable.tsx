@@ -21,8 +21,8 @@ export const CellsFilterTable = () => {
   );
 
   const rowData: CellsFilterTableRowEntry[] = colorMapConfig
-    ? colorMapConfig.map((item, index) => ({
-        id: `${item.cellName}_${index}`,
+    ? colorMapConfig.map((item) => ({
+        id: item.clusterId,
         ...item,
       }))
     : [];
