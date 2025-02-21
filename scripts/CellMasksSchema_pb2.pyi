@@ -24,12 +24,12 @@ class SingleMask(_message.Message):
     def __init__(self, vertices: _Optional[_Iterable[float]] = ..., color: _Optional[_Iterable[int]] = ..., area: _Optional[str] = ..., totalCounts: _Optional[str] = ..., totalGenes: _Optional[str] = ..., cellId: _Optional[str] = ..., clusterId: _Optional[str] = ...) -> None: ...
 
 class ColormapEntry(_message.Message):
-    __slots__ = ("cellName", "color")
-    CELLNAME_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("clusterId", "color")
+    CLUSTERID_FIELD_NUMBER: _ClassVar[int]
     COLOR_FIELD_NUMBER: _ClassVar[int]
-    cellName: str
+    clusterId: str
     color: _containers.RepeatedScalarFieldContainer[int]
-    def __init__(self, cellName: _Optional[str] = ..., color: _Optional[_Iterable[int]] = ...) -> None: ...
+    def __init__(self, clusterId: _Optional[str] = ..., color: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class CellMasks(_message.Message):
     __slots__ = ("cellMasks", "colormap", "numberOfCells")

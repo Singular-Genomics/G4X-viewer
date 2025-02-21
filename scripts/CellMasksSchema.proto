@@ -11,7 +11,7 @@ message SingleMask {
 }
 
 message ColormapEntry {
-  string cellName = 1;
+  string clusterId = 1;
   repeated uint32 color = 2 [packed = true];
 }
 
