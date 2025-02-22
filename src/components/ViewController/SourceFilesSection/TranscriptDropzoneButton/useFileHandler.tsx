@@ -1,14 +1,11 @@
-import { useState } from "react";
-import { useDropzone } from "react-dropzone";
-import {
-  ConfigFileData,
-  useBinaryFilesStore,
-} from "../../../../stores/BinaryFilesStore";
-import { useSnackbar } from "notistack";
-import ZipWorker from "./zipWorker.js?worker";
-import TarWorker from "./tarWorker.js?worker";
-import { paseJsonFromFile } from "../../../../utils/utils";
-import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
+import { useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { ConfigFileData, useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { useSnackbar } from 'notistack';
+import ZipWorker from './zipWorker.js?worker';
+import TarWorker from './tarWorker.js?worker';
+import { paseJsonFromFile } from '../../../../utils/utils';
+import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
@@ -16,40 +13,34 @@ export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
-  const { setFiles, setLayerConfig, setFileName, setColormapConfig } =
-    useBinaryFilesStore();
+  const { setFiles, setLayerConfig, setFileName, setColormapConfig } = useBinaryFilesStore();
 
   const handleWorkerProgress = async (e: any) => {
     if (e.data.progress) {
       setProgress(e.data.progress);
     }
     if (e.data.files && e.data.completed) {
-      const configFile = e.data.files.find((f: File) =>
-        f.name.endsWith("config.json")
-      );
+      const configFile = e.data.files.find((f: File) => f.name.endsWith('config.json'));
 
       if (configFile) {
-        const parsedConfig = (await paseJsonFromFile(
-          configFile
-        )) as ConfigFileData;
+        const parsedConfig = (await paseJsonFromFile(configFile)) as ConfigFileData;
         const { color_map, ...layerConfig } = parsedConfig;
         if (!color_map) {
           enqueueSnackbar({
-            message:
-              "Missing colormap config, cell segmentation filtering will be unavailable",
-            variant: "warning",
+            message: 'Missing colormap config, cell segmentation filtering will be unavailable',
+            variant: 'warning'
           });
         }
 
         setLayerConfig(layerConfig);
         setColormapConfig(color_map);
         useTranscriptLayerStore.setState({
-          maxVisibleLayers: layerConfig.layers,
+          maxVisibleLayers: layerConfig.layers
         });
       }
 
       setFiles(e.data.files);
-      enqueueSnackbar({ message: "Successfully unpacked", variant: "success" });
+      enqueueSnackbar({ message: 'Successfully unpacked', variant: 'success' });
       setLoading(false);
     }
   };
@@ -65,7 +56,7 @@ export const useFileHandler = () => {
       console.error(`Error in ${WorkerType.name}:`, error);
       enqueueSnackbar({
         message: `Error unpacking ${file.type}`,
-        variant: "error",
+        variant: 'error'
       });
       setLoading(false);
       worker.terminate();
@@ -81,16 +72,16 @@ export const useFileHandler = () => {
     const file = acceptedFiles[0];
 
     switch (file.type) {
-      case "application/zip":
+      case 'application/zip':
         processFile(file, ZipWorker);
         break;
-      case "application/x-tar":
+      case 'application/x-tar':
         processFile(file, TarWorker);
         break;
       default:
         enqueueSnackbar({
-          message: "File type not supported",
-          variant: "warning",
+          message: 'File type not supported',
+          variant: 'warning'
         });
     }
   };
@@ -98,15 +89,15 @@ export const useFileHandler = () => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
-      "application/zip": [".zip"],
-      "application/x-tar": [".tar"],
-    },
+      'application/zip': ['.zip'],
+      'application/x-tar': ['.tar']
+    }
   });
 
   return {
     getRootProps,
     getInputProps,
     loading,
-    progress,
+    progress
   };
 };

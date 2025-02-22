@@ -1,2 +1,2 @@
-export * from './GxLoader'
-export * from './GxLoader.types'
+export * from './GxLoader';
+export * from './GxLoader.types';

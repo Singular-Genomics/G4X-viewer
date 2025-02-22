@@ -1,2 +1,2 @@
-export * from "./BinaryFilesStore";
-export * from "./BinaryFilesStore.types";
+export * from './BinaryFilesStore';
+export * from './BinaryFilesStore.types';

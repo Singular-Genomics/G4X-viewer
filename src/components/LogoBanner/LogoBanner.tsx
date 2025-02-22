@@ -1,14 +1,12 @@
-import { Box, Theme, Typography } from "@mui/material";
-import { GxLogo } from "../../shared/components/GxLogo";
+import { Box, Theme, Typography } from '@mui/material';
+import { GxLogo } from '../../shared/components/GxLogo';
 
 export const LogoBanner = () => (
   <Box sx={sx.logoBannerContainer}>
-    <GxLogo version="light"/>
-    <Typography sx={sx.logoText}>
-      G4X Viewer
-    </Typography>
+    <GxLogo version="light" />
+    <Typography sx={sx.logoText}>G4X Viewer</Typography>
   </Box>
-)
+);
 
 const sx = {
   logoBannerContainer: {
@@ -23,6 +21,6 @@ const sx = {
   logoText: {
     color: (theme: Theme) => theme.palette.gx.primary.white,
     fontWeight: 700,
-    fontSize: '20px',
+    fontSize: '20px'
   }
-}
+};

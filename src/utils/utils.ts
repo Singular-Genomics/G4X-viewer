@@ -11,7 +11,7 @@ export const paseJsonFromFile = (file: File) => {
       if (result) {
         resolve(JSON.parse(result as string));
       } else {
-        reject("No result available from file read.");
+        reject('No result available from file read.');
       }
     };
 

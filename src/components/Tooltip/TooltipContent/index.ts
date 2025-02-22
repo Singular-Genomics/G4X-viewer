@@ -1,2 +1,2 @@
-export * from "./TooltipContent";
-export * from "./TooltipContent.types";
+export * from './TooltipContent';
+export * from './TooltipContent.types';

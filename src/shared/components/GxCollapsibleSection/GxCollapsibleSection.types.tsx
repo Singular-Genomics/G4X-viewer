@@ -1,4 +1,4 @@
-import { SxProps, Theme } from "@mui/material";
+import { SxProps, Theme } from '@mui/material';
 
 export type GxCollapsibleSectionProps = {
   sectionTitle: string;
@@ -8,7 +8,7 @@ export type GxCollapsibleSectionProps = {
   unmountOnExit?: boolean;
 };
 
-type GxCollapsibleSectionState = "open" | "collapsed";
+type GxCollapsibleSectionState = 'open' | 'collapsed';
 
 type GxCollapsibleSectionStyles = {
   sectionContainer?: SxProps<Theme>;

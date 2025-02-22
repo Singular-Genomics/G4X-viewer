@@ -3,23 +3,23 @@ import {
   DETAIL_VIEW_ID,
   getDefaultInitialViewState,
   LensExtension,
-  PictureInPictureViewer,
-} from "@hms-dbmi/viv";
-import { useChannelsStore } from "../../stores/ChannelsStore/ChannelsStore";
-import { useShallow } from "zustand/react/shallow";
-import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from "../../shared/constants";
-import { useViewerStore } from "../../stores/ViewerStore/ViewerStore";
-import { Box } from "@mui/material";
+  PictureInPictureViewer
+} from '@hms-dbmi/viv';
+import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
+import { useShallow } from 'zustand/react/shallow';
+import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
+import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
+import { Box } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
-  useHEImageLayer,
-} from "./PictureInPictureViewerAdapter.hooks";
-import { useEffect } from "react";
-import { Tooltip } from "../Tooltip";
-import { debounce } from "lodash";
-import { useHEImageStore } from "../../stores/HEImageStore";
+  useHEImageLayer
+} from './PictureInPictureViewerAdapter.hooks';
+import { useEffect } from 'react';
+import { Tooltip } from '../Tooltip';
+import { debounce } from 'lodash';
+import { useHEImageStore } from '../../stores/HEImageStore';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -36,36 +36,23 @@ export const PictureInPictureViewerAdapter = () => {
     () =>
       useViewerStore.setState({
         viewportWidth: containerSize.width,
-        viewportHeight: containerSize.height,
+        viewportHeight: containerSize.height
       }),
     [containerSize]
   );
 
-  const [colors, contrastLimits, channelsVisible, selections] =
-    useChannelsStore(
-      useShallow((store) => [
-        store.colors,
-        store.contrastLimits,
-        store.channelsVisible,
-        store.selections,
-      ])
-    );
+  const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
+    useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
+  );
 
-  const [
-    colormap,
-    isLensOn,
-    isOverviewOn,
-    lensSelection,
-    onViewportLoad,
-    viewState,
-  ] = useViewerStore(
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState] = useViewerStore(
     useShallow((store) => [
       store.colormap,
       store.isLensOn,
       store.isOverviewOn,
       store.lensSelection,
       store.onViewportLoad,
-      store.viewState,
+      store.viewState
     ])
   );
 
@@ -73,20 +60,16 @@ export const PictureInPictureViewerAdapter = () => {
     if (!viewState && containerSize.width && containerSize.height) {
       const width = containerSize.width;
       const height = containerSize.height;
-      const defualtViewerState = getDefaultInitialViewState(
-        loader,
-        { width, height },
-        0.5
-      );
+      const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
       useViewerStore.setState({
-        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID },
+        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, containerSize.width, containerSize.height]);
 
   const deckProps = {
-    layers: [cellMasksLayer, transcriptLayer],
+    layers: [cellMasksLayer, transcriptLayer]
   };
 
   if (heImageSource && !isImageLoading) {
@@ -94,7 +77,10 @@ export const PictureInPictureViewerAdapter = () => {
   }
 
   return (
-    <Box sx={sx.viewerContainer} ref={containerRef}>
+    <Box
+      sx={sx.viewerContainer}
+      ref={containerRef}
+    >
       {containerSize.width && containerSize.height && (
         <PictureInPictureViewer
           contrastLimits={contrastLimits}
@@ -106,9 +92,7 @@ export const PictureInPictureViewerAdapter = () => {
           overviewOn={isOverviewOn}
           height={containerSize.height}
           width={containerSize.width}
-          extensions={[
-            colormap ? new AdditiveColormapExtension() : new LensExtension(),
-          ]}
+          extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
           lensSelection={lensSelection}
           lensEnabled={isLensOn}
           deckProps={deckProps}
@@ -117,13 +101,10 @@ export const PictureInPictureViewerAdapter = () => {
           viewStates={viewState ? [viewState] : []}
           onViewStateChange={debounce(
             ({ viewState: newViewState, viewId }) => {
-              const z = Math.min(
-                Math.max(Math.round(-(newViewState as any).zoom), 0),
-                loader.length - 1
-              );
+              const z = Math.min(Math.max(Math.round(-(newViewState as any).zoom), 0), loader.length - 1);
               useViewerStore.setState({
                 pyramidResolution: z,
-                viewState: { ...newViewState, id: viewId },
+                viewState: { ...newViewState, id: viewId }
               });
             },
             250,
@@ -133,10 +114,8 @@ export const PictureInPictureViewerAdapter = () => {
             handleValue: (values) =>
               useViewerStore.setState({
                 pixelValues: values.map((value) =>
-                  Number.isInteger(value)
-                    ? value.toFixed(1).toString()
-                    : FILL_PIXEL_VALUE
-                ),
+                  Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
+                )
               }),
             // @ts-expect-error Error in Viv jsDOC declaration.
             // TODO: Fix when issue has beeen resolved and new version has been released.
@@ -145,9 +124,9 @@ export const PictureInPictureViewerAdapter = () => {
               useViewerStore.setState({
                 hoverCoordinates: {
                   x: coords[0].toFixed(0).toString(),
-                  y: coords[1].toFixed(0).toString(),
-                },
-              }),
+                  y: coords[1].toFixed(0).toString()
+                }
+              })
           }}
         />
       )}
@@ -158,8 +137,8 @@ export const PictureInPictureViewerAdapter = () => {
 
 const sx = {
   viewerContainer: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-  },
+    position: 'relative',
+    width: '100%',
+    height: '100%'
+  }
 };

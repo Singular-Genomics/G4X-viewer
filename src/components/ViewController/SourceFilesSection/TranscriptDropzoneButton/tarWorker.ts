@@ -1,5 +1,5 @@
-import { extract } from "it-tar";
-import { pipe } from "it-pipe";
+import { extract } from 'it-tar';
+import { pipe } from 'it-pipe';
 
 onmessage = async (e) => {
   const file = e.data;
@@ -16,7 +16,7 @@ onmessage = async (e) => {
         if (value) {
           processedBytes += value.length;
           postMessage({
-            progress: Math.round((processedBytes / fileSize) * 100),
+            progress: Math.round((processedBytes / fileSize) * 100)
           });
         }
         yield value;
@@ -33,7 +33,7 @@ onmessage = async (e) => {
         for await (const chunk of entry.body) {
           chunks.push(chunk);
         }
-        const blob = new Blob(chunks, { type: "application/octet-stream" });
+        const blob = new Blob(chunks, { type: 'application/octet-stream' });
         entries.push(new File([blob], entry.header.name));
       }
       postMessage({ success: true, files: entries, completed: true });

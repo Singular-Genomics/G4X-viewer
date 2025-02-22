@@ -1,4 +1,4 @@
-import { GxPalette } from './themes/types'
+import { GxPalette } from './themes/types';
 
 declare module '@mui/material/styles' {
   interface Palette extends MuiPalette {
@@ -6,8 +6,8 @@ declare module '@mui/material/styles' {
   }
 
   interface PaletteOptions extends MuiPaletteOptions {
-    gx: GxPalette
+    gx: GxPalette;
   }
 }
 
-export {}
+export {};

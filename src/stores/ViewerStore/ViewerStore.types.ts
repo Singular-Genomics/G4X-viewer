@@ -1,5 +1,5 @@
-import {} from "@hms-dbmi/viv";
-import { SelectionsType } from "../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types";
+import {} from '@hms-dbmi/viv';
+import { SelectionsType } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types';
 
 export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 

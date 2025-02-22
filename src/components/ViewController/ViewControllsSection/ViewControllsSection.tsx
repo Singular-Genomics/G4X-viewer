@@ -1,18 +1,16 @@
-import { Box, Typography } from "@mui/material";
-import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
-import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
-import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
-import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
-import { useHEImageStore } from "../../../stores/HEImageStore";
-import { HEImageLayerToggle } from "./HEImageLayerToggle/HEImageLayerToggle";
+import { Box, Typography } from '@mui/material';
+import { GlobalSelectionSliders } from './GlobalSelectionSliders';
+import { CellMaskLayerToggle } from './CellMaskLayerToggle';
+import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
+import { TranscriptLayerToggle } from './TranscriptLayerToggle';
+import { useHEImageStore } from '../../../stores/HEImageStore';
+import { HEImageLayerToggle } from './HEImageLayerToggle/HEImageLayerToggle';
 
 export const ViewControllsSection = () => {
   const heImageSource = useHEImageStore((store) => store.heImageSource);
   const files = useBinaryFilesStore((store) => store.files);
-  const cellsData = useCellSegmentationLayerStore(
-    (store) => store.cellMasksData
-  );
+  const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -34,19 +32,19 @@ export const ViewControllsSection = () => {
 
 const sx = {
   sectionContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
   },
   subsectionTitle: {
     fontWeight: 700,
-    paddingLeft: "8px",
-    marginBottom: "8px",
+    paddingLeft: '8px',
+    marginBottom: '8px'
   },
   togglesSubSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    paddingLeft: "8px",
-  },
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    paddingLeft: '8px'
+  }
 };

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useHEImageStore } from "../stores/HEImageStore";
-import { ViewerSourceType } from "../stores/ViewerStore";
-import { buildDefaultSelection, createLoader } from "../legacy/utils";
-import { unstable_batchedUpdates } from "react-dom";
-import { isInterleaved } from "@hms-dbmi/viv";
+import { useEffect, useState } from 'react';
+import { useHEImageStore } from '../stores/HEImageStore';
+import { ViewerSourceType } from '../stores/ViewerStore';
+import { buildDefaultSelection, createLoader } from '../legacy/utils';
+import { unstable_batchedUpdates } from 'react-dom';
+import { isInterleaved } from '@hms-dbmi/viv';
 
 export const useHEImage = (source: ViewerSourceType | null) => {
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
@@ -58,14 +58,14 @@ export const useHEImage = (source: ViewerSourceType | null) => {
       newContrastLimits = [
         [0, 255],
         [0, 255],
-        [0, 255],
+        [0, 255]
       ];
     }
 
     useHEImageStore.setState({
       selections: newSelections,
       contrastLimits: newContrastLimits,
-      isImageLoading: false,
+      isImageLoading: false
     });
   }, [loader, source, isLoaderCreated]); // eslint-disable-line react-hooks/exhaustive-deps
 };
