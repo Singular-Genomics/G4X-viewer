@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import { ViewerStore, ViewerStoreValues } from "./ViewerStore.types";
+import {
+  ViewerStore,
+  ViewerStoreValues,
+  GeneralDetailsType,
+} from "./ViewerStore.types";
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
@@ -15,6 +19,7 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   channelOptions: [],
   metadata: null,
   source: null,
+  generalDetails: null,
   pyramidResolution: 0,
   viewportWidth: 0,
   viewportHeight: 0,
@@ -43,4 +48,6 @@ export const useViewerStore = create<ViewerStore>((set) => ({
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
+  setGeneralDetails: (details: GeneralDetailsType) =>
+    set({ generalDetails: details }),
 }));
