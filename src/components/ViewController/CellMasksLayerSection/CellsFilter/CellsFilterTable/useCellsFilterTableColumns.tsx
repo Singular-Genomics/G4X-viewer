@@ -27,8 +27,8 @@ export const useCellsFilterTableColumns =
 
     return [
       {
-        field: "cellName",
-        headerName: "Cell Name",
+        field: "clusterId",
+        headerName: "Cluster ID",
         headerAlign: "center",
         filterable: true,
         flex: 1,
