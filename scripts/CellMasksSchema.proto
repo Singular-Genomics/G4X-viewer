@@ -7,10 +7,11 @@ message SingleMask {
   string totalCounts = 4;
   string totalGenes = 5;
   string cellId = 6;
+  string clusterId = 7;
 }
 
 message ColormapEntry {
-  string cellName = 1;
+  string clusterId = 1;
   repeated uint32 color = 2 [packed = true];
 }
 

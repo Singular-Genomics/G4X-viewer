@@ -5,68 +5,71 @@ export const CellMasksSchema = {
         vertices: {
           rule: "repeated",
           type: "double",
-          id: 1
+          id: 1,
         },
         color: {
           rule: "repeated",
           type: "uint32",
           id: 2,
           options: {
-            packed: "true"
-          }
+            packed: "true",
+          },
         },
         area: {
           type: "string",
-          id: 3
+          id: 3,
         },
         totalCounts: {
           type: "string",
-          id: 4
-        }, 
+          id: 4,
+        },
         totalGenes: {
           type: "string",
-          id: 5
+          id: 5,
         },
         cellId: {
           type: "string",
-          id: 6
-        }
-      }
+          id: 6,
+        },
+        clusterId: {
+          type: "string",
+          id: 7,
+        },
+      },
     },
     ColormapEntry: {
       fields: {
-        cellName: {
+        clusterId: {
           type: "string",
-          id: 1
+          id: 1,
         },
         color: {
           rule: "repeated",
           type: "uint32",
           id: 2,
           options: {
-            packed: "true"
-          }
-        }
-      }
+            packed: "true",
+          },
+        },
+      },
     },
     CellMasks: {
       fields: {
         cellMasks: {
           rule: "repeated",
           type: "SingleMask",
-          id: 1
+          id: 1,
         },
         colormap: {
           rule: "repeated",
           type: "ColormapEntry",
-          id: 2
+          id: 2,
         },
         numberOfCells: {
           type: "uint32",
-          id: 3
-        }
-      }
-    }
-  }
-}
-
+          id: 3,
+        },
+      },
+    },
+  },
+};

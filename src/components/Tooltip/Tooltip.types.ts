@@ -7,6 +7,7 @@ export type TranscriptDatapointType = {
 
 export type CellMaskDatapointType = {
   cellId: string;
+  clusterId: string;
   color: number[];
   area: string;
   totalGenes: string;
