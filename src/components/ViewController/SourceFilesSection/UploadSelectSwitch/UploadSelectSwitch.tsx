@@ -7,8 +7,10 @@ import {
 } from "@mui/material";
 import UploadIcon from "@mui/icons-material/Upload";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
-import { UploadSelectSwitchProps } from "./UploadSelectSwitch.types";
+import {
+  UploadSelectSwitchProps,
+  UPLOAD_MODES,
+} from "./UploadSelectSwitch.types";
 import React from "react";
 
 export function UploadSelectSwitch({
@@ -34,17 +36,13 @@ export function UploadSelectSwitch({
       onChange={handleChange}
       disabled={disabled}
     >
-      <ToggleButton sx={sx.toggleButton} value={"multi-file"}>
+      <ToggleButton sx={sx.toggleButton} value={UPLOAD_MODES.MULTI_FILE}>
         <UploadIcon />
         <Typography sx={sx.toggleButtonLabel}>Multi-file</Typography>
       </ToggleButton>
-      <ToggleButton sx={sx.toggleButton} value={"single-file"}>
+      <ToggleButton sx={sx.toggleButton} value={UPLOAD_MODES.SINGLE_FILE}>
         <UploadFileIcon />
         <Typography sx={sx.toggleButtonLabel}>Single-file</Typography>
-      </ToggleButton>
-      <ToggleButton sx={sx.toggleButton} value={"dir-upload"}>
-        <DriveFolderUploadIcon />
-        <Typography sx={sx.toggleButtonLabel}>Folder</Typography>
       </ToggleButton>
     </ToggleButtonGroup>
   );

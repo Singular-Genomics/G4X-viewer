@@ -5,17 +5,24 @@ import { CellMasksDropzoneButton } from "./CellMasksDropzoneButton";
 import { useCallback, useState } from "react";
 import CollectiveDropzoneButton from "./CollectiveDropzoneButton/CollectiveDropzoneButton";
 import { UploadSelectSwitch } from "./UploadSelectSwitch/UploadSelectSwitch";
-import { UploadMode } from "./UploadSelectSwitch/UploadSelectSwitch.types";
+import {
+  UploadMode,
+  UPLOAD_MODES,
+} from "./UploadSelectSwitch/UploadSelectSwitch.types";
 import { GxModal } from "../../../shared/components/GxModal";
+
+const DONT_SHOW_FLAG = "disableSingleFileUploadWarning_DSA";
 
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSwitchLocked, setIsSwitchLocked] = useState(false);
-  const [uploadMode, setUploadMode] = useState<UploadMode>("multi-file");
+  const [uploadMode, setUploadMode] = useState<UploadMode>(
+    UPLOAD_MODES.MULTI_FILE
+  );
 
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
-    setUploadMode("single-file");
+    setUploadMode(UPLOAD_MODES.SINGLE_FILE);
   }, []);
 
   const handleLockSwitch = useCallback(
@@ -24,11 +31,9 @@ export const SourceFilesSection = () => {
   );
 
   const handleModeChange = useCallback((uploadMode: UploadMode) => {
-    const disableModal = localStorage.getItem(
-      "disableSingleFileUploadWarning_DSA"
-    );
+    const disableModal = localStorage.getItem(DONT_SHOW_FLAG);
 
-    if (!disableModal && uploadMode === "single-file") {
+    if (!disableModal && uploadMode === UPLOAD_MODES.SINGLE_FILE) {
       setIsModalOpen(true);
       return;
     }
@@ -37,7 +42,7 @@ export const SourceFilesSection = () => {
 
   const getUploadComponents = useCallback((uploadMode: UploadMode) => {
     switch (uploadMode) {
-      case "multi-file":
+      case UPLOAD_MODES.MULTI_FILE:
         return (
           <Box sx={sx.sourceFilesSectionContainer}>
             <ImageDropzoneButton />
@@ -45,13 +50,13 @@ export const SourceFilesSection = () => {
             <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
         );
-      case "single-file":
+      case UPLOAD_MODES.SINGLE_FILE:
         return (
           <Box>
             <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
         );
-      case "dir-upload":
+      default:
         return null;
     }
   }, []);
@@ -73,7 +78,7 @@ export const SourceFilesSection = () => {
         title="Warning"
         colorVariant="singular"
         iconVariant="info"
-        dontShowFlag="disableSingleFileUploadWarning_DSA"
+        dontShowFlag={DONT_SHOW_FLAG}
       >
         <Typography sx={sx.modalContentText}>
           You are about use a collective TAR file upload button.
