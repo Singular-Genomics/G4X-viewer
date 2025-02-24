@@ -31,8 +31,14 @@ type CollectiveFileOutput = {
 export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [collectiveFileName, setCollectiveFileName] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
+
+  const collectiveFileName = useBinaryFilesStore(
+    (state) => state.collectiveFileName
+  );
+  const setCollectiveFileName = useBinaryFilesStore(
+    (state) => state.setCollectiveFileName
+  );
 
   const verifyDataSetConfig = useCallback(
     (configFile: DataSetConfig): boolean => {
@@ -83,7 +89,7 @@ export const useFileHandler = () => {
         });
       };
       reader.onerror = () =>
-        console.error("Something went wrong during file laod!");
+        console.error("Something went wrong during file load!");
       reader.readAsArrayBuffer(file);
       reader.addEventListener("progress", (event: ProgressEvent<FileReader>) =>
         setProgress(Math.round((event.loaded / event.total) * 100))
@@ -127,9 +133,9 @@ export const useFileHandler = () => {
 
       let fileName = "unknown";
       if (files.length) {
-        const nameSegemnts = files[0].name.split("/");
+        const nameSegments = files[0].name.split("/");
         fileName =
-          nameSegemnts.length >= 2 ? `${nameSegemnts[1]}.tar` : "unknown";
+          nameSegments.length >= 2 ? `${nameSegments[1]}.tar` : "unknown";
       }
 
       setFiles(files);
@@ -171,7 +177,7 @@ export const useFileHandler = () => {
         source: {
           urlOrFile: outputFiles.proteinImageFile,
           description:
-            outputFiles.proteinImageFile.name.split("/").pop() || "unknwon",
+            outputFiles.proteinImageFile.name.split("/").pop() || "unknown",
         },
       });
 
@@ -233,7 +239,7 @@ export const useFileHandler = () => {
         return;
       }
 
-      console.info("Verification successfull");
+      console.info("Verification successful");
       parseCollectiveFileData(e.data.files, parsedDatasetConfig);
       useTranscriptLayerStore.setState({ isTranscriptLayerOn: false });
       useCellSegmentationLayerStore.setState({ isCellLayerOn: false });
