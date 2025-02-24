@@ -33,7 +33,10 @@ export const useCellMasksFileHandler = () => {
 
       useCellSegmentationLayerStore.setState({
         cellMasksData: cellDataBuffer,
-        cellColormapConfig: colormapConfig,
+        cellColormapConfig: colormapConfig.map((entry: any) => ({
+          clusterId: entry.clusterId,
+          color: entry.color,
+        })),
       });
     };
     reader.onerror = () =>

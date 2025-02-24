@@ -27,12 +27,12 @@ export const useCellsFilterTableColumns =
 
     return [
       {
-        field: "cellName",
-        headerName: "Cell Name",
+        field: "clusterId",
+        headerName: "Cluster ID",
         headerAlign: "center",
         filterable: true,
         flex: 1,
-        renderCell: (params) => <Typography>{params.row.cellName}</Typography>,
+        renderCell: (params) => <Typography>{params.row.clusterId}</Typography>,
       },
       {
         field: "color",
