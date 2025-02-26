@@ -98,10 +98,8 @@ export const useCellSegmentationLayer = () => {
   const [
     cellMasksData,
     isCellLayerOn,
-    isCellStrokeOn,
     isCellFillOn,
     isCellNameFilterOn,
-    cellStrokeWidth,
     cellFillOpacity,
     showFilteredCells,
     cellNameFilters,
@@ -109,10 +107,8 @@ export const useCellSegmentationLayer = () => {
     useShallow((store) => [
       store.cellMasksData,
       store.isCellLayerOn,
-      store.isCellStrokeOn,
       store.isCellFillOn,
       store.isCellNameFilterOn,
-      store.cellStrokeWidth,
       store.cellFillOpacity,
       store.showFilteredCells,
       store.cellNameFilters,
@@ -123,11 +119,9 @@ export const useCellSegmentationLayer = () => {
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     masksData: cellMasksData || new Uint8Array(),
     visible: !!cellMasksData && isCellLayerOn,
-    showCellStroke: isCellStrokeOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
     cellFilters: isCellNameFilterOn ? cellNameFilters : "all",
-    cellStrokeWidth,
     cellFillOpacity,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({

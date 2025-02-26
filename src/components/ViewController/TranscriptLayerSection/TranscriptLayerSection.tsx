@@ -1,6 +1,5 @@
 import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
 import { PointSizeSlider } from "./PointSizeSlider";
-import { ExperimentalToggles } from "./ExperimentalToggles";
 import { PointFilter } from "./PointsFilter/PointFilter";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useTranscriptLayerStore } from "../../../stores/TranscriptLayerStore";
@@ -22,14 +21,10 @@ export const TranscriptLayerSection = () => {
   const [
     isTranscriptLayerOn,
     isGeneNameFilterActive,
-    showTilesBoundries,
-    showTilesData,
   ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isTranscriptLayerOn,
       store.isGeneNameFilterActive,
-      store.showTilesBoundries,
-      store.showTilesData,
     ])
   );
 
@@ -42,15 +37,6 @@ export const TranscriptLayerSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Point Size</Typography>
         <PointSizeSlider />
-      </Box>
-      <Box>
-        <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Experimental Options</Typography>
-          {!isTranscriptLayerOn && (showTilesBoundries || showTilesData) && (
-            <DisabledLayerWarning />
-          )}
-        </Box>
-        <ExperimentalToggles />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>

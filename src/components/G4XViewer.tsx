@@ -10,6 +10,7 @@ import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
 import { useBrightfieldImage } from "../hooks/useBrightfieldImage.hook";
 import { useBrightfieldImagesStore } from "../stores/BrightfieldImagesStore";
+import { DetailsPopup } from "./DetailsPopup";
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -48,6 +49,7 @@ export default function G4XViewer() {
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
             </Box>
           )}
+          <DetailsPopup />
         </>
       </Box>
       <ViewController imageLoaded={!!source} />

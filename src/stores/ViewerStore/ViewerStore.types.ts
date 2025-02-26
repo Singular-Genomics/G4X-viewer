@@ -17,6 +17,7 @@ export type ViewerStoreValues = {
   channelOptions: string[];
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
+  generalDetails: GeneralDetailsType | null;
   pyramidResolution: number;
   viewportWidth: number;
   viewportHeight: number;
@@ -31,6 +32,7 @@ export type ViewerStoreMethods = {
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;
   removeIsChannelLoading: (index: number) => void;
+  setGeneralDetails: (details: GeneralDetailsType) => void;
 };
 
 export type ViewerSourceType = {
@@ -42,4 +44,9 @@ export type ViewerSourceType = {
 export type ViewerHoverCoordinates = {
   x: string;
   y: string;
+};
+
+export type GeneralDetailsType = {
+  fileName: string;
+  data: Record<string, any>;
 };

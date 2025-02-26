@@ -14,20 +14,19 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   }
 
   renderLayers() {
-    const cellMasksData = (this.protoRoot
-      .lookupType("CellMasks")
-      .decode(this.props.masksData) as any).cellMasks;
+    const cellMasksData = (
+      this.protoRoot.lookupType("CellMasks").decode(this.props.masksData) as any
+    ).cellMasks;
 
     let cellsData = [];
     let outlierCellsData = [];
 
-    if(this.props.cellFilters === 'all') {
+    if (this.props.cellFilters === "all") {
       cellsData = cellMasksData;
     } else {
-      [cellsData, outlierCellsData] = partition(
-        cellMasksData,
-        (data) => this.props.cellFilters.includes(data.cellName) //TODO: Update the key name.
-      )
+      [cellsData, outlierCellsData] = partition(cellMasksData, (data) =>
+        this.props.cellFilters.includes(data.clusterId)
+      );
     }
 
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
@@ -36,25 +35,25 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       id: `sub-discarded-cells-layer-${this.props.id}`,
       data: outlierCellsData,
       positionFormat: "XY",
-      stroked: this.props.showCellStroke,
+      stroked: false,
       filled: this.props.showCellFill,
-      getPolygon: d => d.vertices,
+      getPolygon: (d) => d.vertices,
       getLineColor: [238, 238, 238],
       getFillColor: [238, 238, 238, opacityValue],
-      getLineWidth: this.props.cellStrokeWidth,
+      getLineWidth: 0,
       visible: this.props.showDiscardedPoints,
-    })
+    });
 
     const polygonLayer = new PolygonLayer({
       id: `sub-cells-layer-${this.props.id}`,
       data: cellsData,
       positionFormat: "XY",
-      stroked: this.props.showCellStroke,
+      stroked: false,
       filled: this.props.showCellFill,
-      getPolygon: d => d.vertices,
-      getLineColor: d => d.color,
-      getFillColor: d => ([...d.color, opacityValue] as any),
-      getLineWidth: this.props.cellStrokeWidth,
+      getPolygon: (d) => d.vertices,
+      getLineColor: (d) => d.color,
+      getFillColor: (d) => [...d.color, opacityValue] as any,
+      getLineWidth: 0,
       pickable: true,
     });
 
