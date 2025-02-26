@@ -3,7 +3,10 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import TarWorker from "./tarFileWorker.js?worker";
 import { parseJsonFromFile } from "../../../../../utils/utils";
-import { useViewerStore } from "../../../../../stores/ViewerStore";
+import {
+  GeneralDetailsType,
+  useViewerStore,
+} from "../../../../../stores/ViewerStore";
 import {
   ConfigFileData,
   useBinaryFilesStore,
@@ -16,6 +19,7 @@ import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-mas
 
 type DataSetConfig = {
   protein_image_src: string;
+  protein_image_data_src: string;
   he_images_src: string;
   cell_segmentation_src: string;
   transcript_src: string;
@@ -23,6 +27,7 @@ type DataSetConfig = {
 
 type CollectiveFileOutput = {
   proteinImageFile?: File;
+  proteinImageData?: File;
   cellSegmentationFile?: File;
   transcriptFile?: File;
   brightfieldImagesFiles?: File[];
@@ -45,6 +50,8 @@ export const useFileHandler = () => {
       let missingFileError = "";
       if (!configFile.protein_image_src) {
         missingFileError = "protein image file";
+      } else if (!configFile.protein_image_data_src) {
+        missingFileError = "protein image data config";
       } else if (!configFile.he_images_src) {
         missingFileError = "H&E image file";
       } else if (!configFile.transcript_src) {
@@ -186,6 +193,8 @@ export const useFileHandler = () => {
           outputFiles.cellSegmentationFile = file;
         } else if (file.name.endsWith(datasetConfig.protein_image_src)) {
           outputFiles.proteinImageFile = file;
+        } else if (file.name.endsWith(datasetConfig.protein_image_data_src)) {
+          outputFiles.proteinImageData = file;
         } else if (!file.name.endsWith(".json")) {
           console.warn(`Unknown file: ${file.name}`);
         }
@@ -206,6 +215,30 @@ export const useFileHandler = () => {
             outputFiles.proteinImageFile.name.split("/").pop() || "unknown",
         },
       });
+
+      if (!outputFiles.proteinImageData) {
+        enqueueSnackbar({
+          message: "Missing protein image data JSON",
+          variant: "warning",
+        });
+      } else {
+        try {
+          const generalDetails: GeneralDetailsType = {
+            fileName:
+              outputFiles.proteinImageData.name.split("/").pop() || "unknown",
+            data: JSON.parse(await outputFiles.proteinImageData.text()),
+          };
+
+          useViewerStore.getState().setGeneralDetails(generalDetails);
+        } catch (error) {
+          enqueueSnackbar({
+            message:
+              "Error parsing protein image data JSON file: " +
+              (error as Error).message,
+            variant: "error",
+          });
+        }
+      }
 
       if (!outputFiles.transcriptFile) {
         enqueueSnackbar({
