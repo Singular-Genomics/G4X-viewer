@@ -24,7 +24,7 @@ type DataSetConfig = {
 type CollectiveFileOutput = {
   proteinImageFile?: File;
   cellSegmentationFile?: File;
-  transcriptFiles?: File[];
+  transcriptFile?: File;
   brightfieldImagesFiles?: File[];
 };
 
@@ -103,43 +103,70 @@ export const useFileHandler = () => {
     [enqueueSnackbar]
   );
 
-  const parseTranscriptFiles = useCallback(
-    async (files: File[]) => {
-      const { setFiles, setFileName, setLayerConfig, setColormapConfig } =
-        useBinaryFilesStore.getState();
-      const configFile = files.find((f: File) =>
-        f.name.endsWith("config.json")
-      );
+  const processTranscriptTarFile = useCallback(
+    async (tarFile: File) => {
+      setLoading(true);
+      const worker = new TarWorker();
 
-      if (configFile) {
-        const parsedConfig = (await parseJsonFromFile(
-          configFile
-        )) as ConfigFileData;
-        const { color_map, ...layerConfig } = parsedConfig;
-        if (!color_map) {
-          enqueueSnackbar({
-            message:
-              "Missing colormap config, cell segmentation filtering will be unavailable",
-            variant: "warning",
-          });
+      worker.onmessage = async (e) => {
+        if (e.data.progress) {
+          setProgress(e.data.progress);
         }
 
-        setLayerConfig(layerConfig);
-        setColormapConfig(color_map);
-        useTranscriptLayerStore.setState({
-          maxVisibleLayers: layerConfig.layers,
+        if (e.data.files && e.data.completed) {
+          const extractedFiles = e.data.files;
+          const configFile = extractedFiles.find((f: File) =>
+            f.name.endsWith("config.json")
+          );
+
+          if (configFile) {
+            const parsedConfig = (await parseJsonFromFile(
+              configFile
+            )) as ConfigFileData;
+            const { color_map, ...layerConfig } = parsedConfig;
+            if (!color_map) {
+              enqueueSnackbar({
+                message:
+                  "Missing colormap config, cell segmentation filtering will be unavailable",
+                variant: "warning",
+              });
+            }
+
+            const { setLayerConfig, setColormapConfig, setFiles, setFileName } =
+              useBinaryFilesStore.getState();
+            setLayerConfig(layerConfig);
+            setColormapConfig(color_map);
+            setFiles(extractedFiles);
+            useTranscriptLayerStore.setState({
+              maxVisibleLayers: layerConfig.layers,
+            });
+
+            // Extract filename from the tar file
+            const tarFileName = tarFile.name.split("/").pop() || "unknown";
+            setFileName(tarFileName);
+          } else {
+            enqueueSnackbar({
+              message: "Missing transcript config file in TAR archive",
+              variant: "error",
+            });
+          }
+
+          setLoading(false);
+          worker.terminate();
+        }
+      };
+
+      worker.onerror = (error: ErrorEvent) => {
+        console.error(error);
+        enqueueSnackbar({
+          message: `Error unpacking transcript TAR file`,
+          variant: "error",
         });
-      }
+        setLoading(false);
+        worker.terminate();
+      };
 
-      let fileName = "unknown";
-      if (files.length) {
-        const nameSegments = files[0].name.split("/");
-        fileName =
-          nameSegments.length >= 2 ? `${nameSegments[1]}.tar` : "unknown";
-      }
-
-      setFiles(files);
-      setFileName(fileName);
+      worker.postMessage(tarFile);
     },
     [enqueueSnackbar]
   );
@@ -147,13 +174,12 @@ export const useFileHandler = () => {
   const parseCollectiveFileData = useCallback(
     async (inputFiles: File[], datasetConfig: DataSetConfig) => {
       const outputFiles: CollectiveFileOutput = {
-        transcriptFiles: [],
         brightfieldImagesFiles: [],
       };
 
       inputFiles.forEach((file) => {
-        if (file.name.includes(datasetConfig.transcript_src)) {
-          outputFiles.transcriptFiles?.push(file);
+        if (file.name.endsWith(datasetConfig.transcript_src)) {
+          outputFiles.transcriptFile = file;
         } else if (file.name.includes(datasetConfig.he_images_src)) {
           outputFiles.brightfieldImagesFiles?.push(file);
         } else if (file.name.endsWith(datasetConfig.cell_segmentation_src)) {
@@ -181,13 +207,14 @@ export const useFileHandler = () => {
         },
       });
 
-      if (!outputFiles.transcriptFiles?.length) {
+      if (!outputFiles.transcriptFile) {
         enqueueSnackbar({
-          message: "Missing transcript files",
+          message: "Missing transcript file",
           variant: "warning",
         });
       } else {
-        await parseTranscriptFiles(outputFiles.transcriptFiles);
+        // Process the transcript tar file
+        await processTranscriptTarFile(outputFiles.transcriptFile);
       }
 
       if (!outputFiles.cellSegmentationFile) {
@@ -200,7 +227,7 @@ export const useFileHandler = () => {
       }
 
       const { setAvailableImages } = useBrightfieldImagesStore.getState();
-      if (!outputFiles.brightfieldImagesFiles) {
+      if (!outputFiles.brightfieldImagesFiles?.length) {
         enqueueSnackbar({
           message: "Missing H&E images source",
           variant: "warning",
@@ -209,7 +236,7 @@ export const useFileHandler = () => {
         setAvailableImages(outputFiles.brightfieldImagesFiles);
       }
     },
-    [enqueueSnackbar, parseTranscriptFiles, parseSegmentationFile]
+    [enqueueSnackbar, processTranscriptTarFile, parseSegmentationFile]
   );
 
   const handleWorkerProgress = async (e: any) => {
