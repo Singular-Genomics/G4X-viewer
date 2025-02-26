@@ -7,6 +7,7 @@ import CollectiveDropzoneButton from "./CollectiveDropzoneButton/CollectiveDropz
 import { UploadSelectSwitch } from "./UploadSelectSwitch/UploadSelectSwitch";
 import { UploadMode } from "./UploadSelectSwitch/UploadSelectSwitch.types";
 import { GxModal } from "../../../shared/components/GxModal";
+import GeneralDetailsDropzoneButton from "./GeneralDetailsDropzoneButton/GeneralDetailsDropzoneButton";
 
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,6 +42,7 @@ export const SourceFilesSection = () => {
         return (
           <Box sx={sx.sourceFilesSectionContainer}>
             <ImageDropzoneButton />
+            <GeneralDetailsDropzoneButton />
             <TranscriptDropzoneButton setLockSwitch={handleLockSwitch} />
             <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
           </Box>
