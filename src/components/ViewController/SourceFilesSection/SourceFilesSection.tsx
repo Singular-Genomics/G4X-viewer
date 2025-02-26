@@ -41,27 +41,30 @@ export const SourceFilesSection = () => {
     setUploadMode(uploadMode);
   }, []);
 
-  const getUploadComponents = useCallback((uploadMode: UploadMode) => {
-    switch (uploadMode) {
-      case UPLOAD_MODES.MULTI_FILE:
-        return (
-          <Box sx={sx.sourceFilesSectionContainer}>
-            <ImageDropzoneButton />
-            <GeneralDetailsDropzoneButton />
-            <TranscriptDropzoneButton setLockSwitch={handleLockSwitch} />
-            <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
-          </Box>
-        );
-      case UPLOAD_MODES.SINGLE_FILE:
-        return (
-          <Box>
-            <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
-          </Box>
-        );
-      default:
-        return null;
-    }
-  }, []);
+  const getUploadComponents = useCallback(
+    (uploadMode: UploadMode) => {
+      switch (uploadMode) {
+        case UPLOAD_MODES.MULTI_FILE:
+          return (
+            <Box sx={sx.sourceFilesSectionContainer}>
+              <ImageDropzoneButton />
+              <GeneralDetailsDropzoneButton />
+              <TranscriptDropzoneButton setLockSwitch={handleLockSwitch} />
+              <CellMasksDropzoneButton setLockSwitch={handleLockSwitch} />
+            </Box>
+          );
+        case UPLOAD_MODES.SINGLE_FILE:
+          return (
+            <Box>
+              <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
+            </Box>
+          );
+        default:
+          return null;
+      }
+    },
+    [handleLockSwitch]
+  );
 
   return (
     <>
