@@ -1,4 +1,4 @@
-import { PickingInfo } from "@deck.gl/core/typed";
+import { PickingInfo } from "@deck.gl/core";
 import { LayerConfig } from "../../stores/BinaryFilesStore";
 import { GeneNameFilterType } from "../../stores/TranscriptLayerStore";
 

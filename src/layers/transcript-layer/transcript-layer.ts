@@ -3,13 +3,9 @@ import {
   TranscriptLayerProps,
   getTileDataProps,
 } from "./transcript-layer.types";
-import { CompositeLayer } from "@deck.gl/core/typed";
-import {
-  PolygonLayer,
-  TextLayer,
-  ScatterplotLayer,
-} from "@deck.gl/layers/typed";
-import { TileLayer } from "@deck.gl/geo-layers/typed";
+import { CompositeLayer } from "@deck.gl/core";
+import { PolygonLayer, TextLayer, ScatterplotLayer } from "@deck.gl/layers";
+import { TileLayer } from "@deck.gl/geo-layers";
 
 import * as protobuf from "protobufjs";
 import { TranscriptSchema } from "./transcript-schema";
