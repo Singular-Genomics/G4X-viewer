@@ -33,6 +33,7 @@ export function TooltipCellMaskContent({
 }) {
   const tooltipItems: TooltipContentItem[] = [
     { label: "cell id", value: data.cellId },
+    { label: "cluster id", value: data.clusterId },
     {
       label: "color",
       value: `R ${data.color[0]} G ${data.color[1]} B ${data.color[2]}`,

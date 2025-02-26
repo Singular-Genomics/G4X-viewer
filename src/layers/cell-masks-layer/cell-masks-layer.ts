@@ -24,9 +24,8 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     if (this.props.cellFilters === "all") {
       cellsData = cellMasksData;
     } else {
-      [cellsData, outlierCellsData] = partition(
-        cellMasksData,
-        (data) => this.props.cellFilters.includes(data.cellName) //TODO: Update the key name.
+      [cellsData, outlierCellsData] = partition(cellMasksData, (data) =>
+        this.props.cellFilters.includes(data.clusterId)
       );
     }
 
