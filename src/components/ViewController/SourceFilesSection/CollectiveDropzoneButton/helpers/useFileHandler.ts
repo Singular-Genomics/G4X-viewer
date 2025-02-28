@@ -16,6 +16,7 @@ import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerSt
 import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { useBrightfieldImagesStore } from "../../../../../stores/BrightfieldImagesStore";
 import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-masks-schema";
+import { getMissingFilesContent } from "./helpers";
 
 type DataSetConfig = {
   protein_image_src: string;
@@ -47,23 +48,40 @@ export const useFileHandler = () => {
 
   const verifyDataSetConfig = useCallback(
     (configFile: DataSetConfig): boolean => {
-      let missingFileError = "";
+      const missingFileErrors = [];
       if (!configFile.protein_image_src) {
-        missingFileError = "protein image file";
-      } else if (!configFile.protein_image_data_src) {
-        missingFileError = "protein image data config";
-      } else if (!configFile.he_images_src) {
-        missingFileError = "H&E image file";
-      } else if (!configFile.transcript_src) {
-        missingFileError = "transcripts directory";
-      } else if (!configFile.cell_segmentation_src) {
-        missingFileError = "cell segmentation file";
+        missingFileErrors.push("Protein image file");
+      }
+      if (!configFile.protein_image_data_src) {
+        missingFileErrors.push("Protein image data config");
+      }
+      if (!configFile.he_images_src) {
+        missingFileErrors.push("H&E images directory");
+      }
+      if (!configFile.transcript_src) {
+        missingFileErrors.push("Transcripts TAR file");
+      }
+      if (!configFile.cell_segmentation_src) {
+        missingFileErrors.push("Cell segmentation BIN file");
       }
 
-      if (missingFileError) {
-        enqueueSnackbar({
-          message: `Data set is missing ${missingFileError} source name in the config file`,
-        });
+      if (missingFileErrors.length > 0) {
+        if (missingFileErrors.length === 1) {
+          enqueueSnackbar({
+            variant: "gxSnackbar",
+            titleMode: "error",
+            message: `Data set config is missing ${missingFileErrors[0]} source definition`,
+            persist: true,
+          });
+        } else {
+          enqueueSnackbar({
+            variant: "gxSnackbar",
+            titleMode: "error",
+            message: `Data set config is missing ${missingFileErrors.length} source definitions.`,
+            customContent: getMissingFilesContent(missingFileErrors),
+            persist: true,
+          });
+        }
         return false;
       }
 
@@ -86,7 +104,8 @@ export const useFileHandler = () => {
           enqueueSnackbar({
             message:
               "Missing colormap config, transcript metadata filtering will be unavailable",
-            variant: "warning",
+            variant: "gxSnackbar",
+            titleMode: "warning",
           });
         }
 
@@ -135,7 +154,8 @@ export const useFileHandler = () => {
               enqueueSnackbar({
                 message:
                   "Missing colormap config, cell segmentation filtering will be unavailable",
-                variant: "warning",
+                variant: "gxSnackbar",
+                titleMode: "warning",
               });
             }
 
@@ -154,7 +174,8 @@ export const useFileHandler = () => {
           } else {
             enqueueSnackbar({
               message: "Missing transcript config file in TAR archive",
-              variant: "error",
+              variant: "gxSnackbar",
+              titleMode: "error",
             });
           }
 
@@ -167,7 +188,8 @@ export const useFileHandler = () => {
         console.error(error);
         enqueueSnackbar({
           message: `Error unpacking transcript TAR file`,
-          variant: "error",
+          variant: "gxSnackbar",
+          titleMode: "error",
         });
         setLoading(false);
         worker.terminate();
@@ -203,7 +225,8 @@ export const useFileHandler = () => {
       if (!outputFiles.proteinImageFile) {
         enqueueSnackbar({
           message: "Missing protein image file",
-          variant: "error",
+          variant: "gxSnackbar",
+          titleMode: "error",
         });
         return false;
       }
@@ -216,11 +239,10 @@ export const useFileHandler = () => {
         },
       });
 
+      const parsingWarnings = [];
+
       if (!outputFiles.proteinImageData) {
-        enqueueSnackbar({
-          message: "Missing protein image data JSON",
-          variant: "warning",
-        });
+        parsingWarnings.push("Missing protein image data JSON");
       } else {
         try {
           const generalDetails: GeneralDetailsType = {
@@ -235,38 +257,42 @@ export const useFileHandler = () => {
             message:
               "Error parsing protein image data JSON file: " +
               (error as Error).message,
-            variant: "error",
+            variant: "gxSnackbar",
+            titleMode: "error",
           });
         }
       }
 
       if (!outputFiles.transcriptFile) {
-        enqueueSnackbar({
-          message: "Missing transcript file",
-          variant: "warning",
-        });
+        parsingWarnings.push("Missing transcript file");
       } else {
         // Process the transcript tar file
         await processTranscriptTarFile(outputFiles.transcriptFile);
       }
 
       if (!outputFiles.cellSegmentationFile) {
-        enqueueSnackbar({
-          message: "Missing cell segmentation file",
-          variant: "warning",
-        });
+        parsingWarnings.push("Missing cell segmentation file");
       } else {
         parseSegmentationFile(outputFiles.cellSegmentationFile);
       }
 
       const { setAvailableImages } = useBrightfieldImagesStore.getState();
       if (!outputFiles.brightfieldImagesFiles?.length) {
-        enqueueSnackbar({
-          message: "Missing H&E images source",
-          variant: "warning",
-        });
+        parsingWarnings.push("Missing H&E images source");
       } else {
         setAvailableImages(outputFiles.brightfieldImagesFiles);
+      }
+
+      if (parsingWarnings.length > 0) {
+        enqueueSnackbar(
+          `${parsingWarnings.length} missing files were skipped during parsing`,
+          {
+            persist: true,
+            customContent: getMissingFilesContent(parsingWarnings),
+            variant: "gxSnackbar",
+            titleMode: "warning",
+          }
+        );
       }
     },
     [enqueueSnackbar, processTranscriptTarFile, parseSegmentationFile]
@@ -285,7 +311,8 @@ export const useFileHandler = () => {
       if (!datasetConfig) {
         enqueueSnackbar({
           message: "Missing data set config file.",
-          variant: "error",
+          variant: "gxSnackbar",
+          titleMode: "error",
         });
       }
 
@@ -326,7 +353,8 @@ export const useFileHandler = () => {
       console.error(error);
       enqueueSnackbar({
         message: `Error unpacking ${file.type}`,
-        variant: "error",
+        variant: "gxSnackbar",
+        titleMode: "error",
       });
       setLoading(false);
       worker.terminate();
@@ -343,7 +371,8 @@ export const useFileHandler = () => {
     if (file.type !== "application/x-tar") {
       enqueueSnackbar({
         message: "File type not supported",
-        variant: "warning",
+        variant: "gxSnackbar",
+        titleMode: "warning",
       });
       return;
     }
