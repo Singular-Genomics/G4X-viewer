@@ -314,6 +314,9 @@ export const useFileHandler = () => {
           variant: "gxSnackbar",
           titleMode: "error",
         });
+        setLoading(false);
+        setCollectiveFileName("");
+        return;
       }
 
       const parsedDatasetConfig = (await parseJsonFromFile(
@@ -323,6 +326,7 @@ export const useFileHandler = () => {
       if (!verifyDataSetConfig(parsedDatasetConfig)) {
         console.error("Verification failed");
         setLoading(false);
+        setCollectiveFileName("");
         return;
       }
 
@@ -357,6 +361,7 @@ export const useFileHandler = () => {
         titleMode: "error",
       });
       setLoading(false);
+      setCollectiveFileName("");
       worker.terminate();
     };
 
