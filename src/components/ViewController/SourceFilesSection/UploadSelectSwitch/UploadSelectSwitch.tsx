@@ -60,7 +60,7 @@ const styles = (theme: Theme) => ({
       background: theme.palette.gx.mediumGrey[100],
     },
     "&.Mui-selected": {
-      background: theme.palette.gx.gradients.brand,
+      background: theme.palette.gx.gradients.brand(),
       color: theme.palette.gx.primary.white,
     },
   },

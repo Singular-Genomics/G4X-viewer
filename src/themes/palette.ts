@@ -36,12 +36,18 @@ export const colors: GxPalette = {
     info: "rgb(30, 103, 178)",
   },
   gradients: {
-    warning:
-      "linear-gradient(90deg, rgba(251,202,0,1) 0%, rgba(245,185,0,1) 100%)",
-    danger: "linear-gradient(90deg, rgba(251,0,0,1) 0%, rgba(135,0,0,1) 100%)",
-    info: "linear-gradient(90deg, rgba(0,102,251,1) 0%, rgba(0,77,189,1) 100%)",
-    brand:
-      "linear-gradient(90deg, rgba(0,177,164,1) 0%, rgba(0,151,140,1) 100%)",
+    default: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(63,68,71,1) 0%, rgba(30,30,30,1) 100%)`,
+    success: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(67,160,71,1) 0%, rgba(46,113,49,1) 100%)`,
+    warning: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(251,202,0,1) 0%, rgba(177,128,0,1) 100%)`,
+    danger: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(251,0,0,1) 0%, rgba(135,0,0,1) 100%)`,
+    info: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(0,102,251,1) 0%, rgba(0,52,127,1) 100%)`,
+    brand: (angle = 90) =>
+      `linear-gradient(${angle}deg, rgba(0,177,164,1) 0%, rgba(0,95,88,1) 100%)`,
   },
 };
 

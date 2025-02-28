@@ -28,8 +28,10 @@ export interface GxAccentColor {
 }
 
 export interface GxGradients {
-  warning: string;
-  danger: string;
-  info: string;
-  brand: string;
+  default: (angle?: number) => string;
+  warning: (angle?: number) => string;
+  danger: (angle?: number) => string;
+  info: (angle?: number) => string;
+  success: (angle?: number) => string;
+  brand: (angle?: number) => string;
 }
