@@ -157,6 +157,9 @@ export const useHEImageLayer = () => {
     loader: loader as any,
     dtype: dtype,
     opacity: isLayerVisible ? opacity : 0,
+    ...({
+      pickable: false,
+    } as any),
   });
 
   return heImageLayer;
