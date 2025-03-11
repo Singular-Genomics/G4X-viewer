@@ -1,6 +1,6 @@
-import { CompositeLayer } from "@deck.gl/core/typed";
+import { CompositeLayer } from "@deck.gl/core";
 import { CellMasksLayerProps } from "./cell-masks-layer.types";
-import { PolygonLayer } from "@deck.gl/layers/typed";
+import { PolygonLayer } from "@deck.gl/layers";
 import * as protobuf from "protobufjs";
 import { CellMasksSchema } from "./cell-masks-schema";
 import { partition } from "lodash";
