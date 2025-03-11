@@ -37,13 +37,13 @@ export const ImageInfo = () => {
 const styles = (theme: Theme) => ({
   footerWrapper: {
     position: "absolute",
-    right: 0,
-    bottom: 0,
+    right: 55,
+    bottom: 6,
     display: "flex",
     gap: "8px",
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    padding: "8px 20px 10px",
-    borderTopLeftRadius: "16px",
+    padding: "8px 14px 10px",
+    borderRadius: "10px",
   },
   footerText: {
     color: theme.palette.gx.primary.white,
