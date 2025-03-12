@@ -1,9 +1,5 @@
 ---
-name: Issue Template
-about: Template for reporting bugs, feature requests, or documentation issues
 title: ""
-labels: ""
-assignees: ""
 ---
 
 ## Issue Type
