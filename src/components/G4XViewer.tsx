@@ -26,6 +26,8 @@ export default function G4XViewer() {
   useProteinImage(source);
   useHEImage(heImageSource);
 
+  const isLoading = isViewerLoading || isImageLoading;
+
   return (
     <Box sx={sx.mainContainer}>
       <LogoBanner />
@@ -37,11 +39,13 @@ export default function G4XViewer() {
               <ImageInfo />
             </>
           ) : (
-            <Typography sx={sx.infoText} variant="h2">
-              Please upload an image file to view.
-            </Typography>
+            !isLoading && (
+              <Typography sx={sx.infoText} variant="h2">
+                Please upload an image file to view.
+              </Typography>
+            )
           )}
-          {(isViewerLoading || isImageLoading) && (
+          {isLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
               <Typography sx={sx.loadingText}>Loading Image...</Typography>
