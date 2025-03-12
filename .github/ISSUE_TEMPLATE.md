@@ -30,13 +30,13 @@ Clear and concise description of the issue or proposal.
    2. ...
    3. ...
 
-## Expected Behavior
-
-Describe what should happen.
-
 ## Current Behavior
 
 Describe what currently happens (for bugs).
+
+## Expected Behavior
+
+Describe what should happen.
 
 ## Additional Information
 
