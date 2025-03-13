@@ -50,13 +50,14 @@ const styles = (theme: Theme) => ({
     },
     "& .MuiInputBase-root::after": {
       borderBottom: "2px solid",
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.gx.accent.greenBlue,
     },
   },
   dropDownButton: {
     borderStyle: "dashed",
     width: "100%",
     height: "40px",
+    fontWeight: 700,
     borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
     "&:hover": {

@@ -4,6 +4,7 @@ export interface GxPalette {
   mediumGrey: GxTonalGreyColor;
   lightGrey: GxTonalGreyColor;
   accent: GxAccentColor;
+  gradients: GxGradients;
 }
 
 export interface GxPrimaryColor {
@@ -24,4 +25,13 @@ export interface GxAccentColor {
   darkGold: string;
   error: string;
   info: string;
+}
+
+export interface GxGradients {
+  default: (angle?: number) => string;
+  warning: (angle?: number) => string;
+  danger: (angle?: number) => string;
+  info: (angle?: number) => string;
+  success: (angle?: number) => string;
+  brand: (angle?: number) => string;
 }

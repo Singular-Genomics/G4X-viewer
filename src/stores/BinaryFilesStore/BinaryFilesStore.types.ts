@@ -5,6 +5,7 @@ export type BinaryFilesStoreValues = {
   files: File[];
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
+  collectiveFileName: string;
 };
 
 export type BinaryFilesStoreMethods = {
@@ -12,6 +13,7 @@ export type BinaryFilesStoreMethods = {
   setFileName: (newFileName: string) => void;
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
+  setCollectiveFileName: (name: string) => void;
   reset: () => void;
 };
 

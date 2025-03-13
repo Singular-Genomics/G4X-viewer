@@ -8,8 +8,8 @@ import { useShallow } from "zustand/react/shallow";
 import { GxLoader } from "../shared/components/GxLoader";
 import { useProteinImage } from "../hooks/useProteinImage.hook";
 import { ImageInfo } from "./ImageInfo/ImageInfo";
-import { useHEImageStore } from "../stores/HEImageStore";
-import { useHEImage } from "../hooks/useHEImage.hook";
+import { useBrightfieldImage } from "../hooks/useBrightfieldImage.hook";
+import { useBrightfieldImagesStore } from "../stores/BrightfieldImagesStore";
 import { DetailsPopup } from "./DetailsPopup";
 
 export default function G4XViewer() {
@@ -19,12 +19,12 @@ export default function G4XViewer() {
   const [source, isViewerLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading])
   );
-  const [heImageSource, isImageLoading] = useHEImageStore(
-    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
   );
 
   useProteinImage(source);
-  useHEImage(heImageSource);
+  useBrightfieldImage(brightfieldImageSource);
 
   return (
     <Box sx={sx.mainContainer}>
@@ -37,9 +37,11 @@ export default function G4XViewer() {
               <ImageInfo />
             </>
           ) : (
-            <Typography sx={sx.infoText} variant="h2">
-              Please upload an image file to view.
-            </Typography>
+            !isImageLoading && (
+              <Typography sx={sx.infoText} variant="h2">
+                Please upload an image file to view.
+              </Typography>
+            )
           )}
           {(isViewerLoading || isImageLoading) && (
             <Box sx={sx.loaderContainer}>
