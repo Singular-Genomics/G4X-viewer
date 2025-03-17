@@ -8,9 +8,31 @@ export const GxDropzoneButton = ({
   labelText,
   buttonText,
   disabled = false,
+  isDragActive,
+  isDragAccept,
+  isDragReject,
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+
+  let dynamicButtonText = buttonText;
+
+  if (isDragActive) {
+    if (isDragAccept) {
+      dynamicButtonText = "Drop file here";
+    } else if (isDragReject) {
+      dynamicButtonText = "File type not accepted";
+    } else {
+      dynamicButtonText = "Drop to upload";
+    }
+  }
+
+  const buttonStyle = {
+    ...sx.dropDownButton,
+    ...(isDragActive && sx.dropzoneActive),
+    ...(isDragActive && isDragAccept && sx.dropzoneAccept),
+    ...(isDragActive && isDragReject && sx.dropzoneReject),
+  };
 
   return (
     <Box>
@@ -27,13 +49,13 @@ export const GxDropzoneButton = ({
       <Button
         fullWidth
         variant="outlined"
-        sx={sx.dropDownButton}
+        sx={buttonStyle}
         size="small"
         disabled={disabled}
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        {buttonText}
+        {dynamicButtonText}
       </Button>
     </Box>
   );
@@ -50,7 +72,7 @@ const styles = (theme: Theme) => ({
     },
     "& .MuiInputBase-root::after": {
       borderBottom: "2px solid",
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.gx.accent.greenBlue,
     },
   },
   dropDownButton: {
@@ -63,5 +85,21 @@ const styles = (theme: Theme) => ({
       borderColor: theme.palette.gx.accent.greenBlue,
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
     },
+    transition: "all 0.15s ease",
+  },
+  dropzoneActive: {
+    borderStyle: "solid",
+    borderWidth: "2px",
+    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1),
+  },
+  dropzoneAccept: {
+    borderColor: theme.palette.success.main,
+    color: theme.palette.success.main,
+    backgroundColor: alpha(theme.palette.success.main, 0.1),
+  },
+  dropzoneReject: {
+    borderColor: theme.palette.error.main,
+    color: theme.palette.error.main,
+    backgroundColor: alpha(theme.palette.error.main, 0.1),
   },
 });

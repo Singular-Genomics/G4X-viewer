@@ -95,7 +95,7 @@ export const useFileHandler = () => {
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
       "application/zip": [".zip"],
@@ -104,8 +104,7 @@ export const useFileHandler = () => {
   });
 
   return {
-    getRootProps,
-    getInputProps,
+    dropzoneProps,
     loading,
     progress,
   };

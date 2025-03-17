@@ -31,15 +31,12 @@ export const useHEImageHandler = () => {
     useHEImageStore.setState({ heImageSource: newSource });
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
       "image/tiff": [".tif", ".tiff"],
     },
   });
 
-  return {
-    getRootProps,
-    getInputProps,
-  };
+  return dropzoneProps;
 };
