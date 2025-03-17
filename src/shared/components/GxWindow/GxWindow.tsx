@@ -1,5 +1,11 @@
 import { Box, IconButton, Theme, useTheme } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { GxWindowProps } from "./GxWindow.types";
 
@@ -7,10 +13,22 @@ export const GxWindow = ({
   children,
   title,
   boundries,
+  initialPosition = "center",
   onClose,
 }: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
   const sx = styles(theme);
+
+  const windowContainer = useMemo(
+    () =>
+      boundries || {
+        x: window.pageXOffset,
+        y: window.pageYOffset,
+        width: window.innerWidth,
+        height: window.innerHeight,
+      },
+    [boundries]
+  );
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -18,32 +36,71 @@ export const GxWindow = ({
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const windowEl = divRef.current;
+    if (windowEl) {
+      const windowSize = windowEl?.getBoundingClientRect();
+      let newPosX = 0;
+      let newPosY = 0;
+
+      if (initialPosition === "center") {
+        newPosX = windowContainer.width / 2 - windowSize.width;
+        newPosY = windowContainer.height / 2 - windowSize.height;
+      } else {
+        if (/top/gi.test(initialPosition)) {
+          newPosY = windowContainer.y;
+        } else if (/bottom/gi.test(initialPosition)) {
+          newPosY = windowContainer.height - windowSize.height;
+        } else {
+          newPosY = windowContainer.height / 2 - windowSize.height;
+        }
+
+        if (/left/gi.test(initialPosition)) {
+          newPosX = windowContainer.x;
+        } else if (/right/gi.test(initialPosition)) {
+          newPosX = windowContainer.width - windowSize.width;
+        } else {
+          newPosX = windowContainer.width / 2 - windowSize.width;
+        }
+      }
+
+      setPosition({
+        x: newPosX,
+        y: newPosY,
+      });
+
+      setTimeout(() => {
+        windowEl.style.visibility = "visible";
+      }, 0);
+    }
+    //eslint-disable-next-line
+  }, []);
+
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.preventDefault();
-      if (divRef.current) {
-        const rect = divRef.current.getBoundingClientRect();
+      const windowEl = divRef.current;
+      if (windowEl) {
+        const rect = windowEl.getBoundingClientRect();
         dragOffset.current.x = event.clientX - rect.left;
         dragOffset.current.y = event.clientY - rect.top;
         setIsDragging(true);
       }
     },
-    //eslint-disable-next-line
-    [divRef.current]
+    []
   );
 
-  const handleMouseMove = (e: MouseEvent) => {
-    e.preventDefault();
-    if (!isDragging || !divRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      if (!isDragging || !divRef.current) return;
 
-    const windowEl = divRef.current;
-    const parentEl = windowEl.parentElement;
-    let newXPos = e.clientX - dragOffset.current.x;
-    let newYPos = e.clientY - dragOffset.current.y;
+      let newXPos = e.clientX - dragOffset.current.x;
+      let newYPos = e.clientY - dragOffset.current.y;
 
-    const windowSize = windowEl.getBoundingClientRect();
-    const windowContainer = boundries || parentEl?.getBoundingClientRect();
-    if (windowContainer) {
+      const windowEl = divRef.current;
+      const windowSize = windowEl.getBoundingClientRect();
+
       if (newXPos < windowContainer.x) {
         newXPos = windowContainer.x;
       } else if (newXPos + windowSize.width > windowContainer.width) {
@@ -55,15 +112,14 @@ export const GxWindow = ({
       } else if (newYPos + windowSize.height > windowContainer.height) {
         newYPos = windowContainer.height - windowSize.height;
       }
-    }
 
-    setPosition({
-      x: newXPos,
-      y: newYPos,
-    });
-
-    e.preventDefault();
-  };
+      setPosition({
+        x: newXPos,
+        y: newYPos,
+      });
+    },
+    [isDragging, windowContainer]
+  );
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -107,6 +163,7 @@ export const GxWindow = ({
 
 const styles = (theme: Theme) => ({
   windowContainer: (posX: number, posY: number, isDragging: boolean) => ({
+    visibility: "hidden",
     borderRadius: "8px 8px 0px 0px",
     position: "absolute",
     backgroundColor: theme.palette.gx.mediumGrey[500],
@@ -133,7 +190,7 @@ const styles = (theme: Theme) => ({
     display: "flex",
     alignItems: "center",
     background: theme.palette.gx.gradients.brand(),
-    paddingInline: "4px",
+    paddingInline: "8px",
     borderTop: "1px solid",
     borderBottom: "1px solid",
     borderColor: theme.palette.gx.primary.black,
