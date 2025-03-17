@@ -17,8 +17,6 @@ export const usePointFiltersTableColumns =
         .split(" ")
         .map(Number);
 
-      console.log(value, parsedValue);
-
       return (cellValue) =>
         parsedValue.every((value) =>
           (cellValue as Array<number>).includes(value)
