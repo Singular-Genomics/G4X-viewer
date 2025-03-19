@@ -5,12 +5,11 @@ export type TooltipStoreValues = {
   visible: boolean;
   type?: TooltipType;
   object?: any;
-}
+};
 
 export type TooltipType = 'Transcript' | 'CellMask';
 
 type Position = {
-  x: number,
-  y: number,
-}
-
+  x: number;
+  y: number;
+};
