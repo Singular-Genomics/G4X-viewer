@@ -67,5 +67,5 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
       contrastLimits: newContrastLimits,
       isImageLoading: false
     });
-  }, [loader, source, isLoaderCreated]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loader, source, isLoaderCreated]);
 };
