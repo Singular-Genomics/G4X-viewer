@@ -1,5 +1,5 @@
-import {} from "@hms-dbmi/viv";
-import { SelectionsType } from "../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types";
+import {} from '@hms-dbmi/viv';
+import { SelectionsType } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter.types';
 
 export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 
@@ -17,6 +17,7 @@ export type ViewerStoreValues = {
   channelOptions: string[];
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
+  generalDetails: GeneralDetailsType | null;
   pyramidResolution: number;
   viewportWidth: number;
   viewportHeight: number;
@@ -24,12 +25,14 @@ export type ViewerStoreValues = {
 };
 
 export type ViewerStoreMethods = {
+  reset: () => void;
   toggleOverview: () => void;
   toggleLens: () => void;
   onViewportLoad: () => void;
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;
   removeIsChannelLoading: (index: number) => void;
+  setGeneralDetails: (details: GeneralDetailsType) => void;
 };
 
 export type ViewerSourceType = {
@@ -41,4 +44,9 @@ export type ViewerSourceType = {
 export type ViewerHoverCoordinates = {
   x: string;
   y: string;
+};
+
+export type GeneralDetailsType = {
+  fileName: string;
+  data: Record<string, any>;
 };

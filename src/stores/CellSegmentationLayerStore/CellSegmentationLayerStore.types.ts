@@ -1,5 +1,4 @@
-export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues &
-  CellSegmentationLayerStoreMethods;
+export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: Uint8Array | null;
@@ -26,6 +25,6 @@ export type CellSegmentationLayerStoreMethods = {
 };
 
 export type CellSegmentationColormapEntry = {
-  cellName: string;
+  clusterId: string;
   color: number[];
 };
