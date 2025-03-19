@@ -1,11 +1,11 @@
-import { Box, Typography } from '@mui/material';
-import { OverviewToggle } from './OverviewToggle';
-import { useViewerStore } from '../../../stores/ViewerStore';
-import { LensToggle } from './LensToggle';
-import { ChannelControllers } from './ChannelControllers';
-import { AddChannel } from './ChannelControllers/AddChannel';
-import { ColormapSelector } from './ColormapSelector';
-import { useChannelsStore } from '../../../stores/ChannelsStore';
+import { Box, Typography } from "@mui/material";
+import { OverviewToggle } from "./OverviewToggle";
+import { useViewerStore } from "../../../stores/ViewerStore";
+import { LensToggle } from "./LensToggle";
+import { ChannelControllers } from "./ChannelControllers";
+import { AddChannel } from "./ChannelControllers/AddChannel";
+import { ColormapSelector } from "./ColormapSelector";
+import { useChannelsStore } from "../../../stores/ChannelsStore";
 
 export const ChannelsSettingsSection = () => {
   const loader = useChannelsStore().getLoader();
@@ -20,7 +20,7 @@ export const ChannelsSettingsSection = () => {
       </Box>
       <Box sx={sx.togglesWrapper}>
         <OverviewToggle />
-        {!colormap && shape[labels.indexOf('c')] > 1 && <LensToggle />}
+        {!colormap && shape[labels.indexOf("c")] > 1 && <LensToggle />}
       </Box>
       <Box>
         <Typography sx={sx.controlsTitle}>Channel Controls</Typography>
@@ -33,11 +33,11 @@ export const ChannelsSettingsSection = () => {
 
 const sx = {
   togglesWrapper: {
-    padding: '8px'
+    padding: "8px",
   },
   controlsTitle: {
     fontWeight: 700,
-    paddingLeft: '8px',
-    marginBottom: '8px'
-  }
+    paddingLeft: "8px",
+    marginBottom: "8px",
+  },
 };

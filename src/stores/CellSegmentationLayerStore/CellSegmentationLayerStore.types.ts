@@ -1,4 +1,5 @@
-export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
+export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues &
+  CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: Uint8Array | null;

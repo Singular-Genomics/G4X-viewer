@@ -1,17 +1,22 @@
-import { Box, Theme, Tooltip, tooltipClasses, Typography } from '@mui/material';
-import { GxSlider } from '../../../../../shared/components/GxSlider';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
-import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
-import { useShallow } from 'zustand/react/shallow';
-import { triggerViewerRerender } from '../AdvancedViewOptions.helpers';
-import InfoIcon from '@mui/icons-material/Info';
+import { Box, Theme, Tooltip, tooltipClasses, Typography } from "@mui/material";
+import { GxSlider } from "../../../../../shared/components/GxSlider";
+import { useBinaryFilesStore } from "../../../../../stores/BinaryFilesStore";
+import {
+  MaxLayerSliderMark,
+  MaxLayerSliderProps,
+} from "./MaxLayerSlider.types";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
+import { useShallow } from "zustand/react/shallow";
+import { triggerViewerRerender } from "../AdvancedViewOptions.helpers";
+import InfoIcon from "@mui/icons-material/Info";
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const [sliderValuer, setSliderValue] = useState(0);
   const { layers } = useBinaryFilesStore((store) => store.layerConfig);
-  const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
+  const [maxVisibleLayers] = useTranscriptLayerStore(
+    useShallow((store) => [store.maxVisibleLayers])
+  );
 
   useEffect(() => {
     if (maxVisibleLayers) {
@@ -23,7 +28,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     () =>
       Array.from({ length: layers + 1 }, (_, i) => ({
         value: i,
-        label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
+        label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`,
       })),
     [layers]
   );
@@ -38,7 +43,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
       <Box sx={sx.textWrapper}>
         <Typography
           sx={{
-            ...(disabled ? { color: 'rgb(128, 128, 128)' } : {})
+            ...(disabled ? { color: "rgb(128, 128, 128)" } : {}),
           }}
         >
           Percent of transcripts shown
@@ -52,7 +57,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
         >
           <InfoIcon
             sx={{
-              ...(disabled ? { color: 'rgb(128, 128, 128)' } : sx.infoIcon)
+              ...(disabled ? { color: "rgb(128, 128, 128)" } : sx.infoIcon),
             }}
           />
         </Tooltip>
@@ -64,7 +69,9 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
         marks={sliderMarks}
         value={sliderValuer}
         disabled={disabled}
-        onChangeCommitted={(_, newValue) => onMaxLayerChange(newValue as number)}
+        onChangeCommitted={(_, newValue) =>
+          onMaxLayerChange(newValue as number)
+        }
         onChange={(_, newValue) => setSliderValue(newValue as number)}
       />
     </Box>
@@ -73,19 +80,20 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 
 const sx = {
   sliderWrapper: {
-    gap: '24px',
-    padding: '0 24px 0 16px'
+    gap: "24px",
+    padding: "0 24px 0 16px",
   },
   textWrapper: {
-    display: 'flex',
-    gap: '8px'
+    display: "flex",
+    gap: "8px",
   },
   infoTooltip: {
-    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]: {
-      marginBottom: '0px'
-    }
+    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
+      {
+        marginBottom: "0px",
+      },
   },
   infoIcon: {
-    color: (theme: Theme) => theme.palette.gx.accent.info
-  }
+    color: (theme: Theme) => theme.palette.gx.accent.info,
+  },
 };

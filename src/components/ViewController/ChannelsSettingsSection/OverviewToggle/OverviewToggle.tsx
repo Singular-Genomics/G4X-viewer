@@ -1,7 +1,7 @@
-import { FormControlLabel } from '@mui/material';
-import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
-import { useShallow } from 'zustand/react/shallow';
-import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
+import { FormControlLabel } from "@mui/material";
+import { useViewerStore } from "../../../../stores/ViewerStore/ViewerStore";
+import { useShallow } from "zustand/react/shallow";
+import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const OverviewToggle = () => {
   const [isOverviewOn, toggleOverview] = useViewerStore(

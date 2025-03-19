@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { ViewerStore, ViewerStoreValues } from './ViewerStore.types';
+import { create } from "zustand";
+import { ViewerStore, ViewerStoreValues } from "./ViewerStore.types";
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
@@ -7,18 +7,18 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isOverviewOn: true,
   isLensOn: false,
   useColorMap: false,
-  colormap: '',
+  colormap: "",
   globalSelection: { c: 0, t: 0, z: 0 },
   lensSelection: 0,
   pixelValues: [],
-  hoverCoordinates: { x: '', y: '' },
+  hoverCoordinates: { x: "", y: "" },
   channelOptions: [],
   metadata: null,
   source: null,
   pyramidResolution: 0,
   viewportWidth: 0,
   viewportHeight: 0,
-  viewState: null
+  viewState: null,
 };
 
 export const useViewerStore = create<ViewerStore>((set) => ({
@@ -42,5 +42,5 @@ export const useViewerStore = create<ViewerStore>((set) => ({
       const newIsChannelLoading = [...state.isChannelLoading];
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
-    })
+    }),
 }));

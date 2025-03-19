@@ -1,10 +1,23 @@
-import { ClickAwayListener, IconButton, MenuList, Paper, Popper, Theme, Tooltip, alpha, useTheme } from '@mui/material';
-import { ChannelOptionsProps } from './ChannelOption.types';
-import { useRef, useState } from 'react';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { ColorPalette } from './ColorPalette';
+import {
+  ClickAwayListener,
+  IconButton,
+  MenuList,
+  Paper,
+  Popper,
+  Theme,
+  Tooltip,
+  alpha,
+  useTheme,
+} from "@mui/material";
+import { ChannelOptionsProps } from "./ChannelOption.types";
+import { useRef, useState } from "react";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { ColorPalette } from "./ColorPalette";
 
-export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsProps) => {
+export const ChannelOptions = ({
+  handleColorSelect,
+  disabled,
+}: ChannelOptionsProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -13,10 +26,7 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
 
   return (
     <>
-      <Tooltip
-        title="Channel options"
-        arrow
-      >
+      <Tooltip title="Channel options" arrow>
         <IconButton
           size="small"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -27,11 +37,7 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
           <MoreVertIcon fontSize="small" />
         </IconButton>
       </Tooltip>
-      <Popper
-        open={isOpen}
-        anchorEl={anchorRef.current}
-        placement="bottom-end"
-      >
+      <Popper open={isOpen} anchorEl={anchorRef.current} placement="bottom-end">
         <Paper sx={sx.channelOptionsPaper}>
           <ClickAwayListener onClickAway={() => setIsOpen((prev) => !prev)}>
             <MenuList>
@@ -47,12 +53,12 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
-    padding: '8px'
+    padding: "8px",
   },
   channelOptionsButton: {
-    '&:hover': {
+    "&:hover": {
       color: theme.palette.gx.accent.greenBlue,
-      backgroundColor: 'unset'
-    }
-  }
+      backgroundColor: "unset",
+    },
+  },
 });

@@ -1,5 +1,11 @@
 import { fromBlob, fromUrl } from 'geotiff';
-import { loadOmeTiff, loadBioformatsZarr, loadOmeZarr, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
+import {
+  loadOmeTiff,
+  loadBioformatsZarr,
+  loadOmeZarr,
+  loadMultiTiff,
+  getChannelStats,
+} from '@hms-dbmi/viv';
 
 export const GLOBAL_SLIDER_DIMENSION_FIELDS = /** @type {const} */ (['z', 't']);
 
@@ -12,7 +18,11 @@ const MAX_CHANNELS_FOR_SNACKBAR_WARNING = 40;
 function isOmeTiff(urlOrFile) {
   if (Array.isArray(urlOrFile)) return false; // local Zarr is array of File Objects
   const name = typeof urlOrFile === 'string' ? urlOrFile : urlOrFile.name;
-  return name.includes('ome.tiff') || name.includes('ome.tif') || name.includes('.companion.ome');
+  return (
+    name.includes('ome.tiff') ||
+    name.includes('ome.tif') ||
+    name.includes('.companion.ome')
+  );
 }
 
 /**
@@ -21,7 +31,7 @@ function isOmeTiff(urlOrFile) {
  */
 function getMultiTiffFilenames(urlOrFiles) {
   if (Array.isArray(urlOrFiles)) {
-    return urlOrFiles.map((f) => f.name);
+    return urlOrFiles.map(f => f.name);
   } else if (urlOrFiles instanceof File) {
     return [urlOrFiles.name];
   } else {
@@ -37,7 +47,8 @@ function isMultiTiff(urlOrFiles) {
   const filenames = getMultiTiffFilenames(urlOrFiles);
   for (const filename of filenames) {
     const lowerCaseName = filename.toLowerCase();
-    if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif'))) return false;
+    if (!(lowerCaseName.includes('.tiff') || lowerCaseName.includes('.tif')))
+      return false;
   }
   return true;
 }
@@ -101,7 +112,9 @@ async function getTotalImageCount(sources) {
     z: 0,
     t: 0
   });
-  const hasSubIFDs = Boolean(representativeGeoTiffImage?.fileDirectory?.SubIFDs);
+  const hasSubIFDs = Boolean(
+    representativeGeoTiffImage?.fileDirectory?.SubIFDs
+  );
 
   // Non-Bioformats6 pyramids use Image tags for pyramid levels and do not have offsets
   // built in to the format for them, hence the ternary.
@@ -146,7 +159,11 @@ async function fetchSingleFileOmeTiffOffsets(url) {
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
-export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
+export async function createLoader(
+  urlOrFile,
+  handleOffsetsNotFound,
+  handleLoaderError
+) {
   // If the loader fails to load, handle the error (show an error snackbar)
   // Otherwise load.
   try {
@@ -172,13 +189,19 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
 
       // Show a warning if the total number of channels/images exceeds a fixed amount.
       const totalImageCount = await getTotalImageCount(source);
-      if (!maybeOffsets && totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING) {
+      if (
+        !maybeOffsets &&
+        totalImageCount > MAX_CHANNELS_FOR_SNACKBAR_WARNING
+      ) {
         handleOffsetsNotFound(true);
       }
       return source;
     }
 
-    if (Array.isArray(urlOrFile) && typeof urlOrFile[0].arrayBuffer !== 'function') {
+    if (
+      Array.isArray(urlOrFile) &&
+      typeof urlOrFile[0].arrayBuffer !== 'function'
+    ) {
       throw new UnsupportedBrowserError(
         'Cannot upload a local Zarr or flat TIFF files with this browser. Try using Chrome, Firefox, or Microsoft Edge.'
       );
@@ -210,7 +233,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
       // extract metadata into OME-XML-like form
       const metadata = {
         Pixels: {
-          Channels: res.metadata.omero.channels.map((c) => ({
+          Channels: res.metadata.omero.channels.map(c => ({
             Name: c.label,
             SamplesPerPixel: 1
           }))
@@ -243,7 +266,7 @@ export function getNameFromUrl(url) {
  * @returns {{ [Key in typeof GLOBAL_SLIDER_DIMENSION_FIELDS[number]]?: number }
  */
 function getDefaultGlobalSelection(dimensions) {
-  const globalSelectableDimensions = dimensions.filter((d) =>
+  const globalSelectableDimensions = dimensions.filter(d =>
     GLOBAL_SLIDER_DIMENSION_FIELDS.includes(d.name.toLowerCase())
   );
 
@@ -259,7 +282,11 @@ function getDefaultGlobalSelection(dimensions) {
 function isGlobalOrXYDimension(name) {
   // normalize name to lowercase
   name = name.toLowerCase();
-  return name === 'x' || name === 'y' || GLOBAL_SLIDER_DIMENSION_FIELDS.includes(name);
+  return (
+    name === 'x' ||
+    name === 'y' ||
+    GLOBAL_SLIDER_DIMENSION_FIELDS.includes(name)
+  );
 }
 
 /**
@@ -298,14 +325,20 @@ export function buildDefaultSelection({ labels, shape }) {
   const globalSelection = getDefaultGlobalSelection(dimensions);
 
   // First non-global dimension with some sort of selectable values.
-  const firstNonGlobalSelectableDimension = dimensions.find((dim) => !isGlobalOrXYDimension(dim.name));
+  const firstNonGlobalSelectableDimension = dimensions.find(
+    dim => !isGlobalOrXYDimension(dim.name)
+  );
 
   // If there are no additional selectable dimensions, return the global selection.
   if (!firstNonGlobalSelectableDimension) {
     return [globalSelection];
   }
 
-  for (let i = 0; i < Math.min(4, firstNonGlobalSelectableDimension.size); i += 1) {
+  for (
+    let i = 0;
+    i < Math.min(4, firstNonGlobalSelectableDimension.size);
+    i += 1
+  ) {
     selection.push({
       [firstNonGlobalSelectableDimension.name]: i,
       ...globalSelection
@@ -337,9 +370,13 @@ export async function getSingleSelectionStats({ loader, selection }) {
 }
 
 export const getMultiSelectionStats = async ({ loader, selections }) => {
-  const stats = await Promise.all(selections.map((selection) => getSingleSelectionStats({ loader, selection })));
-  const domains = stats.map((stat) => stat.domain);
-  const contrastLimits = stats.map((stat) => stat.contrastLimits);
+  const stats = await Promise.all(
+    selections.map(selection =>
+      getSingleSelectionStats({ loader, selection })
+    )
+  );
+  const domains = stats.map(stat => stat.domain);
+  const contrastLimits = stats.map(stat => stat.contrastLimits);
   return { domains, contrastLimits };
 };
 
@@ -351,12 +388,15 @@ export function guessRgb({ Pixels }) {
   const { SamplesPerPixel } = Pixels.Channels[0];
 
   const is3Channel8Bit = numChannels === 3 && Pixels.Type === 'uint8';
-  const interleavedRgb = Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
+  const interleavedRgb =
+    Pixels.SizeC === 3 && numChannels === 1 && Pixels.Interleaved;
 
   return SamplesPerPixel === 3 || is3Channel8Bit || interleavedRgb;
 }
 export function truncateDecimalNumber(value, maxLength) {
   if (!value && value !== 0) return '';
   const stringValue = value.toString();
-  return stringValue.length > maxLength ? stringValue.substring(0, maxLength).replace(/\.$/, '') : stringValue;
+  return stringValue.length > maxLength
+    ? stringValue.substring(0, maxLength).replace(/\.$/, '')
+    : stringValue;
 }

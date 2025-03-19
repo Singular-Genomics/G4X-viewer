@@ -1,7 +1,7 @@
-import { useShallow } from 'zustand/react/shallow';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { FormControlLabel } from '@mui/material';
-import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
+import { useShallow } from "zustand/react/shallow";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { FormControlLabel } from "@mui/material";
+import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
 
 export const CellMaskLayerToggle = () => {
   const [isCellLayerOn, toggleCellLayer] = useCellSegmentationLayerStore(
@@ -15,9 +15,9 @@ export const CellMaskLayerToggle = () => {
         <GxCheckbox
           onChange={toggleCellLayer}
           checked={isCellLayerOn}
-          disableTouchRipple
+          disableTouchRipple 
         />
       }
     />
-  );
+  )
 };

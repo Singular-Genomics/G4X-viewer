@@ -7,7 +7,7 @@ export const GxLoader = function ({ version = 'dark' }: GxLoaderProps) {
     <Box sx={sx.wrapper}>
       <Box sx={sx.loader} />
       <Box sx={sx.logoWrapper}>
-        <GxLogo version={version} />
+        <GxLogo version={version} /> 
       </Box>
     </Box>
   );
@@ -58,7 +58,7 @@ const sx = {
   wrapper: {
     position: 'relative',
     width: '128px',
-    height: '128px'
+    height: '128px',
   },
   logoWrapper: {
     inset: 0,
@@ -66,7 +66,7 @@ const sx = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    animation: `${logoAnimations} 1s linear infinite`
+    animation: `${logoAnimations} 1s linear infinite`,
   },
   loader: {
     width: '128px',
@@ -80,7 +80,7 @@ const sx = {
       position: 'absolute',
       inset: '0',
       borderRadius: '50%',
-      border: '1px solid rgba(199, 199, 199, 1)'
+      border: '1px solid rgba(199, 199, 199, 1)',
     },
     '&:after': {
       content: '""',
@@ -89,7 +89,7 @@ const sx = {
       inset: '0',
       borderRadius: '50%',
       border: '1px solid rgba(0, 0, 0, 1)',
-      animation: `${loaderCircleAnimations} 2s linear infinite`
-    }
-  }
+      animation: `${loaderCircleAnimations} 2s linear infinite`,
+    },
+  },
 } as const;

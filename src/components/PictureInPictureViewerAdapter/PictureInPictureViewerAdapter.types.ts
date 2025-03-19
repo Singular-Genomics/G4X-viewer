@@ -1,4 +1,4 @@
-import { TiffPixelSource, ZarrPixelSource } from '@hms-dbmi/viv';
+import { TiffPixelSource, ZarrPixelSource } from "@hms-dbmi/viv";
 
 export type PictureInPictureViewerConfig = {
   contrastLimits: number[][];
@@ -10,11 +10,11 @@ export type PictureInPictureViewerConfig = {
   overviewOn: boolean;
   height: number;
   width: number;
-};
+}
 
 export type SelectionsType = {
   [x: string]: number | undefined;
-};
+}
 
 type PixelSource = TiffPixelSource<string[]> | ZarrPixelSource<string[]>;
 
@@ -24,4 +24,4 @@ type OverviewConfig = {
   margin: number;
   scale: number;
   position: OverviewPosition;
-};
+}

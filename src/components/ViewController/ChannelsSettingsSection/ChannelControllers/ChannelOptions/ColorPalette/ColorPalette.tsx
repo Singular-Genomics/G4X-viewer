@@ -1,25 +1,25 @@
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton } from "@mui/material";
 import LensIcon from '@mui/icons-material/Lens';
-import { ColorPaletteProps } from './ColorPalette.types';
-import { COLOR_PALLETE } from '../../../../../../shared/constants';
+import { ColorPaletteProps } from "./ColorPalette.types";
+import { COLOR_PALLETE } from "../../../../../../shared/constants";
 
 export const ColorPalette = ({ handleColorSelect }: ColorPaletteProps) => (
-  <Box sx={sx.container}>
-    {COLOR_PALLETE.map((color, index) => (
-      <IconButton
-        key={index}
-        sx={sx.button}
-        onClick={() => handleColorSelect(color)}
-      >
-        <LensIcon
-          sx={sx.icon}
-          fontSize="small"
-          style={{ color: `rgb(${color})` }}
-        />
-      </IconButton>
-    ))}
-  </Box>
-);
+    <Box sx={sx.container}>
+      {COLOR_PALLETE.map((color, index) => (
+          <IconButton
+            key={index}
+            sx={sx.button}
+            onClick={() => handleColorSelect(color)}
+          >
+            <LensIcon
+              sx={sx.icon}
+              fontSize="small"
+              style={{ color: `rgb(${color})` }}
+            />
+          </IconButton>
+        ))}
+    </Box>
+  );
 
 const sx = {
   container: {

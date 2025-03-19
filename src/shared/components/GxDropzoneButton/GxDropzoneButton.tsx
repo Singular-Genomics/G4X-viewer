@@ -1,5 +1,5 @@
-import { Box, Button, TextField, Theme, alpha, useTheme } from '@mui/material';
-import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
+import { Box, Button, TextField, Theme, alpha, useTheme } from "@mui/material";
+import { GxDropzoneButtonProps } from "./GxDropzoneButton.types";
 
 export const GxDropzoneButton = ({
   getRootProps,
@@ -7,7 +7,7 @@ export const GxDropzoneButton = ({
   labelTitle,
   labelText,
   buttonText,
-  disabled = false
+  disabled = false,
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -20,7 +20,7 @@ export const GxDropzoneButton = ({
         size="small"
         fullWidth
         inputProps={{ readOnly: true }}
-        value={labelText || ' '}
+        value={labelText || " "}
         sx={sx.textField}
         disabled={disabled}
       />
@@ -41,27 +41,27 @@ export const GxDropzoneButton = ({
 
 const styles = (theme: Theme) => ({
   textField: {
-    marginBottom: '8px',
-    '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+    marginBottom: "8px",
+    "& .MuiFormLabel-root.Mui-focused": {
+      color: theme.palette.gx.accent.greenBlue,
     },
-    '& .MuiInputBase-input': {
-      cursor: 'auto'
+    "& .MuiInputBase-input": {
+      cursor: "auto",
     },
-    '& .MuiInputBase-root::after': {
-      borderBottom: '2px solid',
+    "& .MuiInputBase-root::after": {
+      borderBottom: "2px solid",
       borderColor: theme.palette.gx.accent.greenBlue
-    }
+    },
   },
   dropDownButton: {
-    borderStyle: 'dashed',
-    width: '100%',
-    height: '40px',
+    borderStyle: "dashed",
+    width: "100%",
+    height: "40px",
     borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
-    '&:hover': {
+    "&:hover": {
       borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
-    }
-  }
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
+    },
+  },
 });

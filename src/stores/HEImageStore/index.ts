@@ -1,2 +1,2 @@
-export * from './HEImageStore';
-export * from './HEImageStore.types';
+export * from "./HEImageStore";
+export * from "./HEImageStore.types";

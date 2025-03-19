@@ -1,1 +1,1 @@
-export * from './HEImageDropzoneButton';
+export * from './HEImageDropzoneButton'

@@ -1,11 +1,11 @@
-import { useCallback, useState } from 'react';
-import { TranscriptLayerWarningModal } from './TranscriptLayerWarningModal';
-import { Box, FormControlLabel } from '@mui/material';
-import { GxSwitch } from '../../../../shared/components/GxSwitch';
-import { MaxLayerSlider } from './MaxLayerSlider';
-import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
-import { useShallow } from 'zustand/react/shallow';
-import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
+import { useCallback, useState } from "react";
+import { TranscriptLayerWarningModal } from "./TranscriptLayerWarningModal";
+import { Box, FormControlLabel } from "@mui/material";
+import { GxSwitch } from "../../../../shared/components/GxSwitch";
+import { MaxLayerSlider } from "./MaxLayerSlider";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
+import { useShallow } from "zustand/react/shallow";
+import { triggerViewerRerender } from "./AdvancedViewOptions.helpers";
 
 export const AdvancedViewOptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +14,7 @@ export const AdvancedViewOptions = () => {
   );
 
   const toggleLayerControls = useCallback(() => {
-    const disableModal = localStorage.getItem('disableTiledLayerWarnign_DSA');
+    const disableModal = localStorage.getItem("disableTiledLayerWarnign_DSA");
     if (disableModal || overrideLayers) {
       toggleOverrideLayer();
       triggerViewerRerender();
@@ -35,10 +35,7 @@ export const AdvancedViewOptions = () => {
         <FormControlLabel
           label="Enable layers controls"
           control={
-            <GxSwitch
-              checked={overrideLayers}
-              onChange={toggleLayerControls}
-            />
+            <GxSwitch checked={overrideLayers} onChange={toggleLayerControls} />
           }
         />
         <MaxLayerSlider disabled={!overrideLayers} />
@@ -54,9 +51,9 @@ export const AdvancedViewOptions = () => {
 
 const sx = {
   optionsToggleWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    paddingLeft: '8px'
-  }
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    paddingLeft: "8px",
+  },
 };

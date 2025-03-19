@@ -1,8 +1,8 @@
-import { useShallow } from 'zustand/react/shallow';
-import { Grid, Input, Theme, useTheme } from '@mui/material';
-import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
-import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useShallow } from "zustand/react/shallow";
+import { Grid, Input, Theme, useTheme } from "@mui/material";
+import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
+import { GxSlider } from "../../../../shared/components/GxSlider";
+import { useState } from "react";
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
@@ -25,10 +25,7 @@ export const PointSizeSlider = () => {
       alignItems="center"
       sx={sx.sliderInputContainer}
     >
-      <Grid
-        item
-        xs={1}
-      >
+      <Grid item xs={1}>
         <Input
           value={pointSize.toString()}
           size="small"
@@ -36,17 +33,13 @@ export const PointSizeSlider = () => {
           inputProps={{
             step: POINT_SIZE_STEP.toString(),
             max: MAX_POINT_SIZE.toString(),
-            min: MIN_POINT_SIZE.toString()
+            min: MIN_POINT_SIZE.toString(),
           }}
           sx={sx.textField}
           disabled
         />
       </Grid>
-      <Grid
-        item
-        xs
-        sx={sx.sliderInputItem}
-      >
+      <Grid item xs sx={sx.sliderInputItem}>
         <GxSlider
           value={sliderValue}
           onChangeCommitted={() => setPointSize(sliderValue)}
@@ -64,24 +57,24 @@ export const PointSizeSlider = () => {
 
 const styles = (theme: Theme) => ({
   sliderInputContainer: {
-    paddingLeft: '8px',
-    paddingRight: '16px'
+    paddingLeft: "8px",
+    paddingRight: "16px",
   },
   sliderInputItem: {
-    padding: '0px 8px 0px 16px'
+    padding: "0px 8px 0px 16px",
   },
   textField: {
-    marginBottom: '8px',
-    '&.MuiInputBase-root::after': {
-      borderBottom: '2px solid'
+    marginBottom: "8px",
+    "&.MuiInputBase-root::after": {
+      borderBottom: "2px solid",
     },
-    '&.MuiInputBase-root::before': {
+    "&.MuiInputBase-root::before": {
       borderColor: `${theme.palette.gx.primary.black}`,
-      borderBottomStyle: 'solid'
+      borderBottomStyle: "solid",
     },
-    '& .MuiInputBase-input': {
-      textAlign: 'center',
-      WebkitTextFillColor: theme.palette.gx.primary.black
-    }
-  }
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+      WebkitTextFillColor: theme.palette.gx.primary.black,
+    },
+  },
 });

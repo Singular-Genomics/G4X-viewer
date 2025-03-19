@@ -1,1 +1,1 @@
-export * from './ChannelsSettingsSection';
+export * from "./ChannelsSettingsSection";

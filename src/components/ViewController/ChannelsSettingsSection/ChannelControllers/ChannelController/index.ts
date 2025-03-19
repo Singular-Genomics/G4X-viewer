@@ -1,2 +1,2 @@
-export * from './ChannelController';
-export * from './ChannelController.types';
+export * from './ChannelController'
+export * from './ChannelController.types'

@@ -1,18 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { GxCollapsibleSectionProps } from './GxCollapsibleSection.types';
-import { Box, Button, Collapse, SxProps, Theme, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { GxCollapsibleSectionProps } from "./GxCollapsibleSection.types";
+import {
+  Box,
+  Button,
+  Collapse,
+  SxProps,
+  Theme,
+  Typography,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const GxCollapsibleSection = ({
   sectionTitle,
   children,
-  defultState = 'collapsed',
+  defultState = "collapsed",
   unmountOnExit = true,
   customStyles,
-  disabled
+  disabled,
 }: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [expanded, setExpanded] = useState<boolean>(defultState === 'open');
+  const [expanded, setExpanded] = useState<boolean>(defultState === "open");
 
   useEffect(() => {
     if (disabled && expanded) {
@@ -27,9 +34,9 @@ export const GxCollapsibleSection = ({
   const handleExpandScroll = useCallback(() => {
     if (sectionRef.current) {
       sectionRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'nearest'
+        behavior: "smooth",
+        block: "nearest",
+        inline: "nearest",
       });
     }
   }, []);
@@ -38,7 +45,7 @@ export const GxCollapsibleSection = ({
     <Box
       sx={
         {
-          ...customStyles?.sectionContainer
+          ...customStyles?.sectionContainer,
         } as SxProps
       }
     >
@@ -46,17 +53,19 @@ export const GxCollapsibleSection = ({
         sx={
           {
             ...sx.sectionHeader,
-            ...customStyles?.headerContainer
+            ...customStyles?.headerContainer,
           } as SxProps
         }
         disabled={disabled}
         onClick={handleIconClick}
       >
-        <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText }}>{sectionTitle}</Typography>
+        <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText }}>
+          {sectionTitle}
+        </Typography>
         <ExpandMoreIcon
           style={{
-            transform: `rotate(${expanded ? '180deg' : '0deg'})`,
-            transition: 'transform 300ms ease-in-out'
+            transform: `rotate(${expanded ? "180deg" : "0deg"})`,
+            transition: "transform 300ms ease-in-out",
           }}
           sx={sx.collapseIcon}
           fontSize="medium"
@@ -73,7 +82,7 @@ export const GxCollapsibleSection = ({
           sx={
             {
               ...sx.sectionContentContainer,
-              ...customStyles?.contentContainer
+              ...customStyles?.contentContainer,
             } as SxProps
           }
         >
@@ -86,38 +95,38 @@ export const GxCollapsibleSection = ({
 
 const sx = {
   sectionHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    position: 'relative',
-    padding: '8px',
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+    padding: "8px",
     color: (theme: Theme) => theme.palette.gx.primary.black,
-    width: '100%',
+    width: "100%",
     borderRadius: 0,
-    '&:after': {
+    "&:after": {
       background: (theme: Theme) => theme.palette.gx.primary.black,
       bottom: 0,
       content: '""',
-      display: 'block',
-      height: '1px',
-      left: '50%',
-      position: 'absolute',
-      transition: 'width 0.3s ease 0s, left 0.3s ease 0s',
-      width: 0
+      display: "block",
+      height: "1px",
+      left: "50%",
+      position: "absolute",
+      transition: "width 0.3s ease 0s, left 0.3s ease 0s",
+      width: 0,
     },
-    '&:hover:after': {
-      width: '100%',
-      left: 0
-    }
+    "&:hover:after": {
+      width: "100%",
+      left: 0,
+    },
   },
   sectionTitle: {
-    fontWeight: 700
+    fontWeight: 700,
   },
   collapseIcon: {
-    marginLeft: 'auto'
+    marginLeft: "auto",
   },
   sectionContentContainer: {
-    borderBottom: '1px solid',
+    borderBottom: "1px solid",
     borderColor: (theme: Theme) => theme.palette.gx.mediumGrey[300],
-    padding: '8px 0px 16px'
-  }
+    padding: "8px 0px 16px",
+  },
 };

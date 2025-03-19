@@ -1,15 +1,20 @@
-import { useEffect } from 'react';
-import { useChannelsStore } from '../stores/ChannelsStore/ChannelsStore';
-import { ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
-import { useMetadata } from './useMetadata.hook';
-import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
+import { useEffect } from "react";
+import { useChannelsStore } from "../stores/ChannelsStore/ChannelsStore";
+import { ViewerSourceType } from "../stores/ViewerStore/ViewerStore.types";
+import { useMetadata } from "./useMetadata.hook";
+import { useViewerStore } from "../stores/ViewerStore/ViewerStore";
 
 // Legacy from original Avivator app
-import { buildDefaultSelection, createLoader, getMultiSelectionStats, guessRgb } from '../legacy/utils';
-import { unstable_batchedUpdates } from 'react-dom';
-import { isInterleaved } from '@hms-dbmi/viv';
-import { COLOR_PALLETE } from '../shared/constants';
-import { ChannelsSettings } from '../stores/ChannelsStore';
+import {
+  buildDefaultSelection,
+  createLoader,
+  getMultiSelectionStats,
+  guessRgb,
+} from "../legacy/utils";
+import { unstable_batchedUpdates } from "react-dom";
+import { isInterleaved } from "@hms-dbmi/viv";
+import { COLOR_PALLETE } from "../shared/constants";
+import { ChannelsSettings } from "../stores/ChannelsStore";
 
 export const useProteinImage = (source: ViewerSourceType | null) => {
   const loader = useChannelsStore.getState().getLoader();
@@ -52,7 +57,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         unstable_batchedUpdates(() => {
           useChannelsStore.setState({ loader: nextLoader });
           useViewerStore.setState({
-            metadata: nextMeta
+            metadata: nextMeta,
           });
         });
       }
@@ -68,7 +73,9 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       useViewerStore.setState({ isViewerLoading: true });
       const newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
-      const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
+      const channelOptions = Channels.map(
+        (c: any, i: any) => c.Name ?? `Channel ${i}`
+      );
       // Default RGB.
       let newContrastLimits = [];
       let newDomains = [];
@@ -84,24 +91,24 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           newContrastLimits = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newDomains = [
             [0, 255],
             [0, 255],
-            [0, 255]
+            [0, 255],
           ];
           newColors = [
             [255, 0, 0],
             [0, 255, 0],
-            [0, 0, 255]
+            [0, 0, 255],
           ];
         }
         useViewerStore.setState({ useColorMap: false });
       } else {
         const stats = await getMultiSelectionStats({
           loader,
-          selections: newSelections
+          selections: newSelections,
         });
         newDomains = stats.domains;
         newContrastLimits = stats.contrastLimits;
@@ -109,9 +116,13 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => (Channels[i]?.Color && Channels[i].Color.slice(0, -1)) ?? COLOR_PALLETE[i]);
+            : newDomains.map(
+                (_, i) =>
+                  (Channels[i]?.Color && Channels[i].Color.slice(0, -1)) ??
+                  COLOR_PALLETE[i]
+              );
         useViewerStore.setState({
-          useColorMap: true
+          useColorMap: true,
         });
       }
 
@@ -122,7 +133,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         channelsSettings[`${channelName}`] = {
           color: undefined,
           maxValue: undefined,
-          minValue: undefined
+          minValue: undefined,
         };
       });
 
@@ -133,14 +144,14 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
-        channelsSettings
+        channelsSettings,
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
         isViewerLoading: false,
-        pixelValues: new Array(newSelections.length).fill('0'),
+        pixelValues: new Array(newSelections.length).fill("0"),
         globalSelection: newSelections[0],
-        channelOptions
+        channelOptions,
       });
     };
     if (metadata) changeSettings();

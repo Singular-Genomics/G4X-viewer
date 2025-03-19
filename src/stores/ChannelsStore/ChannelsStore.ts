@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { ChannelsStore, ChannelsStoreValues } from './ChannelsStore.types';
+import { create } from "zustand";
+import { ChannelsStore, ChannelsStoreValues } from "./ChannelsStore.types";
 
 const DEFAUlT_CHANNEL_VALUES = {
   channelsVisible: [true],
@@ -7,7 +7,7 @@ const DEFAUlT_CHANNEL_VALUES = {
   colors: [[255, 255, 255]],
   domains: [[0, 65535]],
   selections: [{ z: 0, c: 0, t: 0 }],
-  ids: ''
+  ids: "",
 };
 
 const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
@@ -16,10 +16,10 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   colors: [[255, 255, 255]],
   domains: [[0, 65535]],
   selections: [{ z: 0, c: 0, t: 0 }],
-  ids: [''],
+  ids: [""],
   image: 0,
   loader: [{ labels: [], shape: [] }],
-  channelsSettings: {}
+  channelsSettings: {},
 };
 
 export const useChannelsStore = create<ChannelsStore>((set, get) => ({
@@ -46,7 +46,9 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       const channelKeys = Object.keys(DEFAUlT_CHANNEL_VALUES);
       Object.keys(store).forEach((key) => {
         if (channelKeys.includes(key)) {
-          newState[key] = store[key as keyof ChannelsStoreValues].filter((_: any, index: number) => index !== channel);
+          newState[key] = store[key as keyof ChannelsStoreValues].filter(
+            (_: any, index: number) => index !== channel
+          );
         }
       });
       return { ...store, ...newState };
@@ -56,11 +58,20 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       const entries = Object.entries(newChannelProperties);
       const newStore = { ...store };
       entries.forEach(([property, value]) => {
-        newStore[property as keyof ChannelsStore] = [...store[property as keyof ChannelsStore], value];
+        newStore[property as keyof ChannelsStore] = [
+          ...store[property as keyof ChannelsStore],
+          value,
+        ];
       });
       Object.entries(DEFAUlT_CHANNEL_VALUES).forEach(([key, value]) => {
-        if (newStore[key as keyof ChannelsStore].length < newStore[entries[0][0] as keyof ChannelsStore].length) {
-          newStore[key as keyof ChannelsStore] = [...store[key as keyof ChannelsStore], value];
+        if (
+          newStore[key as keyof ChannelsStore].length <
+          newStore[entries[0][0] as keyof ChannelsStore].length
+        ) {
+          newStore[key as keyof ChannelsStore] = [
+            ...store[key as keyof ChannelsStore],
+            value,
+          ];
         }
       });
       return newStore;
@@ -69,5 +80,5 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
   getLoader: () => {
     const { loader, image } = get();
     return Array.isArray(loader[0]) ? loader[image] : loader;
-  }
+  },
 }));

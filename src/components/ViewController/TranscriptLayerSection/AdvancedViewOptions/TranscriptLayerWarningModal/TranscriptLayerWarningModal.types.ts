@@ -1,5 +1,5 @@
 export type TranscriptLayerWarningModalProps = {
-  isOpen: boolean;
+  isOpen: boolean,
   handleClose: () => void;
   onContinue: () => void;
-};
+}

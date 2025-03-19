@@ -1,9 +1,16 @@
-import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from '@mui/material';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useShallow } from 'zustand/react/shallow';
-import { GxSwitch } from '../../../../shared/components/GxSwitch';
-import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import {
+  Box,
+  FormControlLabel,
+  Grid,
+  Input,
+  Theme,
+  useTheme,
+} from "@mui/material";
+import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { useShallow } from "zustand/react/shallow";
+import { GxSwitch } from "../../../../shared/components/GxSwitch";
+import { GxSlider } from "../../../../shared/components/GxSlider";
+import { useState } from "react";
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -13,9 +20,15 @@ export const CellMasksFillSettings = () => {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.toggleCellFill, store.setCellFillOpacity])
-  );
+  const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] =
+    useCellSegmentationLayerStore(
+      useShallow((store) => [
+        store.isCellFillOn,
+        store.cellFillOpacity,
+        store.toggleCellFill,
+        store.setCellFillOpacity,
+      ])
+    );
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
 
@@ -39,10 +52,7 @@ export const CellMasksFillSettings = () => {
         alignItems="center"
         sx={sx.sliderInputContainer}
       >
-        <Grid
-          item
-          xs={1}
-        >
+        <Grid item xs={1}>
           <Input
             value={sliderValue * 100}
             size="small"
@@ -50,20 +60,16 @@ export const CellMasksFillSettings = () => {
             inputProps={{
               step: FILL_OPACITY_STEP.toString(),
               max: MAX_FILL_OPACITY.toString(),
-              min: MIN_FILL_OPACITY.toString()
+              min: MIN_FILL_OPACITY.toString(),
             }}
             sx={{
               ...sx.textFieldBase,
-              ...(isCellFillOn && sx.textFieldEnabled)
+              ...(isCellFillOn && sx.textFieldEnabled),
             }}
             disabled
           />
         </Grid>
-        <Grid
-          item
-          xs
-          sx={sx.sliderInputItem}
-        >
+        <Grid item xs sx={sx.sliderInputItem}>
           <GxSlider
             value={sliderValue * 100}
             onChange={(_, newValue) => {
@@ -87,37 +93,37 @@ export const CellMasksFillSettings = () => {
 
 const styles = (theme: Theme) => ({
   strokeSettingsContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    marginBottom: '8px'
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
+    marginBottom: "8px",
   },
   toggleSwitch: {
-    paddingLeft: '8px'
+    paddingLeft: "8px",
   },
   sliderInputContainer: {
-    paddingLeft: '8px'
+    paddingLeft: "8px",
   },
   sliderInputItem: {
-    padding: '0px 8px 0px 16px'
+    padding: "0px 8px 0px 16px",
   },
   textFieldBase: {
-    marginBottom: '8px',
-    '&.MuiInputBase-root::after': {
-      borderBottom: '2px solid'
+    marginBottom: "8px",
+    "&.MuiInputBase-root::after": {
+      borderBottom: "2px solid",
     },
-    '& .MuiInputBase-input': {
-      textAlign: 'center'
-    }
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+    },
   },
   textFieldEnabled: {
-    '& .MuiInputBase-input': {
-      textAlign: 'center',
-      WebkitTextFillColor: theme.palette.gx.primary.black
+    "& .MuiInputBase-input": {
+      textAlign: "center",
+      WebkitTextFillColor: theme.palette.gx.primary.black,
     },
-    '&.MuiInputBase-root::before': {
+    "&.MuiInputBase-root::before": {
       borderColor: `${theme.palette.gx.primary.black}`,
-      borderBottomStyle: 'solid'
-    }
-  }
+      borderBottomStyle: "solid",
+    },
+  },
 });

@@ -1,4 +1,4 @@
 export type ChannelOptionsProps = {
-  disabled: boolean;
+  disabled: boolean,
   handleColorSelect: (newColor: number[]) => void;
-};
+}

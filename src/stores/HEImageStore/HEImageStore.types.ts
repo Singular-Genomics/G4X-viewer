@@ -1,5 +1,5 @@
-import { SelectionsType } from '../../components/PictureInPictureViewerAdapter';
-import { ViewerSourceType } from '../ViewerStore';
+import { SelectionsType } from "../../components/PictureInPictureViewerAdapter";
+import { ViewerSourceType } from "../ViewerStore";
 
 export type HEImageStore = HEImageStoreValues & HEImageStoreMethods;
 

@@ -1,24 +1,29 @@
-import { useShallow } from 'zustand/react/shallow';
-import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useCellsFilterTableColumns } from './useCellsFilterTableColumns';
-import { CellsFilterTableRowEntry } from './CellsFilterTable.types';
-import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
+import { useShallow } from "zustand/react/shallow";
+import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { useCellsFilterTableColumns } from "./useCellsFilterTableColumns";
+import { CellsFilterTableRowEntry } from "./CellsFilterTable.types";
+import { GxFilterTable } from "../../../../../shared/components/GxFilterTable";
 
 export const CellsFilterTable = () => {
   const columns = useCellsFilterTableColumns();
-  const [setCellNameFilter, clearCellNameFilter, cellNameFilters, colorMapConfig] = useCellSegmentationLayerStore(
+  const [
+    setCellNameFilter,
+    clearCellNameFilter,
+    cellNameFilters,
+    colorMapConfig,
+  ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.setCellNameFilter,
       store.clearCellNameFilter,
       store.cellNameFilters,
-      store.cellColormapConfig
+      store.cellColormapConfig,
     ])
   );
 
   const rowData: CellsFilterTableRowEntry[] = colorMapConfig
     ? colorMapConfig.map((item, index) => ({
         id: `${item.cellName}_${index}`,
-        ...item
+        ...item,
       }))
     : [];
 

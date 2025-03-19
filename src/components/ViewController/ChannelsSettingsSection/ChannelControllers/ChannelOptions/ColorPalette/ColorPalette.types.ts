@@ -1,3 +1,3 @@
 export type ColorPaletteProps = {
-  handleColorSelect: (colors: number[]) => void;
-};
+  handleColorSelect: (colors: number[]) => void,
+}
