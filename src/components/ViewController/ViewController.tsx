@@ -6,13 +6,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { ViewControllerProps } from "./ViewController.types";
 import { GxCollapsibleSection } from "../../shared/components/GxCollapsibleSection/GxCollapsibleSection";
 import { SourceFilesSection } from "./SourceFilesSection/SourceFilesSection";
-import { ViewControllsSection } from "./ViewControllsSection/ViewControllsSection";
+import { ViewControlsSection } from "./ViewControlsSection/ViewControlsSection";
 import { TranscriptLayerSection } from "./TranscriptLayerSection/TranscriptLayerSection";
 import { useBinaryFilesStore } from "../../stores/BinaryFilesStore";
 import { useCellSegmentationLayerStore } from "../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { CellMasksLayerSection } from "./CellMasksLayerSection";
 import { ControllerHeader } from "./ControllerHeader";
 import { ChannelsSettingsSection } from "./ChannelsSettingsSection/ChannelsSettingsSection";
+import { BrightfieldImagesSection } from "./BrightfieldImagesSection/BrightfieldImagesSection";
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -49,13 +50,19 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle="View Settings"
                 disabled={!imageLoaded}
               >
-                <ViewControllsSection />
+                <ViewControlsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Protein Channel Settings"
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
+              </GxCollapsibleSection>
+              <GxCollapsibleSection
+                sectionTitle="Brightfield Images Settings"
+                disabled={!imageLoaded}
+              >
+                <BrightfieldImagesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle="Transcript Layer Settings"

@@ -28,6 +28,7 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
 
 export const useViewerStore = create<ViewerStore>((set) => ({
   ...DEFAULT_VIEWER_STORE_STATE,
+  reset: () => set({ ...DEFAULT_VIEWER_STORE_STATE }),
   toggleOverview: () => set((store) => ({ isOverviewOn: !store.isOverviewOn })),
   toggleLens: () => set((store) => ({ isLensOn: !store.isLensOn })),
   onViewportLoad: () => {},

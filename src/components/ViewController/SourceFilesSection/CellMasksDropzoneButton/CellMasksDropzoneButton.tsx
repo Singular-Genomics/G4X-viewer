@@ -1,17 +1,23 @@
 import { alpha, Box, LinearProgress, Theme, useTheme } from "@mui/material";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
-import { useCellMasksFileHandler } from "./useCellMasksFileHandler";
+import { useCellMasksFileHandler } from "./helpers/useCellMasksFileHandler";
 import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
+import { CellMasksDropzoneButtonProps } from "./CellMasksDropzoneButton.types";
+import { useEffect } from "react";
 
-export const CellMasksDropzoneButton = () => {
+export const CellMasksDropzoneButton = ({
+  setLockSwitch,
+}: CellMasksDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  
+
   const source = useViewerStore((store) => store.source);
   const fileName = useCellSegmentationLayerStore((store) => store.fileName);
   const { getInputProps, getRootProps, loading, progress } =
     useCellMasksFileHandler();
+
+  useEffect(() => setLockSwitch(loading), [setLockSwitch, loading]);
 
   return (
     <Box>

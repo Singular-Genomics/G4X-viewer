@@ -1,15 +1,23 @@
 import { LinearProgress, Box, Theme, alpha, useTheme } from "@mui/material";
-import { useFileHandler } from "./useFileHandler";
+import { useFileHandler } from "./helpers/useFileHandler";
 import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
 import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
 import { useViewerStore } from "../../../../stores/ViewerStore";
+import { TranscriptDropzoneButtonProps } from "./TranscriptDropzoneButton.types";
+import { useEffect } from "react";
 
-export default function TranscriptDropzoneButton() {
+export default function TranscriptDropzoneButton({
+  setLockSwitch,
+}: TranscriptDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
   const { getRootProps, getInputProps, loading, progress } = useFileHandler();
   const fileName = useBinaryFilesStore((store) => store.fileName);
   const source = useViewerStore((store) => store.source);
+
+  useEffect(() => {
+    setLockSwitch(loading);
+  }, [setLockSwitch, loading]);
 
   return (
     <Box>
