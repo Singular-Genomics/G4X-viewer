@@ -21,24 +21,24 @@ import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
-  useHEImageLayer,
+  useBrightfieldImageLayer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect, useRef } from "react";
 import { Tooltip } from "../Tooltip";
 import { debounce } from "lodash";
-import { useHEImageStore } from "../../stores/HEImageStore";
+import { useBrightfieldImagesStore } from "../../stores/BrightfieldImagesStore";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [heImageSource, isImageLoading] = useHEImageStore(
-    useShallow((store) => [store.heImageSource, store.isImageLoading])
+  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
   );
   const loader = getLoader();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
-  const heImageLayer = useHEImageLayer();
+  const brightfieldImageLayer = useBrightfieldImageLayer();
   const deckGLRef = useRef<any>(null);
 
   const theme = useTheme();
@@ -124,8 +124,8 @@ export const PictureInPictureViewerAdapter = () => {
     },
   };
 
-  if (heImageSource && !isImageLoading) {
-    deckProps.layers = [heImageLayer, ...deckProps.layers];
+  if (brightfieldImageSource && !isImageLoading) {
+    deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
   }
 
   return (

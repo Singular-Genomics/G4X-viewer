@@ -8,7 +8,7 @@ import CellMasksLayer from "../../layers/cell-masks-layer/cell-masks-layer";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTooltipStore } from "../../stores/TooltipStore";
 import TranscriptLayer from "../../layers/transcript-layer/transcript-layer";
-import { useHEImageStore } from "../../stores/HEImageStore";
+import { useBrightfieldImagesStore } from "../../stores/BrightfieldImagesStore";
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>();
@@ -134,9 +134,9 @@ export const useCellSegmentationLayer = () => {
   return cellMasksLayer;
 };
 
-export const useHEImageLayer = () => {
+export const useBrightfieldImageLayer = () => {
   const [selections, contrastLimits, opacity, isLayerVisible, getLoader] =
-    useHEImageStore(
+    useBrightfieldImagesStore(
       useShallow((store) => [
         store.selections,
         store.contrastLimits,
@@ -149,7 +149,7 @@ export const useHEImageLayer = () => {
   const loader = getLoader();
   const { dtype } = loader[0];
 
-  const heImageLayer = new MultiscaleImageLayer({
+  const brightfieldImageLayer = new MultiscaleImageLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
     channelsVisible: [true, true, true],
     selections: selections as any,
@@ -159,5 +159,5 @@ export const useHEImageLayer = () => {
     opacity: isLayerVisible ? opacity : 0,
   });
 
-  return heImageLayer;
+  return brightfieldImageLayer;
 };

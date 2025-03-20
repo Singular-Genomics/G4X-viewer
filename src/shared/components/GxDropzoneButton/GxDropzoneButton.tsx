@@ -79,6 +79,7 @@ const styles = (theme: Theme) => ({
     borderStyle: "dashed",
     width: "100%",
     height: "40px",
+    fontWeight: 700,
     borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
     "&:hover": {
