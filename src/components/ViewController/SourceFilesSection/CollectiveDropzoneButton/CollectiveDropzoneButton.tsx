@@ -9,7 +9,8 @@ export default function CollectiveDropzoneButton({
 }: CollectiveDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
-  const { getInputProps, getRootProps, loading, progress, collectiveFileName } =
+
+  const { dropzoneProps, loading, progress, collectiveFileName } =
     useFileHandler();
 
   useEffect(() => {
@@ -19,11 +20,10 @@ export default function CollectiveDropzoneButton({
   return (
     <Box>
       <GxDropzoneButton
-        getInputProps={getInputProps}
-        getRootProps={getRootProps}
         labelTitle="Collective file upload"
         buttonText="Upload G4X file"
         labelText={collectiveFileName}
+        {...dropzoneProps}
       />
       {loading && (
         <LinearProgress

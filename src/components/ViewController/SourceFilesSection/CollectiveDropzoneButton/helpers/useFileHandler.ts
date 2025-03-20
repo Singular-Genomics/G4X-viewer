@@ -386,7 +386,7 @@ export const useFileHandler = () => {
     setCollectiveFileName(file.name);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
       "application/x-tar": [".g4x.tar"],
@@ -394,8 +394,7 @@ export const useFileHandler = () => {
   });
 
   return {
-    getRootProps,
-    getInputProps,
+    dropzoneProps,
     loading,
     progress,
     collectiveFileName,
