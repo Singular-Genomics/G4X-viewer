@@ -120,6 +120,10 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     });
   }
 
+  getPickingInfo({ info }: { info: PickingInfo }) {
+    return info;
+  }
+
   renderLayers() {
     // ========================= TILED LAYER =====================
     const getTileData = async ({ index, bbox }: getTileDataProps) => {
