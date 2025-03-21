@@ -71,6 +71,10 @@ export const useTranscriptLayer = () => {
     ])
   );
 
+  if (!files.length) {
+    return undefined;
+  }
+
   const metadataLayer = new TranscriptLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
     files,
@@ -115,6 +119,10 @@ export const useCellSegmentationLayer = () => {
     ])
   );
 
+  if (!cellMasksData) {
+    return undefined;
+  }
+
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     masksData: cellMasksData || new Uint8Array(),
@@ -148,6 +156,10 @@ export const useBrightfieldImageLayer = () => {
 
   const loader = getLoader();
   const { dtype } = loader[0];
+
+  if (!loader) {
+    return undefined;
+  }
 
   const brightfieldImageLayer = new MultiscaleImageLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
