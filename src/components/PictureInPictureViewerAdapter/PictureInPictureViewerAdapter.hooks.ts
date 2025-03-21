@@ -11,7 +11,7 @@ import TranscriptLayer from "../../layers/transcript-layer/transcript-layer";
 import { useBrightfieldImagesStore } from "../../stores/BrightfieldImagesStore";
 
 export const useResizableContainer = () => {
-  const containerRef = useRef<HTMLDivElement>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<{
     width: number;
     height: number;
