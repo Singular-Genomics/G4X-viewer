@@ -22,6 +22,7 @@ import {
   useTranscriptLayer,
   useResizableContainer,
   useBrightfieldImageLayer,
+  useScaleBarLayer,
 } from "./PictureInPictureViewerAdapter.hooks";
 import { useEffect, useRef } from "react";
 import { Tooltip } from "../Tooltip";
@@ -39,7 +40,10 @@ export const PictureInPictureViewerAdapter = () => {
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
+  const scaleBarLayer = useScaleBarLayer();
   const deckGLRef = useRef<any>(null);
+
+  const debouncedUpdateRef = useRef<any>(null);
 
   const theme = useTheme();
   const sx = styles(theme);
@@ -82,6 +86,25 @@ export const PictureInPictureViewerAdapter = () => {
   );
 
   useEffect(() => {
+    debouncedUpdateRef.current = debounce(
+      (zoom: number) => {
+        const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
+        useViewerStore.setState({
+          pyramidResolution: z,
+        });
+      },
+      250,
+      { trailing: true }
+    );
+
+    return () => {
+      if (debouncedUpdateRef.current) {
+        debouncedUpdateRef.current.cancel();
+      }
+    };
+  }, [loader.length]);
+
+  useEffect(() => {
     if (!viewState && containerSize.width && containerSize.height) {
       const width = containerSize.width;
       const height = containerSize.height;
@@ -117,7 +140,7 @@ export const PictureInPictureViewerAdapter = () => {
   };
 
   const deckProps = {
-    layers: [cellMasksLayer, transcriptLayer],
+    layers: [cellMasksLayer, transcriptLayer, scaleBarLayer],
     ref: deckGLRef,
     glOptions: {
       preserveDrawingBuffer: true,
@@ -151,20 +174,17 @@ export const PictureInPictureViewerAdapter = () => {
             colormap={colormap}
             onViewportLoad={onViewportLoad}
             viewStates={viewState ? [viewState] : []}
-            onViewStateChange={debounce(
-              ({ viewState: newViewState, viewId }) => {
-                const z = Math.min(
-                  Math.max(Math.round(-(newViewState as any).zoom), 0),
-                  loader.length - 1
-                );
-                useViewerStore.setState({
-                  pyramidResolution: z,
-                  viewState: { ...newViewState, id: viewId },
-                });
-              },
-              250,
-              { trailing: true }
-            )}
+            onViewStateChange={({ viewState: newViewState, viewId }) => {
+              // Update the viewState immediately
+              useViewerStore.setState({
+                viewState: { ...newViewState, id: viewId },
+              });
+
+              // Update the pyramidResolution with debounce
+              if (debouncedUpdateRef.current) {
+                debouncedUpdateRef.current((newViewState as any).zoom);
+              }
+            }}
             hoverHooks={{
               handleValue: (values) =>
                 useViewerStore.setState({
