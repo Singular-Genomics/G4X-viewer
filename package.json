@@ -26,14 +26,18 @@
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "notistack": "^3.0.1",
+    "plotly.js": "^3.0.1",
     "protobufjs": "^7.2.6",
     "react": "^18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-plotly.js": "^2.6.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@types/plotly.js": "^2.35.2",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "@types/react-plotly.js": "^2.6.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
