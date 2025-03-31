@@ -11,6 +11,8 @@ export type CellSegmentationLayerStoreValues = {
   cellFillOpacity: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
+  umapFilter?: UmapFilter;
+  cytometryFilter?: CytometryFilter;
 };
 
 export type CellSegmentationLayerStoreMethods = {
@@ -28,4 +30,20 @@ export type CellSegmentationLayerStoreMethods = {
 export type CellSegmentationColormapEntry = {
   clusterId: string;
   color: number[];
+};
+
+export type UmapFilter = {
+  yRangeStart: number;
+  yRangeEnd: number;
+  xRangeStart: number;
+  xRangeEnd: number;
+};
+
+export type CytometryFilter = {
+  xRangeProteinName: string;
+  xRangeStart: number;
+  xRangeEnd: number;
+  yRangeProteinName: string;
+  yRangeStart: number;
+  yRangeEnd: number;
 };
