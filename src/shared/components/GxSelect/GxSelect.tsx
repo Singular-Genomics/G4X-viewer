@@ -1,76 +1,91 @@
 import {
   Select,
   SelectProps,
+  Theme,
+  alpha,
   menuItemClasses,
   outlinedInputClasses,
+  useTheme,
 } from "@mui/material";
 
-export const GxSelect = ({ children, sx: styles, ...rest }: SelectProps) => {
+export const GxSelect = ({
+  children,
+  sx: customStyles,
+  ...rest
+}: SelectProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
   return (
-    <Select sx={{...sx.rounded, ...styles}} MenuProps={{ sx: sx.roundedMenu }} {...rest}>
+    <Select
+      sx={{ ...sx.rounded, ...customStyles }}
+      MenuProps={{ sx: sx.roundedMenu }}
+      {...rest}
+    >
       {children}
     </Select>
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   rounded: {
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: "8px",
-    background: '#FFF',
+    background: theme.palette.gx.primary.white,
     height: "40px",
-    color: "rgba(18, 18, 18, 0.6)",
+    color: theme.palette.gx.darkGrey[100],
     fontSize: "14px",
     "& .MuiPaper-root": {
       filter: "none",
     },
     [`& .${outlinedInputClasses.notchedOutline}`]: {
-      border: "1px solid rgba(18, 18, 18, 0.2)",
+      border: "1px solid",
+      borderColor: alpha(theme.palette.gx.darkGrey[100], 0.2),
     },
     "&.Mui-disabled": {
       opacity: 1,
       border: "none ",
-      background: "rgba(226, 226, 226, 1)",
+      background: theme.palette.gx.lightGrey[500],
       [`& .${outlinedInputClasses.notchedOutline}`]: {
         border: "none ",
       },
     },
     "& .MuiTypography-root": {
-      overflow: 'hidden',
+      overflow: "hidden",
     },
     "&:hover": {
       [`& .${outlinedInputClasses.notchedOutline}`]: {
-        border: "1px solid rgba(0, 177, 164, 1)",
+        border: "1px solid",
+        borderColor: theme.palette.gx.accent.greenBlue,
       },
     },
     [`&.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]:
       {
-        border: "1px solid rgba(0, 177, 164, 1)",
+        border: "1px solid",
+        borderColor: theme.palette.gx.accent.greenBlue,
       },
   },
   roundedMenu: {
     "& .MuiPaper-root": {
-      border: "1px solid rgba(18, 18, 18, 0.2)",
+      border: "1px solid",
+      borderColor: alpha(theme.palette.gx.darkGrey[100], 0.2),
       filter: "none",
       fontSize: "14px",
       boxSizing: "border-box",
-      // eslint-disable-next-line max-len
-      boxShadow:
-        "0px 82px 80px rgba(140, 140, 140, 0.07), 0px 34.2576px 33.4221px rgba(140, 140, 140, 0.0503198), 0px 18.3158px 17.869px rgba(140, 140, 140, 0.0417275), 0px 10.2677px 10.0172px rgba(140, 140, 140, 0.035), 0px 5.45308px 5.32008px rgba(140, 140, 140, 0.0282725), 0px 2.26915px 2.21381px rgba(140, 140, 140, 0.0196802)",
       "& .MuiMenu-list": {
         padding: "0",
       },
       "& .MuiMenuItem-root": {
         fontSize: "14px",
-        color: "rgba(121, 121, 121, 1)",
+        color: theme.palette.gx.mediumGrey[100],
         "&:hover": {
-          color: "rgba(121, 121, 121, 1)",
-          background: "rgba(1, 167, 168, 0.1)",
+          color: theme.palette.gx.mediumGrey[100],
+          background: alpha(theme.palette.gx.accent.greenBlue, 0.1),
         },
         [`&.${menuItemClasses.selected}`]: {
-          color: "rgba(4, 167, 168, 1)",
+          color: theme.palette.gx.accent.greenBlue,
         },
       },
     },
   },
-};
+});
