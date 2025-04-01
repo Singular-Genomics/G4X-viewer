@@ -1,29 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { useCellSegmentationLayerStore } from "../../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { GxInput } from "../../../../../../shared/components/GxInput";
-import { Button, Theme, useTheme } from "@mui/material";
+import { GxInput } from "../../../../../shared/components/GxInput";
+import { Box, Button, Theme, useTheme } from "@mui/material";
 import {
+  GraphRangeInputsProps,
+  InputConfig,
   InputErrors,
   InputFieldType,
   InputRange,
-} from "./CytometryGraphInputs.types";
+} from "./GraphRangeInputs.types";
 
-const INPUT_FIELDS: Array<{
-  field: InputFieldType;
-  label: string;
-  validateValue: (
-    value: number,
-    filter: any
-  ) => { isValid: boolean; errorMessage?: string };
-  updateFilter: (value: number, filter: any) => any;
-}> = [
+const INPUT_FIELDS: InputConfig[] = [
   {
     field: "xStart",
     label: "X Start",
-    validateValue: (value, filter) => ({
-      isValid: value < filter.xRangeEnd,
-      errorMessage: "X Start can't be greater than X End",
-    }),
+    validateValue: (value, filter) => value < filter.xRangeEnd,
     updateFilter: (value, filter) => ({
       ...filter,
       xRangeStart: value,
@@ -32,10 +22,7 @@ const INPUT_FIELDS: Array<{
   {
     field: "xEnd",
     label: "X End",
-    validateValue: (value, filter) => ({
-      isValid: value > filter.xRangeStart,
-      errorMessage: "X End can't be lesser than X Start",
-    }),
+    validateValue: (value, filter) => value > filter.xRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
       xRangeEnd: value,
@@ -44,10 +31,7 @@ const INPUT_FIELDS: Array<{
   {
     field: "yStart",
     label: "Y Start",
-    validateValue: (value, filter) => ({
-      isValid: value < filter.yRangeStart,
-      errorMessage: "Y Start can't be greater than Y End",
-    }),
+    validateValue: (value, filter) => value < filter.yRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
       yRangeEnd: value,
@@ -56,10 +40,7 @@ const INPUT_FIELDS: Array<{
   {
     field: "yEnd",
     label: "Y End",
-    validateValue: (value, filter) => ({
-      isValid: value > filter.yRangeEnd,
-      errorMessage: "Y End can't be lesser than Y Start",
-    }),
+    validateValue: (value, filter) => value > filter.yRangeEnd,
     updateFilter: (value, filter) => ({
       ...filter,
       yRangeStart: value,
@@ -67,11 +48,14 @@ const INPUT_FIELDS: Array<{
   },
 ];
 
-export function CytometryGraphInputs() {
+export function GraphRangeInputs({
+  rangeSource,
+  onUpdateRange,
+  onClear,
+}: GraphRangeInputsProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const { cytometryFilter } = useCellSegmentationLayerStore();
   const [rangeInput, setRangeInput] = useState<InputRange>({
     xStart: "",
     xEnd: "",
@@ -81,16 +65,16 @@ export function CytometryGraphInputs() {
   const [errors, setErrors] = useState<InputErrors>({});
 
   useEffect(() => {
-    if (cytometryFilter) {
+    if (rangeSource) {
       setRangeInput({
-        xStart: Math.round(cytometryFilter.xRangeStart).toString(),
-        xEnd: Math.round(cytometryFilter.xRangeEnd).toString(),
-        yStart: Math.round(cytometryFilter.yRangeEnd).toString(),
-        yEnd: Math.round(cytometryFilter.yRangeStart).toString(),
+        xStart: Math.round(rangeSource.xRangeStart).toString(),
+        xEnd: Math.round(rangeSource.xRangeEnd).toString(),
+        yStart: Math.round(rangeSource.yRangeEnd).toString(),
+        yEnd: Math.round(rangeSource.yRangeStart).toString(),
       });
       setErrors({});
     }
-  }, [cytometryFilter]);
+  }, [rangeSource]);
 
   const handleInputClear = useCallback(() => {
     setRangeInput({
@@ -99,11 +83,9 @@ export function CytometryGraphInputs() {
       yStart: "",
       yEnd: "",
     });
+    onClear();
     setErrors({});
-    useCellSegmentationLayerStore.setState({
-      cytometryFilter: undefined,
-    });
-  }, []);
+  }, [onClear]);
 
   const handleInputChange = useCallback(
     (newValueString: string, field: InputFieldType) => {
@@ -112,39 +94,34 @@ export function CytometryGraphInputs() {
         [field]: newValueString,
       }));
 
-      if (!cytometryFilter || !newValueString) return;
+      if (!rangeSource || !newValueString) return;
 
       const numValue = Number(newValueString);
       const fieldConfig = INPUT_FIELDS.find((config) => config.field === field);
 
       if (!fieldConfig) return;
 
-      const { isValid, errorMessage } = fieldConfig.validateValue(
-        numValue,
-        cytometryFilter
-      );
+      const isValid = fieldConfig.validateValue(numValue, rangeSource);
 
       if (isValid) {
-        useCellSegmentationLayerStore.setState({
-          cytometryFilter: fieldConfig.updateFilter(numValue, cytometryFilter),
-        });
+        onUpdateRange(fieldConfig.updateFilter(numValue, rangeSource));
 
         setErrors((prev) => ({
           ...prev,
-          [field]: undefined,
+          [field]: false,
         }));
       } else {
         setErrors((prev) => ({
           ...prev,
-          [field]: errorMessage,
+          [field]: true,
         }));
       }
     },
-    [cytometryFilter]
+    [rangeSource, onUpdateRange]
   );
 
   return (
-    <>
+    <Box sx={sx.inputWrapper}>
       {INPUT_FIELDS.map(({ field, label }) => (
         <GxInput
           key={field}
@@ -159,13 +136,26 @@ export function CytometryGraphInputs() {
       <Button onClick={handleInputClear} fullWidth sx={sx.clearButton}>
         Clear
       </Button>
-    </>
+    </Box>
   );
 }
 
 const styles = (theme: Theme) => ({
+  inputWrapper: {
+    display: "grid",
+    gridTemplateColumns: "repeat(4, 1fr) 100px",
+    justifyContent: "space-between",
+    alignItems: "start",
+    gap: "8px",
+    paddingBlock: "16px",
+    height: "min-content",
+    marginTop: "auto",
+    backgroundColor: theme.palette.gx.primary.white,
+    paddingInline: "8px",
+  },
   clearButton: {
     fontWeight: 700,
+    height: "100%",
     color: theme.palette.gx.primary.white,
     background: theme.palette.gx.gradients.brand(),
   },

@@ -1,4 +1,11 @@
-import { alpha, Box, Theme, Typography, useTheme } from "@mui/material";
+import {
+  alpha,
+  Box,
+  MenuItem,
+  Theme,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { CytometryGraphProps } from "./CytometryGraph.types";
 import Plot from "react-plotly.js";
 import { Data, Layout } from "plotly.js";
@@ -7,18 +14,20 @@ import { debounce } from "lodash";
 import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
 import { GxSelect } from "../../../../../shared/components/GxSelect";
 import { GetBrandColorscale } from "./CytometryGraph.helpers";
-import { CytometryGraphInputs } from "./CytometryGraphInputs";
+import { CytometrySettingsMenu } from "./CytometrySettingsMenu/CytometrySettingsMenu";
+import { GraphRangeInputs } from "../GraphRangeInputs";
+import { CytometryFilter } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types";
 
-export const CytometryGraph = ({
-  data,
-  binSize = 100,
-}: CytometryGraphProps) => {
+export const CytometryGraph = ({ data }: CytometryGraphProps) => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
 
   const { cytometryFilter } = useCellSegmentationLayerStore();
-  const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  // TODO: Implement setBinSize in the graph settings menu
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [binSize, setBinSize] = useState(100);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -166,12 +175,28 @@ export const CytometryGraph = ({
 
   return (
     <Box sx={sx.container}>
-      <Box sx={sx.selectWrapper}>
-        <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
-        <GxSelect fullWidth placeholder="Select Data Source"></GxSelect>
-        <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
-        <GxSelect fullWidth placeholder="Select Data Source"></GxSelect>
+      <Box sx={sx.headerWrapper}>
+        <Box sx={sx.selectWrapper}>
+          <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
+          <GxSelect
+            fullWidth
+            placeholder="Select Data Source"
+            MenuProps={{ sx: { zIndex: 3000 } }}
+          >
+            <MenuItem>Select One...</MenuItem>
+          </GxSelect>
+          <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
+          <GxSelect
+            fullWidth
+            placeholder="Select Data Source"
+            MenuProps={{ sx: { zIndex: 3000 } }}
+          >
+            <MenuItem>Select One...</MenuItem>
+          </GxSelect>
+        </Box>
+        <CytometrySettingsMenu />
       </Box>
+
       <Box ref={containerRef} sx={sx.graphWrapper}>
         <Plot
           data={plotData}
@@ -191,16 +216,15 @@ export const CytometryGraph = ({
             ],
             responsive: true,
             displayModeBar: true,
-            displaylogo: false,
           }}
           onSelected={(e) => {
             if (e?.range) {
               useCellSegmentationLayerStore.setState({
                 cytometryFilter: {
-                  xRangeProteinName: "Protein-1",
+                  xRangeProteinName: cytometryFilter?.xRangeProteinName || "",
+                  yRangeProteinName: cytometryFilter?.yRangeProteinName || "",
                   xRangeStart: e.range.x[0],
                   xRangeEnd: e.range.x[1],
-                  yRangeProteinName: "Protein-2",
                   yRangeStart: e.range.y[1],
                   yRangeEnd: e.range.y[0],
                 },
@@ -209,9 +233,19 @@ export const CytometryGraph = ({
           }}
         />
       </Box>
-      <Box sx={sx.inputWrapper}>
-        <CytometryGraphInputs />
-      </Box>
+      <GraphRangeInputs
+        rangeSource={cytometryFilter}
+        onUpdateRange={(newFilter) =>
+          useCellSegmentationLayerStore.setState({
+            cytometryFilter: newFilter as CytometryFilter,
+          })
+        }
+        onClear={() =>
+          useCellSegmentationLayerStore.setState({
+            cytometryFilter: undefined,
+          })
+        }
+      />
     </Box>
   );
 };
@@ -230,29 +264,21 @@ const styles = (theme: Theme) => ({
   plot: {
     width: "100%",
   },
+  headerWrapper: {
+    display: "flex",
+    alignItems: "center",
+  },
   selectWrapper: {
     display: "flex",
     alignItems: "center",
-    gap: "16px",
+    width: "100%",
     backgroundColor: theme.palette.gx.primary.white,
-    paddingBlock: "8px",
-    paddingInline: "24px",
+    gap: "16px",
+    padding: "8px",
   },
   selectLabel: {
     textAlign: "right",
     textWrap: "nowrap",
     fontWeight: "bold",
-  },
-  inputWrapper: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr) 150px",
-    justifyContent: "space-between",
-    alignItems: "start",
-    gap: "8px",
-    paddingBlock: "16px",
-    height: "min-content",
-    marginTop: "auto",
-    backgroundColor: theme.palette.gx.primary.white,
-    paddingInline: "24px",
   },
 });
