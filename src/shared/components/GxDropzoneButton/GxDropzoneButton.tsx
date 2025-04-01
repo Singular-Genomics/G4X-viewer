@@ -1,4 +1,13 @@
-import { Box, Button, TextField, Theme, alpha, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Theme,
+  alpha,
+  useTheme,
+  IconButton,
+} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { GxDropzoneButtonProps } from "./GxDropzoneButton.types";
 
 export const GxDropzoneButton = ({
@@ -8,6 +17,8 @@ export const GxDropzoneButton = ({
   labelText,
   buttonText,
   disabled = false,
+  onCloudUploadClick,
+  isCloudUploaded,
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -23,6 +34,20 @@ export const GxDropzoneButton = ({
         value={labelText || " "}
         sx={sx.textField}
         disabled={disabled}
+        InputProps={{
+          endAdornment: onCloudUploadClick && (
+            <IconButton
+              onClick={onCloudUploadClick}
+              size="small"
+              sx={
+                isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon
+              }
+              disabled={disabled}
+            >
+              <CloudUploadIcon />
+            </IconButton>
+          ),
+        }}
       />
       <Button
         fullWidth
@@ -63,6 +88,18 @@ const styles = (theme: Theme) => ({
     "&:hover": {
       borderColor: theme.palette.gx.accent.greenBlue,
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
+    },
+  },
+  cloudUploadIcon: {
+    color: theme.palette.grey[500],
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.grey[500], 0.1),
+    },
+  },
+  cloudUploadIconActive: {
+    color: theme.palette.gx.accent.greenBlue,
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1),
     },
   },
 });

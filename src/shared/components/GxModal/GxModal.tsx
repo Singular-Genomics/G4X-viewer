@@ -23,9 +23,10 @@ export const GxModal = ({
   colorVariant = "singular",
   iconVariant = "info",
   dontShowFlag,
+  size = "default",
 }: GxModalProps) => {
   const theme = useTheme();
-  const sx = styles(theme);
+  const sx = styles(theme, size);
   const stylesVaraint =
     colorVariants[colorVariant as keyof typeof colorVariants];
 
@@ -93,66 +94,100 @@ export const GxModal = ({
   );
 };
 
-const styles = (theme: Theme) => ({
-  modalContainer: {
-    width: "fit-content",
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    borderRadius: "16px",
-    border: "1px solid rgba(125, 125, 125, 1)",
-    overflow: "hidden",
-  },
-  headerWrapper: {
-    display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    padding: "8px",
-  },
-  modalIcon: {
-    height: "64px",
-    width: "64px",
-    color: theme.palette.gx.primary.white,
-  },
-  modalTitle: {
-    fontSize: "32px",
-    fontWeight: "bold",
-    color: theme.palette.gx.primary.white,
-    textTransform: "uppercase",
-  },
-  modalContentWrapper: {
-    padding: "16px",
-    background: theme.palette.gx.lightGrey[700],
-  },
-  modalButtonsWrapper: {
-    display: "flex",
-    justifyContent: "space-around",
-    alignItems: "center",
-    margin: "48px 0px 16px",
-  },
-  modalButtonBase: {
-    fontWeight: "bold",
-    padding: "4px 32px",
-    transition: "all 0.2s",
-    "&:hover": {
-      transform: "translateY(-4px)",
-      boxShadow: "0px 5px 8px rgba(0, 0, 0, 0.3)",
+const styles = (theme: Theme, size: string) => {
+  // Base styles for all sizes
+  const baseStyles = {
+    modalContainer: {
+      width: "fit-content",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      borderRadius: "16px",
+      border: "1px solid rgba(125, 125, 125, 1)",
+      overflow: "hidden",
     },
-  },
-  continueButton: {
-    color: theme.palette.gx.primary.white,
-  },
-  cancelButton: {
-    color: theme.palette.gx.primary.black,
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: theme.palette.gx.primary.black,
-  },
-  chechboxWrapper: {
-    marginLeft: "16px",
-  },
-});
+    headerWrapper: {
+      display: "flex",
+      alignItems: "center",
+      gap: "16px",
+      padding: "8px",
+    },
+    modalContentWrapper: {
+      padding: "16px",
+      background: theme.palette.gx.lightGrey[700],
+    },
+    modalButtonsWrapper: {
+      display: "flex",
+      justifyContent: "space-around",
+      alignItems: "center",
+      margin: "48px 0px 16px",
+    },
+    modalButtonBase: {
+      fontWeight: "bold",
+      padding: "4px 32px",
+      transition: "all 0.2s",
+      "&:hover": {
+        transform: "translateY(-4px)",
+        boxShadow: "0px 5px 8px rgba(0, 0, 0, 0.3)",
+      },
+    },
+    continueButton: {
+      color: theme.palette.gx.primary.white,
+    },
+    cancelButton: {
+      color: theme.palette.gx.primary.black,
+      borderWidth: "2px",
+      borderStyle: "solid",
+      borderColor: theme.palette.gx.primary.black,
+    },
+    chechboxWrapper: {
+      marginLeft: "16px",
+    },
+  };
+
+  // Size-specific styles
+  if (size === "small") {
+    return {
+      ...baseStyles,
+      modalIcon: {
+        height: "32px",
+        width: "32px",
+        color: theme.palette.gx.primary.white,
+      },
+      modalTitle: {
+        fontSize: "18px",
+        fontWeight: "bold",
+        color: theme.palette.gx.primary.white,
+        textTransform: "uppercase",
+      },
+      modalButtonsWrapper: {
+        ...baseStyles.modalButtonsWrapper,
+        margin: "24px 0px 16px",
+      },
+      modalButtonBase: {
+        ...baseStyles.modalButtonBase,
+        padding: "4px 24px",
+      },
+    };
+  }
+
+  // Default size styles
+  return {
+    ...baseStyles,
+    modalIcon: {
+      height: "64px",
+      width: "64px",
+      color: theme.palette.gx.primary.white,
+    },
+    modalTitle: {
+      fontSize: "32px",
+      fontWeight: "bold",
+      color: theme.palette.gx.primary.white,
+      textTransform: "uppercase",
+    },
+  };
+};
 
 const colorVariants = {
   danger: {
