@@ -154,7 +154,6 @@ export function CytometryGraphInputs() {
           type="number"
           size="small"
           error={!!errors[field]}
-          helperText={errors[field]}
         />
       ))}
       <Button onClick={handleInputClear} fullWidth sx={sx.clearButton}>
