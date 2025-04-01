@@ -4,6 +4,7 @@ import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationL
 import { useShallow } from "zustand/react/shallow";
 import { CellMasksFillSettings } from "./CellMasksFillSettings";
 import { CellsFilter } from "./CellsFilter";
+import { GraphFilters } from "./GraphFilters/GraphFilters";
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -41,6 +42,13 @@ export const CellMasksLayerSection = () => {
           {!isCellLayerOn && isCellNameFilterOn && <DisabledLayerWarning />}
         </Box>
         <CellsFilter />
+      </Box>
+      <Box>
+        <Box sx={sx.subsectionWrapper}>
+          <Typography sx={sx.subsectionTitle}>Graph Filters</Typography>
+          {!isCellLayerOn && isCellNameFilterOn && <DisabledLayerWarning />}
+        </Box>
+        <GraphFilters />
       </Box>
     </Box>
   );

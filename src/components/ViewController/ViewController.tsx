@@ -74,6 +74,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <GxCollapsibleSection
                 sectionTitle="Segmentation Layer Settings"
                 disabled={!imageLoaded || !cellMasksFiles?.length}
+                unmountOnExit={false}
               >
                 <CellMasksLayerSection />
               </GxCollapsibleSection>
