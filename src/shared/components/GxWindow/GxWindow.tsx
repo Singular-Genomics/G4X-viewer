@@ -13,7 +13,6 @@ export const GxWindow = ({
   children,
   title,
   boundries,
-  initialPosition = "center",
   onClose,
 }: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
@@ -35,46 +34,6 @@ export const GxWindow = ({
 
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const windowEl = divRef.current;
-    if (windowEl) {
-      const windowSize = windowEl?.getBoundingClientRect();
-      let newPosX = 0;
-      let newPosY = 0;
-
-      if (initialPosition === "center") {
-        newPosX = windowContainer.width / 2 - windowSize.width;
-        newPosY = windowContainer.height / 2 - windowSize.height;
-      } else {
-        if (/top/gi.test(initialPosition)) {
-          newPosY = windowContainer.y;
-        } else if (/bottom/gi.test(initialPosition)) {
-          newPosY = windowContainer.height - windowSize.height;
-        } else {
-          newPosY = windowContainer.height / 2 - windowSize.height;
-        }
-
-        if (/left/gi.test(initialPosition)) {
-          newPosX = windowContainer.x;
-        } else if (/right/gi.test(initialPosition)) {
-          newPosX = windowContainer.width - windowSize.width;
-        } else {
-          newPosX = windowContainer.width / 2 - windowSize.width;
-        }
-      }
-
-      setPosition({
-        x: newPosX,
-        y: newPosY,
-      });
-
-      setTimeout(() => {
-        windowEl.style.visibility = "visible";
-      }, 0);
-    }
-    //eslint-disable-next-line
-  }, []);
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -163,11 +122,10 @@ export const GxWindow = ({
 
 const styles = (theme: Theme) => ({
   windowContainer: (posX: number, posY: number, isDragging: boolean) => ({
-    visibility: "hidden",
     borderRadius: "8px 8px 0px 0px",
     position: "absolute",
     backgroundColor: theme.palette.gx.mediumGrey[500],
-    zIndex: 9999,
+    zIndex: 2000,
     transition: "box-shadow 0.25s",
     boxShadow: isDragging
       ? "24px 24px 8px rgba(0,0,0,0.5)"
@@ -197,6 +155,8 @@ const styles = (theme: Theme) => ({
   },
   windowContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[300],
+    width: "600px",
+    height: "600px",
     minWidth: "200px",
     minHeight: "50px",
     resize: "both",
