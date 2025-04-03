@@ -1,11 +1,15 @@
 import { useShallow } from "zustand/react/shallow";
 import { Box, Theme, useTheme } from "@mui/material";
 import { ChannelController } from "./ChannelController/ChannelController";
-import { PropertiesUpdateType, useChannelsStore } from "../../../../stores/ChannelsStore";
+
+import {
+  PropertiesUpdateType,
+  useChannelsStore,
+} from "../../../../stores/ChannelsStore";
 import { useViewerStore } from "../../../../stores/ViewerStore";
 import { useMetadata } from "../../../../hooks/useMetadata.hook";
 import { getSingleSelectionStats } from "../../../../legacy/utils";
-
+import { ChannelSettingsImportExportButtons } from "./ChannelSettingsImportExportButtons";
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -57,6 +61,8 @@ export const ChannelControllers = () => {
 
   return (
     <Box sx={sx.channelControllersContainer}>
+      <ChannelSettingsImportExportButtons />
+
       {ids.map((id, index) => {
         const toggleIsOn = () => toggleIsOnSetter(index);
         const name = channelOptions[(selections as any)[index].c];
