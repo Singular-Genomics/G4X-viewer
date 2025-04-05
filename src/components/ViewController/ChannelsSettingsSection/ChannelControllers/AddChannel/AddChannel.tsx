@@ -1,80 +1,65 @@
-import { useShallow } from "zustand/react/shallow";
-import { useCallback } from "react";
-import { Button, Theme, alpha, useTheme } from "@mui/material";
-import { MAX_CHANNELS } from "@hms-dbmi/viv";
+import { useShallow } from 'zustand/react/shallow';
+import { useCallback } from 'react';
+import { Button, Theme, alpha, useTheme } from '@mui/material';
+import { MAX_CHANNELS } from '@hms-dbmi/viv';
 import AddIcon from '@mui/icons-material/Add';
-import { useViewerStore } from "../../../../../stores/ViewerStore";
-import { useChannelsStore } from "../../../../../stores/ChannelsStore";
-import { useMetadata } from "../../../../../hooks/useMetadata.hook";
-import { getSingleSelectionStats } from "../../../../../legacy/utils";
-import { COLOR_PALLETE } from "../../../../../shared/constants";
+import { useViewerStore } from '../../../../../stores/ViewerStore';
+import { useChannelsStore } from '../../../../../stores/ChannelsStore';
+import { useMetadata } from '../../../../../hooks/useMetadata.hook';
+import { getSingleSelectionStats } from '../../../../../legacy/utils';
+import { COLOR_PALLETE } from '../../../../../shared/constants';
 
 export const AddChannel = () => {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const [
-    globalSelection,
-    isViewerLoading,
-    setIsChannelLoading,
-    addIsChannelLoading,
-  ] = useViewerStore(
+  const [globalSelection, isViewerLoading, setIsChannelLoading, addIsChannelLoading] = useViewerStore(
     useShallow((store) => [
       store.globalSelection,
       store.isViewerLoading,
       store.setIsChannelLoading,
-      store.addIsChannelLoading,
+      store.addIsChannelLoading
     ])
   );
 
-  const [selections, setPropertiesForChannel, addChannel, getLoader] =
-    useChannelsStore(
-      useShallow((store) => [
-        store.selections,
-        store.setPropertiesForChannel,
-        store.addChannel,
-        store.getLoader,
-      ])
-    );
+  const [selections, setPropertiesForChannel, addChannel, getLoader] = useChannelsStore(
+    useShallow((store) => [store.selections, store.setPropertiesForChannel, store.addChannel, store.getLoader])
+  );
 
   const loader = getLoader();
   const metadata = useMetadata();
   const { labels } = loader[0];
 
   const handleChannelAdd = useCallback(() => {
-    let selection = Object.fromEntries(
-      labels.map((label: string) => [label, 0])
-    );
+    let selection = Object.fromEntries(labels.map((label: string) => [label, 0]));
     selection = { ...selection, ...globalSelection };
 
     const numSelectionsBeforeAdd = selections.length;
     getSingleSelectionStats({
       loader,
-      selection,
+      selection
     }).then(({ domain, contrastLimits }) => {
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
         contrastLimits,
-        channelsVisible: true,
+        channelsVisible: true
       });
       useViewerStore.setState({
         onViewportLoad: () => {
           useViewerStore.setState({ onViewportLoad: () => {} });
           setIsChannelLoading(numSelectionsBeforeAdd, false);
-        },
+        }
       });
       addIsChannelLoading(true);
       const {
-        Pixels: { Channels },
+        Pixels: { Channels }
       } = metadata;
       const { c } = selection;
       addChannel({
         selections: selection,
         ids: String(Math.random()),
         channelsVisible: false,
-        colors:
-          (Channels[c].Color && Channels[c].Color.slice(0, -1)) ??
-          (COLOR_PALLETE[c] || [255, 255, 255]),
+        colors: (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255])
       } as any);
     });
   }, [
@@ -86,7 +71,7 @@ export const AddChannel = () => {
     metadata,
     selections,
     setIsChannelLoading,
-    setPropertiesForChannel,
+    setPropertiesForChannel
   ]);
 
   return (
@@ -104,13 +89,13 @@ export const AddChannel = () => {
 
 const styles = (theme: Theme) => ({
   addChannelButton: {
-    marginTop: "16px",
+    marginTop: '16px',
     color: theme.palette.gx.accent.greenBlue,
-    border: "1px solid",
+    border: '1px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    borderRadius: "8px",
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
-    },
-  },
+    borderRadius: '8px',
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+    }
+  }
 });

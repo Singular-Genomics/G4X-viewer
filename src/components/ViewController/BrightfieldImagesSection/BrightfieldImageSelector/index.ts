@@ -1,2 +1,2 @@
-export * from "./BrightfieldImageSelector";
-export * from "./BrightfieldImageSelector.types";
+export * from './BrightfieldImageSelector';
+export * from './BrightfieldImageSelector.types';

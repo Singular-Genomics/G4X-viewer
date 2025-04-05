@@ -1,0 +1,10 @@
+dist
+node_modules
+build
+coverage
+.github
+public
+scripts
+assets
+package-lock.json
+*.html
