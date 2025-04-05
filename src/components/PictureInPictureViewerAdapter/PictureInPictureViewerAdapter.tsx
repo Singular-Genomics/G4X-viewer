@@ -70,7 +70,7 @@ export const PictureInPictureViewerAdapter = () => {
       (zoom: number) => {
         const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
         useViewerStore.setState({
-          pyramidResolution: z,
+          pyramidResolution: z
         });
       },
       250,
@@ -151,7 +151,7 @@ export const PictureInPictureViewerAdapter = () => {
             onViewStateChange={({ viewState: newViewState, viewId }) => {
               // Update the viewState immediately
               useViewerStore.setState({
-                viewState: { ...newViewState, id: viewId },
+                viewState: { ...newViewState, id: viewId }
               });
 
               // Update the pyramidResolution with debounce
