@@ -167,8 +167,8 @@ export const useBrightfieldImageLayer = () => {
     dtype: dtype,
     opacity: isLayerVisible ? opacity : 0,
     ...({
-      pickable: false,
-    } as any),
+      pickable: false
+    } as any)
   });
 
   return brightfieldImageLayer;
