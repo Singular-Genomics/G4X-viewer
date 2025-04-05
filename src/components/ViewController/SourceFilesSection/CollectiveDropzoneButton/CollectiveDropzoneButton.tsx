@@ -8,8 +8,7 @@ export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDr
   const theme = useTheme();
   const sx = styles(theme);
 
-  const { dropzoneProps, loading, progress, collectiveFileName } =
-    useFileHandler();
+  const { dropzoneProps, loading, progress, collectiveFileName } = useFileHandler();
 
   useEffect(() => {
     setLockSwitch(loading);

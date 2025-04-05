@@ -10,7 +10,7 @@ export const GxDropzoneButton = ({
   disabled = false,
   isDragActive,
   isDragAccept,
-  isDragReject,
+  isDragReject
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -19,11 +19,11 @@ export const GxDropzoneButton = ({
 
   if (isDragActive) {
     if (isDragAccept) {
-      dynamicButtonText = "Drop file here";
+      dynamicButtonText = 'Drop file here';
     } else if (isDragReject) {
-      dynamicButtonText = "File type not accepted";
+      dynamicButtonText = 'File type not accepted';
     } else {
-      dynamicButtonText = "Drop to upload";
+      dynamicButtonText = 'Drop to upload';
     }
   }
 
@@ -31,7 +31,7 @@ export const GxDropzoneButton = ({
     ...sx.dropDownButton,
     ...(isDragActive && sx.dropzoneActive),
     ...(isDragActive && isDragAccept && sx.dropzoneAccept),
-    ...(isDragActive && isDragReject && sx.dropzoneReject),
+    ...(isDragActive && isDragReject && sx.dropzoneReject)
   };
 
   return (
@@ -84,23 +84,23 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.accent.greenBlue,
     '&:hover': {
       borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2),
+      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     },
-    transition: "all 0.15s ease",
+    transition: 'all 0.15s ease'
   },
   dropzoneActive: {
-    borderStyle: "solid",
-    borderWidth: "2px",
-    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1),
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1)
   },
   dropzoneAccept: {
     borderColor: theme.palette.success.main,
     color: theme.palette.success.main,
-    backgroundColor: alpha(theme.palette.success.main, 0.1),
+    backgroundColor: alpha(theme.palette.success.main, 0.1)
   },
   dropzoneReject: {
     borderColor: theme.palette.error.main,
     color: theme.palette.error.main,
-    backgroundColor: alpha(theme.palette.error.main, 0.1),
-  },
+    backgroundColor: alpha(theme.palette.error.main, 0.1)
+  }
 });
