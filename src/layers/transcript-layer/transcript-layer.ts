@@ -1,7 +1,7 @@
 import { SingleTileLayerProps, TranscriptLayerProps, getTileDataProps } from './transcript-layer.types';
-import { CompositeLayer } from '@deck.gl/core/typed';
-import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers/typed';
-import { TileLayer } from '@deck.gl/geo-layers/typed';
+import { CompositeLayer, PickingInfo } from '@deck.gl/core';
+import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { TileLayer } from '@deck.gl/geo-layers';
 
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from './transcript-schema';
@@ -111,6 +111,10 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     });
   }
 
+  getPickingInfo({ info }: { info: PickingInfo }) {
+    return info;
+  }
+
   renderLayers() {
     // ========================= TILED LAYER =====================
     const getTileData = async ({ index, bbox }: getTileDataProps) => {
@@ -165,7 +169,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       minZoom = layers - this.props.maxVisibleLayers;
     }
 
-    const tiledLayer = new TileLayer(this.props, {
+    const tiledLayer = new TileLayer({
       id: 'tiled_layer',
       tileSize: tile_size,
       maxZoom: layers,
@@ -173,9 +177,16 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       zoomOffset: 2,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
+      pickable: true,
       getTileData,
       updateTriggers: {
-        getTileData: [this.props.files, this.props.visible, this.props.geneFilters, this.props.showDiscardedPoints]
+        getTileData: [
+          this.props.files,
+          this.props.visible,
+          this.props.geneFilters,
+          this.props.showDiscardedPoints,
+          this.props.pointSize
+        ]
       },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
