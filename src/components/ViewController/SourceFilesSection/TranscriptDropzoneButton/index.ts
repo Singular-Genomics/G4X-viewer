@@ -1,2 +1,2 @@
-export * from "./TranscriptDropzoneButton";
-export * from "./TranscriptDropzoneButton.types";
+export * from './TranscriptDropzoneButton';
+export * from './TranscriptDropzoneButton.types';

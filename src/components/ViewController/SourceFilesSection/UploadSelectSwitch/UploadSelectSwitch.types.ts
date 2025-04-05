@@ -1,6 +1,6 @@
 export const UPLOAD_MODES = {
-  MULTI_FILE: "multi-file" as const,
-  SINGLE_FILE: "single-file" as const,
+  MULTI_FILE: 'multi-file' as const,
+  SINGLE_FILE: 'single-file' as const
 };
 
 export type UploadSelectSwitchProps = {
