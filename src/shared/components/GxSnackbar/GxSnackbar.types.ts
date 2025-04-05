@@ -1,5 +1,5 @@
-import { SxProps } from "@mui/material";
-import { CustomContentProps } from "notistack";
+import { SxProps } from '@mui/material';
+import { CustomContentProps } from 'notistack';
 
 export type GxSnackbarProps = {
   customContent?: React.ReactNode;
@@ -11,9 +11,4 @@ export type GxSnackbarProps = {
   };
 } & CustomContentProps;
 
-export type GxSnackbarModes =
-  | "brand"
-  | "success"
-  | "error"
-  | "warning"
-  | "info";
+export type GxSnackbarModes = 'brand' | 'success' | 'error' | 'warning' | 'info';

@@ -1,2 +1,2 @@
-export * from "./BrightfieldImagesStore";
-export * from "./BrightfieldImagesStore.types";
+export * from './BrightfieldImagesStore';
+export * from './BrightfieldImagesStore.types';

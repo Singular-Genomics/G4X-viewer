@@ -1,1 +1,1 @@
-export * from "./MaxLayerSlider";
+export * from './MaxLayerSlider';

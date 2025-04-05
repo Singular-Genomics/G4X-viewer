@@ -1,22 +1,16 @@
-import { useSnackbar } from "notistack";
-import { useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import TarWorker from "./tarFileWorker.js?worker";
-import { parseJsonFromFile } from "../../../../../utils/utils";
-import {
-  GeneralDetailsType,
-  useViewerStore,
-} from "../../../../../stores/ViewerStore";
-import {
-  ConfigFileData,
-  useBinaryFilesStore,
-} from "../../../../../stores/BinaryFilesStore";
-import * as protobuf from "protobufjs";
-import { useTranscriptLayerStore } from "../../../../../stores/TranscriptLayerStore";
-import { useCellSegmentationLayerStore } from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useBrightfieldImagesStore } from "../../../../../stores/BrightfieldImagesStore";
-import { CellMasksSchema } from "../../../../../layers/cell-masks-layer/cell-masks-schema";
-import { getMissingFilesContent } from "./helpers";
+import { useSnackbar } from 'notistack';
+import { useCallback, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import TarWorker from './tarFileWorker.js?worker';
+import { parseJsonFromFile } from '../../../../../utils/utils';
+import { GeneralDetailsType, useViewerStore } from '../../../../../stores/ViewerStore';
+import { ConfigFileData, useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import * as protobuf from 'protobufjs';
+import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
+import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { getMissingFilesContent } from './helpers';
 
 type DataSetConfig = {
   protein_image_src: string;
@@ -39,47 +33,43 @@ export const useFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
 
-  const collectiveFileName = useBinaryFilesStore(
-    (state) => state.collectiveFileName
-  );
-  const setCollectiveFileName = useBinaryFilesStore(
-    (state) => state.setCollectiveFileName
-  );
+  const collectiveFileName = useBinaryFilesStore((state) => state.collectiveFileName);
+  const setCollectiveFileName = useBinaryFilesStore((state) => state.setCollectiveFileName);
 
   const verifyDataSetConfig = useCallback(
     (configFile: DataSetConfig): boolean => {
       const missingFileErrors = [];
       if (!configFile.protein_image_src) {
-        missingFileErrors.push("Protein image file");
+        missingFileErrors.push('Protein image file');
       }
       if (!configFile.protein_image_data_src) {
-        missingFileErrors.push("Protein image data config");
+        missingFileErrors.push('Protein image data config');
       }
       if (!configFile.he_images_src) {
-        missingFileErrors.push("H&E images directory");
+        missingFileErrors.push('H&E images directory');
       }
       if (!configFile.transcript_src) {
-        missingFileErrors.push("Transcripts TAR file");
+        missingFileErrors.push('Transcripts TAR file');
       }
       if (!configFile.cell_segmentation_src) {
-        missingFileErrors.push("Cell segmentation BIN file");
+        missingFileErrors.push('Cell segmentation BIN file');
       }
 
       if (missingFileErrors.length > 0) {
         if (missingFileErrors.length === 1) {
           enqueueSnackbar({
-            variant: "gxSnackbar",
-            titleMode: "error",
+            variant: 'gxSnackbar',
+            titleMode: 'error',
             message: `Data set config is missing ${missingFileErrors[0]} source definition`,
-            persist: true,
+            persist: true
           });
         } else {
           enqueueSnackbar({
-            variant: "gxSnackbar",
-            titleMode: "error",
+            variant: 'gxSnackbar',
+            titleMode: 'error',
             message: `Data set config is missing ${missingFileErrors.length} source definitions.`,
             customContent: getMissingFilesContent(missingFileErrors),
-            persist: true,
+            persist: true
           });
         }
         return false;
@@ -96,34 +86,30 @@ export const useFileHandler = () => {
       reader.onload = () => {
         const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
         const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-        const colormapConfig = (
-          protoRoot.lookupType("CellMasks").decode(cellDataBuffer) as any
-        ).colormap;
+        const colormapConfig = (protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any).colormap;
 
         if (!colormapConfig || !colormapConfig.length) {
           enqueueSnackbar({
-            message:
-              "Missing colormap config, transcript metadata filtering will be unavailable",
-            variant: "gxSnackbar",
-            titleMode: "warning",
+            message: 'Missing colormap config, transcript metadata filtering will be unavailable',
+            variant: 'gxSnackbar',
+            titleMode: 'warning'
           });
         }
 
         useCellSegmentationLayerStore.setState({
           cellMasksData: cellDataBuffer,
-          cellColormapConfig: colormapConfig,
+          cellColormapConfig: colormapConfig
         });
       };
-      reader.onerror = () =>
-        console.error("Something went wrong during file load!");
+      reader.onerror = () => console.error('Something went wrong during file load!');
       reader.readAsArrayBuffer(file);
-      reader.addEventListener("progress", (event: ProgressEvent<FileReader>) =>
+      reader.addEventListener('progress', (event: ProgressEvent<FileReader>) =>
         setProgress(Math.round((event.loaded / event.total) * 100))
       );
-      reader.addEventListener("loadend", () => setLoading(false));
+      reader.addEventListener('loadend', () => setLoading(false));
 
       useCellSegmentationLayerStore.setState({
-        fileName: file.name.split("/").pop() || "unknown",
+        fileName: file.name.split('/').pop() || 'unknown'
       });
     },
     [enqueueSnackbar]
@@ -141,41 +127,35 @@ export const useFileHandler = () => {
 
         if (e.data.files && e.data.completed) {
           const extractedFiles = e.data.files;
-          const configFile = extractedFiles.find((f: File) =>
-            f.name.endsWith("config.json")
-          );
+          const configFile = extractedFiles.find((f: File) => f.name.endsWith('config.json'));
 
           if (configFile) {
-            const parsedConfig = (await parseJsonFromFile(
-              configFile
-            )) as ConfigFileData;
+            const parsedConfig = (await parseJsonFromFile(configFile)) as ConfigFileData;
             const { color_map, ...layerConfig } = parsedConfig;
             if (!color_map) {
               enqueueSnackbar({
-                message:
-                  "Missing colormap config, cell segmentation filtering will be unavailable",
-                variant: "gxSnackbar",
-                titleMode: "warning",
+                message: 'Missing colormap config, cell segmentation filtering will be unavailable',
+                variant: 'gxSnackbar',
+                titleMode: 'warning'
               });
             }
 
-            const { setLayerConfig, setColormapConfig, setFiles, setFileName } =
-              useBinaryFilesStore.getState();
+            const { setLayerConfig, setColormapConfig, setFiles, setFileName } = useBinaryFilesStore.getState();
             setLayerConfig(layerConfig);
             setColormapConfig(color_map);
             setFiles(extractedFiles);
             useTranscriptLayerStore.setState({
-              maxVisibleLayers: layerConfig.layers,
+              maxVisibleLayers: layerConfig.layers
             });
 
             // Extract filename from the tar file
-            const tarFileName = tarFile.name.split("/").pop() || "unknown";
+            const tarFileName = tarFile.name.split('/').pop() || 'unknown';
             setFileName(tarFileName);
           } else {
             enqueueSnackbar({
-              message: "Missing transcript config file in TAR archive",
-              variant: "gxSnackbar",
-              titleMode: "error",
+              message: 'Missing transcript config file in TAR archive',
+              variant: 'gxSnackbar',
+              titleMode: 'error'
             });
           }
 
@@ -188,8 +168,8 @@ export const useFileHandler = () => {
         console.error(error);
         enqueueSnackbar({
           message: `Error unpacking transcript TAR file`,
-          variant: "gxSnackbar",
-          titleMode: "error",
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         setLoading(false);
         worker.terminate();
@@ -203,7 +183,7 @@ export const useFileHandler = () => {
   const parseCollectiveFileData = useCallback(
     async (inputFiles: File[], datasetConfig: DataSetConfig) => {
       const outputFiles: CollectiveFileOutput = {
-        brightfieldImagesFiles: [],
+        brightfieldImagesFiles: []
       };
 
       inputFiles.forEach((file) => {
@@ -217,16 +197,16 @@ export const useFileHandler = () => {
           outputFiles.proteinImageFile = file;
         } else if (file.name.endsWith(datasetConfig.protein_image_data_src)) {
           outputFiles.proteinImageData = file;
-        } else if (!file.name.endsWith(".json")) {
+        } else if (!file.name.endsWith('.json')) {
           console.warn(`Unknown file: ${file.name}`);
         }
       });
 
       if (!outputFiles.proteinImageFile) {
         enqueueSnackbar({
-          message: "Missing protein image file",
-          variant: "gxSnackbar",
-          titleMode: "error",
+          message: 'Missing protein image file',
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         return false;
       }
@@ -234,65 +214,58 @@ export const useFileHandler = () => {
       useViewerStore.setState({
         source: {
           urlOrFile: outputFiles.proteinImageFile,
-          description:
-            outputFiles.proteinImageFile.name.split("/").pop() || "unknown",
-        },
+          description: outputFiles.proteinImageFile.name.split('/').pop() || 'unknown'
+        }
       });
 
       const parsingWarnings = [];
 
       if (!outputFiles.proteinImageData) {
-        parsingWarnings.push("Missing protein image data JSON");
+        parsingWarnings.push('Missing protein image data JSON');
       } else {
         try {
           const generalDetails: GeneralDetailsType = {
-            fileName:
-              outputFiles.proteinImageData.name.split("/").pop() || "unknown",
-            data: JSON.parse(await outputFiles.proteinImageData.text()),
+            fileName: outputFiles.proteinImageData.name.split('/').pop() || 'unknown',
+            data: JSON.parse(await outputFiles.proteinImageData.text())
           };
 
           useViewerStore.getState().setGeneralDetails(generalDetails);
         } catch (error) {
           enqueueSnackbar({
-            message:
-              "Error parsing protein image data JSON file: " +
-              (error as Error).message,
-            variant: "gxSnackbar",
-            titleMode: "error",
+            message: 'Error parsing protein image data JSON file: ' + (error as Error).message,
+            variant: 'gxSnackbar',
+            titleMode: 'error'
           });
         }
       }
 
       if (!outputFiles.transcriptFile) {
-        parsingWarnings.push("Missing transcript file");
+        parsingWarnings.push('Missing transcript file');
       } else {
         // Process the transcript tar file
         await processTranscriptTarFile(outputFiles.transcriptFile);
       }
 
       if (!outputFiles.cellSegmentationFile) {
-        parsingWarnings.push("Missing cell segmentation file");
+        parsingWarnings.push('Missing cell segmentation file');
       } else {
         parseSegmentationFile(outputFiles.cellSegmentationFile);
       }
 
       const { setAvailableImages } = useBrightfieldImagesStore.getState();
       if (!outputFiles.brightfieldImagesFiles?.length) {
-        parsingWarnings.push("Missing H&E images source");
+        parsingWarnings.push('Missing H&E images source');
       } else {
         setAvailableImages(outputFiles.brightfieldImagesFiles);
       }
 
       if (parsingWarnings.length > 0) {
-        enqueueSnackbar(
-          `${parsingWarnings.length} missing files were skipped during parsing`,
-          {
-            persist: true,
-            customContent: getMissingFilesContent(parsingWarnings),
-            variant: "gxSnackbar",
-            titleMode: "warning",
-          }
-        );
+        enqueueSnackbar(`${parsingWarnings.length} missing files were skipped during parsing`, {
+          persist: true,
+          customContent: getMissingFilesContent(parsingWarnings),
+          variant: 'gxSnackbar',
+          titleMode: 'warning'
+        });
       }
     },
     [enqueueSnackbar, processTranscriptTarFile, parseSegmentationFile]
@@ -304,33 +277,29 @@ export const useFileHandler = () => {
     }
 
     if (e.data.files && e.data.completed) {
-      const datasetConfig = e.data.files.find((f: File) =>
-        f.name.endsWith("dataset.config.json")
-      );
+      const datasetConfig = e.data.files.find((f: File) => f.name.endsWith('dataset.config.json'));
 
       if (!datasetConfig) {
         enqueueSnackbar({
-          message: "Missing data set config file.",
-          variant: "gxSnackbar",
-          titleMode: "error",
+          message: 'Missing data set config file.',
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         setLoading(false);
-        setCollectiveFileName("");
+        setCollectiveFileName('');
         return;
       }
 
-      const parsedDatasetConfig = (await parseJsonFromFile(
-        datasetConfig
-      )) as DataSetConfig;
+      const parsedDatasetConfig = (await parseJsonFromFile(datasetConfig)) as DataSetConfig;
 
       if (!verifyDataSetConfig(parsedDatasetConfig)) {
-        console.error("Verification failed");
+        console.error('Verification failed');
         setLoading(false);
-        setCollectiveFileName("");
+        setCollectiveFileName('');
         return;
       }
 
-      console.info("Verification successful");
+      console.info('Verification successful');
       parseCollectiveFileData(e.data.files, parsedDatasetConfig);
       useTranscriptLayerStore.setState({ isTranscriptLayerOn: false });
       useCellSegmentationLayerStore.setState({ isCellLayerOn: false });
@@ -357,11 +326,11 @@ export const useFileHandler = () => {
       console.error(error);
       enqueueSnackbar({
         message: `Error unpacking ${file.type}`,
-        variant: "gxSnackbar",
-        titleMode: "error",
+        variant: 'gxSnackbar',
+        titleMode: 'error'
       });
       setLoading(false);
-      setCollectiveFileName("");
+      setCollectiveFileName('');
       worker.terminate();
     };
 
@@ -373,11 +342,11 @@ export const useFileHandler = () => {
 
     setProgress(0);
     const file = acceptedFiles[0];
-    if (file.type !== "application/x-tar") {
+    if (file.type !== 'application/x-tar') {
       enqueueSnackbar({
-        message: "File type not supported",
-        variant: "gxSnackbar",
-        titleMode: "warning",
+        message: 'File type not supported',
+        variant: 'gxSnackbar',
+        titleMode: 'warning'
       });
       return;
     }
@@ -389,8 +358,8 @@ export const useFileHandler = () => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: {
-      "application/x-tar": [".g4x.tar"],
-    },
+      'application/x-tar': ['.g4x.tar']
+    }
   });
 
   return {
@@ -398,6 +367,6 @@ export const useFileHandler = () => {
     getInputProps,
     loading,
     progress,
-    collectiveFileName,
+    collectiveFileName
   };
 };

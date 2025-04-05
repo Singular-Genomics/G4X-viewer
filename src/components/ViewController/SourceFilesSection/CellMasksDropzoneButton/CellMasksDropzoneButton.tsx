@@ -1,21 +1,18 @@
-import { alpha, Box, LinearProgress, Theme, useTheme } from "@mui/material";
-import { useViewerStore } from "../../../../stores/ViewerStore";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
-import { useCellMasksFileHandler } from "./helpers/useCellMasksFileHandler";
-import { useCellSegmentationLayerStore } from "../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { CellMasksDropzoneButtonProps } from "./CellMasksDropzoneButton.types";
-import { useEffect } from "react";
+import { alpha, Box, LinearProgress, Theme, useTheme } from '@mui/material';
+import { useViewerStore } from '../../../../stores/ViewerStore';
+import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton';
+import { useCellMasksFileHandler } from './helpers/useCellMasksFileHandler';
+import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { CellMasksDropzoneButtonProps } from './CellMasksDropzoneButton.types';
+import { useEffect } from 'react';
 
-export const CellMasksDropzoneButton = ({
-  setLockSwitch,
-}: CellMasksDropzoneButtonProps) => {
+export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   const source = useViewerStore((store) => store.source);
   const fileName = useCellSegmentationLayerStore((store) => store.fileName);
-  const { getInputProps, getRootProps, loading, progress } =
-    useCellMasksFileHandler();
+  const { getInputProps, getRootProps, loading, progress } = useCellMasksFileHandler();
 
   useEffect(() => setLockSwitch(loading), [setLockSwitch, loading]);
 
@@ -42,14 +39,11 @@ export const CellMasksDropzoneButton = ({
 
 const styles = (theme: Theme) => ({
   progressBar: {
-    "& .MuiLinearProgress-barColorPrimary": {
-      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
+    '& .MuiLinearProgress-barColorPrimary': {
+      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`
     },
-    "&.MuiLinearProgress-root": {
-      backgroundColor: `${alpha(
-        theme.palette.gx.accent.greenBlue,
-        0.2
-      )} !important`,
-    },
-  },
+    '&.MuiLinearProgress-root': {
+      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`
+    }
+  }
 });

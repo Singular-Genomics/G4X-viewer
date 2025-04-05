@@ -3,73 +3,73 @@ export const CellMasksSchema = {
     SingleMask: {
       fields: {
         vertices: {
-          rule: "repeated",
-          type: "double",
-          id: 1,
+          rule: 'repeated',
+          type: 'double',
+          id: 1
         },
         color: {
-          rule: "repeated",
-          type: "uint32",
+          rule: 'repeated',
+          type: 'uint32',
           id: 2,
           options: {
-            packed: "true",
-          },
+            packed: 'true'
+          }
         },
         area: {
-          type: "string",
-          id: 3,
+          type: 'string',
+          id: 3
         },
         totalCounts: {
-          type: "string",
-          id: 4,
+          type: 'string',
+          id: 4
         },
         totalGenes: {
-          type: "string",
-          id: 5,
+          type: 'string',
+          id: 5
         },
         cellId: {
-          type: "string",
-          id: 6,
+          type: 'string',
+          id: 6
         },
         clusterId: {
-          type: "string",
-          id: 7,
-        },
-      },
+          type: 'string',
+          id: 7
+        }
+      }
     },
     ColormapEntry: {
       fields: {
         clusterId: {
-          type: "string",
-          id: 1,
+          type: 'string',
+          id: 1
         },
         color: {
-          rule: "repeated",
-          type: "uint32",
+          rule: 'repeated',
+          type: 'uint32',
           id: 2,
           options: {
-            packed: "true",
-          },
-        },
-      },
+            packed: 'true'
+          }
+        }
+      }
     },
     CellMasks: {
       fields: {
         cellMasks: {
-          rule: "repeated",
-          type: "SingleMask",
-          id: 1,
+          rule: 'repeated',
+          type: 'SingleMask',
+          id: 1
         },
         colormap: {
-          rule: "repeated",
-          type: "ColormapEntry",
-          id: 2,
+          rule: 'repeated',
+          type: 'ColormapEntry',
+          id: 2
         },
         numberOfCells: {
-          type: "uint32",
-          id: 3,
-        },
-      },
-    },
-  },
+          type: 'uint32',
+          id: 3
+        }
+      }
+    }
+  }
 };
