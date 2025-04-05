@@ -165,7 +165,10 @@ export const useBrightfieldImageLayer = () => {
     contrastLimits: contrastLimits as any,
     loader: loader as any,
     dtype: dtype,
-    opacity: isLayerVisible ? opacity : 0
+    opacity: isLayerVisible ? opacity : 0,
+    ...({
+      pickable: false
+    } as any)
   });
 
   return brightfieldImageLayer;
