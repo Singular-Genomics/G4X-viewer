@@ -7,7 +7,8 @@ import { useEffect } from 'react';
 export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
-  const { getInputProps, getRootProps, loading, progress, collectiveFileName } = useFileHandler();
+
+  const { dropzoneProps, loading, progress, collectiveFileName } = useFileHandler();
 
   useEffect(() => {
     setLockSwitch(loading);
@@ -16,11 +17,10 @@ export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDr
   return (
     <Box>
       <GxDropzoneButton
-        getInputProps={getInputProps}
-        getRootProps={getRootProps}
         labelTitle="Collective file upload"
         buttonText="Upload G4X file"
         labelText={collectiveFileName}
+        {...dropzoneProps}
       />
       {loading && (
         <LinearProgress

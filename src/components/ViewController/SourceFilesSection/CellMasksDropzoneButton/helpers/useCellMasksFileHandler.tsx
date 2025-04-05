@@ -48,7 +48,7 @@ export const useCellMasksFileHandler = () => {
     });
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     multiple: false,
     accept: {
@@ -57,8 +57,7 @@ export const useCellMasksFileHandler = () => {
   });
 
   return {
-    getRootProps,
-    getInputProps,
+    dropzoneProps,
     progress,
     loading
   };

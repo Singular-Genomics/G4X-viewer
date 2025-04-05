@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
-  const { getRootProps, getInputProps, loading, progress } = useFileHandler();
+  const { dropzoneProps, loading, progress } = useFileHandler();
   const fileName = useBinaryFilesStore((store) => store.fileName);
   const source = useViewerStore((store) => store.source);
 
@@ -20,12 +20,11 @@ export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDr
   return (
     <Box>
       <GxDropzoneButton
-        getRootProps={getRootProps}
-        getInputProps={getInputProps}
         labelTitle="Transcript File Name"
         labelText={fileName}
         buttonText="Upload points file"
         disabled={!source}
+        {...dropzoneProps}
       />
       {loading && (
         <LinearProgress

@@ -12,19 +12,18 @@ export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButt
 
   const source = useViewerStore((store) => store.source);
   const fileName = useCellSegmentationLayerStore((store) => store.fileName);
-  const { getInputProps, getRootProps, loading, progress } = useCellMasksFileHandler();
+  const { dropzoneProps, loading, progress } = useCellMasksFileHandler();
 
   useEffect(() => setLockSwitch(loading), [setLockSwitch, loading]);
 
   return (
     <Box>
       <GxDropzoneButton
-        getRootProps={getRootProps}
-        getInputProps={getInputProps}
         labelTitle="Cell Mask Filename"
         labelText={fileName}
         buttonText="Upload Cell Mask"
         disabled={!source}
+        {...dropzoneProps}
       />
       {loading && (
         <LinearProgress

@@ -13,7 +13,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const [activeImageName, setActiveImageName] = useState<string>('');
   const { setActiveImage, removeFileByName } = useBrightfieldImagesStore();
 
-  const { getInputProps, getRootProps } = useBrightfieldImageHandler();
+  const { dropzoneProps } = useBrightfieldImageHandler();
 
   const handleImageRemove = useCallback(
     (imageName: string) => {
@@ -65,9 +65,9 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         sx={sx.dropDownButton}
         size="small"
         disabled={images.length >= MAX_NUMBER_OF_IMAGES}
-        {...getRootProps()}
+        {...dropzoneProps.getRootProps()}
       >
-        <input {...getInputProps()} />+ Add H&E Image
+        <input {...dropzoneProps.getInputProps()} />+ Add H&E Image
       </Button>
     </Box>
   );

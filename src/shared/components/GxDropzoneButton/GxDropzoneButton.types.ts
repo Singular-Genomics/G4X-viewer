@@ -7,4 +7,7 @@ export type GxDropzoneButtonProps = {
   labelText?: string;
   buttonText: string;
   disabled?: boolean;
+  isDragActive?: boolean;
+  isDragAccept?: boolean;
+  isDragReject?: boolean;
 };

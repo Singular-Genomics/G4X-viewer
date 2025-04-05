@@ -46,7 +46,7 @@ export const useGeneralDetailsHandler = () => {
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
       'application/json': ['.json']
@@ -54,8 +54,5 @@ export const useGeneralDetailsHandler = () => {
     multiple: false
   });
 
-  return {
-    getRootProps,
-    getInputProps
-  };
+  return dropzoneProps;
 };

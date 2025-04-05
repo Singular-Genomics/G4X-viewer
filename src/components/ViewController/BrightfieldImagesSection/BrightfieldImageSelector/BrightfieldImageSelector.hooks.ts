@@ -37,7 +37,7 @@ export const useBrightfieldImageHandler = () => {
     addNewFile(imageFile);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
       'image/tiff': ['.tif', '.tiff']
@@ -45,7 +45,6 @@ export const useBrightfieldImageHandler = () => {
   });
 
   return {
-    getRootProps,
-    getInputProps
+    dropzoneProps
   };
 };
