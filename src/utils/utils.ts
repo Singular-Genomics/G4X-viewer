@@ -2,7 +2,7 @@ export const getVivId = (id: string) => {
   return `-#${id}#`;
 };
 
-export const paseJsonFromFile = (file: File) => {
+export const parseJsonFromFile = (file: File) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -11,7 +11,7 @@ export const paseJsonFromFile = (file: File) => {
       if (result) {
         resolve(JSON.parse(result as string));
       } else {
-        reject("No result available from file read.");
+        reject('No result available from file read.');
       }
     };
 

@@ -1,5 +1,4 @@
-export type TranscriptLayerStore = TranscriptLayerStoreValues &
-  TranscriptLayerStoreMethods;
+export type TranscriptLayerStore = TranscriptLayerStoreValues & TranscriptLayerStoreMethods;
 
 export type TranscriptLayerStoreValues = {
   isTranscriptLayerOn: boolean;

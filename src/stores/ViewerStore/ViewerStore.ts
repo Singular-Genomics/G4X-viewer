@@ -1,9 +1,5 @@
-import { create } from "zustand";
-import {
-  ViewerStore,
-  ViewerStoreValues,
-  GeneralDetailsType,
-} from "./ViewerStore.types";
+import { create } from 'zustand';
+import { ViewerStore, ViewerStoreValues, GeneralDetailsType } from './ViewerStore.types';
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
@@ -11,11 +7,11 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isOverviewOn: true,
   isLensOn: false,
   useColorMap: false,
-  colormap: "",
+  colormap: '',
   globalSelection: { c: 0, t: 0, z: 0 },
   lensSelection: 0,
   pixelValues: [],
-  hoverCoordinates: { x: "", y: "" },
+  hoverCoordinates: { x: '', y: '' },
   channelOptions: [],
   metadata: null,
   source: null,
@@ -23,11 +19,12 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   pyramidResolution: 0,
   viewportWidth: 0,
   viewportHeight: 0,
-  viewState: null,
+  viewState: null
 };
 
 export const useViewerStore = create<ViewerStore>((set) => ({
   ...DEFAULT_VIEWER_STORE_STATE,
+  reset: () => set({ ...DEFAULT_VIEWER_STORE_STATE }),
   toggleOverview: () => set((store) => ({ isOverviewOn: !store.isOverviewOn })),
   toggleLens: () => set((store) => ({ isLensOn: !store.isLensOn })),
   onViewportLoad: () => {},
@@ -48,6 +45,5 @@ export const useViewerStore = create<ViewerStore>((set) => ({
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
-  setGeneralDetails: (details: GeneralDetailsType) =>
-    set({ generalDetails: details }),
+  setGeneralDetails: (details: GeneralDetailsType) => set({ generalDetails: details })
 }));

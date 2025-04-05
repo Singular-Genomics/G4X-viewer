@@ -1,21 +1,25 @@
-import { ThemeProvider } from "@mui/material";
-import G4XViewer from "./components/G4XViewer";
-import { SnackbarProvider } from "notistack";
-import { gxTheme } from "./themes/theme";
+import { ThemeProvider } from '@mui/material';
+import G4XViewer from './components/G4XViewer';
+import { SnackbarProvider } from 'notistack';
+import { gxTheme } from './themes/theme';
+import { GxSnackbar } from './shared/components/GxSnackbar/GxSnackbar';
 
 export const App = () => {
   return (
-    <SnackbarProvider
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "center",
-      }}
-      autoHideDuration={3000}
-      maxSnack={3}
-    >
-      <ThemeProvider theme={gxTheme}>
+    <ThemeProvider theme={gxTheme}>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        autoHideDuration={3000}
+        maxSnack={3}
+        Components={{
+          gxSnackbar: GxSnackbar
+        }}
+      >
         <G4XViewer />
-      </ThemeProvider>
-    </SnackbarProvider>
+      </SnackbarProvider>
+    </ThemeProvider>
   );
 };
