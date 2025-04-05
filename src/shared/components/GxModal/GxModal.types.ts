@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export type GxModalProps = {
   isOpen: boolean;
@@ -11,6 +11,6 @@ export type GxModalProps = {
   dontShowFlag?: string;
 };
 
-type GxModalColorVaraints = "danger" | "warning" | "info" | "singular";
+type GxModalColorVaraints = 'danger' | 'warning' | 'info' | 'singular';
 
-type GxModalIconVariant = "danger" | "warning" | "info";
+type GxModalIconVariant = 'danger' | 'warning' | 'info';

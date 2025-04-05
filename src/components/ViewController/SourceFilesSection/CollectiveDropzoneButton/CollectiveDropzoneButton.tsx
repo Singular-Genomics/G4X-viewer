@@ -1,12 +1,10 @@
-import { alpha, Box, LinearProgress, Theme, useTheme } from "@mui/material";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
-import { useFileHandler } from "./helpers/useFileHandler";
-import { CollectiveDropzoneButtonProps } from "./CollectiveDropzoneButton.types";
-import { useEffect } from "react";
+import { alpha, Box, LinearProgress, Theme, useTheme } from '@mui/material';
+import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton';
+import { useFileHandler } from './helpers/useFileHandler';
+import { CollectiveDropzoneButtonProps } from './CollectiveDropzoneButton.types';
+import { useEffect } from 'react';
 
-export default function CollectiveDropzoneButton({
-  setLockSwitch,
-}: CollectiveDropzoneButtonProps) {
+export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -38,14 +36,11 @@ export default function CollectiveDropzoneButton({
 
 const styles = (theme: Theme) => ({
   progressBar: {
-    "& .MuiLinearProgress-barColorPrimary": {
-      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
+    '& .MuiLinearProgress-barColorPrimary': {
+      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`
     },
-    "&.MuiLinearProgress-root": {
-      backgroundColor: `${alpha(
-        theme.palette.gx.accent.greenBlue,
-        0.2
-      )} !important`,
-    },
-  },
+    '&.MuiLinearProgress-root': {
+      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`
+    }
+  }
 });

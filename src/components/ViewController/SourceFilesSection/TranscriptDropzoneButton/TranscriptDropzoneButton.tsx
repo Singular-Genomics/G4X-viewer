@@ -1,14 +1,12 @@
-import { LinearProgress, Box, Theme, alpha, useTheme } from "@mui/material";
-import { useFileHandler } from "./helpers/useFileHandler";
-import { useBinaryFilesStore } from "../../../../stores/BinaryFilesStore";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton/GxDropzoneButton";
-import { useViewerStore } from "../../../../stores/ViewerStore";
-import { TranscriptDropzoneButtonProps } from "./TranscriptDropzoneButton.types";
-import { useEffect } from "react";
+import { LinearProgress, Box, Theme, alpha, useTheme } from '@mui/material';
+import { useFileHandler } from './helpers/useFileHandler';
+import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton/GxDropzoneButton';
+import { useViewerStore } from '../../../../stores/ViewerStore';
+import { TranscriptDropzoneButtonProps } from './TranscriptDropzoneButton.types';
+import { useEffect } from 'react';
 
-export default function TranscriptDropzoneButton({
-  setLockSwitch,
-}: TranscriptDropzoneButtonProps) {
+export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
   const { dropzoneProps, loading, progress } = useFileHandler();
@@ -41,14 +39,11 @@ export default function TranscriptDropzoneButton({
 
 const styles = (theme: Theme) => ({
   progressBar: {
-    "& .MuiLinearProgress-barColorPrimary": {
-      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`,
+    '& .MuiLinearProgress-barColorPrimary': {
+      backgroundColor: `${theme.palette.gx.accent.greenBlue} !important`
     },
-    "&.MuiLinearProgress-root": {
-      backgroundColor: `${alpha(
-        theme.palette.gx.accent.greenBlue,
-        0.2
-      )} !important`,
-    },
-  },
+    '&.MuiLinearProgress-root': {
+      backgroundColor: `${alpha(theme.palette.gx.accent.greenBlue, 0.2)} !important`
+    }
+  }
 });

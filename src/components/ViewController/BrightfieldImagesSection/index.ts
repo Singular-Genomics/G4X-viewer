@@ -1,1 +1,1 @@
-export * from "./BrightfieldImagesSection";
+export * from './BrightfieldImagesSection';

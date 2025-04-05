@@ -1,2 +1,2 @@
-export * from "./GxSnackbar";
-export * from "./GxSnackbar.types";
+export * from './GxSnackbar';
+export * from './GxSnackbar.types';

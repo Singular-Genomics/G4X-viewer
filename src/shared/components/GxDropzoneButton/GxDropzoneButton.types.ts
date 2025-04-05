@@ -1,4 +1,4 @@
-import { DropzoneRootProps, DropzoneInputProps } from "react-dropzone";
+import { DropzoneRootProps, DropzoneInputProps } from 'react-dropzone';
 
 export type GxDropzoneButtonProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T | undefined) => T;

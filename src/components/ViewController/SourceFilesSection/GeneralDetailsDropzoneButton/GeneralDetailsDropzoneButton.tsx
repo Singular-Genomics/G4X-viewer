@@ -1,7 +1,7 @@
-import { Box } from "@mui/material";
-import { useViewerStore } from "../../../../stores/ViewerStore";
-import { GxDropzoneButton } from "../../../../shared/components/GxDropzoneButton";
-import { useGeneralDetailsHandler } from "./useGeneralDetailsButtonHandler";
+import { Box } from '@mui/material';
+import { useViewerStore } from '../../../../stores/ViewerStore';
+import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton';
+import { useGeneralDetailsHandler } from './useGeneralDetailsButtonHandler';
 
 export default function GeneralDetailsDropzoneButton() {
   const dropzoneProps = useGeneralDetailsHandler();
