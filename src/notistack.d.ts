@@ -1,6 +1,6 @@
-import { GxSnackbarModes } from "./shared/components/GxSnackbar/GxSnackbar.types";
+import { GxSnackbarModes } from './shared/components/GxSnackbar/GxSnackbar.types';
 
-declare module "notistack" {
+declare module 'notistack' {
   interface VariantOverrides {
     gxSnackbar: {
       customContent?: React.ReactNode;

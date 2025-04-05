@@ -1,2 +1,2 @@
-export * from "./CollectiveDropzoneButton";
-export * from "./CollectiveDropzoneButton.types";
+export * from './CollectiveDropzoneButton';
+export * from './CollectiveDropzoneButton.types';
