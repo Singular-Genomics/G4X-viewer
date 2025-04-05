@@ -21,6 +21,7 @@ import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { useSnackbar } from 'notistack';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -33,6 +34,7 @@ export const PictureInPictureViewerAdapter = () => {
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
   const deckGLRef = useRef<any>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const theme = useTheme();
   const sx = styles(theme);
@@ -104,8 +106,11 @@ export const PictureInPictureViewerAdapter = () => {
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Screenshot capture failed:', error);
-      throw error;
+      enqueueSnackbar({
+        message: 'Screenshot capture failed: ' + (error as Error).message,
+        variant: 'gxSnackbar',
+        titleMode: 'error'
+      });
     }
   };
 
