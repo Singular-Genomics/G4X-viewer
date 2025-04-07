@@ -1,23 +1,10 @@
-import {
-  Theme,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import UploadIcon from "@mui/icons-material/Upload";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import {
-  UploadSelectSwitchProps,
-  UPLOAD_MODES,
-} from "./UploadSelectSwitch.types";
-import React from "react";
+import { Theme, ToggleButton, ToggleButtonGroup, Typography, useTheme } from '@mui/material';
+import UploadIcon from '@mui/icons-material/Upload';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { UploadSelectSwitchProps, UPLOAD_MODES } from './UploadSelectSwitch.types';
+import React from 'react';
 
-export function UploadSelectSwitch({
-  uploadMode,
-  onUploadModeChange,
-  disabled,
-}: UploadSelectSwitchProps) {
+export function UploadSelectSwitch({ uploadMode, onUploadModeChange, disabled }: UploadSelectSwitchProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -36,11 +23,17 @@ export function UploadSelectSwitch({
       onChange={handleChange}
       disabled={disabled}
     >
-      <ToggleButton sx={sx.toggleButton} value={UPLOAD_MODES.MULTI_FILE}>
+      <ToggleButton
+        sx={sx.toggleButton}
+        value={UPLOAD_MODES.MULTI_FILE}
+      >
         <UploadIcon />
         <Typography sx={sx.toggleButtonLabel}>Multi-file</Typography>
       </ToggleButton>
-      <ToggleButton sx={sx.toggleButton} value={UPLOAD_MODES.SINGLE_FILE}>
+      <ToggleButton
+        sx={sx.toggleButton}
+        value={UPLOAD_MODES.SINGLE_FILE}
+      >
         <UploadFileIcon />
         <Typography sx={sx.toggleButtonLabel}>Single-file</Typography>
       </ToggleButton>
@@ -50,22 +43,22 @@ export function UploadSelectSwitch({
 
 const styles = (theme: Theme) => ({
   toggleButtonGroup: {
-    marginBottom: "16px",
+    marginBottom: '16px'
   },
   toggleButton: {
-    width: "100%",
-    display: "flex",
-    gap: "8px",
-    "&.Mui-selected.Mui-disabled": {
-      background: theme.palette.gx.mediumGrey[100],
+    width: '100%',
+    display: 'flex',
+    gap: '8px',
+    '&.Mui-selected.Mui-disabled': {
+      background: theme.palette.gx.mediumGrey[100]
     },
-    "&.Mui-selected": {
+    '&.Mui-selected': {
       background: theme.palette.gx.gradients.brand(),
-      color: theme.palette.gx.primary.white,
-    },
+      color: theme.palette.gx.primary.white
+    }
   },
   toggleButtonLabel: {
-    fontSize: "11px",
-    textWrap: "nowrap",
-  },
+    fontSize: '11px',
+    textWrap: 'nowrap'
+  }
 });

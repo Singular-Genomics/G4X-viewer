@@ -1,2 +1,2 @@
-export * from "./GxModal";
-export * from "./GxModal.types";
+export * from './GxModal';
+export * from './GxModal.types';

@@ -1,4 +1,4 @@
-import { DropzoneRootProps, DropzoneInputProps } from "react-dropzone";
+import { DropzoneRootProps, DropzoneInputProps } from 'react-dropzone';
 
 export type GxDropzoneButtonProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T | undefined) => T;
@@ -9,4 +9,7 @@ export type GxDropzoneButtonProps = {
   disabled?: boolean;
   onCloudUploadClick?: () => void;
   isCloudUploaded?: boolean;
+  isDragActive?: boolean;
+  isDragAccept?: boolean;
+  isDragReject?: boolean;
 };

@@ -1,21 +1,12 @@
-import { getPixelValueDisplay } from "./ChannelController.helpers";
-import { ChannelControllerProps } from "./ChannelController.types";
-import {
-  Box,
-  Grid,
-  IconButton,
-  MenuItem,
-  Theme,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { ChannelOptions } from "../ChannelOptions/ChannelOptions";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { ChannelRangeSlider } from "./ChannelRangeSlider/ChannelRangeSlider";
-import { GxCheckbox } from "../../../../../shared/components/GxCheckbox";
-import { GxSelect } from "../../../../../shared/components/GxSelect";
-import { useViewerStore } from "../../../../../stores/ViewerStore";
+import { getPixelValueDisplay } from './ChannelController.helpers';
+import { ChannelControllerProps } from './ChannelController.types';
+import { Box, Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
+import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
+import { GxSelect } from '../../../../../shared/components/GxSelect';
+import { useViewerStore } from '../../../../../stores/ViewerStore';
 
 export const ChannelController = ({
   color,
@@ -28,7 +19,7 @@ export const ChannelController = ({
   onSelectionChange,
   handleColorSelect,
   handleRemoveChannel,
-  handleSliderChange,
+  handleSliderChange
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -36,7 +27,12 @@ export const ChannelController = ({
   const channelOptions = useViewerStore((store) => store.channelOptions);
 
   return (
-    <Grid container direction="column" justifyContent="center" gap={1}>
+    <Grid
+      container
+      direction="column"
+      justifyContent="center"
+      gap={1}
+    >
       <Box sx={sx.headerWrapper}>
         <GxCheckbox
           onChange={toggleIsOn}
@@ -50,7 +46,11 @@ export const ChannelController = ({
           sx={sx.channelSelect}
         >
           {channelOptions.map((opt) => (
-            <MenuItem disabled={isLoading} key={opt} value={opt}>
+            <MenuItem
+              disabled={isLoading}
+              key={opt}
+              value={opt}
+            >
               <Typography>{opt}</Typography>
             </MenuItem>
           ))}
@@ -60,7 +60,10 @@ export const ChannelController = ({
             handleColorSelect={handleColorSelect}
             disabled={isLoading}
           />
-          <Tooltip title="Remove channel" arrow>
+          <Tooltip
+            title="Remove channel"
+            arrow
+          >
             <IconButton
               component="span"
               size="small"
@@ -87,40 +90,40 @@ export const ChannelController = ({
 
 const styles = (theme: Theme) => ({
   removeChannelButton: {
-    "&:hover": {
+    '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
-      backgroundColor: "unset",
-    },
+      backgroundColor: 'unset'
+    }
   },
   headerWrapper: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center'
   },
   valueWrapper: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    margin: "4px auto 0 0",
-    padding: "4px 0",
-    borderRadius: "8px",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '4px auto 0 0',
+    padding: '4px 0',
+    borderRadius: '8px',
     background: theme.palette.gx.primary.white,
-    width: "50%",
+    width: '50%'
   },
   channelSelect: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   textField: {
-    marginBottom: "8px",
-    width: "60px",
-    "& .MuiFormLabel-root.Mui-focused": {
-      color: theme.palette.gx.accent.greenBlue,
+    marginBottom: '8px',
+    width: '60px',
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: theme.palette.gx.accent.greenBlue
     },
-    "&.MuiInputBase-input": {
-      cursor: "auto",
+    '&.MuiInputBase-input': {
+      cursor: 'auto'
     },
-    "&.MuiInputBase-root::after": {
-      borderBottom: "2px solid",
-      borderColor: theme.palette.gx.accent.greenBlue,
-    },
-  },
+    '&.MuiInputBase-root::after': {
+      borderBottom: '2px solid',
+      borderColor: theme.palette.gx.accent.greenBlue
+    }
+  }
 });

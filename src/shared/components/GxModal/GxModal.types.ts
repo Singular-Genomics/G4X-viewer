@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export type GxModalProps = {
   isOpen: boolean;
@@ -12,8 +12,8 @@ export type GxModalProps = {
   size?: GxModalSize;
 };
 
-type GxModalColorVaraints = "danger" | "warning" | "info" | "singular";
+type GxModalColorVaraints = 'danger' | 'warning' | 'info' | 'singular';
 
-type GxModalIconVariant = "danger" | "warning" | "info";
+type GxModalIconVariant = 'danger' | 'warning' | 'info';
 
-type GxModalSize = "default" | "small";
+type GxModalSize = 'default' | 'small';
