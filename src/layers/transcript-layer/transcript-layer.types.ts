@@ -1,6 +1,6 @@
-import { PickingInfo } from "@deck.gl/core/typed";
-import { LayerConfig } from "../../stores/BinaryFilesStore";
-import { GeneNameFilterType } from "../../stores/TranscriptLayerStore";
+import { PickingInfo } from '@deck.gl/core';
+import { LayerConfig } from '../../stores/BinaryFilesStore';
+import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -24,7 +24,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
   config: LayerConfig;
-  geneFilters: GeneNameFilterType | "all";
+  geneFilters: GeneNameFilterType | 'all';
   pointSize: number;
   showTilesBoundries: boolean;
   showTilesData: boolean;

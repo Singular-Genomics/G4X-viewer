@@ -1,35 +1,16 @@
-import { SnackbarContent, useSnackbar } from "notistack";
-import { GxSnackbarProps } from "./GxSnackbar.types";
-import { forwardRef, useCallback, useMemo, useState } from "react";
-import {
-  alpha,
-  Box,
-  Card,
-  CardActions,
-  Collapse,
-  IconButton,
-  Theme,
-  useTheme,
-} from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
-import ReportRoundedIcon from "@mui/icons-material/ReportRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import InfoIcon from "@mui/icons-material/Info";
-import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import { SnackbarContent, useSnackbar } from 'notistack';
+import { GxSnackbarProps } from './GxSnackbar.types';
+import { forwardRef, useCallback, useMemo, useState } from 'react';
+import { alpha, Box, Card, CardActions, Collapse, IconButton, Theme, useTheme } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import InfoIcon from '@mui/icons-material/Info';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
-  (
-    {
-      message,
-      customContent,
-      titleMode = "brand",
-      iconMode,
-      id,
-      customStyles,
-    }: GxSnackbarProps,
-    ref
-  ) => {
+  ({ message, customContent, titleMode = 'brand', iconMode, id, customStyles }: GxSnackbarProps, ref) => {
     const [expanded, setExpanded] = useState(false);
     const theme = useTheme();
     const { closeSnackbar } = useSnackbar();
@@ -37,14 +18,14 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
 
     const modalIcon = useMemo(() => {
       switch (iconMode ? iconMode : titleMode) {
-        case "success":
+        case 'success':
           return <CheckCircleIcon />;
-        case "error":
+        case 'error':
           return <ReportRoundedIcon />;
-        case "warning":
+        case 'warning':
           return <WarningRoundedIcon />;
-        case "info":
-        case "brand":
+        case 'info':
+        case 'brand':
           return <InfoIcon />;
       }
     }, [titleMode, iconMode]);
@@ -64,9 +45,7 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
             sx={{
               ...sx.snackbarTitle,
               ...customStyles?.titleStyles,
-              ...sx.snackbarTitleMode[
-                titleMode as keyof typeof sx.snackbarTitleMode
-              ],
+              ...sx.snackbarTitleMode[titleMode as keyof typeof sx.snackbarTitleMode]
             }}
           >
             {modalIcon}
@@ -78,7 +57,7 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
                   disableTouchRipple
                   sx={{
                     ...sx.iconButton,
-                    ...(expanded && { transform: "rotate(180deg)" }),
+                    ...(expanded && { transform: 'rotate(180deg)' })
                   }}
                   onClick={handleExpandClick}
                 >
@@ -95,11 +74,14 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
             </Box>
           </CardActions>
           {customContent && (
-            <Collapse in={expanded} timeout="auto">
+            <Collapse
+              in={expanded}
+              timeout="auto"
+            >
               <Box
                 sx={{
                   ...sx.snackbarContentWrapper,
-                  ...customStyles?.contentStyles,
+                  ...customStyles?.contentStyles
                 }}
               >
                 {customContent}
@@ -114,53 +96,53 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
 
 const styles = (theme: Theme) => ({
   snackbarBase: {
-    background: "transparent",
-    borderRadius: "8px",
-    overflow: "hidden",
+    background: 'transparent',
+    borderRadius: '8px',
+    overflow: 'hidden'
   },
   snackbarTitle: {
-    padding: "8px 16px",
-    minWidth: "300px",
-    maxWidth: "600px",
+    padding: '8px 16px',
+    minWidth: '300px',
+    maxWidth: '600px',
     color: theme.palette.gx.primary.white,
-    fontWeight: "700",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    background: "transparent",
+    fontWeight: '700',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    background: 'transparent'
   },
   iconButtonsWrapper: {
-    marginLeft: "8px",
+    marginLeft: '8px'
   },
   iconButton: {
     color: theme.palette.gx.primary.white,
-    transition: "all .2s",
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.2),
-    },
+    transition: 'all .2s',
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.gx.primary.white, 0.2)
+    }
   },
   snackbarTitleMode: {
     default: {
-      background: theme.palette.gx.gradients.default(),
+      background: theme.palette.gx.gradients.default()
     },
     brand: {
-      background: theme.palette.gx.gradients.brand(),
+      background: theme.palette.gx.gradients.brand()
     },
     success: {
-      background: theme.palette.gx.gradients.success(),
+      background: theme.palette.gx.gradients.success()
     },
     error: {
-      background: theme.palette.gx.gradients.danger(),
+      background: theme.palette.gx.gradients.danger()
     },
     warning: {
-      background: theme.palette.gx.gradients.warning(),
+      background: theme.palette.gx.gradients.warning()
     },
     info: {
-      background: theme.palette.gx.gradients.info(),
-    },
+      background: theme.palette.gx.gradients.info()
+    }
   },
   snackbarContentWrapper: {
-    background: "white",
-    padding: "8px",
-  },
+    background: 'white',
+    padding: '8px'
+  }
 });

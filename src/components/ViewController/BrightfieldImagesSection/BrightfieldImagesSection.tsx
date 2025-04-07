@@ -1,18 +1,15 @@
-import { Box, Typography } from "@mui/material";
-import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
-import { useState } from "react";
-import { GxSlider } from "../../../shared/components/GxSlider";
-import { BrightfieldImageSelector } from "./BrightfieldImageSelector/BrightfieldImageSelector";
+import { Box, Typography } from '@mui/material';
+import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
+import { useState } from 'react';
+import { GxSlider } from '../../../shared/components/GxSlider';
+import { BrightfieldImageSelector } from './BrightfieldImageSelector/BrightfieldImageSelector';
 
 export const BrightfieldImagesSection = () => {
   const sx = styles();
 
-  const { brightfieldImageSource, opacity, availableImages } =
-    useBrightfieldImagesStore();
+  const { brightfieldImageSource, opacity, availableImages } = useBrightfieldImagesStore();
 
-  const [opacitySliderValue, setOpacitySliderValue] = useState<number>(
-    opacity * 100
-  );
+  const [opacitySliderValue, setOpacitySliderValue] = useState<number>(opacity * 100);
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -20,24 +17,22 @@ export const BrightfieldImagesSection = () => {
         <Typography sx={sx.subsectionTitle}>Layer opacity</Typography>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px",
-            marginLeft: "8px",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            marginLeft: '8px'
           }}
         >
           <Typography>0%</Typography>
           <GxSlider
             value={opacitySliderValue}
             onChange={(_, newValue) => {
-              setOpacitySliderValue(
-                Array.isArray(newValue) ? newValue[0] : newValue
-              );
+              setOpacitySliderValue(Array.isArray(newValue) ? newValue[0] : newValue);
             }}
             onChangeCommitted={() =>
               useBrightfieldImagesStore.setState({
-                opacity: +(opacitySliderValue / 100).toFixed(2),
+                opacity: +(opacitySliderValue / 100).toFixed(2)
               })
             }
             min={0}
@@ -58,20 +53,20 @@ export const BrightfieldImagesSection = () => {
 
 const styles = () => ({
   sectionContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
   },
   subsectionTitle: {
     fontWeight: 700,
-    marginLeft: "8px",
-    marginBottom: "8px",
+    marginLeft: '8px',
+    marginBottom: '8px'
   },
   sliderWrapper: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center'
   },
   opacitySlider: {
-    padding: "0 8px 0 16px",
-  },
+    padding: '0 8px 0 16px'
+  }
 });

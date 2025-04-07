@@ -1,8 +1,7 @@
-import { useShallow } from "zustand/react/shallow";
-import { Box, FormControlLabel } from "@mui/material";
-import { GxCheckbox } from "../../../../shared/components/GxCheckbox";
-import { useTranscriptLayerStore } from "../../../../stores/TranscriptLayerStore";
-
+import { useShallow } from 'zustand/react/shallow';
+import { Box, FormControlLabel } from '@mui/material';
+import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
+import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 
 export const TranscriptLayerToggle = () => {
   const [isTranscriptLayerOn, showTilesBoundries, toggleTranscriptLayer, toggleTileBoundries] = useTranscriptLayerStore(
@@ -10,7 +9,7 @@ export const TranscriptLayerToggle = () => {
       store.isTranscriptLayerOn,
       store.showTilesBoundries,
       store.toggleTranscriptLayer,
-      store.toggleTileBoundries,
+      store.toggleTileBoundries
     ])
   );
 

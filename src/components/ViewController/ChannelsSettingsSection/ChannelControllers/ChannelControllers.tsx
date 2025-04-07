@@ -1,15 +1,11 @@
-import { useShallow } from "zustand/react/shallow";
-import { Box, Theme, useTheme } from "@mui/material";
-import { ChannelController } from "./ChannelController/ChannelController";
-
-import {
-  PropertiesUpdateType,
-  useChannelsStore,
-} from "../../../../stores/ChannelsStore";
-import { useViewerStore } from "../../../../stores/ViewerStore";
-import { useMetadata } from "../../../../hooks/useMetadata.hook";
-import { getSingleSelectionStats } from "../../../../legacy/utils";
-import { ChannelSettingsImportExportButtons } from "./ChannelSettingsImportExportButtons";
+import { useShallow } from 'zustand/react/shallow';
+import { Box, Theme, useTheme } from '@mui/material';
+import { ChannelController } from './ChannelController/ChannelController';
+import { PropertiesUpdateType, useChannelsStore } from '../../../../stores/ChannelsStore';
+import { useViewerStore } from '../../../../stores/ViewerStore';
+import { useMetadata } from '../../../../hooks/useMetadata.hook';
+import { getSingleSelectionStats } from '../../../../legacy/utils';
+import { ChannelSettingsImportExportButtons } from './ChannelSettingsImportExportButtons';
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -23,7 +19,7 @@ export const ChannelControllers = () => {
     toggleIsOnSetter,
     removeChannel,
     setPropertiesForChannel,
-    getLoader,
+    getLoader
   ] = useChannelsStore(
     useShallow((store) => [
       store.ids,
@@ -35,23 +31,17 @@ export const ChannelControllers = () => {
       store.toggleIsOn,
       store.removeChannel,
       store.setPropertiesForChannel,
-      store.getLoader,
+      store.getLoader
     ])
   );
 
-  const [
-    channelOptions,
-    pixelValues,
-    isChannelLoading,
-    setIsChannelLoading,
-    removeIsChannelLoading,
-  ] = useViewerStore(
+  const [channelOptions, pixelValues, isChannelLoading, setIsChannelLoading, removeIsChannelLoading] = useViewerStore(
     useShallow((store) => [
       store.channelOptions,
       store.pixelValues,
       store.isChannelLoading,
       store.setIsChannelLoading,
-      store.removeIsChannelLoading,
+      store.removeIsChannelLoading
     ])
   );
 
@@ -70,16 +60,16 @@ export const ChannelControllers = () => {
         const onSelectionChange = (channelName: string) => {
           const selection = {
             ...selections[index],
-            c: channelOptions.indexOf(channelName),
+            c: channelOptions.indexOf(channelName)
           };
           setIsChannelLoading(index, true);
 
           getSingleSelectionStats({
             loader,
-            selection,
+            selection
           }).then(({ domain, contrastLimits: newContrastLimit }) => {
             const {
-              Pixels: { Channels },
+              Pixels: { Channels }
             } = metadata;
             const { c } = selection;
 
@@ -90,18 +80,12 @@ export const ChannelControllers = () => {
               channelsSettings[channelName].maxValue
             ) {
               const settings = channelsSettings[channelName];
-              newProps.contrastLimits = [
-                settings.minValue,
-                settings.maxValue,
-              ] as number[];
+              newProps.contrastLimits = [settings.minValue, settings.maxValue] as number[];
             } else {
               newProps.contrastLimits = newContrastLimit;
             }
 
-            if (
-              channelName in channelsSettings &&
-              channelsSettings[channelName].color
-            ) {
+            if (channelName in channelsSettings && channelsSettings[channelName].color) {
               newProps.colors = channelsSettings[channelName].color;
             } else if (Channels[c].Color) {
               newProps.colors = Channels[c].Color.slice(0, -1);
@@ -114,7 +98,7 @@ export const ChannelControllers = () => {
               onViewportLoad: () => {
                 useViewerStore.setState({ onViewportLoad: () => {} });
                 setIsChannelLoading(index, false);
-              },
+              }
             });
             setPropertiesForChannel(index, { selections: selection });
           });
@@ -141,7 +125,10 @@ export const ChannelControllers = () => {
         };
 
         return (
-          <Box key={id} sx={sx.channelControlerWrapper}>
+          <Box
+            key={id}
+            sx={sx.channelControlerWrapper}
+          >
             <ChannelController
               name={name}
               onSelectionChange={onSelectionChange}
@@ -164,15 +151,15 @@ export const ChannelControllers = () => {
 
 const styles = (theme: Theme) => ({
   channelControllersContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-    paddingTop: "8px",
-    overflowY: "auto",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    paddingTop: '8px',
+    overflowY: 'auto'
   },
   channelControlerWrapper: {
-    padding: "8px",
+    padding: '8px',
     background: theme.palette.gx.lightGrey[900],
-    borderRadius: "4px",
-  },
+    borderRadius: '4px'
+  }
 });
