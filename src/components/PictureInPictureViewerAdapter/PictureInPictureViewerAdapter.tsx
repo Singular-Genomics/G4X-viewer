@@ -21,6 +21,7 @@ import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import { useSnackbar } from 'notistack';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -33,6 +34,7 @@ export const PictureInPictureViewerAdapter = () => {
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
   const deckGLRef = useRef<any>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const theme = useTheme();
   const sx = styles(theme);
@@ -74,18 +76,41 @@ export const PictureInPictureViewerAdapter = () => {
   }, [loader, containerSize.width, containerSize.height]);
 
   const takeScreenshot = () => {
-    if (deckGLRef.current && deckGLRef.current.deck) {
-      const canvas = deckGLRef.current.deck.canvas;
-      if (canvas) {
-        const result = canvas.toDataURL('image/png');
-
-        const link = document.createElement('a');
-        link.href = result;
-        link.download = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    try {
+      if (!deckGLRef.current?.deck) {
+        throw new Error('DeckGL reference is not available');
       }
+
+      const deck = deckGLRef.current.deck;
+      const fileName = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
+
+      // Force an immediate redraw to ensure the scene is rendered
+      if (typeof deck.redraw === 'function') {
+        // Use synchronous redraw
+        deck.redraw(true);
+      }
+
+      const canvas = deck.canvas;
+      if (!canvas) {
+        throw new Error('Canvas not available');
+      }
+
+      // Get the data URL right away
+      const result = canvas.toDataURL('image/png');
+
+      // Create and trigger download
+      const link = document.createElement('a');
+      link.href = result;
+      link.download = `${fileName}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      enqueueSnackbar({
+        message: 'Screenshot capture failed: ' + (error as Error).message,
+        variant: 'gxSnackbar',
+        titleMode: 'error'
+      });
     }
   };
 
