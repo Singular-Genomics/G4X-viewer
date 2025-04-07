@@ -38,8 +38,6 @@ export default function G4XViewer() {
             </>
           ) : (
             !isLoading && (
-              <Typography sx={sx.infoText} variant="h2">
-            !isImageLoading && (
               <Typography
                 sx={sx.infoText}
                 variant="h2"
