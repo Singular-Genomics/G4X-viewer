@@ -31,7 +31,6 @@ export default function ImageDropzoneButton() {
 
   const handleClose = () => {
     setIsPopupOpen(false);
-    setCloudImageUrl('');
   };
 
   const handleSubmit = () => {
@@ -93,7 +92,7 @@ export default function ImageDropzoneButton() {
         iconVariant="info"
         size="small"
       >
-        <Box sx={{ width: '700px' }}>
+        <Box sx={sx.modalBox}>
           <TextField
             variant="filled"
             label="Image URL"
@@ -111,6 +110,9 @@ export default function ImageDropzoneButton() {
 }
 
 const styles = (theme: Theme) => ({
+  modalBox: {
+    width: '700px'
+  },
   textField: {
     marginTop: 1,
     marginBottom: '8px',
