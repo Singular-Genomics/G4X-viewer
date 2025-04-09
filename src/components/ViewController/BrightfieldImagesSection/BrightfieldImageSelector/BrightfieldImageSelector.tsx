@@ -61,6 +61,14 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const handleCloudSubmit = (url: string) => {
     const filename = url.split('/').pop() || url;
 
+    if (!/^.+\.(ome\.tiff|tif)$/.test(filename)) {
+      enqueueSnackbar({
+        message: 'Invalid input file name. Only .ome.tiff and .tif extensions allowed',
+        variant: 'error'
+      });
+      return;
+    }
+
     const index = availableImages.findIndex((entry) => {
       if (typeof entry === 'string') {
         return entry.split('/').pop() === filename || entry === filename;
