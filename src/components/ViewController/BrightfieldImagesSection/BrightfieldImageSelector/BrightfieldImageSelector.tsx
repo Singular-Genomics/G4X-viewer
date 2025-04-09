@@ -103,6 +103,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
                 key={index}
                 imageEntry={entry}
                 isActive={entryName === activeImageName}
+                entryType={typeof entry === 'string' ? 'cloud-upload' : 'local-file'}
                 onSelectImage={handleImageSelect}
                 onRemoveImage={handleImageRemove}
               />
