@@ -10,6 +10,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 export const ChannelSettingsImportExportButtons = () => {
   const theme = useTheme();
+  const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
 
   const [ids, selections, channelsVisible, colors, contrastLimits, channelsSettings, setPropertiesForChannel] =
@@ -216,7 +217,7 @@ export const ChannelSettingsImportExportButtons = () => {
     [ids, channelOptions, setPropertiesForChannel, enqueueSnackbar]
   );
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     accept: {
       'application/json': ['.json']
@@ -224,7 +225,24 @@ export const ChannelSettingsImportExportButtons = () => {
     maxFiles: 1
   });
 
-  const sx = styles(theme);
+  let dynamicButtonText = 'Import';
+
+  if (isDragActive) {
+    if (isDragAccept) {
+      dynamicButtonText = 'Drop Here';
+    } else if (isDragReject) {
+      dynamicButtonText = 'Invalid File';
+    } else {
+      dynamicButtonText = 'Drop File';
+    }
+  }
+
+  const importButtonStyle = {
+    ...sx.importButton,
+    ...(isDragActive && sx.importButtonActive),
+    ...(isDragActive && isDragAccept && sx.importButtonAccept),
+    ...(isDragActive && isDragReject && sx.importButtonReject)
+  };
 
   return (
     <Box sx={sx.buttonsContainer}>
@@ -240,12 +258,12 @@ export const ChannelSettingsImportExportButtons = () => {
       <Button
         variant="outlined"
         startIcon={<UploadIcon />}
-        sx={sx.importButton}
+        sx={importButtonStyle}
         fullWidth
         {...getRootProps()}
       >
         <input {...getInputProps()} />
-        Import
+        {dynamicButtonText}
       </Button>
     </Box>
   );
@@ -278,5 +296,20 @@ const styles = (theme: Theme) => ({
       borderColor: theme.palette.gx.accent.greenBlue,
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     }
+  },
+  importButtonActive: {
+    borderStyle: 'solid',
+    borderWidth: '2px',
+    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1)
+  },
+  importButtonAccept: {
+    borderColor: theme.palette.success.main,
+    color: theme.palette.success.main,
+    backgroundColor: alpha(theme.palette.success.main, 0.1)
+  },
+  importButtonReject: {
+    borderColor: theme.palette.error.main,
+    color: theme.palette.error.main,
+    backgroundColor: alpha(theme.palette.error.main, 0.1)
   }
 });
