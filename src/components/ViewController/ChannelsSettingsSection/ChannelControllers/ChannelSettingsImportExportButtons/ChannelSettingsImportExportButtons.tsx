@@ -196,6 +196,7 @@ export const ChannelSettingsImportExportButtons = () => {
         startIcon={<DownloadIcon />}
         onClick={exportChannelSettings}
         sx={sx.exportButton}
+        fullWidth
       >
         Export
       </Button>
@@ -203,6 +204,7 @@ export const ChannelSettingsImportExportButtons = () => {
         variant="outlined"
         startIcon={<UploadIcon />}
         sx={sx.importButton}
+        fullWidth
         {...getRootProps()}
       >
         <input {...getInputProps()} />
@@ -215,14 +217,16 @@ export const ChannelSettingsImportExportButtons = () => {
 const styles = (theme: Theme) => ({
   buttonsContainer: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     gap: '16px',
     marginBottom: '12px',
-    padding: '0 10px'
+    width: '100%',
+    padding: '0'
   },
   exportButton: {
     backgroundColor: theme.palette.gx.accent.greenBlue,
-    padding: '7px 24px',
+    padding: '7px 16px',
+    flex: 1,
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.9)
     }
@@ -231,7 +235,8 @@ const styles = (theme: Theme) => ({
     borderStyle: 'dashed',
     borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
-    padding: '7px 24px',
+    padding: '7px 16px',
+    flex: 1,
     '&:hover': {
       borderColor: theme.palette.gx.accent.greenBlue,
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
