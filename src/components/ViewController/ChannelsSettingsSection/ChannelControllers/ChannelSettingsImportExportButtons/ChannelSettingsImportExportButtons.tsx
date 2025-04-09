@@ -25,14 +25,25 @@ export const ChannelSettingsImportExportButtons = () => {
       ])
     );
 
-  const [channelOptions] = useViewerStore(useShallow((store) => [store.channelOptions]));
+  const [channelOptions, metadata, generalDetails] = useViewerStore(
+    useShallow((store) => [store.channelOptions, store.metadata, store.generalDetails])
+  );
 
   const exportChannelSettings = () => {
     try {
+      const filteredChannelsSettings = Object.entries(channelsSettings || {}).reduce(
+        (acc, [key, value]) => {
+          if (value && Object.keys(value).length > 0) {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as Record<string, any>
+      );
+
       const exportData = {
-        channelsSettings,
-        channels: ids.map((id, index) => ({
-          id,
+        channelsSettings: filteredChannelsSettings,
+        channels: ids.map((_, index) => ({
           name: channelOptions[(selections as any)[index].c],
           visible: channelsVisible[index],
           color: colors[index],
@@ -41,14 +52,40 @@ export const ChannelSettingsImportExportButtons = () => {
         }))
       };
 
-      const jsonData = JSON.stringify(exportData, null, 2);
+      let jsonData;
+      try {
+        jsonData = JSON.stringify(exportData, null, 2);
+      } catch (jsonError) {
+        console.error('Error stringifying channel settings:', jsonError);
+        enqueueSnackbar({
+          message: 'Error formatting channel settings for export',
+          variant: 'error'
+        });
+        return;
+      }
 
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
 
+      let fileName = 'channel-settings';
+
+      if (generalDetails && generalDetails.fileName) {
+        const baseName = generalDetails.fileName.split('.').slice(0, -1).join('.');
+        const sanitizedName = baseName.replace(/[^\w-]/g, '_');
+        if (sanitizedName) {
+          fileName = `channel-settings_${sanitizedName}`;
+        }
+      } else if (metadata && metadata.Name) {
+        const baseName = metadata.Name.split('.').slice(0, -1).join('.');
+        const sanitizedName = baseName.replace(/[^\w-]/g, '_');
+        if (sanitizedName) {
+          fileName = `channel-settings_${sanitizedName}`;
+        }
+      }
+
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'channel-settings.json';
+      a.download = `${fileName}.json`;
       document.body.appendChild(a);
       a.click();
 
