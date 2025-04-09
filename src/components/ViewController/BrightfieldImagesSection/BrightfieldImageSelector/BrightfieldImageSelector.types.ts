@@ -1,1 +1,3 @@
-export type BrightfieldImageSelectorProps = { images: File[] };
+export type BrightfieldImageSelectorProps = {
+  images: (File | string)[];
+};

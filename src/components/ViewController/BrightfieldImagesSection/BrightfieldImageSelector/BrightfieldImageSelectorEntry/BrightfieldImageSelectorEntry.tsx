@@ -12,7 +12,9 @@ export const BrightfieldImageSelectorEntry = ({
   const theme = useTheme();
   const sx = styles(theme);
 
-  const fileName = imageEntry.name.split('/').pop();
+  const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
+
+  const fileName = entryName.split('/').pop();
   const imageName = fileName ? fileName.split('.').shift() : '';
 
   return (
@@ -22,7 +24,7 @@ export const BrightfieldImageSelectorEntry = ({
         labelPlacement="end"
         control={
           <GxRadio
-            value={imageEntry.name}
+            value={entryName}
             checked={isActive}
             onClick={() => onSelectImage(imageEntry)}
             sx={sx.radioButton}
@@ -31,7 +33,7 @@ export const BrightfieldImageSelectorEntry = ({
         sx={sx.entryTitle}
       />
       <Button
-        onClick={() => onRemoveImage(imageEntry.name)}
+        onClick={() => onRemoveImage(entryName)}
         sx={sx.removeButton}
       >
         <ClearIcon sx={sx.removeIcon} />
