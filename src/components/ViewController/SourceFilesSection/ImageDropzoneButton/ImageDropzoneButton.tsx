@@ -1,4 +1,4 @@
-import { Box, TextField, useTheme, Theme } from '@mui/material';
+import { Box } from '@mui/material';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton';
 import { useImageHandler } from './helpers/useImageHandler';
@@ -8,7 +8,7 @@ import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
-import { GxModal } from '../../../../shared/components/GxModal';
+import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 
 export default function ImageDropzoneButton() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -19,10 +19,7 @@ export default function ImageDropzoneButton() {
   };
 
   const dropzoneProps = useImageHandler(handleDropzoneUpload);
-
   const imageName = useViewerStore((store) => store.source?.description);
-  const theme = useTheme();
-  const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCloudUploadClick = () => {
@@ -33,16 +30,7 @@ export default function ImageDropzoneButton() {
     setIsPopupOpen(false);
   };
 
-  const handleSubmit = () => {
-    if (!cloudImageUrl.trim()) {
-      enqueueSnackbar({
-        message: 'Please enter a valid image URL',
-        variant: 'error'
-      });
-      return;
-    }
-
-    // Extract filename from URL
+  const handleSubmit = (cloudImageUrl: string) => {
     const filename = cloudImageUrl.split('/').pop() || cloudImageUrl;
 
     if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(filename)) {
@@ -83,48 +71,16 @@ export default function ImageDropzoneButton() {
         {...dropzoneProps}
       />
 
-      <GxModal
+      <CloudBasedModal
         isOpen={isPopupOpen}
         onClose={handleClose}
-        onContinue={handleSubmit}
+        onSubmit={handleSubmit}
+        url={cloudImageUrl}
+        onUrlChange={setCloudImageUrl}
         title="Cloud Upload"
-        colorVariant="singular"
-        iconVariant="info"
-        size="small"
-      >
-        <Box sx={sx.modalBox}>
-          <TextField
-            variant="filled"
-            label="Image URL"
-            size="small"
-            fullWidth
-            value={cloudImageUrl}
-            onChange={(e) => setCloudImageUrl(e.target.value)}
-            placeholder="Enter URL to .ome.tiff or .zarr file"
-            sx={sx.textField}
-          />
-        </Box>
-      </GxModal>
+        placeholder="Enter URL to .ome.tiff or .zarr file"
+        label="Image URL"
+      />
     </Box>
   );
 }
-
-const styles = (theme: Theme) => ({
-  modalBox: {
-    width: '700px'
-  },
-  textField: {
-    marginTop: 1,
-    marginBottom: '8px',
-    '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
-    },
-    '& .MuiInputBase-input': {
-      cursor: 'auto'
-    },
-    '& .MuiInputBase-root::after': {
-      borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
-    }
-  }
-});
