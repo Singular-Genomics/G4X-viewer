@@ -23,17 +23,17 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
     return Array.isArray(loader[0]) ? loader[image] : loader;
   },
   toggleImageLayer: () => set((store) => ({ isLayerVisible: !store.isLayerVisible })),
-  setActiveImage: (file: File | null) =>
+  setActiveImage: (file: File | string | null) =>
     set({
       brightfieldImageSource: file
         ? {
-            description: file.name,
+            description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
             urlOrFile: file
           }
         : null
     }),
-  setAvailableImages: (files: File[]) => set({ availableImages: files }),
-  addNewFile: (file: File) =>
+  setAvailableImages: (files: (File | string)[]) => set({ availableImages: files }),
+  addNewFile: (file: File | string) =>
     set((state) => {
       const newImagesList = state.availableImages;
       newImagesList.push(file);
@@ -45,7 +45,13 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
   removeFileByName: (fileName: string) =>
     set((state) => {
       const newImagesList = state.availableImages;
-      const index = newImagesList.findIndex((entry) => entry.name === fileName);
+      const index = newImagesList.findIndex((entry) => {
+        if (typeof entry === 'string') {
+          return entry.split('/').pop() === fileName || entry === fileName;
+        }
+        return entry.name === fileName;
+      });
+
       if (index !== -1) {
         if (newImagesList.length === 1) {
           newImagesList.pop();

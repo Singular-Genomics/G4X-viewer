@@ -1,18 +1,23 @@
-import { alpha, Box, Button, FormControlLabel, Theme, useTheme } from '@mui/material';
+import { alpha, Box, Button, Fade, FormControlLabel, Theme, Tooltip, useTheme } from '@mui/material';
 import { BrightfieldImageSelectorEntryProps } from './BrightfieldImageSelectorEntry.types';
 import ClearIcon from '@mui/icons-material/Clear';
 import { GxRadio } from '../../../../../shared/components/GxRadio';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CloudIcon from '@mui/icons-material/Cloud';
 
 export const BrightfieldImageSelectorEntry = ({
   imageEntry,
   isActive,
+  entryType,
   onSelectImage,
   onRemoveImage
 }: BrightfieldImageSelectorEntryProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const fileName = imageEntry.name.split('/').pop();
+  const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
+
+  const fileName = entryName.split('/').pop();
   const imageName = fileName ? fileName.split('.').shift() : '';
 
   return (
@@ -21,17 +26,42 @@ export const BrightfieldImageSelectorEntry = ({
         label={imageName}
         labelPlacement="end"
         control={
-          <GxRadio
-            value={imageEntry.name}
-            checked={isActive}
-            onClick={() => onSelectImage(imageEntry)}
-            sx={sx.radioButton}
-          />
+          <Box>
+            <GxRadio
+              value={entryName}
+              checked={isActive}
+              onClick={() => onSelectImage(imageEntry)}
+              sx={sx.radioButton}
+            />
+          </Box>
         }
         sx={sx.entryTitle}
       />
+      <Tooltip
+        placement="left"
+        arrow
+        slots={{
+          transition: Fade
+        }}
+        slotProps={{
+          popper: {
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, -8]
+                }
+              }
+            ]
+          }
+        }}
+        sx={sx.entryTypeTooltip}
+        title={entryType === 'local-file' ? 'Local file' : 'Cloud File'}
+      >
+        {entryType === 'local-file' ? <InsertDriveFileIcon fontSize="small" /> : <CloudIcon fontSize="small" />}
+      </Tooltip>
       <Button
-        onClick={() => onRemoveImage(imageEntry.name)}
+        onClick={() => onRemoveImage(entryName)}
         sx={sx.removeButton}
       >
         <ClearIcon sx={sx.removeIcon} />
@@ -55,6 +85,10 @@ const styles = (theme: Theme) => ({
   radioButton: {
     pointerEvents: 'none',
     marginRight: '8px'
+  },
+  entryTypeTooltip: {
+    marginRight: '8px',
+    color: theme.palette.gx.mediumGrey[500]
   },
   removeButton: {
     minWidth: 'unset',
