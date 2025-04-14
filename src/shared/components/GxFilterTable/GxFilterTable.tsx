@@ -49,13 +49,15 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
           disableColumnResize
           disableColumnSorting
           pageSizeOptions={[100]}
+          rowSelectionModel={activeFilters}
           onRowSelectionModelChange={(newSelection) => {
             if (newSelection.length === 0 || newSelection.length === rows.length) {
               onClearFilteres();
+            } else {
+              onSetFilter(newSelection as string[]);
             }
-
-            onSetFilter(newSelection as string[]);
           }}
+          keepNonExistentRowsSelected
           checkboxSelection
           slots={{
             baseCheckbox: GxCheckbox,
