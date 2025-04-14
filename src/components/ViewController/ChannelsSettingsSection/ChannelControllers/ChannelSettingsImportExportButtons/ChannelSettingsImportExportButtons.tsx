@@ -32,18 +32,20 @@ export const ChannelSettingsImportExportButtons = () => {
 
   const exportChannelSettings = () => {
     try {
-      const filteredChannelsSettings = Object.entries(channelsSettings || {}).reduce(
-        (acc, [key, value]) => {
-          if (value && Object.keys(value).length > 0) {
-            acc[key] = value;
-          }
-          return acc;
-        },
-        {} as Record<string, any>
-      );
+      // Filter out empty channel settings objects
+      const filteredChannelsSettings: Record<string, any> = {};
 
-      const exportData = {
-        channelsSettings: filteredChannelsSettings,
+      // Only include settings that have meaningful properties
+      Object.entries(channelsSettings || {}).forEach(([key, value]) => {
+        if (value && Object.keys(value).length > 0 && Object.values(value).some((v) => v !== undefined && v !== null)) {
+          filteredChannelsSettings[key] = value;
+        }
+      });
+
+      const exportData: {
+        channelsSettings?: Record<string, any>;
+        channels: any[];
+      } = {
         channels: ids.map((_, index) => ({
           name: channelOptions[(selections as any)[index].c],
           visible: channelsVisible[index],
@@ -52,6 +54,11 @@ export const ChannelSettingsImportExportButtons = () => {
           selection: selections[index]
         }))
       };
+
+      // Only include channel settings if we have non-empty ones
+      if (Object.keys(filteredChannelsSettings).length > 0) {
+        exportData.channelsSettings = filteredChannelsSettings;
+      }
 
       let jsonData;
       try {
@@ -148,7 +155,11 @@ export const ChannelSettingsImportExportButtons = () => {
                   }
 
                   if (channelData.selection) {
-                    newProps.selections = channelData.selection;
+                    const updatedSelection = {
+                      ...channelData.selection,
+                      c: channelIndex
+                    };
+                    newProps.selections = updatedSelection;
                   }
 
                   setPropertiesForChannel(idx, newProps);
@@ -165,11 +176,16 @@ export const ChannelSettingsImportExportButtons = () => {
                   const channelIndex = channelOptions.indexOf(channelName);
 
                   if (channelIndex !== -1) {
-                    const newSelection = channelData.selection || {
-                      z: 0,
-                      c: channelIndex,
-                      t: 0
-                    };
+                    const newSelection = channelData.selection
+                      ? {
+                          ...channelData.selection,
+                          c: channelIndex
+                        }
+                      : {
+                          z: 0,
+                          c: channelIndex,
+                          t: 0
+                        };
 
                     const numSelectionsBeforeAdd = useChannelsStore.getState().selections.length;
 
