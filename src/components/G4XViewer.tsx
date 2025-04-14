@@ -24,6 +24,8 @@ export default function G4XViewer() {
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
 
+  const isLoading = isViewerLoading || isImageLoading;
+
   return (
     <Box sx={sx.mainContainer}>
       <LogoBanner />
@@ -35,7 +37,7 @@ export default function G4XViewer() {
               <ImageInfo />
             </>
           ) : (
-            !isImageLoading && (
+            !isLoading && (
               <Typography
                 sx={sx.infoText}
                 variant="h2"
@@ -44,7 +46,7 @@ export default function G4XViewer() {
               </Typography>
             )
           )}
-          {(isViewerLoading || isImageLoading) && (
+          {isLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
               <Typography sx={sx.loadingText}>Loading Image...</Typography>

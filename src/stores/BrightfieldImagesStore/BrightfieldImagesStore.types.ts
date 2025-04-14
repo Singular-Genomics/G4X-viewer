@@ -12,15 +12,15 @@ export type BrightfieldImagesStoreValues = {
   contrastLimits: number[][];
   isImageLoading: boolean;
   isLayerVisible: boolean;
-  availableImages: File[];
+  availableImages: (File | string)[];
 };
 
 export type BrightfieldImagesStoreMethods = {
   reset: () => void;
   getLoader: () => any;
   toggleImageLayer: () => void;
-  setActiveImage: (file: File | null) => void;
-  setAvailableImages: (files: File[]) => void;
-  addNewFile: (file: File) => void;
+  setActiveImage: (file: File | string | null) => void;
+  setAvailableImages: (files: (File | string)[]) => void;
+  addNewFile: (file: File | string) => void;
   removeFileByName: (fileName: string) => void;
 };
