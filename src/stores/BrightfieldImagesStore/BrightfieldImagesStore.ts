@@ -23,15 +23,23 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
     return Array.isArray(loader[0]) ? loader[image] : loader;
   },
   toggleImageLayer: () => set((store) => ({ isLayerVisible: !store.isLayerVisible })),
-  setActiveImage: (file: File | string | null) =>
+  setActiveImage: (file: File | string | null) => {
+    if (file === null) {
+      set({
+        brightfieldImageSource: null,
+        loader: DEFAULT_VALUES.loader
+      });
+      return;
+    }
+
     set({
-      brightfieldImageSource: file
-        ? {
-            description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
-            urlOrFile: file
-          }
-        : null
-    }),
+      brightfieldImageSource: {
+        description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
+        urlOrFile: file
+      },
+      loader: DEFAULT_VALUES.loader
+    });
+  },
   setAvailableImages: (files: (File | string)[]) => set({ availableImages: files }),
   addNewFile: (file: File | string) =>
     set((state) => {

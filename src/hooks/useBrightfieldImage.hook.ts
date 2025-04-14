@@ -10,6 +10,9 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
   const loader = useBrightfieldImagesStore.getState().getLoader();
 
   useEffect(() => {
+    // Reset state when source changes
+    setIsLoaderCreated(false);
+
     async function changeLoader() {
       if (!source) return null;
 
@@ -42,8 +45,17 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
         setIsLoaderCreated(true);
       }
     }
-    if (source) changeLoader();
-  }, [source, history]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    if (source) {
+      changeLoader();
+    } else {
+      // Reset loader state when source is null
+      useBrightfieldImagesStore.setState({
+        loader: [{ labels: [], shape: [] }],
+        isImageLoading: false
+      });
+    }
+  }, [source]);
 
   useEffect(() => {
     if (!source || !isLoaderCreated) return;
