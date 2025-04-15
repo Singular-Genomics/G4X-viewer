@@ -16,7 +16,7 @@ import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { useSnackbar } from 'notistack';
-import PictureInPictureViewer from './PictureInPictureViewer';
+import PictureInPictureViewer from '../PictureInPictureViewer';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -150,8 +150,8 @@ export const PictureInPictureViewerAdapter = () => {
       {containerSize.width && containerSize.height && (
         <>
           <PictureInPictureViewer
-            contrastLimits={contrastLimits}
-            colors={colors}
+            contrastLimits={contrastLimits as any}
+            colors={colors as any}
             channelsVisible={channelsVisible}
             loader={loader}
             selections={selections}
@@ -177,22 +177,24 @@ export const PictureInPictureViewerAdapter = () => {
                 debouncedUpdateRef.current((newViewState as any).zoom);
               }
             }}
-            hoverHooks={{
-              handleValue: (values: any) =>
-                useViewerStore.setState({
-                  pixelValues: values.map((value: any) =>
-                    Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
-                  )
-                }),
-              handleCoordnate: (coords: number[]) =>
-                coords &&
-                useViewerStore.setState({
-                  hoverCoordinates: {
-                    x: coords[0].toFixed(0).toString(),
-                    y: coords[1].toFixed(0).toString()
-                  }
-                })
-            }}
+            hoverHooks={
+              {
+                handleValue: (values: any) =>
+                  useViewerStore.setState({
+                    pixelValues: values.map((value: any) =>
+                      Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
+                    )
+                  }),
+                handleCoordnate: (coords: number[]) =>
+                  coords &&
+                  useViewerStore.setState({
+                    hoverCoordinates: {
+                      x: coords[0].toFixed(0).toString(),
+                      y: coords[1].toFixed(0).toString()
+                    }
+                  })
+              } as any
+            }
           />
           <MuiTooltip title="Screenshot">
             <IconButton

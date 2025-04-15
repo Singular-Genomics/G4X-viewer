@@ -13,12 +13,13 @@ export function ScaleBar() {
   const loader = getLoader();
   const physicalSize = loader[0]?.meta?.physicalSizes?.x;
 
-  // Calculation logic for scalebar
   const { zoom, width } = viewState || { zoom: 0, width: 0 };
   const scale = Math.pow(2, zoom);
   const viewLength = width / scale;
   const barLength = viewLength * 0.05;
   const displayNumber = Math.round(barLength * (physicalSize?.size || 1));
+
+  if (!displayNumber) return null;
 
   return (
     <Box sx={sx.container}>
