@@ -5,13 +5,8 @@ import { DetailViewProps } from './DetailView.types';
 export const DETAIL_VIEW_ID = 'detail';
 
 export default class DetailView extends VivView {
-  constructor({ id, x = 0, y = 0, height, width, snapScaleBar }: DetailViewProps) {
+  constructor({ id, x = 0, y = 0, height, width }: DetailViewProps) {
     super({ id, x, y, height, width } as any);
-
-    // Add snapScaleBar property if provided
-    if (snapScaleBar !== undefined) {
-      (this as any).snapScaleBar = snapScaleBar;
-    }
   }
 
   getLayers({ props }: any): any {

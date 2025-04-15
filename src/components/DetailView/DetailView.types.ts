@@ -6,7 +6,6 @@ export type DetailViewProps = {
   y?: number;
   height: number;
   width: number;
-  snapScaleBar?: boolean;
 };
 
 export type ImageLayerProps = {
