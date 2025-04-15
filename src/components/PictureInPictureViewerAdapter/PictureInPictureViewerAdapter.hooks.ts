@@ -1,5 +1,5 @@
 import { useShallow } from 'zustand/react/shallow';
-import { DETAIL_VIEW_ID, MultiscaleImageLayer, ScaleBarLayer } from '@hms-dbmi/viv';
+import { DETAIL_VIEW_ID, MultiscaleImageLayer } from '@hms-dbmi/viv';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
@@ -9,8 +9,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { useChannelsStore } from '../../stores/ChannelsStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -175,23 +173,4 @@ export const useBrightfieldImageLayer = () => {
   });
 
   return brightfieldImageLayer;
-};
-
-export const useScaleBarLayer = () => {
-  const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const getLoader = useChannelsStore((store) => store.getLoader);
-
-  const loader = getLoader();
-
-  const physicalSize = loader[0]?.meta?.physicalSizes?.x;
-
-  const scaleBarLayer = new ScaleBarLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-scale-bar-layer`,
-    viewState: viewState || {},
-    unit: physicalSize?.unit ?? 'µm',
-    size: physicalSize?.size,
-    snap: false
-  });
-
-  return scaleBarLayer;
 };
