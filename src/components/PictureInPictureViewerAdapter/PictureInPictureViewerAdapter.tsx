@@ -84,8 +84,13 @@ export const PictureInPictureViewerAdapter = () => {
       const width = containerSize.width;
       const height = containerSize.height;
       const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+
       useViewerStore.setState({
-        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID }
+        viewState: {
+          ...defualtViewerState,
+          id: DETAIL_VIEW_ID,
+          width
+        }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
