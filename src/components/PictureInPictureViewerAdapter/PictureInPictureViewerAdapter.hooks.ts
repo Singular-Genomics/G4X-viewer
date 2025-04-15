@@ -154,11 +154,12 @@ export const useBrightfieldImageLayer = () => {
   );
 
   const loader = getLoader();
-  const { dtype } = loader[0];
 
-  if (!loader) {
+  if (!loader || !loader[0] || !loader[0].shape) {
     return undefined;
   }
+
+  const { dtype } = loader[0];
 
   const brightfieldImageLayer = new MultiscaleImageLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,

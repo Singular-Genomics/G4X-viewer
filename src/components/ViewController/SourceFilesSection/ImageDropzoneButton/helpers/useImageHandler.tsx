@@ -6,7 +6,7 @@ import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerSt
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
 
-export const useImageHandler = () => {
+export const useImageHandler = (onDropzoneUpload?: () => void) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const onDrop = (files: File[]) => {
@@ -36,6 +36,10 @@ export const useImageHandler = () => {
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
+
+    if (onDropzoneUpload) {
+      onDropzoneUpload();
+    }
   };
 
   const dropzoneProps = useDropzone({

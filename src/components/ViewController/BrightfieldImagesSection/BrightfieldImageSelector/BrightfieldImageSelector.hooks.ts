@@ -25,7 +25,13 @@ export const useBrightfieldImageHandler = () => {
       return;
     }
 
-    const index = availableImages.findIndex((entry) => entry.name === imageFile.name);
+    const index = availableImages.findIndex((entry) => {
+      if (typeof entry === 'string') {
+        return entry.split('/').pop() === imageFile.name || entry === imageFile.name;
+      }
+      return entry.name === imageFile.name;
+    });
+
     if (index !== -1) {
       enqueueSnackbar({
         message: 'Image with same name already has already been loaded',
