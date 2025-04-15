@@ -189,7 +189,7 @@ export const useScaleBarLayer = () => {
     id: `${getVivId(DETAIL_VIEW_ID)}-scale-bar-layer`,
     viewState: viewState || {},
     unit: physicalSize?.unit ?? 'µm',
-    size: physicalSize,
+    size: physicalSize?.size,
     snap: false
   });
 

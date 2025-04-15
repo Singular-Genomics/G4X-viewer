@@ -1,10 +1,4 @@
-import {
-  AdditiveColormapExtension,
-  DETAIL_VIEW_ID,
-  getDefaultInitialViewState,
-  LensExtension,
-  PictureInPictureViewer
-} from '@hms-dbmi/viv';
+import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
@@ -14,8 +8,7 @@ import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
-  useBrightfieldImageLayer,
-  useScaleBarLayer
+  useBrightfieldImageLayer
 } from './PictureInPictureViewerAdapter.hooks';
 import { useEffect, useRef } from 'react';
 import { Tooltip } from '../Tooltip';
@@ -23,6 +16,7 @@ import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { useSnackbar } from 'notistack';
+import PictureInPictureViewer from './PictureInPictureViewer';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -34,7 +28,6 @@ export const PictureInPictureViewerAdapter = () => {
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
-  const scaleBarLayer = useScaleBarLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -138,7 +131,7 @@ export const PictureInPictureViewerAdapter = () => {
   };
 
   const deckProps = {
-    layers: [cellMasksLayer, transcriptLayer, scaleBarLayer],
+    layers: [cellMasksLayer, transcriptLayer],
     ref: deckGLRef,
     glOptions: {
       preserveDrawingBuffer: true
@@ -173,7 +166,7 @@ export const PictureInPictureViewerAdapter = () => {
             colormap={colormap}
             onViewportLoad={onViewportLoad}
             viewStates={viewState ? [viewState] : []}
-            onViewStateChange={({ viewState: newViewState, viewId }) => {
+            onViewStateChange={({ viewState: newViewState, viewId }: { viewState: any; viewId: any }) => {
               // Update the viewState immediately
               useViewerStore.setState({
                 viewState: { ...newViewState, id: viewId }
@@ -185,14 +178,12 @@ export const PictureInPictureViewerAdapter = () => {
               }
             }}
             hoverHooks={{
-              handleValue: (values) =>
+              handleValue: (values: any) =>
                 useViewerStore.setState({
-                  pixelValues: values.map((value) =>
+                  pixelValues: values.map((value: any) =>
                     Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
                   )
                 }),
-              // @ts-expect-error Error in Viv jsDOC declaration.
-              // TODO: Fix when issue has beeen resolved and new version has been released.
               handleCoordnate: (coords: number[]) =>
                 coords &&
                 useViewerStore.setState({
