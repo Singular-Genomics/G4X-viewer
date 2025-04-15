@@ -17,7 +17,9 @@ export function ScaleBar() {
   const scale = Math.pow(2, zoom);
   const viewLength = width / scale;
   const barLength = viewLength * 0.05;
-  const displayNumber = Math.round(barLength * (physicalSize?.size || 1));
+  const displayNumber = barLength * (physicalSize?.size || 1);
+
+  const formattedNumber = displayNumber < 1 ? displayNumber.toFixed(1) : Math.round(displayNumber);
 
   if (!displayNumber) return null;
 
@@ -30,7 +32,7 @@ export function ScaleBar() {
         />
       </Box>
       <Typography sx={sx.text}>
-        {displayNumber} {physicalSize?.unit || 'µm'}
+        {formattedNumber} {physicalSize?.unit || 'µm'}
       </Typography>
     </Box>
   );
