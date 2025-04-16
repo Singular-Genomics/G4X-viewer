@@ -31,7 +31,10 @@ export function ScaleBar() {
           alt="scale bar"
         />
       </Box>
-      <Typography sx={sx.text}>
+      <Typography
+        sx={sx.text}
+        fontSize="14px"
+      >
         {formattedNumber} {physicalSize?.unit || 'µm'}
       </Typography>
     </Box>
@@ -44,7 +47,7 @@ const styles = (theme: Theme) => ({
     right: 55,
     bottom: 50,
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    padding: '8px 14px',
+    padding: '4px 8px',
     borderRadius: '10px',
     zIndex: 10,
     display: 'flex',
@@ -53,8 +56,7 @@ const styles = (theme: Theme) => ({
   },
   iconContainer: {
     display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '2px'
+    justifyContent: 'center'
   },
   text: {
     color: theme.palette.gx.primary.white
