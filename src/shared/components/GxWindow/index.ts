@@ -1,2 +1,2 @@
-export * from "./GxWindow";
-export * from "./GxWindow.types";
+export * from './GxWindow';
+export * from './GxWindow.types';

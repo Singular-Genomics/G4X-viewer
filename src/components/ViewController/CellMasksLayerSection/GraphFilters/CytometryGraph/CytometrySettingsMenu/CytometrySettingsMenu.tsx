@@ -1,16 +1,8 @@
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  Theme,
-  Typography,
-  useTheme,
-} from "@mui/material";
-import { GxSelect } from "../../../../../../shared/components/GxSelect";
-import { GxInput } from "../../../../../../shared/components/GxInput";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { useRef, useState } from "react";
+import { Box, IconButton, Menu, MenuItem, Theme, Typography, useTheme } from '@mui/material';
+import { GxSelect } from '../../../../../../shared/components/GxSelect';
+import { GxInput } from '../../../../../../shared/components/GxInput';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useRef, useState } from 'react';
 
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
@@ -20,7 +12,10 @@ export const CytometrySettingsMenu = () => {
   const [openMenu, setOpenMenu] = useState(false);
 
   return (
-    <Box sx={sx.settingsButtonWrapper} ref={menenuAnchor}>
+    <Box
+      sx={sx.settingsButtonWrapper}
+      ref={menenuAnchor}
+    >
       <IconButton onClick={() => setOpenMenu((prev) => !prev)}>
         <SettingsIcon />
       </IconButton>
@@ -30,7 +25,7 @@ export const CytometrySettingsMenu = () => {
         anchorEl={menenuAnchor.current}
         sx={{ zIndex: 3000 }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Typography>Colorscale:</Typography>
           <GxSelect
             autoWidth
@@ -41,7 +36,7 @@ export const CytometrySettingsMenu = () => {
             <MenuItem>YlOrRd</MenuItem>
           </GxSelect>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Typography>Bin size:</Typography>
           <GxInput variant="standard" />
         </Box>
@@ -52,11 +47,11 @@ export const CytometrySettingsMenu = () => {
 
 const styles = (theme: Theme) => ({
   settingsButtonWrapper: {
-    height: "100%",
-    width: "min-fit",
-    display: "flex",
+    height: '100%',
+    width: 'min-fit',
+    display: 'flex',
     backgroundColor: theme.palette.gx.primary.white,
-    marginLeft: "1px",
-    padding: "8px",
-  },
+    marginLeft: '1px',
+    padding: '8px'
+  }
 });

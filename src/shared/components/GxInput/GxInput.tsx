@@ -1,15 +1,14 @@
-import { TextField, TextFieldProps, Theme, useTheme } from "@mui/material";
+import { TextField, TextFieldProps, Theme, useTheme } from '@mui/material';
 
-export const GxInput = ({
-  children,
-  sx: customStyles,
-  ...rest
-}: TextFieldProps) => {
+export const GxInput = ({ children, sx: customStyles, ...rest }: TextFieldProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   return (
-    <TextField sx={{ ...customStyles, ...sx.input }} {...rest}>
+    <TextField
+      sx={{ ...customStyles, ...sx.input }}
+      {...rest}
+    >
       {children}
     </TextField>
   );
@@ -17,20 +16,20 @@ export const GxInput = ({
 
 const styles = (theme: Theme) => ({
   input: {
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: theme.palette.gx.mediumGrey[100],
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: theme.palette.gx.mediumGrey[100]
       },
-      "&:hover fieldset": {
-        borderColor: theme.palette.gx.darkGrey[500],
+      '&:hover fieldset': {
+        borderColor: theme.palette.gx.darkGrey[500]
       },
-      "&.Mui-focused fieldset": {
+      '&.Mui-focused fieldset': {
         borderColor: theme.palette.gx.accent.greenBlue,
-        borderWidth: "1px",
-      },
+        borderWidth: '1px'
+      }
     },
-    "& .MuiFormLabel-root.Mui-focused": {
-      color: theme.palette.gx.accent.greenBlue,
-    },
-  },
+    '& .MuiFormLabel-root.Mui-focused': {
+      color: theme.palette.gx.accent.greenBlue
+    }
+  }
 });

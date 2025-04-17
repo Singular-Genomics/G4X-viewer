@@ -1,1 +1,1 @@
-export * from "./GxInput";
+export * from './GxInput';

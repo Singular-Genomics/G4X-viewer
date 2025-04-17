@@ -1,2 +1,2 @@
-export * from "./UmapGraph";
-export * from "./UmapGraph.types";
+export * from './UmapGraph';
+export * from './UmapGraph.types';

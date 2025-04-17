@@ -1,66 +1,56 @@
-import { useCallback, useEffect, useState } from "react";
-import { GxInput } from "../../../../../shared/components/GxInput";
-import { Box, Button, Theme, useTheme } from "@mui/material";
-import {
-  GraphRangeInputsProps,
-  InputConfig,
-  InputErrors,
-  InputFieldType,
-  InputRange,
-} from "./GraphRangeInputs.types";
+import { useCallback, useEffect, useState } from 'react';
+import { GxInput } from '../../../../../shared/components/GxInput';
+import { Box, Button, Theme, useTheme } from '@mui/material';
+import { GraphRangeInputsProps, InputConfig, InputErrors, InputFieldType, InputRange } from './GraphRangeInputs.types';
 
 const INPUT_FIELDS: InputConfig[] = [
   {
-    field: "xStart",
-    label: "X Start",
+    field: 'xStart',
+    label: 'X Start',
     validateValue: (value, filter) => value < filter.xRangeEnd,
     updateFilter: (value, filter) => ({
       ...filter,
-      xRangeStart: value,
-    }),
+      xRangeStart: value
+    })
   },
   {
-    field: "xEnd",
-    label: "X End",
+    field: 'xEnd',
+    label: 'X End',
     validateValue: (value, filter) => value > filter.xRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
-      xRangeEnd: value,
-    }),
+      xRangeEnd: value
+    })
   },
   {
-    field: "yStart",
-    label: "Y Start",
+    field: 'yStart',
+    label: 'Y Start',
     validateValue: (value, filter) => value < filter.yRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
-      yRangeEnd: value,
-    }),
+      yRangeEnd: value
+    })
   },
   {
-    field: "yEnd",
-    label: "Y End",
+    field: 'yEnd',
+    label: 'Y End',
     validateValue: (value, filter) => value > filter.yRangeEnd,
     updateFilter: (value, filter) => ({
       ...filter,
-      yRangeStart: value,
-    }),
-  },
+      yRangeStart: value
+    })
+  }
 ];
 
-export function GraphRangeInputs({
-  rangeSource,
-  onUpdateRange,
-  onClear,
-}: GraphRangeInputsProps) {
+export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear }: GraphRangeInputsProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
   const [rangeInput, setRangeInput] = useState<InputRange>({
-    xStart: "",
-    xEnd: "",
-    yStart: "",
-    yEnd: "",
+    xStart: '',
+    xEnd: '',
+    yStart: '',
+    yEnd: ''
   });
   const [errors, setErrors] = useState<InputErrors>({});
 
@@ -70,7 +60,7 @@ export function GraphRangeInputs({
         xStart: Math.round(rangeSource.xRangeStart).toString(),
         xEnd: Math.round(rangeSource.xRangeEnd).toString(),
         yStart: Math.round(rangeSource.yRangeEnd).toString(),
-        yEnd: Math.round(rangeSource.yRangeStart).toString(),
+        yEnd: Math.round(rangeSource.yRangeStart).toString()
       });
       setErrors({});
     }
@@ -78,10 +68,10 @@ export function GraphRangeInputs({
 
   const handleInputClear = useCallback(() => {
     setRangeInput({
-      xStart: "",
-      xEnd: "",
-      yStart: "",
-      yEnd: "",
+      xStart: '',
+      xEnd: '',
+      yStart: '',
+      yEnd: ''
     });
     onClear();
     setErrors({});
@@ -91,7 +81,7 @@ export function GraphRangeInputs({
     (newValueString: string, field: InputFieldType) => {
       setRangeInput((prev) => ({
         ...prev,
-        [field]: newValueString,
+        [field]: newValueString
       }));
 
       if (!rangeSource || !newValueString) return;
@@ -108,12 +98,12 @@ export function GraphRangeInputs({
 
         setErrors((prev) => ({
           ...prev,
-          [field]: false,
+          [field]: false
         }));
       } else {
         setErrors((prev) => ({
           ...prev,
-          [field]: true,
+          [field]: true
         }));
       }
     },
@@ -133,7 +123,11 @@ export function GraphRangeInputs({
           error={!!errors[field]}
         />
       ))}
-      <Button onClick={handleInputClear} fullWidth sx={sx.clearButton}>
+      <Button
+        onClick={handleInputClear}
+        fullWidth
+        sx={sx.clearButton}
+      >
         Clear
       </Button>
     </Box>
@@ -142,21 +136,21 @@ export function GraphRangeInputs({
 
 const styles = (theme: Theme) => ({
   inputWrapper: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr) 100px",
-    justifyContent: "space-between",
-    alignItems: "start",
-    gap: "8px",
-    paddingBlock: "16px",
-    height: "min-content",
-    marginTop: "auto",
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr) 100px',
+    justifyContent: 'space-between',
+    alignItems: 'start',
+    gap: '8px',
+    paddingBlock: '16px',
+    height: 'min-content',
+    marginTop: 'auto',
     backgroundColor: theme.palette.gx.primary.white,
-    paddingInline: "8px",
+    paddingInline: '8px'
   },
   clearButton: {
     fontWeight: 700,
-    height: "100%",
+    height: '100%',
     color: theme.palette.gx.primary.white,
-    background: theme.palette.gx.gradients.brand(),
-  },
+    background: theme.palette.gx.gradients.brand()
+  }
 });

@@ -1,7 +1,7 @@
 import {
   CytometryFilter,
-  UmapFilter,
-} from "../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types";
+  UmapFilter
+} from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
 export type GraphRangeInputsProps = {
   rangeSource: UmapFilter | CytometryFilter | undefined;
@@ -12,10 +12,7 @@ export type GraphRangeInputsProps = {
 export type InputConfig = {
   field: InputFieldType;
   label: string;
-  validateValue: (
-    value: number,
-    filter: UmapFilter | CytometryFilter
-  ) => boolean;
+  validateValue: (value: number, filter: UmapFilter | CytometryFilter) => boolean;
   updateFilter: (value: number, filter: UmapFilter | CytometryFilter) => any;
 };
 
@@ -33,4 +30,4 @@ export type InputErrors = {
   yEnd?: boolean;
 };
 
-export type InputFieldType = "xStart" | "xEnd" | "yStart" | "yEnd";
+export type InputFieldType = 'xStart' | 'xEnd' | 'yStart' | 'yEnd';
