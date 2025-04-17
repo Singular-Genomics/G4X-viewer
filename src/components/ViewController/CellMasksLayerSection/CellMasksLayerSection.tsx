@@ -1,10 +1,10 @@
-import { Box, Theme, Tooltip, Typography, tooltipClasses } from "@mui/material";
-import WarningIcon from "@mui/icons-material/Warning";
-import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useShallow } from "zustand/react/shallow";
-import { CellMasksFillSettings } from "./CellMasksFillSettings";
-import { CellsFilter } from "./CellsFilter";
-import { GraphFilters } from "./GraphFilters/GraphFilters";
+import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
+import WarningIcon from '@mui/icons-material/Warning';
+import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useShallow } from 'zustand/react/shallow';
+import { CellMasksFillSettings } from './CellMasksFillSettings';
+import { CellsFilter } from './CellsFilter';
+import { GraphFilters } from './GraphFilters/GraphFilters';
 
 const DisabledLayerWarning = () => (
   <Tooltip
@@ -18,14 +18,9 @@ const DisabledLayerWarning = () => (
 );
 
 export const CellMasksLayerSection = () => {
-  const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] =
-    useCellSegmentationLayerStore(
-      useShallow((store) => [
-        store.isCellLayerOn,
-        store.isCellFillOn,
-        store.isCellNameFilterOn,
-      ])
-    );
+  const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.isCellFillOn, store.isCellNameFilterOn])
+  );
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -56,27 +51,26 @@ export const CellMasksLayerSection = () => {
 
 const sx = {
   sectionContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
   },
   subsectionWrapper: {
-    display: "flex",
-    gap: "8px",
+    display: 'flex',
+    gap: '8px'
   },
   subsectionTitle: {
     fontWeight: 700,
-    paddingLeft: "8px",
-    marginBottom: "8px",
+    paddingLeft: '8px',
+    marginBottom: '8px'
   },
   warningIcon: {
     color: (theme: Theme) => theme.palette.gx.accent.darkGold,
-    border: "",
+    border: ''
   },
   warningTooltip: {
-    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]:
-      {
-        marginBottom: "0px",
-      },
-  },
+    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]: {
+      marginBottom: '0px'
+    }
+  }
 };

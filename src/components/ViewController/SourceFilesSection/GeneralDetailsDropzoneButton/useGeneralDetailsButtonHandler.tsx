@@ -1,9 +1,6 @@
-import { useDropzone } from "react-dropzone";
-import {
-  GeneralDetailsType,
-  useViewerStore,
-} from "../../../../stores/ViewerStore";
-import { useSnackbar } from "notistack";
+import { useDropzone } from 'react-dropzone';
+import { GeneralDetailsType, useViewerStore } from '../../../../stores/ViewerStore';
+import { useSnackbar } from 'notistack';
 
 export const useGeneralDetailsHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -11,17 +8,17 @@ export const useGeneralDetailsHandler = () => {
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: "Please upload a single details file",
-        variant: "error",
+        message: 'Please upload a single details file',
+        variant: 'error'
       });
       return;
     }
 
     const file = files[0];
-    if (!file.name.endsWith(".json")) {
+    if (!file.name.endsWith('.json')) {
       enqueueSnackbar({
-        message: "Invalid file format. Only .json files are allowed",
-        variant: "error",
+        message: 'Invalid file format. Only .json files are allowed',
+        variant: 'error'
       });
       return;
     }
@@ -32,33 +29,30 @@ export const useGeneralDetailsHandler = () => {
 
       const generalDetails: GeneralDetailsType = {
         fileName: file.name,
-        data: jsonData,
+        data: jsonData
       };
 
       useViewerStore.getState().setGeneralDetails(generalDetails);
 
       enqueueSnackbar({
-        message: "General details file loaded successfully",
-        variant: "success",
+        message: 'General details file loaded successfully',
+        variant: 'success'
       });
     } catch (error) {
       enqueueSnackbar({
-        message: "Error parsing JSON file: " + (error as Error).message,
-        variant: "error",
+        message: 'Error parsing JSON file: ' + (error as Error).message,
+        variant: 'error'
       });
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const dropzoneProps = useDropzone({
     onDrop,
     accept: {
-      "application/json": [".json"],
+      'application/json': ['.json']
     },
-    multiple: false,
+    multiple: false
   });
 
-  return {
-    getRootProps,
-    getInputProps,
-  };
+  return dropzoneProps;
 };

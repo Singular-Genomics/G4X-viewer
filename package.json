@@ -1,22 +1,41 @@
 {
   "name": "g4x-viewer",
   "private": true,
-  "version": "2.5.0",
+  "version": "2.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "type-check": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "prettier --write --list-different",
+      "eslint --fix --cache"
+    ],
+    "src/**/*.{json,css,md}": [
+      "prettier --write --list-different"
+    ],
+    "src/**/*.{ts,tsx}": [
+      "bash -c 'tsc --noEmit'"
+    ]
   },
   "dependencies": {
-    "@deck.gl/core": "~8.8.27",
-    "@deck.gl/geo-layers": "~8.8.27",
-    "@deck.gl/layers": "~8.8.27",
-    "@deck.gl/react": "~8.8.27",
+    "@deck.gl/core": "9.0.41",
+    "@deck.gl/extensions": "9.0.41",
+    "@deck.gl/geo-layers": "9.0.41",
+    "@deck.gl/layers": "9.0.41",
+    "@deck.gl/mesh-layers": "9.0.41",
+    "@deck.gl/react": "9.0.41",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@hms-dbmi/viv": "^0.16.1",
+    "@hms-dbmi/viv": "^0.17.2",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.18",
     "@mui/x-data-grid": "^7.5.0",
@@ -28,22 +47,30 @@
     "notistack": "^3.0.1",
     "plotly.js": "^3.0.1",
     "protobufjs": "^7.2.6",
-    "react": "^18.2.0",
-    "react-dropzone": "^14.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-dropzone": "^14.3.8",
     "react-plotly.js": "^2.6.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/plotly.js": "^2.35.2",
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@types/react-plotly.js": "^2.6.3",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.56.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.0"
   }

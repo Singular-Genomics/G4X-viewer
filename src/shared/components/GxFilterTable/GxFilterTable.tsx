@@ -1,9 +1,9 @@
-import {  Box, FormControlLabel, Theme, alpha, useTheme } from "@mui/material";
-import { GridToolbarQuickFilter } from "@mui/x-data-grid";
-import { DataGrid } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
-import { GxFilterTableProps, GxFilterTableRowPropBase } from "./GxFilterTable.types";
-import { GxCheckbox } from "../GxCheckbox";
+import { Box, FormControlLabel, Theme, alpha, useTheme } from '@mui/material';
+import { GridToolbarQuickFilter } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
+import { useMemo, useState } from 'react';
+import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
+import { GxCheckbox } from '../GxCheckbox';
 
 const GxFiltersSearch = () => {
   const theme = useTheme();
@@ -13,29 +13,30 @@ const GxFiltersSearch = () => {
     <GridToolbarQuickFilter
       quickFilterParser={(searchInput: string) =>
         searchInput
-          .split(",")
+          .split(',')
           .map((value) => value.trim())
-          .filter((value) => value !== "")
+          .filter((value) => value !== '')
       }
       sx={sx.searchToolbar}
     />
   );
 };
 
-export const GxFilterTable = <T extends GxFilterTableRowPropBase, >({
+export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   columns,
   rows,
   activeFilters,
   onClearFilteres,
-  onSetFilter,
+  onSetFilter
 }: GxFilterTableProps<T>) => {
   const theme = useTheme();
   const sx = styles(theme);
   const [activeOnly, setActiveOnly] = useState<boolean>(false);
 
-  rows = useMemo(() => (
-    activeOnly ? rows.filter((item) => activeFilters.includes(item.id)) : rows
-  ), [activeOnly, activeFilters, rows])
+  rows = useMemo(
+    () => (activeOnly ? rows.filter((item) => activeFilters.includes(item.id)) : rows),
+    [activeOnly, activeFilters, rows]
+  );
 
   return (
     <>
@@ -48,25 +49,24 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase, >({
           disableColumnResize
           disableColumnSorting
           pageSizeOptions={[100]}
+          rowSelectionModel={activeFilters}
           onRowSelectionModelChange={(newSelection) => {
-            if (
-              newSelection.length === 0 ||
-              newSelection.length === rows.length
-            ) {
+            if (newSelection.length === 0 || newSelection.length === rows.length) {
               onClearFilteres();
+            } else {
+              onSetFilter(newSelection as string[]);
             }
-
-            onSetFilter((newSelection as string[]));
           }}
+          keepNonExistentRowsSelected
           checkboxSelection
           slots={{
             baseCheckbox: GxCheckbox,
-            toolbar: GxFiltersSearch,
+            toolbar: GxFiltersSearch
           }}
           slotProps={{
             toolbar: {
-              showQuickFilter: true,
-            },
+              showQuickFilter: true
+            }
           }}
           hideFooterSelectedRowCount={true}
           sx={sx.filtersTable}
@@ -90,53 +90,53 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase, >({
 
 const styles = (theme: Theme) => ({
   searchToolbar: {
-    marginBottom: "8px",
-    "& .MuiInputBase-root": {
+    marginBottom: '8px',
+    '& .MuiInputBase-root': {
       backgroundColor: theme.palette.gx.primary.white,
-      padding: "8px",
-      "&:hover:not(.Mui-disabled, .Mui-error):before": {
-        borderColor: theme.palette.gx.mediumGrey[300],
+      padding: '8px',
+      '&:hover:not(.Mui-disabled, .Mui-error):before': {
+        borderColor: theme.palette.gx.mediumGrey[300]
       },
-      "&:after": {
-        borderColor: theme.palette.gx.accent.greenBlue,
-      },
-    },
+      '&:after': {
+        borderColor: theme.palette.gx.accent.greenBlue
+      }
+    }
   },
   tableContainer: {
-    "& .MuiDataGrid-root": {
-      borderWidth: "0px",
+    '& .MuiDataGrid-root': {
+      borderWidth: '0px'
     },
-    "& .MuiDataGrid-virtualScroller": {
-      borderRadius: "0px !important",
+    '& .MuiDataGrid-virtualScroller': {
+      borderRadius: '0px !important'
     },
-    "& .MuiDataGrid-row": {
+    '& .MuiDataGrid-row': {
       backgroundColor: theme.palette.gx.primary.white,
-      cursor: "pointer",
-      "&.Mui-selected": {
-        backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.4),
-      },
+      cursor: 'pointer',
+      '&.Mui-selected': {
+        backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.4)
+      }
     },
-    "& .MuiDataGrid-container--top [role=row]": {
-      background: `${theme.palette.gx.lightGrey[900]} !important`,
+    '& .MuiDataGrid-container--top [role=row]': {
+      background: `${theme.palette.gx.lightGrey[900]} !important`
     },
-    "& .MuiDataGrid-columnHeaderTitle": {
+    '& .MuiDataGrid-columnHeaderTitle': {
       color: theme.palette.gx.darkGrey[900],
-      textTransform: "uppercase",
-      fontWeight: 700,
+      textTransform: 'uppercase',
+      fontWeight: 700
     },
-    "& .MuiDataGrid-footerContainer": {
-      background: theme.palette.gx.lightGrey[900],
-    },
+    '& .MuiDataGrid-footerContainer': {
+      background: theme.palette.gx.lightGrey[900]
+    }
   },
   filtersTable: {
-    height: "400px",
-    "& .MuiDataGrid-cell": {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
+    height: '400px',
+    '& .MuiDataGrid-cell': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
   },
   activeFiltersSwitchWrapper: {
     float: 'right'
-  },
+  }
 });

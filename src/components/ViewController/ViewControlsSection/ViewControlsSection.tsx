@@ -1,21 +1,17 @@
-import { Box, Typography } from "@mui/material";
-import { GlobalSelectionSliders } from "./GlobalSelectionSliders";
-import { CellMaskLayerToggle } from "./CellMaskLayerToggle";
-import { useCellSegmentationLayerStore } from "../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore";
-import { useBinaryFilesStore } from "../../../stores/BinaryFilesStore";
-import { TranscriptLayerToggle } from "./TranscriptLayerToggle";
-import { useBrightfieldImagesStore } from "../../../stores/BrightfieldImagesStore";
-import { BrightfieldLayerToggle } from "./BrightfieldLayerToggle/BrightfieldLayerToggle";
-import { useMemo } from "react";
+import { Box, Typography } from '@mui/material';
+import { GlobalSelectionSliders } from './GlobalSelectionSliders';
+import { CellMaskLayerToggle } from './CellMaskLayerToggle';
+import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
+import { TranscriptLayerToggle } from './TranscriptLayerToggle';
+import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
+import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
+import { useMemo } from 'react';
 
 export const ViewControlsSection = () => {
-  const brightfieldImageSource = useBrightfieldImagesStore(
-    (store) => store.brightfieldImageSource
-  );
+  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
   const files = useBinaryFilesStore((store) => store.files);
-  const cellsData = useCellSegmentationLayerStore(
-    (store) => store.cellMasksData
-  );
+  const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   const areLayersAvailable = useMemo(
     () => files.length || cellsData || brightfieldImageSource,
@@ -31,11 +27,7 @@ export const ViewControlsSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
         <Box sx={sx.togglesSubSection}>
-          {!areLayersAvailable && (
-            <Typography sx={sx.placeholderMessage}>
-              No active layers available
-            </Typography>
-          )}
+          {!areLayersAvailable && <Typography sx={sx.placeholderMessage}>No active layers available</Typography>}
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
@@ -47,22 +39,22 @@ export const ViewControlsSection = () => {
 
 const sx = {
   sectionContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
   },
   subsectionTitle: {
     fontWeight: 700,
-    paddingLeft: "8px",
-    marginBottom: "8px",
+    paddingLeft: '8px',
+    marginBottom: '8px'
   },
   togglesSubSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-    paddingLeft: "8px",
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    paddingLeft: '8px'
   },
   placeholderMessage: {
-    textAlign: "center",
-  },
+    textAlign: 'center'
+  }
 };
