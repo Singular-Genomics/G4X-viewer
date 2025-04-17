@@ -1,14 +1,12 @@
 import { Box, darken, useTheme } from '@mui/material';
-import { debounce } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { Layout } from 'plotly.js';
-import { UmapGraphProps } from './UmapGraph.types';
 import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
-export const UmapGraph = ({ data }: UmapGraphProps) => {
+export const UmapGraph = () => {
   const theme = useTheme();
   const sx = styles();
 
@@ -20,14 +18,12 @@ export const UmapGraph = ({ data }: UmapGraphProps) => {
     const containerEl = containerRef.current;
     if (!containerEl) return;
 
-    const resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        if (!entries || !entries[0]) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || !entries[0]) return;
 
-        const { width, height } = entries[0].contentRect;
-        setDimensions({ width, height });
-      }, 25)
-    );
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
 
     resizeObserver.observe(containerEl);
 
@@ -75,8 +71,8 @@ export const UmapGraph = ({ data }: UmapGraphProps) => {
         <Plot
           data={[
             {
-              x: data.map((point) => point.value_X),
-              y: data.map((point) => point.value_Y),
+              x: [],
+              y: [],
               mode: 'markers',
               type: 'scatter',
               marker: {

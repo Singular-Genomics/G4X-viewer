@@ -1,9 +1,7 @@
 import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
-import { CytometryGraphProps } from './CytometryGraph.types';
 import Plot from 'react-plotly.js';
 import { Data, Layout } from 'plotly.js';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { debounce } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { GetBrandColorscale } from './CytometryGraph.helpers';
@@ -11,27 +9,24 @@ import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettings
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
-export const CytometryGraph = ({ data }: CytometryGraphProps) => {
+export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
 
   const { cytometryFilter } = useCellSegmentationLayerStore();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [binSize] = useState(100);
 
   useEffect(() => {
     const containerEl = containerRef.current;
     if (!containerEl) return;
 
-    const resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        if (!entries || !entries[0]) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || !entries[0]) return;
 
-        const { width, height } = entries[0].contentRect;
-        setDimensions({ width, height });
-      }, 25)
-    );
+      const { width, height } = entries[0].contentRect;
+      setDimensions({ width, height });
+    });
 
     resizeObserver.observe(containerEl);
 
@@ -42,55 +37,12 @@ export const CytometryGraph = ({ data }: CytometryGraphProps) => {
     };
   }, []);
 
-  const heatmapData = useMemo(() => {
-    if (!data.length) return { z: [[0]], x: [0], y: [0], xMax: 0, yMax: 0 };
-
-    const xValues = data.map((p) => p.value_X);
-    const yValues = data.map((p) => p.value_Y);
-
-    const xMin = Math.min(...xValues);
-    const xMax = Math.max(...xValues);
-    const yMin = Math.min(...yValues);
-    const yMax = Math.max(...yValues);
-
-    const xBins = Math.ceil((xMax - xMin) / binSize) + 1;
-    const yBins = Math.ceil((yMax - yMin) / binSize) + 1;
-
-    const zMatrix: number[][] = Array(yBins)
-      .fill(0)
-      .map(() => Array(xBins).fill(0));
-
-    const xAxis = Array(xBins)
-      .fill(0)
-      .map((_, i) => xMin + i * binSize);
-    const yAxis = Array(yBins)
-      .fill(0)
-      .map((_, i) => yMin + i * binSize);
-
-    data.forEach((point) => {
-      const xBin = Math.floor((point.value_X - xMin) / binSize);
-      const yBin = Math.floor((point.value_Y - yMin) / binSize);
-
-      if (xBin >= 0 && xBin < xBins && yBin >= 0 && yBin < yBins) {
-        zMatrix[yBin][xBin] += point.count;
-      }
-    });
-
-    return {
-      z: zMatrix,
-      x: xAxis,
-      y: yAxis,
-      xMax: xMax,
-      yMax: yMax
-    };
-  }, [data, binSize]);
-
   const plotData: Data[] = [
     {
       type: 'heatmap',
-      z: heatmapData.z,
-      x: heatmapData.x,
-      y: heatmapData.y,
+      z: [],
+      x: [],
+      y: [],
       colorscale: GetBrandColorscale(),
       showscale: true,
       hoverinfo: 'x+y+z',
