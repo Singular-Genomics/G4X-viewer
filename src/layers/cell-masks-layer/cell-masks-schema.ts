@@ -1,5 +1,17 @@
 export const CellMasksSchema = {
   nested: {
+    UmapEntry: {
+      fields: {
+        umapY: {
+          type: "double",
+          id: 1,
+        },
+        umapX: {
+          type: "double",
+          id: 2,
+        },
+      },
+    },
     SingleMask: {
       fields: {
         vertices: {
@@ -34,6 +46,16 @@ export const CellMasksSchema = {
         clusterId: {
           type: "string",
           id: 7,
+        },
+        proteins: {
+          rule: "map",
+          keyType: "string",
+          type: "double",
+          id: 8,
+        },
+        umapValues: {
+          type: "UmapEntry",
+          id: 9,
         },
       },
     },
