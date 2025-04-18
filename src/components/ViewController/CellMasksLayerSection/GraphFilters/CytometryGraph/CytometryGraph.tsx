@@ -1,6 +1,6 @@
 import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
-import { Data, Layout } from 'plotly.js';
+import { Data, Datum, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
@@ -8,14 +8,42 @@ import { GetBrandColorscale } from './CytometryGraph.helpers';
 import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettingsMenu';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import * as protobuf from 'protobufjs';
+import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { HeatmapWorker } from './helpers/heatmapWorker';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
 
-  const { cytometryFilter } = useCellSegmentationLayerStore();
+  const { cytometryFilter, cellMasksData } = useCellSegmentationLayerStore();
+  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: any }>({
+    x: [],
+    y: [],
+    z: []
+  });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (cellMasksData) {
+      const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+      const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
+      const worker = new HeatmapWorker();
+      worker.onMessage((output) => {
+        console.log(output);
+        if (output.completed && output.data) {
+          setHeatmapData(output.data);
+        }
+      });
+      worker.onError((error) => console.error(error));
+      worker.postMessage({
+        xValues: parsedMasks.map((mask: any) => mask.proteins.CD3_intensity_mean),
+        yValues: parsedMasks.map((mask: any) => mask.proteins.CD20_intensity_mean),
+        binSize: 100
+      });
+    }
+  }, [cellMasksData]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -40,15 +68,13 @@ export const CytometryGraph = () => {
   const plotData: Data[] = [
     {
       type: 'heatmap',
-      z: [],
-      x: [],
-      y: [],
+      x: heatmapData.x,
+      y: heatmapData.y,
+      z: heatmapData.z,
       colorscale: GetBrandColorscale(),
       showscale: true,
       hoverinfo: 'x+y+z',
-      hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>',
-      zmin: 0,
-      zmax: 15
+      hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
     }
   ];
 
