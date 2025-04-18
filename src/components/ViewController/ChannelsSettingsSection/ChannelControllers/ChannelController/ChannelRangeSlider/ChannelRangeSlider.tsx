@@ -39,7 +39,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
               ? CHANNEL_MIN
               : +currentValue;
         setMinInputValue(newValue.toString());
-        handleSliderChange([newValue, currentMaxValue]);
+        handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
     [currentMaxValue, handleSliderChange]
   );
@@ -63,7 +63,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
               ? CHANNEL_MAX
               : +currentValue;
         setMaxInputValue(newValue.toString());
-        handleSliderChange([currentMinValue, newValue]);
+        handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
     [currentMinValue, handleSliderChange]
   );
@@ -100,7 +100,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
       <GxSlider
         disabled={isLoading}
         value={slider}
-        onChange={(_, newValue) => handleSliderChange(Array.isArray(newValue) ? newValue : [newValue])}
+        onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
         valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
         min={CHANNEL_MIN}
         max={CHANNEL_MAX}

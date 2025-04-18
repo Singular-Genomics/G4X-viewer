@@ -80,15 +80,15 @@ export const ChannelControllers = () => {
               channelsSettings[channelName].maxValue
             ) {
               const settings = channelsSettings[channelName];
-              newProps.contrastLimits = [settings.minValue, settings.maxValue] as number[];
+              newProps.contrastLimits = [settings.minValue, settings.maxValue] as [number, number];
             } else {
-              newProps.contrastLimits = newContrastLimit;
+              newProps.contrastLimits = newContrastLimit as [number, number];
             }
 
             if (channelName in channelsSettings && channelsSettings[channelName].color) {
-              newProps.colors = channelsSettings[channelName].color;
+              newProps.colors = channelsSettings[channelName].color as [number, number, number];
             } else if (Channels[c].Color) {
-              newProps.colors = Channels[c].Color.slice(0, -1);
+              newProps.colors = Channels[c].Color.slice(0, -1) as [number, number, number];
             }
 
             newProps.domains = domain;
@@ -109,14 +109,14 @@ export const ChannelControllers = () => {
           removeIsChannelLoading(index);
         };
 
-        const handleColorSelect = (color: number[]) => {
+        const handleColorSelect = (color: [number, number, number]) => {
           if (name in channelsSettings) {
             channelsSettings[name].color = color;
           }
           setPropertiesForChannel(index, { colors: color });
         };
 
-        const handleSliderChange = (newValue: number[]) => {
+        const handleSliderChange = (newValue: [number, number]) => {
           if (name in channelsSettings) {
             channelsSettings[name].minValue = newValue[0];
             channelsSettings[name].maxValue = newValue[1];
@@ -135,11 +135,11 @@ export const ChannelControllers = () => {
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
-              color={colors[index]}
+              color={colors[index] as [number, number, number]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
-              slider={contrastLimits[index]}
+              slider={contrastLimits[index] as [number, number]}
               handleSliderChange={handleSliderChange}
             />
           </Box>

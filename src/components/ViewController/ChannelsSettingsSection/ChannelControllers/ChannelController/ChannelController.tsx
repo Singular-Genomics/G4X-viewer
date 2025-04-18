@@ -57,7 +57,7 @@ export const ChannelController = ({
         </GxSelect>
         <Box>
           <ChannelOptions
-            handleColorSelect={handleColorSelect}
+            handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
           />
           <Tooltip
