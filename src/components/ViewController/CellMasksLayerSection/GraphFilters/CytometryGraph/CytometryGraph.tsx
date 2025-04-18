@@ -183,7 +183,7 @@ export const CytometryGraph = () => {
             fullWidth
             value={xAxisProtein}
             onChange={(e) => setXAxisProtein(e.target.value as string)}
-            placeholder="Select Data Source"
+            label="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
@@ -200,7 +200,7 @@ export const CytometryGraph = () => {
             fullWidth
             value={yAxisProtein}
             onChange={(e) => setYAxisProtein(e.target.value as string)}
-            placeholder="Select Data Source"
+            label="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
