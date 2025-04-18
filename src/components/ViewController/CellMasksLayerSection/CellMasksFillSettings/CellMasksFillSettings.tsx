@@ -39,10 +39,7 @@ export const CellMasksFillSettings = () => {
         alignItems="center"
         sx={sx.sliderInputContainer}
       >
-        <Grid
-          item
-          xs={1}
-        >
+        <Grid size={1}>
           <Input
             value={sliderValue * 100}
             size="small"
@@ -60,8 +57,7 @@ export const CellMasksFillSettings = () => {
           />
         </Grid>
         <Grid
-          item
-          xs
+          size={'grow'}
           sx={sx.sliderInputItem}
         >
           <GxSlider
