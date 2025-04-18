@@ -11,12 +11,16 @@ import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStor
 import * as protobuf from 'protobufjs';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { HeatmapWorker } from './helpers/heatmapWorker';
+import { useSnackbar } from 'notistack';
+
+const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
 
+  const { enqueueSnackbar } = useSnackbar();
   const { cytometryFilter, cellMasksData } = useCellSegmentationLayerStore();
   const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: any }>({
     x: [],
@@ -24,26 +28,54 @@ export const CytometryGraph = () => {
     z: []
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [xAxisProtein, setXAxisProtein] = useState('');
+  const [yAxisProtein, setYAxisProtein] = useState('');
+  const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
 
   useEffect(() => {
     if (cellMasksData) {
-      const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+      const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
+      if (!parsedMasks.length) {
+        enqueueSnackbar({
+          message: 'Missing cell masks in given data set',
+          variant: 'error'
+        });
+        return;
+      }
+
+      const listOfProteinNames = Object.keys(parsedMasks[0].proteins);
+      if (listOfProteinNames.length < 2) {
+        enqueueSnackbar({
+          message:
+            'Data set contains only a single channel data. At least to channels are required for plotting the heatmap',
+          variant: 'error'
+        });
+        return;
+      }
+
+      setAvailableProteinNames(listOfProteinNames);
+      setXAxisProtein(listOfProteinNames[0]);
+      setYAxisProtein(listOfProteinNames[1]);
+    }
+  }, [cellMasksData, enqueueSnackbar]);
+
+  useEffect(() => {
+    if (cellMasksData && xAxisProtein && yAxisProtein) {
       const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
-        console.log(output);
         if (output.completed && output.data) {
           setHeatmapData(output.data);
         }
       });
       worker.onError((error) => console.error(error));
       worker.postMessage({
-        xValues: parsedMasks.map((mask: any) => mask.proteins.CD3_intensity_mean),
-        yValues: parsedMasks.map((mask: any) => mask.proteins.CD20_intensity_mean),
-        binSize: 100
+        xValues: parsedMasks.map((mask: any) => mask.proteins[xAxisProtein]),
+        yValues: parsedMasks.map((mask: any) => mask.proteins[yAxisProtein]),
+        binSize: 20
       });
     }
-  }, [cellMasksData]);
+  }, [cellMasksData, xAxisProtein, yAxisProtein]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -149,18 +181,36 @@ export const CytometryGraph = () => {
           <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
           <GxSelect
             fullWidth
+            value={xAxisProtein}
+            onChange={(e) => setXAxisProtein(e.target.value as string)}
             placeholder="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
-            <MenuItem>Select One...</MenuItem>
+            {availableProteinNames.map((proteinName) => (
+              <MenuItem
+                value={proteinName}
+                disabled={proteinName === yAxisProtein}
+              >
+                {proteinName}
+              </MenuItem>
+            ))}
           </GxSelect>
           <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
           <GxSelect
             fullWidth
+            value={yAxisProtein}
+            onChange={(e) => setYAxisProtein(e.target.value as string)}
             placeholder="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
-            <MenuItem>Select One...</MenuItem>
+            {availableProteinNames.map((proteinName) => (
+              <MenuItem
+                value={proteinName}
+                disabled={proteinName === xAxisProtein}
+              >
+                {proteinName}
+              </MenuItem>
+            ))}
           </GxSelect>
         </Box>
         <CytometrySettingsMenu />
