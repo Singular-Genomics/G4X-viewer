@@ -43,8 +43,8 @@ export type ViewStateChange = (params: ViewStateChangeParams) => void;
 export type Hover = (info: any, event: any) => void;
 
 export type PictureInPictureViewerProps = {
-  contrastLimits: number[][] | [number, number][];
-  colors: number[][] | [number, number, number][];
+  contrastLimits: [number, number][];
+  colors: [number, number, number][];
   channelsVisible: boolean[];
   colormap?: string;
   loader: PixelSource[];

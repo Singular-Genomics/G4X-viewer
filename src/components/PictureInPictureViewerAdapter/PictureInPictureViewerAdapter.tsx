@@ -155,8 +155,8 @@ export const PictureInPictureViewerAdapter = () => {
       {containerSize.width && containerSize.height && (
         <>
           <PictureInPictureViewer
-            contrastLimits={contrastLimits as any}
-            colors={colors as any}
+            contrastLimits={contrastLimits}
+            colors={colors}
             channelsVisible={channelsVisible}
             loader={loader}
             selections={selections}

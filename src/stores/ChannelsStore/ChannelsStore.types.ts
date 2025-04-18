@@ -3,8 +3,8 @@ import { SelectionsType } from '../../components/PictureInPictureViewerAdapter/P
 export type ChannelsStore = ChannelsStoreValues & ChannelsStoreMethods;
 
 export type ChannelsStoreValues = {
-  contrastLimits: number[][];
-  colors: number[][];
+  contrastLimits: [number, number][];
+  colors: [number, number, number][];
   channelsVisible: boolean[];
   channelsSettings: ChannelsSettings;
   selections: SelectionsType[];
@@ -23,8 +23,8 @@ export type ChannelsStoreMethods = {
 };
 
 export type PropertiesUpdateType = {
-  contrastLimits?: number[];
-  colors?: number[];
+  contrastLimits?: [number, number];
+  colors?: [number, number, number];
   domains?: number[];
   selections?: SelectionsType;
   channelsVisible?: boolean;
@@ -40,7 +40,7 @@ export type ChannelsSettings = {
 };
 
 export type ChannelSettings = {
-  color?: number[];
+  color?: [number, number, number];
   maxValue?: number;
   minValue?: number;
 };
