@@ -1,7 +1,7 @@
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
-  cellMasksData: Uint8Array | null;
+  cellMasksData: any[] | null;
   fileName: string;
   isCellLayerOn: boolean;
   isCellFillOn: boolean;
@@ -11,7 +11,9 @@ export type CellSegmentationLayerStoreValues = {
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
   umapFilter?: UmapFilter;
-  cytometryFilter?: CytometryFilter;
+  cytometryProteinsNames: string[];
+  cytometryFilter: CytometryFilter;
+  umapDataAvailable: boolean;
 };
 
 export type CellSegmentationLayerStoreMethods = {
@@ -22,6 +24,7 @@ export type CellSegmentationLayerStoreMethods = {
   setCellFillOpacity: (newOpacity: number) => void;
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
+  setCytometryFilter: (filterSettings: CytometryFilter) => void;
   clearCellNameFilter: () => void;
   reset: () => void;
 };
@@ -39,10 +42,10 @@ export type UmapFilter = {
 };
 
 export type CytometryFilter = {
-  xRangeProteinName: string;
-  xRangeStart: number;
-  xRangeEnd: number;
-  yRangeProteinName: string;
-  yRangeStart: number;
-  yRangeEnd: number;
+  xRangeProteinName?: string;
+  xRangeStart?: number;
+  xRangeEnd?: number;
+  yRangeProteinName?: string;
+  yRangeStart?: number;
+  yRangeEnd?: number;
 };

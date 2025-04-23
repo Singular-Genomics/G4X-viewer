@@ -14,15 +14,13 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   }
 
   renderLayers() {
-    const cellMasksData = (this.protoRoot.lookupType('CellMasks').decode(this.props.masksData) as any).cellMasks;
-
     let cellsData = [];
     let outlierCellsData = [];
 
     if (this.props.cellFilters === 'all') {
-      cellsData = cellMasksData;
+      cellsData = this.props.masksData;
     } else {
-      [cellsData, outlierCellsData] = partition(cellMasksData, (data) =>
+      [cellsData, outlierCellsData] = partition(this.props.masksData, (data) =>
         this.props.cellFilters.includes(data.clusterId)
       );
     }
@@ -38,6 +36,9 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       getPolygon: (d) => d.vertices,
       getLineColor: [238, 238, 238],
       getFillColor: [238, 238, 238, opacityValue],
+      updateTriggers: {
+        getFillColor: this.props.cellFillOpacity
+      },
       getLineWidth: 0,
       visible: this.props.showDiscardedPoints
     });
@@ -51,6 +52,9 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       getPolygon: (d) => d.vertices,
       getLineColor: (d) => d.color,
       getFillColor: (d) => [...d.color, opacityValue] as any,
+      updateTriggers: {
+        getFillColor: this.props.cellFillOpacity
+      },
       getLineWidth: 0,
       pickable: true
     });
