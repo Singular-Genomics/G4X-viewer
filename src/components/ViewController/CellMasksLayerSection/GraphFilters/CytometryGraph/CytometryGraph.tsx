@@ -21,7 +21,7 @@ export const CytometryGraph = () => {
   const sx = styles(theme);
 
   const { enqueueSnackbar } = useSnackbar();
-  const { cytometryFilter, cellMasksData } = useCellSegmentationLayerStore();
+  const { cytometryFilter, cellMasksData, setCytometryFilter } = useCellSegmentationLayerStore();
   const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: any }>({
     x: [],
     y: [],
@@ -261,8 +261,11 @@ export const CytometryGraph = () => {
           })
         }
         onClear={() =>
-          useCellSegmentationLayerStore.setState({
-            cytometryFilter: undefined
+          setCytometryFilter({
+            xRangeEnd: undefined,
+            xRangeStart: undefined,
+            yRangeEnd: undefined,
+            yRangeStart: undefined
           })
         }
       />

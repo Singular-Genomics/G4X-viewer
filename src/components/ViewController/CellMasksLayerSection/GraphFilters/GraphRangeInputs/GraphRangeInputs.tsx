@@ -7,7 +7,7 @@ const INPUT_FIELDS: InputConfig[] = [
   {
     field: 'xStart',
     label: 'X Start',
-    validateValue: (value, filter) => value < filter.xRangeEnd,
+    validateValue: (value, filter) => !!filter?.xRangeStart && value < filter.xRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
       xRangeStart: value
@@ -16,7 +16,7 @@ const INPUT_FIELDS: InputConfig[] = [
   {
     field: 'xEnd',
     label: 'X End',
-    validateValue: (value, filter) => value > filter.xRangeStart,
+    validateValue: (value, filter) => !!filter?.xRangeStart && value > filter.xRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
       xRangeEnd: value
@@ -25,7 +25,7 @@ const INPUT_FIELDS: InputConfig[] = [
   {
     field: 'yStart',
     label: 'Y Start',
-    validateValue: (value, filter) => value < filter.yRangeStart,
+    validateValue: (value, filter) => !!filter.yRangeStart && value < filter.yRangeStart,
     updateFilter: (value, filter) => ({
       ...filter,
       yRangeEnd: value
@@ -34,7 +34,7 @@ const INPUT_FIELDS: InputConfig[] = [
   {
     field: 'yEnd',
     label: 'Y End',
-    validateValue: (value, filter) => value > filter.yRangeEnd,
+    validateValue: (value, filter) => !!filter.yRangeEnd && value > filter.yRangeEnd,
     updateFilter: (value, filter) => ({
       ...filter,
       yRangeStart: value
@@ -57,10 +57,10 @@ export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear }: GraphR
   useEffect(() => {
     if (rangeSource) {
       setRangeInput({
-        xStart: Math.round(rangeSource.xRangeStart).toString(),
-        xEnd: Math.round(rangeSource.xRangeEnd).toString(),
-        yStart: Math.round(rangeSource.yRangeEnd).toString(),
-        yEnd: Math.round(rangeSource.yRangeStart).toString()
+        xStart: rangeSource.xRangeStart ? Math.round(rangeSource.xRangeStart).toString() : '',
+        xEnd: rangeSource.xRangeEnd ? Math.round(rangeSource.xRangeEnd).toString() : '',
+        yStart: rangeSource.yRangeEnd ? Math.round(rangeSource.yRangeEnd).toString() : '',
+        yEnd: rangeSource.yRangeStart ? Math.round(rangeSource.yRangeStart).toString() : ''
       });
       setErrors({});
     }
