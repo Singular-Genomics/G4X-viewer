@@ -28,6 +28,11 @@ const styles = (theme: Theme) => ({
         borderWidth: '1px'
       }
     },
+    '& .MuiInput-root': {
+      '&::after': {
+        borderColor: theme.palette.gx.accent.greenBlue
+      }
+    },
     '& .MuiFormLabel-root.Mui-focused': {
       color: theme.palette.gx.accent.greenBlue
     }
