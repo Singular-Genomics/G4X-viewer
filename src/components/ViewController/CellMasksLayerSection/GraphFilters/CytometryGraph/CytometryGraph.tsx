@@ -1,19 +1,15 @@
 import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { ColorScale, Data, Datum, Layout } from 'plotly.js';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettingsMenu';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
-import * as protobuf from 'protobufjs';
-import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
-
-const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
@@ -36,8 +32,7 @@ export const CytometryGraph = () => {
 
   useEffect(() => {
     if (cellMasksData) {
-      const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
-      if (!parsedMasks.length) {
+      if (!cellMasksData.length) {
         enqueueSnackbar({
           message: 'Missing cell masks in given data set',
           variant: 'error'
@@ -45,7 +40,7 @@ export const CytometryGraph = () => {
         return;
       }
 
-      const listOfProteinNames = Object.keys(parsedMasks[0].proteins);
+      const listOfProteinNames = Object.keys(cellMasksData[0].proteins);
       if (listOfProteinNames.length < 2) {
         enqueueSnackbar({
           message:
@@ -58,12 +53,15 @@ export const CytometryGraph = () => {
       setAvailableProteinNames(listOfProteinNames);
       setXAxisProtein(listOfProteinNames[0]);
       setYAxisProtein(listOfProteinNames[1]);
+      setCytometryFilter({
+        xRangeProteinName: listOfProteinNames[0],
+        yRangeProteinName: listOfProteinNames[1]
+      });
     }
-  }, [cellMasksData, enqueueSnackbar]);
+  }, [cellMasksData, enqueueSnackbar, setCytometryFilter]);
 
   useEffect(() => {
     if (cellMasksData && xAxisProtein && yAxisProtein && binSize) {
-      const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
         if (output.completed && output.data) {
@@ -72,8 +70,8 @@ export const CytometryGraph = () => {
       });
       worker.onError((error) => console.error(error));
       worker.postMessage({
-        xValues: parsedMasks.map((mask: any) => mask.proteins[xAxisProtein]),
-        yValues: parsedMasks.map((mask: any) => mask.proteins[yAxisProtein]),
+        xValues: cellMasksData.map((mask: any) => mask.proteins[xAxisProtein]),
+        yValues: cellMasksData.map((mask: any) => mask.proteins[yAxisProtein]),
         binSize: binSize
       });
     }
@@ -88,7 +86,7 @@ export const CytometryGraph = () => {
 
       const { width, height } = entries[0].contentRect;
       setDimensions({ width, height });
-    }, 100);
+    }, 250);
 
     const resizeObserver = new ResizeObserver(handleResize);
 
@@ -100,6 +98,15 @@ export const CytometryGraph = () => {
       }
     };
   }, []);
+
+  const handleProteinChange = useCallback(
+    (proteinName: string, axis: 'y' | 'x') =>
+      setTimeout(() => {
+        setCytometryFilter(axis === 'x' ? { xRangeProteinName: proteinName } : { yRangeProteinName: proteinName });
+        console.log('set');
+      }, 10),
+    [setCytometryFilter]
+  );
 
   const plotData: Data[] | undefined = colorscale
     ? [
@@ -124,7 +131,7 @@ export const CytometryGraph = () => {
     plot_bgcolor: theme.palette.gx.lightGrey[900],
     xaxis: {
       title: {
-        text: 'Test X',
+        text: xAxisProtein,
         font: { size: 14 }
       },
       type: 'linear',
@@ -137,7 +144,7 @@ export const CytometryGraph = () => {
     },
     yaxis: {
       title: {
-        text: 'Test Y',
+        text: yAxisProtein,
         font: { size: 14 },
         standoff: 10
       },
@@ -188,7 +195,10 @@ export const CytometryGraph = () => {
           <GxSelect
             fullWidth
             value={xAxisProtein}
-            onChange={(e) => setXAxisProtein(e.target.value as string)}
+            onChange={(e) => {
+              setXAxisProtein(e.target.value as string);
+              handleProteinChange(e.target.value as string, 'x');
+            }}
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
@@ -204,7 +214,10 @@ export const CytometryGraph = () => {
           <GxSelect
             fullWidth
             value={yAxisProtein}
-            onChange={(e) => setYAxisProtein(e.target.value as string)}
+            onChange={(e) => {
+              setYAxisProtein(e.target.value as string);
+              handleProteinChange(e.target.value as string, 'y');
+            }}
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
