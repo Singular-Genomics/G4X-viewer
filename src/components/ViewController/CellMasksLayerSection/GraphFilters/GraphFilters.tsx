@@ -46,7 +46,7 @@ export const GraphFilters = () => {
       </ToggleButtonGroup>
       {isWindowVisible && (
         <GxWindow
-          title="test"
+          title={selectedGraph}
           config={{
             startWidth: 800,
             startHeight: 400,
