@@ -11,6 +11,7 @@ import * as protobuf from 'protobufjs';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { useSnackbar } from 'notistack';
+import { debounce } from 'lodash';
 
 const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
 
@@ -28,6 +29,7 @@ export const CytometryGraph = () => {
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [colorscale, setColorScale] = useState<ColorScale | undefined>(undefined);
+  const [binSize, setBinSize] = useState<number>(0);
   const [xAxisProtein, setXAxisProtein] = useState('');
   const [yAxisProtein, setYAxisProtein] = useState('');
   const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
@@ -60,7 +62,7 @@ export const CytometryGraph = () => {
   }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
-    if (cellMasksData && xAxisProtein && yAxisProtein) {
+    if (cellMasksData && xAxisProtein && yAxisProtein && binSize) {
       const parsedMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
@@ -72,21 +74,23 @@ export const CytometryGraph = () => {
       worker.postMessage({
         xValues: parsedMasks.map((mask: any) => mask.proteins[xAxisProtein]),
         yValues: parsedMasks.map((mask: any) => mask.proteins[yAxisProtein]),
-        binSize: 20
+        binSize: binSize
       });
     }
-  }, [cellMasksData, xAxisProtein, yAxisProtein]);
+  }, [cellMasksData, xAxisProtein, yAxisProtein, binSize]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
     if (!containerEl) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    const handleResize = debounce((entries) => {
       if (!entries || !entries[0]) return;
 
       const { width, height } = entries[0].contentRect;
       setDimensions({ width, height });
-    });
+    }, 100);
+
+    const resizeObserver = new ResizeObserver(handleResize);
 
     resizeObserver.observe(containerEl);
 
@@ -213,7 +217,10 @@ export const CytometryGraph = () => {
             ))}
           </GxSelect>
         </Box>
-        <CytometrySettingsMenu onColorscaleChange={(colorscale) => setColorScale(colorscale)} />
+        <CytometrySettingsMenu
+          onColorscaleChange={(colorscale) => setColorScale(colorscale)}
+          onBinSizeChange={(newBinSize) => setBinSize(newBinSize)}
+        />
       </Box>
 
       <Box
@@ -224,7 +231,6 @@ export const CytometryGraph = () => {
           <Plot
             data={plotData}
             layout={layout as Partial<Layout>}
-            style={sx.plot}
             config={{
               modeBarButtons: [['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews']],
               responsive: true,
@@ -268,12 +274,14 @@ const styles = (theme: Theme) => ({
   container: {
     width: '100%',
     height: '100%',
-    display: 'grid',
-    gridTemplateColumns: '1fr',
+    display: 'flex',
+    flexDirection: 'column',
     gap: '1px'
   },
   graphWrapper: {
-    overflow: 'hidden'
+    overflow: 'hidden',
+    height: '100%',
+    width: '100%'
   },
   plot: {
     width: '100%'

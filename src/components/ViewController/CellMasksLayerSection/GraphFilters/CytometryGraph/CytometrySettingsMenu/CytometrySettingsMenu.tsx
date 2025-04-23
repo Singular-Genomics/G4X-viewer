@@ -1,19 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ColorScale } from 'plotly.js';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Grid, IconButton, MenuItem, Popover, Theme, Typography, useTheme } from '@mui/material';
 import { GxSelect } from '../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../shared/components/GxInput';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { GetBrandColorscale } from './CytometrySettingsMenu.helpers';
-import { CytometrySettingsMenuProps } from './CytometrySettingsMenu.types';
+import { ColorScaleOption, CytometrySettingsMenuProps, HeatmapSettings } from './CytometrySettingsMenu.types';
+import { useSnackbar } from 'notistack';
+import { debounce } from 'lodash';
 
-const AVAILABLE_COLORSCALES: { label: string; value: ColorScale }[] = [
+const SETTINGS_FLAG = 'HeatmapSettings';
+
+const AVAILABLE_COLORSCALES: ColorScaleOption[] = [
   { label: 'Singular', value: GetBrandColorscale() },
   { label: 'YlGnBu', value: 'YlGnBu' },
   { label: 'YlOrRd', value: 'YlOrRd' },
   { label: 'RdBu', value: 'RdBu' },
   { label: 'Portland', value: 'Portland' },
-  { label: 'Picnic', value: 'Picnic' },
   { label: 'Picnic', value: 'Picnic' },
   { label: 'Jet', value: 'Jet' },
   { label: 'Hot', value: 'Hot' },
@@ -24,31 +26,84 @@ const AVAILABLE_COLORSCALES: { label: string; value: ColorScale }[] = [
   { label: 'Bluered', value: 'Bluered' }
 ];
 
-export const CytometrySettingsMenu = ({ onColorscaleChange }: CytometrySettingsMenuProps) => {
+const DEFAULT_BIN_SIZE = 100;
+
+export const CytometrySettingsMenu = ({ onBinSizeChange, onColorscaleChange }: CytometrySettingsMenuProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-
+  const { enqueueSnackbar } = useSnackbar();
+  const settings = useRef<HeatmapSettings | undefined>(undefined);
   const menenuAnchor = useRef(null);
   const [openMenu, setOpenMenu] = useState(false);
-  const [currentColorScale, setCurrentColorScale] = useState<string>('');
+  const [binSizeInput, setBinSizeInput] = useState('');
+  const [colorscaleInput, setColorscaleInput] = useState<ColorScaleOption | undefined>(undefined);
 
   useEffect(() => {
-    if (!currentColorScale) {
-      setCurrentColorScale(AVAILABLE_COLORSCALES[0].label);
-      onColorscaleChange?.(AVAILABLE_COLORSCALES[0].value);
+    const savedSettingsJson = window.localStorage.getItem(SETTINGS_FLAG);
+    let parsedSettings;
+    try {
+      parsedSettings = savedSettingsJson ? (JSON.parse(savedSettingsJson) as HeatmapSettings) : undefined;
+    } catch {
+      enqueueSnackbar({
+        message: 'Failed to retrive previous session settings. Default values will be used',
+        variant: 'warning'
+      });
     }
+
+    const matchingOption =
+      parsedSettings && parsedSettings.colorscaleName
+        ? AVAILABLE_COLORSCALES.find((item) => item.label === parsedSettings.colorscaleName)
+        : undefined;
+
+    const binSize = parsedSettings?.binSize || DEFAULT_BIN_SIZE;
+
+    onColorscaleChange(matchingOption?.value || AVAILABLE_COLORSCALES[0].value);
+    setColorscaleInput(matchingOption || AVAILABLE_COLORSCALES[0]);
+    onBinSizeChange(binSize);
+    setBinSizeInput(binSize.toString());
+    settings.current = parsedSettings;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onColorscaleChange]);
+  }, []);
 
   const onColorscaleSelect = useCallback(
     (newColorScale: string) => {
       const colorscale = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
-      setCurrentColorScale(newColorScale);
       if (colorscale) {
-        onColorscaleChange?.(colorscale.value);
+        setColorscaleInput(colorscale);
+        onColorscaleChange(colorscale.value);
+        if (!settings.current) {
+          settings.current = { colorscaleName: newColorScale };
+        } else {
+          settings.current = { ...settings.current, colorscaleName: newColorScale };
+        }
+
+        localStorage.setItem(SETTINGS_FLAG, JSON.stringify(settings.current));
       }
     },
     [onColorscaleChange]
+  );
+
+  const handleBinSizeChange = useMemo(
+    () =>
+      debounce((newBinSize: number) => {
+        onBinSizeChange(newBinSize);
+        if (!settings.current) {
+          settings.current = { binSize: newBinSize };
+        } else {
+          settings.current = { ...settings.current, binSize: newBinSize };
+        }
+
+        localStorage.setItem(SETTINGS_FLAG, JSON.stringify(settings.current));
+      }, 350),
+    [onBinSizeChange]
+  );
+
+  const onBinSizeInput = useCallback(
+    (newBinSize: string) => {
+      setBinSizeInput(newBinSize);
+      handleBinSizeChange(Number(newBinSize));
+    },
+    [handleBinSizeChange]
   );
 
   return (
@@ -88,7 +143,7 @@ export const CytometrySettingsMenu = ({ onColorscaleChange }: CytometrySettingsM
             <GxSelect
               fullWidth
               size="small"
-              value={currentColorScale}
+              value={colorscaleInput?.label}
               onChange={(e) => onColorscaleSelect(e.target.value as string)}
               MenuProps={{ sx: { zIndex: 3000 } }}
             >
@@ -108,7 +163,10 @@ export const CytometrySettingsMenu = ({ onColorscaleChange }: CytometrySettingsM
           <Grid size={1}>
             <GxInput
               fullWidth
+              value={binSizeInput}
+              type="number"
               variant="standard"
+              onChange={(e) => onBinSizeInput(e.target.value)}
             />
           </Grid>
         </Grid>
