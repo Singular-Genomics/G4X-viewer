@@ -1,4 +1,6 @@
+import { ColorScale } from 'plotly.js';
+
 export type CytometrySettingsMenuProps = {
   onBinSizeChange?: (newBinSize: number) => void;
-  onColoscaleChange?: (colorscaleName: string) => void;
+  onColorscaleChange?: (colorscale: ColorScale) => void;
 };

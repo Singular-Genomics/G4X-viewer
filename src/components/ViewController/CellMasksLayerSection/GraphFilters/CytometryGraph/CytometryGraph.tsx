@@ -1,10 +1,9 @@
 import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
-import { Data, Datum, Layout } from 'plotly.js';
+import { ColorScale, Data, Datum, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
-import { GetBrandColorscale } from './CytometryGraph.helpers';
 import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettingsMenu';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
@@ -28,6 +27,7 @@ export const CytometryGraph = () => {
     z: []
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [colorscale, setColorScale] = useState<ColorScale | undefined>(undefined);
   const [xAxisProtein, setXAxisProtein] = useState('');
   const [yAxisProtein, setYAxisProtein] = useState('');
   const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
@@ -97,18 +97,20 @@ export const CytometryGraph = () => {
     };
   }, []);
 
-  const plotData: Data[] = [
-    {
-      type: 'heatmap',
-      x: heatmapData.x,
-      y: heatmapData.y,
-      z: heatmapData.z,
-      colorscale: GetBrandColorscale(),
-      showscale: true,
-      hoverinfo: 'x+y+z',
-      hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
-    }
-  ];
+  const plotData: Data[] | undefined = colorscale
+    ? [
+        {
+          type: 'heatmap',
+          x: heatmapData.x,
+          y: heatmapData.y,
+          z: heatmapData.z,
+          colorscale: colorscale,
+          showscale: true,
+          hoverinfo: 'x+y+z',
+          hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
+        }
+      ]
+    : undefined;
 
   const layout = {
     dragmode: 'select',
@@ -183,7 +185,6 @@ export const CytometryGraph = () => {
             fullWidth
             value={xAxisProtein}
             onChange={(e) => setXAxisProtein(e.target.value as string)}
-            label="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
@@ -200,7 +201,6 @@ export const CytometryGraph = () => {
             fullWidth
             value={yAxisProtein}
             onChange={(e) => setYAxisProtein(e.target.value as string)}
-            label="Select Data Source"
             MenuProps={{ sx: { zIndex: 3000 } }}
           >
             {availableProteinNames.map((proteinName) => (
@@ -213,37 +213,39 @@ export const CytometryGraph = () => {
             ))}
           </GxSelect>
         </Box>
-        <CytometrySettingsMenu />
+        <CytometrySettingsMenu onColorscaleChange={(colorscale) => setColorScale(colorscale)} />
       </Box>
 
       <Box
         ref={containerRef}
         sx={sx.graphWrapper}
       >
-        <Plot
-          data={plotData}
-          layout={layout as Partial<Layout>}
-          style={sx.plot}
-          config={{
-            modeBarButtons: [['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews']],
-            responsive: true,
-            displayModeBar: true
-          }}
-          onSelected={(e) => {
-            if (e?.range) {
-              useCellSegmentationLayerStore.setState({
-                cytometryFilter: {
-                  xRangeProteinName: cytometryFilter?.xRangeProteinName || '',
-                  yRangeProteinName: cytometryFilter?.yRangeProteinName || '',
-                  xRangeStart: e.range.x[0],
-                  xRangeEnd: e.range.x[1],
-                  yRangeStart: e.range.y[1],
-                  yRangeEnd: e.range.y[0]
-                }
-              });
-            }
-          }}
-        />
+        {plotData && (
+          <Plot
+            data={plotData}
+            layout={layout as Partial<Layout>}
+            style={sx.plot}
+            config={{
+              modeBarButtons: [['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews']],
+              responsive: true,
+              displayModeBar: true
+            }}
+            onSelected={(e) => {
+              if (e?.range) {
+                useCellSegmentationLayerStore.setState({
+                  cytometryFilter: {
+                    xRangeProteinName: cytometryFilter?.xRangeProteinName || '',
+                    yRangeProteinName: cytometryFilter?.yRangeProteinName || '',
+                    xRangeStart: e.range.x[0],
+                    xRangeEnd: e.range.x[1],
+                    yRangeStart: e.range.y[1],
+                    yRangeEnd: e.range.y[0]
+                  }
+                });
+              }
+            }}
+          />
+        )}
       </Box>
       <GraphRangeInputs
         rangeSource={cytometryFilter}
@@ -278,7 +280,8 @@ const styles = (theme: Theme) => ({
   },
   headerWrapper: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: 'min-content'
   },
   selectWrapper: {
     display: 'flex',
