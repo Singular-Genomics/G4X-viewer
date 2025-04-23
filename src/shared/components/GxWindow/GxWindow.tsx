@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
 
-export const GxWindow = ({ children, title, boundries, onClose }: React.PropsWithChildren<GxWindowProps>) => {
+export const GxWindow = ({ children, title, boundries, onClose, config }: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -104,7 +104,19 @@ export const GxWindow = ({ children, title, boundries, onClose }: React.PropsWit
           <CloseIcon />
         </IconButton>
       </Box>
-      <Box sx={sx.windowContentWrapper}>{children}</Box>
+      <Box
+        sx={{
+          ...sx.windowContentWrapper,
+          width: `${config?.startWidth || 600}px`,
+          height: `${config?.startHeight || 600}px`,
+          minWidth: `${config?.minWidth || 400}px`,
+          minHeight: `${config?.minHeight || 400}px`,
+          ...(config?.maxWidth && { maxWidth: `${config.maxWidth}px` }),
+          ...(config?.maxHeight && { maxHeight: `${config.maxHeight}px` })
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };
@@ -142,10 +154,6 @@ const styles = (theme: Theme) => ({
   },
   windowContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[300],
-    width: '600px',
-    height: '600px',
-    minWidth: '200px',
-    minHeight: '50px',
     resize: 'both',
     overflow: 'auto',
     padding: '8px'

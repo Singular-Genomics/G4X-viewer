@@ -43,6 +43,14 @@ export const GraphFilters = () => {
       {isWindowVisible && (
         <GxWindow
           title="test"
+          config={{
+            startWidth: 800,
+            startHeight: 400,
+            minWidth: 400,
+            minHeight: 400,
+            maxWidth: 1400,
+            maxHeight: 800
+          }}
           onClose={() => {
             setIsWindowVisible(false);
             setSelectedGraph(undefined);
