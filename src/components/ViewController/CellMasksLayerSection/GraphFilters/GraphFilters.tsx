@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { GxWindow } from '../../../../shared/components/GxWindow';
 import { CytometryGraph } from './CytometryGraph/CytometryGraph';
 import { UmapGraph } from './UmapGraph/UmapGraph';
+import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
 type GraphMode = undefined | 'Cytometry' | 'Umap';
 
@@ -10,6 +11,7 @@ export const GraphFilters = () => {
   const theme = useTheme();
   const sx = styles(theme);
 
+  const { cytometryProteinsNames, umapDataAvailable } = useCellSegmentationLayerStore();
   const [selectedGraph, setSelectedGraph] = useState<GraphMode>(undefined);
   const [isWindowVisible, setIsWindowVisible] = useState(false);
 
@@ -30,12 +32,14 @@ export const GraphFilters = () => {
         <ToggleButton
           sx={sx.toggleButton}
           value="Umap"
+          disabled={!umapDataAvailable}
         >
           UMAP
         </ToggleButton>
         <ToggleButton
           sx={sx.toggleButton}
           value="Cytometry"
+          disabled={!cytometryProteinsNames.length}
         >
           Cytometry
         </ToggleButton>
