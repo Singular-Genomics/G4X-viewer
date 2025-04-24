@@ -1,15 +1,16 @@
 import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
-import { ColorScale, Data, Datum, Layout } from 'plotly.js';
+import { Data, Datum, Layout } from 'plotly.js';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettingsMenu';
 import { GraphRangeInputs } from '../GraphRangeInputs';
-import { CytometryFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
+import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
@@ -17,17 +18,17 @@ export const CytometryGraph = () => {
   const sx = styles(theme);
 
   const { enqueueSnackbar } = useSnackbar();
-  const { cytometryFilter, cellMasksData, setCytometryFilter } = useCellSegmentationLayerStore();
+  const { cellMasksData } = useCellSegmentationLayerStore();
+  const { settings, updateProteinNames } = useCytometryGraphStore();
   const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: any }>({
     x: [],
     y: [],
     z: []
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [colorscale, setColorScale] = useState<ColorScale | undefined>(undefined);
-  const [binSize, setBinSize] = useState<number>(0);
   const [xAxisProtein, setXAxisProtein] = useState('');
   const [yAxisProtein, setYAxisProtein] = useState('');
+  const [selectionRange, setSelectionRange] = useState<HeatmapRanges | undefined>(undefined);
   const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
 
   useEffect(() => {
@@ -53,15 +54,17 @@ export const CytometryGraph = () => {
       setAvailableProteinNames(listOfProteinNames);
       setXAxisProtein(listOfProteinNames[0]);
       setYAxisProtein(listOfProteinNames[1]);
-      setCytometryFilter({
-        xRangeProteinName: listOfProteinNames[0],
-        yRangeProteinName: listOfProteinNames[1]
+      useCytometryGraphStore.setState({
+        proteinNames: {
+          xAxis: listOfProteinNames[0],
+          yAxis: listOfProteinNames[1]
+        }
       });
     }
-  }, [cellMasksData, enqueueSnackbar, setCytometryFilter]);
+  }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
-    if (cellMasksData && xAxisProtein && yAxisProtein && binSize) {
+    if (cellMasksData && xAxisProtein && yAxisProtein && settings.binSize) {
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
         if (output.completed && output.data) {
@@ -72,10 +75,10 @@ export const CytometryGraph = () => {
       worker.postMessage({
         xValues: cellMasksData.map((mask: any) => mask.proteins[xAxisProtein]),
         yValues: cellMasksData.map((mask: any) => mask.proteins[yAxisProtein]),
-        binSize: binSize
+        binSize: settings.binSize
       });
     }
-  }, [cellMasksData, xAxisProtein, yAxisProtein, binSize]);
+  }, [cellMasksData, xAxisProtein, yAxisProtein, settings.binSize]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -102,26 +105,23 @@ export const CytometryGraph = () => {
   const handleProteinChange = useCallback(
     (proteinName: string, axis: 'y' | 'x') =>
       setTimeout(() => {
-        setCytometryFilter(axis === 'x' ? { xRangeProteinName: proteinName } : { yRangeProteinName: proteinName });
-        console.log('set');
+        updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
       }, 10),
-    [setCytometryFilter]
+    [updateProteinNames]
   );
 
-  const plotData: Data[] | undefined = colorscale
-    ? [
-        {
-          type: 'heatmap',
-          x: heatmapData.x,
-          y: heatmapData.y,
-          z: heatmapData.z,
-          colorscale: colorscale,
-          showscale: true,
-          hoverinfo: 'x+y+z',
-          hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
-        }
-      ]
-    : undefined;
+  const plotData: Data[] = [
+    {
+      type: 'heatmap',
+      x: heatmapData.x,
+      y: heatmapData.y,
+      z: heatmapData.z,
+      colorscale: settings.colorscale.value,
+      showscale: true,
+      hoverinfo: 'x+y+z',
+      hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
+    }
+  ];
 
   const layout = {
     dragmode: 'select',
@@ -134,13 +134,13 @@ export const CytometryGraph = () => {
         text: xAxisProtein,
         font: { size: 14 }
       },
-      type: 'linear',
+      type: settings.axisType,
       autorange: true,
       linewidth: 2,
       mirror: true,
       tickmode: 'array',
       tickfont: { size: 12 },
-      exponentformat: 'power'
+      exponentformat: settings.exponentFormat
     },
     yaxis: {
       title: {
@@ -148,13 +148,13 @@ export const CytometryGraph = () => {
         font: { size: 14 },
         standoff: 10
       },
-      type: 'linear',
+      type: settings.axisType,
       autorange: true,
       linewidth: 2,
       mirror: true,
       tickmode: 'array',
       tickfont: { size: 12 },
-      exponentformat: 'power',
+      exponentformat: settings.exponentFormat,
       scaleanchor: 'x',
       scaleratio: 1
     },
@@ -165,7 +165,7 @@ export const CytometryGraph = () => {
       fillcolor: alpha(theme.palette.gx.primary.black, 0.1)
     },
     selections: [
-      ...(cytometryFilter
+      ...(selectionRange
         ? [
             {
               line: {
@@ -175,11 +175,11 @@ export const CytometryGraph = () => {
               },
               opacity: 1,
               type: 'rect',
-              x0: cytometryFilter.xRangeStart,
-              x1: cytometryFilter.xRangeEnd,
+              x0: selectionRange.xStart,
+              x1: selectionRange.xEnd,
               xref: 'x',
-              y0: cytometryFilter.yRangeEnd,
-              y1: cytometryFilter.yRangeStart,
+              y0: selectionRange.yStart,
+              y1: selectionRange.yEnd,
               yref: 'y'
             }
           ]
@@ -230,10 +230,7 @@ export const CytometryGraph = () => {
             ))}
           </GxSelect>
         </Box>
-        <CytometrySettingsMenu
-          onColorscaleChange={(colorscale) => setColorScale(colorscale)}
-          onBinSizeChange={(newBinSize) => setBinSize(newBinSize)}
-        />
+        <CytometrySettingsMenu />
       </Box>
 
       <Box
@@ -251,15 +248,11 @@ export const CytometryGraph = () => {
             }}
             onSelected={(e) => {
               if (e?.range) {
-                useCellSegmentationLayerStore.setState({
-                  cytometryFilter: {
-                    xRangeProteinName: cytometryFilter?.xRangeProteinName || '',
-                    yRangeProteinName: cytometryFilter?.yRangeProteinName || '',
-                    xRangeStart: e.range.x[0],
-                    xRangeEnd: e.range.x[1],
-                    yRangeStart: e.range.y[1],
-                    yRangeEnd: e.range.y[0]
-                  }
+                setSelectionRange({
+                  xStart: e.range.x[0],
+                  xEnd: e.range.x[1],
+                  yStart: e.range.y[1],
+                  yEnd: e.range.y[0]
                 });
               }
             }}
@@ -267,20 +260,12 @@ export const CytometryGraph = () => {
         )}
       </Box>
       <GraphRangeInputs
-        rangeSource={cytometryFilter}
-        onUpdateRange={(newFilter) =>
-          useCellSegmentationLayerStore.setState({
-            cytometryFilter: newFilter as CytometryFilter
-          })
-        }
-        onClear={() =>
-          setCytometryFilter({
-            xRangeEnd: undefined,
-            xRangeStart: undefined,
-            yRangeEnd: undefined,
-            yRangeStart: undefined
-          })
-        }
+        rangeSource={selectionRange}
+        onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
+        onClear={() => {
+          setSelectionRange(undefined);
+          useCytometryGraphStore.setState({ ranges: undefined });
+        }}
       />
     </Box>
   );

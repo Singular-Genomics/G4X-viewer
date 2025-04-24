@@ -11,6 +11,7 @@ import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegment
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { getMissingFilesContent } from './helpers';
+import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 
 type DataSetConfig = {
   protein_image_src: string;
@@ -121,9 +122,9 @@ export const useFileHandler = () => {
             color: entry.color
           })),
           cytometryProteinsNames: listOfProteinNames,
-          umapDataAvailable: areUmapAvailable,
-          cytometryFilter: {}
+          umapDataAvailable: areUmapAvailable
         });
+        useCytometryGraphStore.getState().resetFilters();
       };
       reader.onerror = () => console.error('Something went wrong during file load!');
       reader.readAsArrayBuffer(file);

@@ -2,7 +2,6 @@ import { Box, darken, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
-import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { Layout } from 'plotly.js';
 import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
@@ -11,8 +10,8 @@ export const UmapGraph = () => {
   const sx = styles();
 
   const containerRef = useRef(null);
-  const { umapFilter } = useCellSegmentationLayerStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
+  const [selectionRange, setSelectionRange] = useState<UmapFilter | undefined>(undefined);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -40,7 +39,7 @@ export const UmapGraph = () => {
     dragmode: 'select',
     margin: { l: 50, r: 50, b: 50, t: 50 },
     selections: [
-      ...(umapFilter
+      ...(selectionRange
         ? [
             {
               line: {
@@ -50,11 +49,11 @@ export const UmapGraph = () => {
               },
               opacity: 1,
               type: 'rect',
-              x0: umapFilter.xRangeStart,
-              x1: umapFilter.xRangeEnd,
+              x0: selectionRange.xStart,
+              x1: selectionRange.xEnd,
               xref: 'x',
-              y0: umapFilter.yRangeEnd,
-              y1: umapFilter.yRangeStart,
+              y0: selectionRange.yStart,
+              y1: selectionRange.yEnd,
               yref: 'y'
             }
           ]
@@ -90,30 +89,20 @@ export const UmapGraph = () => {
           }}
           onSelected={(e) => {
             if (e?.range) {
-              useCellSegmentationLayerStore.setState({
-                umapFilter: {
-                  xRangeStart: e.range.x[0],
-                  xRangeEnd: e.range.x[1],
-                  yRangeStart: e.range.y[1],
-                  yRangeEnd: e.range.y[0]
-                }
+              setSelectionRange({
+                xStart: e.range.x[0],
+                xEnd: e.range.x[1],
+                yStart: e.range.y[1],
+                yEnd: e.range.y[0]
               });
             }
           }}
         />
       </Box>
       <GraphRangeInputs
-        rangeSource={umapFilter}
-        onUpdateRange={(newFilter) =>
-          useCellSegmentationLayerStore.setState({
-            umapFilter: newFilter as UmapFilter
-          })
-        }
-        onClear={() =>
-          useCellSegmentationLayerStore.setState({
-            umapFilter: undefined
-          })
-        }
+        rangeSource={selectionRange}
+        onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
+        onClear={() => setSelectionRange(undefined)}
       />
     </Box>
   );

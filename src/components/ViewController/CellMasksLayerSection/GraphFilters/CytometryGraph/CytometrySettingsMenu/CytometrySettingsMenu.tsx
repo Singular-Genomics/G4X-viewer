@@ -3,99 +3,81 @@ import { Box, Grid, IconButton, MenuItem, Popover, Theme, Typography, useTheme }
 import { GxSelect } from '../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../shared/components/GxInput';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { GetBrandColorscale } from './CytometrySettingsMenu.helpers';
-import { ColorScaleOption, CytometrySettingsMenuProps, HeatmapSettings } from './CytometrySettingsMenu.types';
-import { useSnackbar } from 'notistack';
+import { SelectOption, ColorScaleOption } from './CytometrySettingsMenu.types';
 import { debounce } from 'lodash';
+import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import {
+  AVAILABLE_AXIS_TYPES,
+  AVAILABLE_COLORSCALES,
+  AVAILABLE_EXPONENT_FORMATS
+} from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 
-const SETTINGS_FLAG = 'HeatmapSettings';
-
-const AVAILABLE_COLORSCALES: ColorScaleOption[] = [
-  { label: 'Singular', value: GetBrandColorscale() },
-  { label: 'YlGnBu', value: 'YlGnBu' },
-  { label: 'YlOrRd', value: 'YlOrRd' },
-  { label: 'RdBu', value: 'RdBu' },
-  { label: 'Portland', value: 'Portland' },
-  { label: 'Picnic', value: 'Picnic' },
-  { label: 'Jet', value: 'Jet' },
-  { label: 'Hot', value: 'Hot' },
-  { label: 'Greys', value: 'Greys' },
-  { label: 'Greens', value: 'Greens' },
-  { label: 'Electric', value: 'Electric' },
-  { label: 'Earth', value: 'Earth' },
-  { label: 'Bluered', value: 'Bluered' }
-];
-
-const DEFAULT_BIN_SIZE = 100;
-
-export const CytometrySettingsMenu = ({ onBinSizeChange, onColorscaleChange }: CytometrySettingsMenuProps) => {
+export const CytometrySettingsMenu = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { enqueueSnackbar } = useSnackbar();
-  const settings = useRef<HeatmapSettings | undefined>(undefined);
+  const { updateSettings } = useCytometryGraphStore();
   const menenuAnchor = useRef(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [binSizeInput, setBinSizeInput] = useState('');
+  const [axisTypeInput, setAxisTypeInput] = useState<SelectOption | undefined>(undefined);
+  const [exponentFormatInput, setExponentFormatInput] = useState<SelectOption | undefined>(undefined);
   const [colorscaleInput, setColorscaleInput] = useState<ColorScaleOption | undefined>(undefined);
 
   useEffect(() => {
-    const savedSettingsJson = window.localStorage.getItem(SETTINGS_FLAG);
-    let parsedSettings;
-    try {
-      parsedSettings = savedSettingsJson ? (JSON.parse(savedSettingsJson) as HeatmapSettings) : undefined;
-    } catch {
-      enqueueSnackbar({
-        message: 'Failed to retrive previous session settings. Default values will be used',
-        variant: 'warning'
-      });
-    }
+    const { binSize, colorscale, axisType, exponentFormat } = useCytometryGraphStore.getState().settings;
 
-    const matchingOption =
-      parsedSettings && parsedSettings.colorscaleName
-        ? AVAILABLE_COLORSCALES.find((item) => item.label === parsedSettings.colorscaleName)
-        : undefined;
+    const matchingAxisOption = AVAILABLE_AXIS_TYPES.find((item) => item.value === axisType);
+    const matchingExponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.value === exponentFormat);
 
-    const binSize = parsedSettings?.binSize || DEFAULT_BIN_SIZE;
-
-    onColorscaleChange(matchingOption?.value || AVAILABLE_COLORSCALES[0].value);
-    setColorscaleInput(matchingOption || AVAILABLE_COLORSCALES[0]);
-    onBinSizeChange(binSize);
+    setColorscaleInput(colorscale);
     setBinSizeInput(binSize.toString());
-    settings.current = parsedSettings;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (matchingAxisOption) {
+      setAxisTypeInput(matchingAxisOption);
+    }
+    if (matchingExponentFormatOption) {
+      setExponentFormatInput(matchingExponentFormatOption);
+    }
   }, []);
 
   const onColorscaleSelect = useCallback(
     (newColorScale: string) => {
       const colorscale = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
       if (colorscale) {
+        updateSettings({ colorscale });
         setColorscaleInput(colorscale);
-        onColorscaleChange(colorscale.value);
-        if (!settings.current) {
-          settings.current = { colorscaleName: newColorScale };
-        } else {
-          settings.current = { ...settings.current, colorscaleName: newColorScale };
-        }
-
-        localStorage.setItem(SETTINGS_FLAG, JSON.stringify(settings.current));
       }
     },
-    [onColorscaleChange]
+    [updateSettings]
+  );
+
+  const onAxisTypeSelect = useCallback(
+    (newAxisType: string) => {
+      const axisTypeOption = AVAILABLE_AXIS_TYPES.find((item) => item.label === newAxisType);
+      if (axisTypeOption) {
+        setAxisTypeInput(axisTypeOption);
+        updateSettings({ axisType: axisTypeOption.value });
+      }
+    },
+    [updateSettings]
+  );
+
+  const onExponentFormatSelect = useCallback(
+    (newExponentFormat: string) => {
+      const exponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.label === newExponentFormat);
+      if (exponentFormatOption) {
+        setExponentFormatInput(exponentFormatOption);
+        updateSettings({ exponentFormat: exponentFormatOption.value });
+      }
+    },
+    [updateSettings]
   );
 
   const handleBinSizeChange = useMemo(
     () =>
       debounce((newBinSize: number) => {
-        onBinSizeChange(newBinSize);
-        if (!settings.current) {
-          settings.current = { binSize: newBinSize };
-        } else {
-          settings.current = { ...settings.current, binSize: newBinSize };
-        }
-
-        localStorage.setItem(SETTINGS_FLAG, JSON.stringify(settings.current));
+        updateSettings({ binSize: newBinSize });
       }, 350),
-    [onBinSizeChange]
+    [updateSettings]
   );
 
   const onBinSizeInput = useCallback(
@@ -132,6 +114,7 @@ export const CytometrySettingsMenu = ({ onBinSizeChange, onColorscaleChange }: C
           container
           columns={2}
           rowSpacing={1}
+          sx={{ width: '400px' }}
         >
           <Grid
             alignContent={'center'}
@@ -157,7 +140,10 @@ export const CytometrySettingsMenu = ({ onBinSizeChange, onColorscaleChange }: C
               ))}
             </GxSelect>
           </Grid>
-          <Grid size={1}>
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
             <Typography>Bin size:</Typography>
           </Grid>
           <Grid size={1}>
@@ -168,6 +154,54 @@ export const CytometrySettingsMenu = ({ onBinSizeChange, onColorscaleChange }: C
               variant="standard"
               onChange={(e) => onBinSizeInput(e.target.value)}
             />
+          </Grid>
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Axis type:</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxSelect
+              fullWidth
+              size="small"
+              value={axisTypeInput?.label}
+              onChange={(e) => onAxisTypeSelect(e.target.value as string)}
+              MenuProps={{ sx: { zIndex: 3000 } }}
+            >
+              {AVAILABLE_AXIS_TYPES.map((item) => (
+                <MenuItem
+                  key={item.label}
+                  value={item.label}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
+            </GxSelect>
+          </Grid>
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Exponent format:</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxSelect
+              fullWidth
+              size="small"
+              value={exponentFormatInput?.label}
+              onChange={(e) => onExponentFormatSelect(e.target.value as string)}
+              MenuProps={{ sx: { zIndex: 3000 } }}
+            >
+              {AVAILABLE_EXPONENT_FORMATS.map((item) => (
+                <MenuItem
+                  key={item.label}
+                  value={item.label}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
+            </GxSelect>
           </Grid>
         </Grid>
       </Popover>

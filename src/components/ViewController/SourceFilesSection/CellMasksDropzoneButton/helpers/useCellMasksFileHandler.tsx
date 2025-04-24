@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
@@ -53,9 +54,9 @@ export const useCellMasksFileHandler = () => {
           color: entry.color
         })),
         cytometryProteinsNames: listOfProteinNames,
-        umapDataAvailable: areUmapAvailable,
-        cytometryFilter: {}
+        umapDataAvailable: areUmapAvailable
       });
+      useCytometryGraphStore.getState().resetFilters();
     };
     reader.onerror = () => console.error('Something went wrong during file laod!');
     reader.readAsArrayBuffer(files[0]);
