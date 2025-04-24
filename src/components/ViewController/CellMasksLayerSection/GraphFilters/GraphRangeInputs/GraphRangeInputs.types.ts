@@ -5,6 +5,7 @@ export type GraphRangeInputsProps = {
   rangeSource: UmapFilter | HeatmapRanges | undefined;
   onUpdateRange: (newFilter: UmapFilter | HeatmapRanges) => void;
   onClear: () => void;
+  onConfirm: () => void;
 };
 
 export type InputConfig = {

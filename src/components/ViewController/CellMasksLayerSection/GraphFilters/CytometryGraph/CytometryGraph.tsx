@@ -266,6 +266,11 @@ export const CytometryGraph = () => {
           setSelectionRange(undefined);
           useCytometryGraphStore.setState({ ranges: undefined });
         }}
+        onConfirm={() =>
+          useCytometryGraphStore.setState({
+            ranges: selectionRange
+          })
+        }
       />
     </Box>
   );

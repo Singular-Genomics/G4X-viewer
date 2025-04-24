@@ -17,11 +17,22 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
     let cellsData = [];
     let outlierCellsData = [];
 
-    if (this.props.cellFilters === 'all') {
+    if (this.props.cellNameFilters === 'all') {
       cellsData = this.props.masksData;
     } else {
       [cellsData, outlierCellsData] = partition(this.props.masksData, (data) =>
-        this.props.cellFilters.includes(data.clusterId)
+        this.props.cellNameFilters.includes(data.clusterId)
+      );
+    }
+
+    const { proteins, range } = this.props.cellCytometryFilter;
+    if (range && !!proteins.xAxis && !!proteins.yAxis) {
+      cellsData = cellsData.filter(
+        (cell) =>
+          cell.proteins[proteins.xAxis as string] <= range.xEnd &&
+          cell.proteins[proteins.xAxis as string] >= range.xStart &&
+          cell.proteins[proteins.yAxis as string] >= range.yEnd &&
+          cell.proteins[proteins.yAxis as string] <= range.yStart
       );
     }
 

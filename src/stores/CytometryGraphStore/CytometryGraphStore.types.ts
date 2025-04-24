@@ -25,7 +25,7 @@ type HeatmapSettings = {
   exponentFormat: string;
 };
 
-type ProteinNames = {
+export type ProteinNames = {
   xAxis?: string;
   yAxis?: string;
 };

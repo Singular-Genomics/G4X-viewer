@@ -4,6 +4,7 @@ import Plot from 'react-plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { Layout } from 'plotly.js';
 import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
 export const UmapGraph = () => {
   const theme = useTheme();
@@ -103,6 +104,7 @@ export const UmapGraph = () => {
         rangeSource={selectionRange}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
         onClear={() => setSelectionRange(undefined)}
+        onConfirm={() => useCellSegmentationLayerStore.setState({ umapFilter: selectionRange })}
       />
     </Box>
   );

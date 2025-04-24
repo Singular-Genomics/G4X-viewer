@@ -42,7 +42,7 @@ const INPUT_FIELDS: InputConfig[] = [
   }
 ];
 
-export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear }: GraphRangeInputsProps) {
+export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear, onConfirm }: GraphRangeInputsProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -130,6 +130,13 @@ export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear }: GraphR
       >
         Clear
       </Button>
+      <Button
+        onClick={onConfirm}
+        fullWidth
+        sx={sx.confirmButton}
+      >
+        Confirm
+      </Button>
     </Box>
   );
 }
@@ -137,7 +144,7 @@ export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear }: GraphR
 const styles = (theme: Theme) => ({
   inputWrapper: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr) 100px',
+    gridTemplateColumns: 'repeat(4, 1fr) 100px 100px',
     justifyContent: 'space-between',
     alignItems: 'start',
     gap: '8px',
@@ -148,6 +155,14 @@ const styles = (theme: Theme) => ({
     paddingInline: '8px'
   },
   clearButton: {
+    fontWeight: 700,
+    height: '100%',
+    color: theme.palette.gx.accent.greenBlue,
+    border: '1px solid',
+    borderColor: theme.palette.gx.accent.greenBlue,
+    background: theme.palette.gx.primary.white
+  },
+  confirmButton: {
     fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.primary.white,
