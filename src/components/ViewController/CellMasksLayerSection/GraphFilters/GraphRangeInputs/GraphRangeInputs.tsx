@@ -170,12 +170,20 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.accent.greenBlue,
     border: '1px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    background: theme.palette.gx.primary.white
+    background: theme.palette.gx.primary.white,
+    '&.Mui-disabled': {
+      borderColor: theme.palette.gx.mediumGrey[300],
+      color: theme.palette.gx.mediumGrey[300]
+    }
   },
   confirmButton: {
     fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.primary.white,
-    background: theme.palette.gx.gradients.brand()
+    background: theme.palette.gx.gradients.brand(),
+    '&.Mui-disabled': {
+      background: theme.palette.gx.mediumGrey[300],
+      color: theme.palette.gx.primary.black
+    }
   }
 });
