@@ -1,33 +1,29 @@
-import { alpha, Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
+import { alpha, Box, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Datum, Layout } from 'plotly.js';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { GxSelect } from '../../../../../shared/components/GxSelect';
-import { CytometrySettingsMenu } from './CytometrySettingsMenu/CytometrySettingsMenu';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
-  const sx = styles(theme);
 
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
-  const { settings, updateProteinNames } = useCytometryGraphStore();
+  const { proteinNames, settings } = useCytometryGraphStore();
   const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: Datum[][] }>({
     x: [],
     y: [],
     z: []
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const [xAxisProtein, setXAxisProtein] = useState('');
-  const [yAxisProtein, setYAxisProtein] = useState('');
   const [selectionRange, setSelectionRange] = useState<HeatmapRanges | undefined>(undefined);
   const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
 
@@ -51,17 +47,9 @@ export const CytometryGraph = () => {
         return;
       }
 
-      const { ranges, proteinNames } = useCytometryGraphStore.getState();
+      const { ranges } = useCytometryGraphStore.getState();
 
       setAvailableProteinNames(listOfProteinNames);
-
-      if (!proteinNames.xAxis || !proteinNames.yAxis) {
-        setXAxisProtein(listOfProteinNames[0]);
-        setYAxisProtein(listOfProteinNames[1]);
-      } else {
-        setXAxisProtein(proteinNames.xAxis);
-        setYAxisProtein(proteinNames.yAxis);
-      }
 
       if (ranges) {
         setSelectionRange(ranges);
@@ -77,7 +65,7 @@ export const CytometryGraph = () => {
   }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
-    if (cellMasksData && xAxisProtein && yAxisProtein && settings.binSize) {
+    if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binSize) {
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
         if (output.completed && output.data) {
@@ -86,12 +74,12 @@ export const CytometryGraph = () => {
       });
       worker.onError((error) => console.error(error));
       worker.postMessage({
-        xValues: cellMasksData.map((mask: any) => mask.proteins[xAxisProtein]),
-        yValues: cellMasksData.map((mask: any) => mask.proteins[yAxisProtein]),
+        xValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.xAxis as string]),
+        yValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.yAxis as string]),
         binSize: settings.binSize
       });
     }
-  }, [cellMasksData, xAxisProtein, yAxisProtein, settings.binSize]);
+  }, [cellMasksData, proteinNames.xAxis, proteinNames.yAxis, settings.binSize]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -115,14 +103,6 @@ export const CytometryGraph = () => {
     };
   }, []);
 
-  const handleProteinChange = useCallback(
-    (proteinName: string, axis: 'y' | 'x') =>
-      setTimeout(() => {
-        updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
-      }, 10),
-    [updateProteinNames]
-  );
-
   const plotData: Data[] = [
     {
       type: 'heatmap',
@@ -144,7 +124,7 @@ export const CytometryGraph = () => {
     plot_bgcolor: theme.palette.gx.lightGrey[900],
     xaxis: {
       title: {
-        text: xAxisProtein,
+        text: proteinNames.xAxis,
         font: { size: 14 }
       },
       type: settings.axisType,
@@ -157,7 +137,7 @@ export const CytometryGraph = () => {
     },
     yaxis: {
       title: {
-        text: yAxisProtein,
+        text: proteinNames.yAxis,
         font: { size: 14 },
         standoff: 10
       },
@@ -202,50 +182,7 @@ export const CytometryGraph = () => {
 
   return (
     <Box sx={sx.container}>
-      <Box sx={sx.headerWrapper}>
-        <Box sx={sx.selectWrapper}>
-          <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
-          <GxSelect
-            fullWidth
-            value={xAxisProtein}
-            onChange={(e) => {
-              setXAxisProtein(e.target.value as string);
-              handleProteinChange(e.target.value as string, 'x');
-            }}
-            MenuProps={{ sx: { zIndex: 3000 } }}
-          >
-            {availableProteinNames.map((proteinName) => (
-              <MenuItem
-                value={proteinName}
-                disabled={proteinName === yAxisProtein}
-              >
-                {proteinName}
-              </MenuItem>
-            ))}
-          </GxSelect>
-          <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
-          <GxSelect
-            fullWidth
-            value={yAxisProtein}
-            onChange={(e) => {
-              setYAxisProtein(e.target.value as string);
-              handleProteinChange(e.target.value as string, 'y');
-            }}
-            MenuProps={{ sx: { zIndex: 3000 } }}
-          >
-            {availableProteinNames.map((proteinName) => (
-              <MenuItem
-                value={proteinName}
-                disabled={proteinName === xAxisProtein}
-              >
-                {proteinName}
-              </MenuItem>
-            ))}
-          </GxSelect>
-        </Box>
-        <CytometrySettingsMenu />
-      </Box>
-
+      <CytometryHeader availableProteinNames={availableProteinNames} />
       <Box
         ref={containerRef}
         sx={sx.graphWrapper}
@@ -289,7 +226,7 @@ export const CytometryGraph = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const sx = {
   container: {
     width: '100%',
     height: '100%',
@@ -304,23 +241,5 @@ const styles = (theme: Theme) => ({
   },
   plot: {
     width: '100%'
-  },
-  headerWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    height: 'min-content'
-  },
-  selectWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: theme.palette.gx.primary.white,
-    gap: '16px',
-    padding: '8px'
-  },
-  selectLabel: {
-    textAlign: 'right',
-    textWrap: 'nowrap',
-    fontWeight: 'bold'
   }
-});
+};

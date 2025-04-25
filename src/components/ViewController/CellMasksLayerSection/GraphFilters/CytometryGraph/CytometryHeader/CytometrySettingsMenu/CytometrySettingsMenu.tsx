@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Grid, IconButton, MenuItem, Popover, Theme, Typography, useTheme } from '@mui/material';
-import { GxSelect } from '../../../../../../shared/components/GxSelect';
-import { GxInput } from '../../../../../../shared/components/GxInput';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { SelectOption, ColorScaleOption } from './CytometrySettingsMenu.types';
 import { debounce } from 'lodash';
-import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useCytometryGraphStore } from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import {
   AVAILABLE_AXIS_TYPES,
   AVAILABLE_COLORSCALES,
   AVAILABLE_EXPONENT_FORMATS
-} from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+} from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { GxSelect } from '../../../../../../../shared/components/GxSelect';
+import { GxInput } from '../../../../../../../shared/components/GxInput';
 
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
