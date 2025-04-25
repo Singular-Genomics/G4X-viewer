@@ -2,17 +2,30 @@ import { Box, darken, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
-import { Layout } from 'plotly.js';
+import { Datum, Layout } from 'plotly.js';
 import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useSnackbar } from 'notistack';
 
 export const UmapGraph = () => {
   const theme = useTheme();
   const sx = styles();
 
   const containerRef = useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const { cellMasksData } = useCellSegmentationLayerStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [selectionRange, setSelectionRange] = useState<UmapFilter | undefined>(undefined);
+  const [plotData, setPlotData] = useState<{ x: Datum[]; y: Datum[] }>({ x: [], y: [] });
+
+  useEffect(() => {
+    if (cellMasksData) {
+      setPlotData({
+        x: cellMasksData.map((mask) => mask.umapValues.umapX),
+        y: cellMasksData.map((mask) => mask.umapValues.umapY)
+      });
+    }
+  }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -71,10 +84,10 @@ export const UmapGraph = () => {
         <Plot
           data={[
             {
-              x: [],
-              y: [],
+              x: plotData.x,
+              y: plotData.y,
               mode: 'markers',
-              type: 'scatter',
+              type: 'scattergl',
               marker: {
                 color: darken(theme.palette.gx.accent.greenBlue, 0.25)
               }
