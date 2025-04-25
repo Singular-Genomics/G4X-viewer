@@ -1,7 +1,9 @@
+import { SingleMask } from '../../shared/types';
+
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
-  cellMasksData: any[] | null;
+  cellMasksData: SingleMask[] | null;
   fileName: string;
   isCellLayerOn: boolean;
   isCellFillOn: boolean;
