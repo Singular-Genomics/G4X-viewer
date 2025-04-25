@@ -1,9 +1,9 @@
-import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.types';
 
 export type GraphRangeInputsProps = {
-  rangeSource: UmapFilter | HeatmapRanges | undefined;
-  onUpdateRange: (newFilter: UmapFilter | HeatmapRanges) => void;
+  rangeSource: UmapRange | HeatmapRanges | undefined;
+  onUpdateRange: (newFilter: UmapRange | HeatmapRanges) => void;
   onClear: () => void;
   onConfirm: () => void;
 };
@@ -11,8 +11,8 @@ export type GraphRangeInputsProps = {
 export type InputConfig = {
   field: InputFieldType;
   label: string;
-  validateValue: (value: number, filter: UmapFilter | HeatmapRanges) => boolean;
-  updateFilter: (value: number, filter: UmapFilter | HeatmapRanges) => any;
+  validateValue: (value: number, filter: UmapRange | HeatmapRanges) => boolean;
+  updateFilter: (value: number, filter: UmapRange | HeatmapRanges) => any;
 };
 
 export type InputRange = {

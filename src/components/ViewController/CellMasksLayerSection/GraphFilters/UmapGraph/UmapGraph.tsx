@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { Datum, Layout } from 'plotly.js';
-import { UmapFilter } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useSnackbar } from 'notistack';
+import { useUmapGraphStore } from '../../../../../stores/UmapGraphStore/UmapGraphStore';
+import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.types';
 
 export const UmapGraph = () => {
   const theme = useTheme();
@@ -14,8 +15,9 @@ export const UmapGraph = () => {
   const containerRef = useRef(null);
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
+  const { settings } = useUmapGraphStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
-  const [selectionRange, setSelectionRange] = useState<UmapFilter | undefined>(undefined);
+  const [selectionRange, setSelectionRange] = useState<UmapRange | undefined>(undefined);
   const [plotData, setPlotData] = useState<{ x: Datum[]; y: Datum[] }>({ x: [], y: [] });
 
   useEffect(() => {
@@ -89,7 +91,8 @@ export const UmapGraph = () => {
               mode: 'markers',
               type: 'scattergl',
               marker: {
-                color: darken(theme.palette.gx.accent.greenBlue, 0.25)
+                color: darken(theme.palette.gx.accent.greenBlue, 0.25),
+                size: settings.pointSize
               }
             }
           ]}
@@ -117,7 +120,7 @@ export const UmapGraph = () => {
         rangeSource={selectionRange}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
         onClear={() => setSelectionRange(undefined)}
-        onConfirm={() => useCellSegmentationLayerStore.setState({ umapFilter: selectionRange })}
+        onConfirm={() => useUmapGraphStore.setState({ ranges: selectionRange })}
       />
     </Box>
   );
