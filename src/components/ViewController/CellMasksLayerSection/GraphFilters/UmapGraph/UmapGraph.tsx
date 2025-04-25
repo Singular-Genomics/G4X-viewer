@@ -24,6 +24,13 @@ export const UmapGraph = () => {
   const [plotData, setPlotData] = useState<{ x: Datum[]; y: Datum[] }>({ x: [], y: [] });
 
   useEffect(() => {
+    const { ranges } = useUmapGraphStore.getState();
+    if (ranges) {
+      setSelectionRange(ranges);
+    }
+  }, []);
+
+  useEffect(() => {
     if (cellMasksData) {
       getPlotData(cellMasksData, settings.subsamplingValue).then((results) => setPlotData(results));
     }
