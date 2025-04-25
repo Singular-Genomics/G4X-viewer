@@ -18,11 +18,18 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
     if (!proteinNames.xAxis || !proteinNames.yAxis) {
       setXAxisProtein(availableProteinNames[0]);
       setYAxisProtein(availableProteinNames[1]);
+      useCytometryGraphStore.setState({
+        proteinNames: {
+          xAxis: availableProteinNames[0],
+          yAxis: availableProteinNames[1]
+        }
+      });
     } else {
       setXAxisProtein(proteinNames.xAxis);
       setYAxisProtein(proteinNames.yAxis);
     }
-  }, [availableProteinNames]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleProteinChange = useCallback(
     (proteinName: string, axis: 'y' | 'x') =>

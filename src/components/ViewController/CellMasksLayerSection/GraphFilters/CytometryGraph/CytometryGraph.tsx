@@ -54,13 +54,6 @@ export const CytometryGraph = () => {
       if (ranges) {
         setSelectionRange(ranges);
       }
-
-      useCytometryGraphStore.setState({
-        proteinNames: {
-          xAxis: listOfProteinNames[0],
-          yAxis: listOfProteinNames[1]
-        }
-      });
     }
   }, [cellMasksData, enqueueSnackbar]);
 
