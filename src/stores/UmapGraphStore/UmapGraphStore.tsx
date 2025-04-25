@@ -12,8 +12,10 @@ const DEFAULT_VALUES: UmapGraphStoreValues = {
 
 export const useUmapGraphStore = create<UmapGraphStore>()(
   persist(
-    () => ({
-      ...DEFAULT_VALUES
+    (set) => ({
+      ...DEFAULT_VALUES,
+      resetFilters: () => set((state) => ({ ...state, ranges: undefined })),
+      updateSettings: (newSettings) => set((state) => ({ ...state, settings: { ...state.settings, ...newSettings } }))
     }),
     {
       name: 'umapSettings',

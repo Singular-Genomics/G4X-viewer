@@ -3,6 +3,7 @@ import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.t
 
 export type GraphRangeInputsProps = {
   rangeSource: UmapRange | HeatmapRanges | undefined;
+  inputPrecission?: number;
   onUpdateRange: (newFilter: UmapRange | HeatmapRanges) => void;
   onClear: () => void;
   onConfirm: () => void;

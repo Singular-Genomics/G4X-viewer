@@ -7,6 +7,9 @@ import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegment
 import { useSnackbar } from 'notistack';
 import { useUmapGraphStore } from '../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.types';
+import { UmapGraphHeader } from './UmapGraphHeader/UmapGraphHeader';
+import { debounce } from 'lodash';
+import { getPlotData } from './UmapGraph.helpers';
 
 export const UmapGraph = () => {
   const theme = useTheme();
@@ -22,23 +25,22 @@ export const UmapGraph = () => {
 
   useEffect(() => {
     if (cellMasksData) {
-      setPlotData({
-        x: cellMasksData.map((mask) => mask.umapValues.umapX),
-        y: cellMasksData.map((mask) => mask.umapValues.umapY)
-      });
+      getPlotData(cellMasksData, settings.subsamplingValue).then((results) => setPlotData(results));
     }
-  }, [cellMasksData, enqueueSnackbar]);
+  }, [cellMasksData, enqueueSnackbar, settings.subsamplingValue]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
     if (!containerEl) return;
 
-    const resizeObserver = new ResizeObserver((entries) => {
+    const handleResize = debounce((entries) => {
       if (!entries || !entries[0]) return;
 
       const { width, height } = entries[0].contentRect;
       setDimensions({ width, height });
-    });
+    }, 250);
+
+    const resizeObserver = new ResizeObserver(handleResize);
 
     resizeObserver.observe(containerEl);
 
@@ -79,6 +81,7 @@ export const UmapGraph = () => {
 
   return (
     <Box sx={sx.container}>
+      <UmapGraphHeader />
       <Box
         ref={containerRef}
         sx={sx.graphWrapper}
@@ -130,11 +133,13 @@ const styles = () => ({
   container: {
     width: '100%',
     height: '100%',
-    display: 'grid',
-    gridTemplateColumns: '1fr',
+    display: 'flex',
+    flexDirection: 'column',
     gap: '1px'
   },
   graphWrapper: {
-    overflow: 'hidden'
+    overflow: 'hidden',
+    height: '100%',
+    width: '100%'
   }
 });

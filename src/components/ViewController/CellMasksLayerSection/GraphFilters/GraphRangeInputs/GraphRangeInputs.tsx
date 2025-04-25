@@ -42,7 +42,13 @@ const INPUT_FIELDS: InputConfig[] = [
   }
 ];
 
-export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear, onConfirm }: GraphRangeInputsProps) {
+export function GraphRangeInputs({
+  rangeSource,
+  inputPrecission,
+  onUpdateRange,
+  onClear,
+  onConfirm
+}: GraphRangeInputsProps) {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -57,14 +63,14 @@ export function GraphRangeInputs({ rangeSource, onUpdateRange, onClear, onConfir
   useEffect(() => {
     if (rangeSource) {
       setRangeInput({
-        xStart: Math.round(rangeSource.xStart).toString(),
-        xEnd: Math.round(rangeSource.xEnd).toString(),
-        yStart: Math.round(rangeSource.yEnd).toString(),
-        yEnd: Math.round(rangeSource.yStart).toString()
+        xStart: rangeSource.xStart.toFixed(inputPrecission || 0).toString(),
+        xEnd: rangeSource.xEnd.toFixed(inputPrecission || 0).toString(),
+        yStart: rangeSource.yEnd.toFixed(inputPrecission || 0).toString(),
+        yEnd: rangeSource.yStart.toFixed(inputPrecission || 0).toString()
       });
       setErrors({});
     }
-  }, [rangeSource]);
+  }, [rangeSource, inputPrecission]);
 
   const handleInputClear = useCallback(() => {
     setRangeInput({
