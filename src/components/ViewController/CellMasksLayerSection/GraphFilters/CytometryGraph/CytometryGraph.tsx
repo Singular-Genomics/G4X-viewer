@@ -51,9 +51,22 @@ export const CytometryGraph = () => {
         return;
       }
 
+      const { ranges, proteinNames } = useCytometryGraphStore.getState();
+
       setAvailableProteinNames(listOfProteinNames);
-      setXAxisProtein(listOfProteinNames[0]);
-      setYAxisProtein(listOfProteinNames[1]);
+
+      if (!proteinNames.xAxis || !proteinNames.yAxis) {
+        setXAxisProtein(listOfProteinNames[0]);
+        setYAxisProtein(listOfProteinNames[1]);
+      } else {
+        setXAxisProtein(proteinNames.xAxis);
+        setYAxisProtein(proteinNames.yAxis);
+      }
+
+      if (ranges) {
+        setSelectionRange(ranges);
+      }
+
       useCytometryGraphStore.setState({
         proteinNames: {
           xAxis: listOfProteinNames[0],
