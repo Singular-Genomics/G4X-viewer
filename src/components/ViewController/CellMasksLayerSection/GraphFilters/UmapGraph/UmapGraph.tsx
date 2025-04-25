@@ -129,7 +129,10 @@ export const UmapGraph = () => {
       <GraphRangeInputs
         rangeSource={selectionRange}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
-        onClear={() => setSelectionRange(undefined)}
+        onClear={() => {
+          setSelectionRange(undefined);
+          useUmapGraphStore.setState({ ranges: undefined });
+        }}
         onConfirm={() => useUmapGraphStore.setState({ ranges: selectionRange })}
         inputPrecission={3}
       />

@@ -1,8 +1,10 @@
 import { PickingInfo } from '@deck.gl/core';
 import { HeatmapRanges, ProteinNames } from '../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { UmapRange } from '../../stores/UmapGraphStore/UmapGraphStore.types';
+import { SingleMask } from '../../shared/types';
 
 export type CellMasksLayerProps = CompositeLayerProps & {
-  masksData: any[];
+  masksData: SingleMask[];
   showCellFill: boolean;
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
@@ -11,6 +13,7 @@ export type CellMasksLayerProps = CompositeLayerProps & {
     proteins: ProteinNames;
     range?: HeatmapRanges;
   };
+  umapFilter?: UmapRange;
   onHover?: (pikingInfo: PickingInfo) => void;
 };
 
