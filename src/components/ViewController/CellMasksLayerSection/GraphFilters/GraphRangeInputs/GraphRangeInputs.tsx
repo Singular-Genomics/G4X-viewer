@@ -116,6 +116,8 @@ export function GraphRangeInputs({
     [rangeSource, onUpdateRange]
   );
 
+  const isValidRange = rangeInput.xStart && rangeInput.xEnd && rangeInput.yStart && rangeInput.yEnd;
+
   return (
     <Box sx={sx.inputWrapper}>
       {INPUT_FIELDS.map(({ field, label }) => (
@@ -132,6 +134,7 @@ export function GraphRangeInputs({
       <Button
         onClick={handleInputClear}
         fullWidth
+        disabled={!isValidRange}
         sx={sx.clearButton}
       >
         Clear
@@ -139,6 +142,7 @@ export function GraphRangeInputs({
       <Button
         onClick={onConfirm}
         fullWidth
+        disabled={!isValidRange}
         sx={sx.confirmButton}
       >
         Confirm
