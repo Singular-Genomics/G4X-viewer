@@ -20,7 +20,7 @@ export const CytometryGraph = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { settings, updateProteinNames } = useCytometryGraphStore();
-  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: any }>({
+  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: Datum[][] }>({
     x: [],
     y: [],
     z: []
