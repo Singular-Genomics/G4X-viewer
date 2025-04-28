@@ -9,6 +9,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { EditableGeoJsonLayer } from '@deck.gl-community/editable-layers';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -173,4 +175,62 @@ export const useBrightfieldImageLayer = () => {
   });
 
   return brightfieldImageLayer;
+};
+
+export const usePolygonDrawingLayer = () => {
+  const [isPolygonDrawingEnabled, polygonFeatures, selectedFeatureIndex, mode, updatePolygonFeatures, selectFeature] =
+    usePolygonDrawingStore(
+      useShallow((store) => [
+        store.isPolygonDrawingEnabled,
+        store.polygonFeatures,
+        store.selectedFeatureIndex,
+        store.mode,
+        store.updatePolygonFeatures,
+        store.selectFeature
+      ])
+    );
+
+  if (!isPolygonDrawingEnabled) {
+    return undefined;
+  }
+
+  const featureCollection = {
+    type: 'FeatureCollection',
+    features: polygonFeatures
+  };
+
+  const onEdit = ({ updatedData, editType, featureIndexes }: any) => {
+    updatePolygonFeatures(updatedData.features);
+
+    if (editType === 'addFeature') {
+      const newFeatureIndex = updatedData.features.length - 1;
+      selectFeature(newFeatureIndex);
+    } else if (editType === 'selectFeature') {
+      selectFeature(featureIndexes[0]);
+    }
+  };
+
+  const polygonLayer = new EditableGeoJsonLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
+    data: featureCollection as any,
+    mode,
+    selectedFeatureIndexes: selectedFeatureIndex !== null ? [selectedFeatureIndex] : [],
+    onEdit,
+    pickable: true,
+    autoHighlight: true,
+    getFillColor: [0, 200, 0, 100],
+    getLineColor: [0, 200, 0, 200],
+    lineWidthMinPixels: 2,
+    pointRadiusMinPixels: 5,
+    editHandlePointRadiusMinPixels: 5,
+    editHandlePointRadiusScale: 20,
+    getEditHandlePointColor: (handle: any) => {
+      if (handle.type === 'intermediate') {
+        return [0, 0, 255, 255];
+      }
+      return [200, 0, 0, 255];
+    }
+  });
+
+  return polygonLayer;
 };
