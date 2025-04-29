@@ -1,8 +1,8 @@
 import { TiffPixelSource, ZarrPixelSource } from '@hms-dbmi/viv';
 
 export type PictureInPictureViewerConfig = {
-  contrastLimits: number[][];
-  colors: number[][];
+  contrastLimits: [number, number][];
+  colors: [number, number, number][];
   channelsVisible: boolean[];
   loader: PixelSource[];
   selections: SelectionsType[];
