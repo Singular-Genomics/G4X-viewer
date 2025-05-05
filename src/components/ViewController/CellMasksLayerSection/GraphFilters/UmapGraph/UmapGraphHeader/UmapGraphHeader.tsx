@@ -1,6 +1,6 @@
 import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { GxInput } from '../../../../../../shared/components/GxInput';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { InputErrors } from './UmapGraphHeader.types';
 import { useUmapGraphStore } from '../../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { debounce } from 'lodash';
@@ -42,45 +42,45 @@ export const UmapGraphHeader = () => {
     [updateSettings]
   );
 
-  const handlePointSizeChange = useCallback(
-    (newValue: string) => {
-      setPointSizeInput(newValue);
-      if (!newValue) {
-        setErrors((prev) => ({ ...prev, pointSize: '' }));
-        return;
-      } else if (Number(newValue) < MIN_POINT_SIZE) {
-        setErrors((prev) => ({ ...prev, pointSize: `Min. ${MIN_POINT_SIZE}` }));
-        return;
-      } else if (Number(newValue) > MAX_POINT_SIZE) {
-        setErrors((prev) => ({ ...prev, pointSize: `Max. ${MAX_POINT_SIZE}` }));
-        return;
-      }
+  const handlePointSizeChange = (newValue: string) => {
+    setPointSizeInput(newValue);
+    if (!newValue) {
+      setErrors((prev) => ({ ...prev, pointSize: '' }));
+      return;
+    } else if (!/^[0-9]*$/.test(newValue)) {
+      setErrors((prev) => ({ ...prev, pointSize: 'Invalid value' }));
+      return;
+    } else if (Number(newValue) < MIN_POINT_SIZE) {
+      setErrors((prev) => ({ ...prev, pointSize: `Min. ${MIN_POINT_SIZE}` }));
+      return;
+    } else if (Number(newValue) > MAX_POINT_SIZE) {
+      setErrors((prev) => ({ ...prev, pointSize: `Max. ${MAX_POINT_SIZE}` }));
+      return;
+    }
 
-      debouncedSettingsUpdate({ pointSize: Number(newValue) });
-    },
-    [debouncedSettingsUpdate]
-  );
+    debouncedSettingsUpdate({ pointSize: Number(newValue) });
+  };
 
-  const handleSubsamplingChange = useCallback(
-    (newValue: string) => {
-      setSubsamplingInput(newValue);
-      if (!newValue) {
-        setErrors((prev) => ({ ...prev, subsamplingValue: '' }));
-        return;
-      } else if (Number(newValue) < MIN_SUBSAMPLE_VALUE) {
-        setErrors((prev) => ({ ...prev, subsamplingValue: `Min. ${MIN_SUBSAMPLE_VALUE}` }));
-        return;
-      } else if (Number(newValue) > MAX_SUBSAMPLE_VALUE) {
-        setErrors((prev) => ({ ...prev, subsamplingValue: `Max. ${MAX_SUBSAMPLE_VALUE}` }));
-        return;
-      }
+  const handleSubsamplingChange = (newValue: string) => {
+    setSubsamplingInput(newValue);
+    if (!newValue) {
+      setErrors((prev) => ({ ...prev, subsamplingValue: '' }));
+      return;
+    } else if (!/^[0-9]*$/.test(newValue)) {
+      setErrors((prev) => ({ ...prev, subsamplingValue: 'Invalid value' }));
+      return;
+    } else if (Number(newValue) < MIN_SUBSAMPLE_VALUE) {
+      setErrors((prev) => ({ ...prev, subsamplingValue: `Min. ${MIN_SUBSAMPLE_VALUE}` }));
+      return;
+    } else if (Number(newValue) > MAX_SUBSAMPLE_VALUE) {
+      setErrors((prev) => ({ ...prev, subsamplingValue: `Max. ${MAX_SUBSAMPLE_VALUE}` }));
+      return;
+    }
 
-      debouncedSettingsUpdate({
-        subsamplingValue: Number(newValue)
-      });
-    },
-    [debouncedSettingsUpdate]
-  );
+    debouncedSettingsUpdate({
+      subsamplingValue: Number(newValue)
+    });
+  };
 
   return (
     <Box sx={sx.headerWrapper}>
@@ -90,6 +90,7 @@ export const UmapGraphHeader = () => {
         onChange={(e) => handlePointSizeChange(e.target.value)}
         error={!!errors.pointSize}
         helperText={errors.pointSize || `Min. ${MIN_POINT_SIZE} | Max. ${MAX_POINT_SIZE}`}
+        type="number"
         sx={sx.inputField}
       />
       <Typography sx={sx.inputLabel}>Subsampling Value</Typography>
@@ -98,6 +99,7 @@ export const UmapGraphHeader = () => {
         onChange={(e) => handleSubsamplingChange(e.target.value)}
         error={!!errors.subsamplingValue}
         helperText={errors.subsamplingValue || `Min. ${MIN_SUBSAMPLE_VALUE} | Max. ${MAX_SUBSAMPLE_VALUE}`}
+        type="number"
         sx={sx.inputField}
       />
     </Box>

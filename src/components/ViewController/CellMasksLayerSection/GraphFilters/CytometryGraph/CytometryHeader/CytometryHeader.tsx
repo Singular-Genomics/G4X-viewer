@@ -2,7 +2,7 @@ import { Box, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import { CytometrySettingsMenu } from './CytometrySettingsMenu';
 import { GxSelect } from '../../../../../../shared/components/GxSelect';
 import { CytometryHeaderProps } from './CytometryHeader.types';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 
 export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps) => {
@@ -34,15 +34,12 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
     }
   }, [availableProteinNames]);
 
-  const handleProteinChange = useCallback(
-    (proteinName: string, axis: 'y' | 'x') =>
-      setTimeout(() => {
-        useCytometryGraphStore
-          .getState()
-          .updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
-      }, 10),
-    []
-  );
+  const handleProteinChange = (proteinName: string, axis: 'y' | 'x') =>
+    setTimeout(() => {
+      useCytometryGraphStore
+        .getState()
+        .updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
+    }, 10);
 
   return (
     <Box sx={sx.headerWrapper}>
