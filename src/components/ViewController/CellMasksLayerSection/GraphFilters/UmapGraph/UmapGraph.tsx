@@ -112,7 +112,7 @@ export const UmapGraph = () => {
           layout={layout as Partial<Layout>}
           config={{
             displayModeBar: true,
-            modeBarButtonsToRemove: ['lasso2d', 'toImage']
+            modeBarButtonsToRemove: ['lasso2d']
           }}
           onSelected={(e) => {
             if (e?.range) {

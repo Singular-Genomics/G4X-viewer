@@ -185,8 +185,9 @@ export const CytometryGraph = () => {
             data={plotData}
             layout={layout as Partial<Layout>}
             config={{
-              modeBarButtons: [['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews']],
-              responsive: true,
+              modeBarButtons: [
+                ['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews', 'toImage']
+              ],
               displayModeBar: true
             }}
             onSelected={(e) => {
