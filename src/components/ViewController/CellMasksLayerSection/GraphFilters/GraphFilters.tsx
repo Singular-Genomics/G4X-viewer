@@ -31,7 +31,7 @@ export const GraphFilters = () => {
       >
         <ToggleButton
           sx={sx.toggleButton}
-          value="Umap"
+          value="UMAP"
           disabled={!umapDataAvailable}
         >
           UMAP
