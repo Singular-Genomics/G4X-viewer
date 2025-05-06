@@ -111,6 +111,7 @@ export const UmapGraph = () => {
           }}
           layout={layout as Partial<Layout>}
           config={{
+            scrollZoom: true,
             displayModeBar: true,
             modeBarButtonsToRemove: ['lasso2d']
           }}

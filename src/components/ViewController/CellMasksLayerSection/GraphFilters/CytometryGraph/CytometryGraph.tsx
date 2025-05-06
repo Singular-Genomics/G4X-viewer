@@ -188,6 +188,7 @@ export const CytometryGraph = () => {
               modeBarButtons: [
                 ['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews', 'toImage']
               ],
+              scrollZoom: true,
               displayModeBar: true
             }}
             onSelected={(e) => {
