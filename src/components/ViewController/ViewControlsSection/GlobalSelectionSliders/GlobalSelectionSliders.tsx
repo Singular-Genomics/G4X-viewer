@@ -79,15 +79,11 @@ export const GlobalSelectionSliders = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Grid
-                item
-                xs={1}
-              >
+              <Grid size={1}>
                 <Typography sx={sx.selectionLabel}>{label}</Typography>
               </Grid>
               <Grid
-                item
-                xs
+                size={'grow'}
                 sx={sx.sliderContainer}
               >
                 <Slider
