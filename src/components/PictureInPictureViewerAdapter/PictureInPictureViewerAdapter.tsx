@@ -9,7 +9,7 @@ import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { alpha, Box, IconButton, Tooltip as MuiTooltip, Theme, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
@@ -21,14 +21,8 @@ import { useEffect, useRef } from 'react';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { useSnackbar } from 'notistack';
-import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
-import CreateIcon from '@mui/icons-material/Create';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
+import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -43,29 +37,6 @@ export const PictureInPictureViewerAdapter = () => {
   const polygonDrawingLayer = usePolygonDrawingLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
-
-  const [
-    isPolygonDrawingEnabled,
-    togglePolygonDrawing,
-    setDrawPolygonMode,
-    setModifyMode,
-    setViewMode,
-    mode,
-    clearPolygons
-  ] = usePolygonDrawingStore(
-    useShallow((store) => [
-      store.isPolygonDrawingEnabled,
-      store.togglePolygonDrawing,
-      store.setDrawPolygonMode,
-      store.setModifyMode,
-      store.setViewMode,
-      store.mode,
-      store.clearPolygons
-    ])
-  );
-
-  const theme = useTheme();
-  const sx = styles(theme);
 
   useEffect(
     () =>
@@ -212,94 +183,7 @@ export const PictureInPictureViewerAdapter = () => {
                 })
             }}
           />
-          <Box sx={sx.controlsContainer}>
-            <MuiTooltip title="Screenshot">
-              <IconButton
-                sx={sx.controlButton}
-                onClick={takeScreenshot}
-                color="primary"
-              >
-                <PhotoCameraIcon />
-              </IconButton>
-            </MuiTooltip>
-
-            <MuiTooltip title={isPolygonDrawingEnabled ? 'Disable Drawing' : 'Enable Drawing'}>
-              <IconButton
-                sx={{
-                  ...sx.controlButton,
-                  backgroundColor: isPolygonDrawingEnabled
-                    ? alpha(theme.palette.primary.main, 0.5)
-                    : alpha(theme.palette.gx.primary.black, 0.5)
-                }}
-                onClick={togglePolygonDrawing}
-                color="primary"
-              >
-                <CreateIcon />
-              </IconButton>
-            </MuiTooltip>
-
-            {isPolygonDrawingEnabled && (
-              <>
-                <MuiTooltip title="Draw Polygon">
-                  <IconButton
-                    sx={{
-                      ...sx.controlButton,
-                      backgroundColor:
-                        mode instanceof DrawPolygonMode
-                          ? alpha(theme.palette.primary.main, 0.5)
-                          : alpha(theme.palette.gx.primary.black, 0.5)
-                    }}
-                    onClick={setDrawPolygonMode}
-                    color="primary"
-                  >
-                    <CreateIcon />
-                  </IconButton>
-                </MuiTooltip>
-
-                <MuiTooltip title="Modify Polygon">
-                  <IconButton
-                    sx={{
-                      ...sx.controlButton,
-                      backgroundColor:
-                        mode instanceof ModifyMode
-                          ? alpha(theme.palette.primary.main, 0.5)
-                          : alpha(theme.palette.gx.primary.black, 0.5)
-                    }}
-                    onClick={setModifyMode}
-                    color="primary"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </MuiTooltip>
-
-                <MuiTooltip title="View Mode">
-                  <IconButton
-                    sx={{
-                      ...sx.controlButton,
-                      backgroundColor:
-                        mode instanceof ViewMode
-                          ? alpha(theme.palette.primary.main, 0.5)
-                          : alpha(theme.palette.gx.primary.black, 0.5)
-                    }}
-                    onClick={setViewMode}
-                    color="primary"
-                  >
-                    <VisibilityIcon />
-                  </IconButton>
-                </MuiTooltip>
-
-                <MuiTooltip title="Clear All Polygons">
-                  <IconButton
-                    sx={sx.controlButton}
-                    onClick={clearPolygons}
-                    color="primary"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </MuiTooltip>
-              </>
-            )}
-          </Box>
+          <PolygonDrawingMenu takeScreenshot={takeScreenshot} />
           <Tooltip />
         </>
       )}
@@ -307,37 +191,10 @@ export const PictureInPictureViewerAdapter = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const sx = {
   viewerContainer: {
     position: 'relative',
     width: '100%',
     height: '100%'
-  },
-  controlsContainer: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    zIndex: 100,
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 1
-  },
-  controlButton: {
-    color: theme.palette.gx.lightGrey[300],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
-    }
-  },
-  screenshotButton: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    zIndex: 100,
-    color: theme.palette.gx.lightGrey[300],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
-    }
   }
-});
+};
