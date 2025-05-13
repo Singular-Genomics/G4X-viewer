@@ -1,5 +1,5 @@
 import { Box, IconButton, Theme, useTheme } from '@mui/material';
-import { Language, LinkedIn, GitHub, X } from '@mui/icons-material';
+import { Language, LinkedIn, GitHub, X, Email } from '@mui/icons-material';
 import { socialLinks } from '../../config/socialLinks';
 
 export const SocialIcons = () => {
@@ -43,6 +43,15 @@ export const SocialIcons = () => {
         aria-label="GitHub"
       >
         <GitHub sx={sx.icon} />
+      </IconButton>
+      <IconButton
+        sx={sx.iconButton}
+        href={socialLinks.email}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Email"
+      >
+        <Email sx={sx.icon} />
       </IconButton>
     </Box>
   );
