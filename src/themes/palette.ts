@@ -1,5 +1,5 @@
+import { PaletteOptions } from '@mui/material';
 import { GxPalette } from './types';
-import createPalette, { PaletteOptions } from '@mui/material/styles/createPalette';
 
 export const colors: GxPalette = {
   primary: {
@@ -43,6 +43,6 @@ export const colors: GxPalette = {
   }
 };
 
-export const gxColorPalette = createPalette({
+export const gxColorPalette = {
   gx: colors
-} as PaletteOptions);
+} as PaletteOptions;
