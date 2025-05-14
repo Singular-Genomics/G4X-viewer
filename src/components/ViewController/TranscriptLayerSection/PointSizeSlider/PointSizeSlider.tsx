@@ -25,10 +25,7 @@ export const PointSizeSlider = () => {
       alignItems="center"
       sx={sx.sliderInputContainer}
     >
-      <Grid
-        item
-        xs={1}
-      >
+      <Grid size={1}>
         <Input
           value={pointSize.toString()}
           size="small"
@@ -43,8 +40,7 @@ export const PointSizeSlider = () => {
         />
       </Grid>
       <Grid
-        item
-        xs
+        size={'grow'}
         sx={sx.sliderInputItem}
       >
         <GxSlider

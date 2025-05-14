@@ -10,9 +10,6 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
     }
 
     const parsedValue = (value as string).replace(/\[|\]/g, '').split(' ').map(Number);
-
-    console.log(value, parsedValue);
-
     return (cellValue) => parsedValue.every((value) => (cellValue as Array<number>).includes(value));
   };
 
