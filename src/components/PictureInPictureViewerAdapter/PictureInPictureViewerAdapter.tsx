@@ -118,6 +118,9 @@ export const PictureInPictureViewerAdapter = () => {
     ref: deckGLRef,
     glOptions: {
       preserveDrawingBuffer: true
+    },
+    controller: {
+      doubleClickZoom: false
     }
   };
 
