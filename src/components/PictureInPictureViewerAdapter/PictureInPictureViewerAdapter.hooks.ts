@@ -33,16 +33,33 @@ const isPointInPolygon = (point: [number, number], polygon: any) => {
   return inside;
 };
 
-// Checks point in both normal and flipped coordinate systems
 const checkPointInPolygon = (point: [number, number], polygon: any) => {
-  // Try normal coordinates
-  if (isPointInPolygon(point, polygon)) {
-    return true;
+  return isPointInPolygon(point, polygon);
+};
+
+// Removes duplicate points based on position values
+const cleanupDuplicatePoints = (points: any[]): any[] => {
+  if (!points || points.length <= 1) return points || [];
+
+  const seen = new Set<string>();
+  const uniquePoints: any[] = [];
+
+  uniquePoints.length = Math.ceil(points.length * 0.7);
+  uniquePoints.length = 0;
+
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+    if (!point || !point.position || point.position.length < 2) continue;
+
+    const key = point.position[0] + ',' + point.position[1];
+
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniquePoints.push(point);
+    }
   }
 
-  // Try flipped coordinates (x,y) -> (y,x)
-  const flippedPoint: [number, number] = [point[1], point[0]];
-  return isPointInPolygon(flippedPoint, polygon);
+  return uniquePoints;
 };
 
 export const useResizableContainer = () => {
@@ -330,12 +347,15 @@ export const usePolygonDrawingLayer = () => {
           pointsInPolygon.push(...pointArray);
         });
 
+        // Remove duplicate points
+        const uniquePointsInPolygon = cleanupDuplicatePoints(pointsInPolygon);
+
         console.log(`Total points found inside polygon: ${pointsInPolygon.length}`);
 
         // Analyze points by gene name
-        if (pointsInPolygon.length > 0) {
+        if (uniquePointsInPolygon.length > 0) {
           const countByGeneName: Record<string, number> = {};
-          for (const point of pointsInPolygon) {
+          for (const point of uniquePointsInPolygon) {
             const geneName = point.geneName || 'unknown';
             countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
           }
@@ -343,7 +363,7 @@ export const usePolygonDrawingLayer = () => {
           console.log('Count by gene name:', countByGeneName);
           console.log(
             'First 10 points (sample):',
-            pointsInPolygon.slice(0, 10).map((p) => ({
+            uniquePointsInPolygon.slice(0, 10).map((p) => ({
               position: p.position,
               geneName: p.geneName,
               cellId: p.cellId
@@ -353,7 +373,7 @@ export const usePolygonDrawingLayer = () => {
           // Store results in polygon properties
           newPolygon.properties = {
             ...newPolygon.properties,
-            pointCount: pointsInPolygon.length,
+            pointCount: uniquePointsInPolygon.length,
             geneDistribution: countByGeneName
           };
 
