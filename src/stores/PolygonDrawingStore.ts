@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
+import { useTranscriptLayerStore } from './TranscriptLayerStore';
 
 type PolygonFeature = {
   type: 'Feature';
@@ -48,5 +49,8 @@ export const usePolygonDrawingStore = create<PolygonDrawingState>((set) => ({
 
   selectFeature: (index) => set({ selectedFeatureIndex: index }),
 
-  clearPolygons: () => set({ polygonFeatures: [], selectedFeatureIndex: null })
+  clearPolygons: () => {
+    useTranscriptLayerStore.getState().setSelectedPoints([]);
+    set({ polygonFeatures: [], selectedFeatureIndex: null });
+  }
 }));
