@@ -143,6 +143,7 @@ export const CytometryGraph = () => {
   const layout = {
     dragmode: 'select',
     hovermode: 'closest',
+    uirevision: 'true',
     margin: { t: 50, r: 100, b: 80, l: 100 },
     paper_bgcolor: theme.palette.gx.primary.white,
     plot_bgcolor: theme.palette.gx.lightGrey[900],

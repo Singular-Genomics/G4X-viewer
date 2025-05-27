@@ -69,6 +69,7 @@ export const UmapGraph = () => {
   const layout = {
     width: dimensions.width,
     height: dimensions.height,
+    uirevision: 'true',
     dragmode: 'select',
     margin: { l: 50, r: 50, b: 50, t: 50 },
     selections: [
