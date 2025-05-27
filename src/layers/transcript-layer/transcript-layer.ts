@@ -148,20 +148,23 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           );
         }
 
-        const selectedPointsData = pointsData.filter((point: any) =>
-          this.props.selectedPoints.some(
-            (selectedPoint: any) =>
-              selectedPoint.position[0] === point.position[0] && selectedPoint.position[1] === point.position[1]
+        const selectedPositionsSet = new Set(
+          this.props.selectedPoints.map(
+            (selectedPoint: any) => `${selectedPoint.position[0]},${selectedPoint.position[1]}`
           )
         );
 
-        const unselectedPointsData = pointsData.filter(
-          (point: any) =>
-            !this.props.selectedPoints.some(
-              (selectedPoint: any) =>
-                selectedPoint.position[0] === point.position[0] && selectedPoint.position[1] === point.position[1]
-            )
-        );
+        const selectedPointsData = [];
+        const unselectedPointsData = [];
+
+        for (const point of pointsData) {
+          const positionKey = `${point.position[0]},${point.position[1]}`;
+          if (selectedPositionsSet.has(positionKey)) {
+            selectedPointsData.push(point);
+          } else {
+            unselectedPointsData.push(point);
+          }
+        }
 
         return [
           {
