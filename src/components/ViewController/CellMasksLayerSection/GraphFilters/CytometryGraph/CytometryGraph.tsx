@@ -1,4 +1,4 @@
-import { alpha, Box, Typography, useTheme } from '@mui/material';
+import { alpha, Box, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
@@ -18,6 +18,7 @@ import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
+  const sx = styles(theme);
 
   const { enqueueSnackbar } = useSnackbar();
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
@@ -225,51 +226,11 @@ export const CytometryGraph = () => {
         sx={sx.graphWrapper}
       >
         {loader && (
-          <Box
-            sx={{
-              position: 'absolute',
-              zIndex: 10,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
-            <Box
-              sx={{
-                width: '50%',
-                height: '50%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: '8px',
-                background: alpha(theme.palette.gx.darkGrey[500], 0.55)
-              }}
-            >
+          <Box sx={sx.loaderWrapper}>
+            <Box sx={sx.loaderInfoBox}>
               <GxLoader />
-              <Typography
-                sx={{
-                  color: theme.palette.gx.primary.white,
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  marginBlockStart: '16px'
-                }}
-              >
-                {`${loader?.progress} %`}
-              </Typography>
-              {loader?.message && (
-                <Typography
-                  sx={{
-                    color: theme.palette.gx.primary.white,
-                    fontSize: '24px',
-                    fontWeight: 700
-                  }}
-                >
-                  {loader.message}
-                </Typography>
-              )}
+              <Typography sx={sx.loaderProgressValueText}>{`${loader?.progress} %`}</Typography>
+              {loader?.message && <Typography sx={sx.loaderProgressMessage}>{loader.message}</Typography>}
             </Box>
           </Box>
         )}
@@ -318,7 +279,7 @@ export const CytometryGraph = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   container: {
     width: '100%',
     height: '100%',
@@ -332,7 +293,36 @@ const sx = {
     height: '100%',
     width: '100%'
   },
+  loaderWrapper: {
+    position: 'absolute',
+    zIndex: 10,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  loaderInfoBox: {
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '8px',
+    background: alpha(theme.palette.gx.darkGrey[500], 0.55)
+  },
+  loaderProgressValueText: {
+    color: theme.palette.gx.primary.white,
+    fontSize: '24px',
+    fontWeight: 700,
+    marginBlockStart: '16px'
+  },
+  loaderProgressMessage: {
+    color: theme.palette.gx.primary.white,
+    fontSize: '24px',
+    fontWeight: 700
+  },
   plot: {
     width: '100%'
   }
-};
+});

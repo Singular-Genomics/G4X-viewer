@@ -6,7 +6,7 @@ const DEFAULT_VALUES: UmapGraphStoreValues = {
   ranges: undefined,
   settings: {
     pointSize: 1,
-    subsamplingValue: 0
+    subsamplingValue: 1
   }
 };
 
