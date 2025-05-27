@@ -1,4 +1,10 @@
-export function mapValuesToColors(values: number[], colorscale: [number, string][], reverse?: boolean) {
+export function mapValuesToColors(
+  values: number[],
+  colorscale: [number, string][],
+  upperLimit: number = 1,
+  lowerLimit: number = 0,
+  reverse?: boolean
+) {
   let scale = colorscale;
 
   if (reverse) {
@@ -7,16 +13,15 @@ export function mapValuesToColors(values: number[], colorscale: [number, string]
   }
 
   return values.map((value) => {
-    if (value <= scale[0][0]) {
-      return scale[0][1];
+    if (value < lowerLimit || value > upperLimit) {
+      return '#d7d7d7';
     }
-    if (value >= scale[scale.length - 1][0]) {
-      return scale[scale.length - 1][1];
-    }
+
+    const normalizedValue = (value - lowerLimit) / (upperLimit - lowerLimit);
 
     let lowerIndex = 0;
     for (let i = 0; i < scale.length - 1; i++) {
-      if (value >= scale[i][0] && value <= scale[i + 1][0]) {
+      if (normalizedValue >= scale[i][0] && normalizedValue <= scale[i + 1][0]) {
         lowerIndex = i;
         break;
       }
@@ -27,15 +32,15 @@ export function mapValuesToColors(values: number[], colorscale: [number, string]
     const lowerColor = scale[lowerIndex][1];
     const upperColor = scale[lowerIndex + 1][1];
 
-    if (value === lowerThreshold) {
+    if (normalizedValue === lowerThreshold) {
       return lowerColor;
     }
-    if (value === upperThreshold) {
+    if (normalizedValue === upperThreshold) {
       return upperColor;
     }
 
     // Interpolate between the two colors
-    const ratio = (value - lowerThreshold) / (upperThreshold - lowerThreshold);
+    const ratio = (normalizedValue - lowerThreshold) / (upperThreshold - lowerThreshold);
     return interpolateColor(lowerColor, upperColor, ratio);
   });
 }

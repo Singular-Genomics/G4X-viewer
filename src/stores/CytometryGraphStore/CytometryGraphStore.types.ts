@@ -23,6 +23,8 @@ type HeatmapSettings = {
     label: string;
     value: [number, string][];
     reversed: boolean;
+    upperThreshold?: number;
+    lowerThreshold?: number;
   };
   exponentFormat: string;
 };

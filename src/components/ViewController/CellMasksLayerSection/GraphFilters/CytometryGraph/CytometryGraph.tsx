@@ -1,18 +1,19 @@
 import { alpha, Box, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
-import { Data, Datum, Layout } from 'plotly.js';
+import { Data, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { AxisTypes, HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
-import { LoaderInfo } from './CytometryGraph.types';
+import { GraphData, LoaderInfo } from './CytometryGraph.types';
 import { mapValuesToColors } from './CytometryGraph.helpers';
+import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
@@ -22,7 +23,7 @@ export const CytometryGraph = () => {
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { proteinNames, settings } = useCytometryGraphStore();
-  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: number[]; axisType: AxisTypes }>({
+  const [heatmapData, setHeatmapData] = useState<GraphData>({
     x: [],
     y: [],
     z: [],
@@ -69,6 +70,7 @@ export const CytometryGraph = () => {
         if (output.completed && output.success && output.data) {
           setHeatmapData({
             ...output.data,
+            metadata: output.metadata,
             axisType: settings.axisType
           });
           setLoader(undefined);
@@ -135,7 +137,13 @@ export const CytometryGraph = () => {
       y: heatmapData.y,
       mode: 'markers',
       marker: {
-        color: mapValuesToColors(heatmapData.z, settings.colorscale.value, settings.colorscale.reversed),
+        color: mapValuesToColors(
+          heatmapData.z,
+          settings.colorscale.value,
+          settings.colorscale.upperThreshold,
+          settings.colorscale.lowerThreshold,
+          settings.colorscale.reversed
+        ),
         size: settings.pointSize
       },
       showscale: true,
@@ -285,6 +293,12 @@ export const CytometryGraph = () => {
               });
             }
           }}
+        />
+      </Box>
+      <Box sx={{ backgroundColor: theme.palette.gx.primary.white, paddingInline: '32px' }}>
+        <ColorscaleSlider
+          min={heatmapData.metadata?.zMin}
+          max={heatmapData.metadata?.zMax}
         />
       </Box>
       <GraphRangeInputs
