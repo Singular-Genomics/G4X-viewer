@@ -11,6 +11,7 @@ import {
 } from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../../shared/components/GxInput';
+import { GxCheckbox } from '../../../../../../../shared/components/GxCheckbox';
 
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
@@ -18,22 +19,27 @@ export const CytometrySettingsMenu = () => {
   const { updateSettings } = useCytometryGraphStore();
   const menenuAnchor = useRef(null);
   const [openMenu, setOpenMenu] = useState(false);
-  const [binSizeInput, setBinSizeInput] = useState('');
+  const [binXCountInput, setBinXCountInput] = useState('');
+  const [binYCountInput, setBinYCountInput] = useState('');
   const [axisTypeInput, setAxisTypeInput] = useState<SelectOption | undefined>(undefined);
   const [exponentFormatInput, setExponentFormatInput] = useState<SelectOption | undefined>(undefined);
   const [colorscaleInput, setColorscaleInput] = useState<ColorScaleOption | undefined>(undefined);
 
   useEffect(() => {
-    const { binSize, colorscale, axisType, exponentFormat } = useCytometryGraphStore.getState().settings;
+    const { binCountX, binCountY, colorscale, axisType, exponentFormat } = useCytometryGraphStore.getState().settings;
 
     const matchingAxisOption = AVAILABLE_AXIS_TYPES.find((item) => item.value === axisType);
+
     const matchingExponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.value === exponentFormat);
 
     setColorscaleInput(colorscale);
-    setBinSizeInput(binSize.toString());
+    setBinXCountInput(binCountX.toString());
+    setBinYCountInput(binCountY.toString());
+
     if (matchingAxisOption) {
       setAxisTypeInput(matchingAxisOption);
     }
+
     if (matchingExponentFormatOption) {
       setExponentFormatInput(matchingExponentFormatOption);
     }
@@ -41,13 +47,13 @@ export const CytometrySettingsMenu = () => {
 
   const onColorscaleSelect = useCallback(
     (newColorScale: string) => {
-      const colorscale = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
-      if (colorscale) {
-        updateSettings({ colorscale });
-        setColorscaleInput(colorscale);
+      const colorscaleConfig = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
+      if (colorscaleConfig) {
+        updateSettings({ colorscale: { ...colorscaleConfig, reversed: !!colorscaleInput?.reversed } });
+        setColorscaleInput((prev) => prev && { ...colorscaleConfig, reversed: prev.reversed });
       }
     },
-    [updateSettings]
+    [updateSettings, colorscaleInput?.reversed]
   );
 
   const onAxisTypeSelect = useCallback(
@@ -74,19 +80,33 @@ export const CytometrySettingsMenu = () => {
 
   const handleBinSizeChange = useMemo(
     () =>
-      debounce((newBinSize: number) => {
-        updateSettings({ binSize: newBinSize });
+      debounce((newBinSize: number, axis: 'x' | 'y') => {
+        updateSettings(axis === 'x' ? { binCountX: newBinSize } : { binCountY: newBinSize });
       }, 350),
     [updateSettings]
   );
 
   const onBinSizeInput = useCallback(
-    (newBinSize: string) => {
-      setBinSizeInput(newBinSize);
-      handleBinSizeChange(Number(newBinSize));
+    (newBinSize: string, axis: 'x' | 'y') => {
+      if (axis === 'x') {
+        setBinXCountInput(newBinSize);
+      } else {
+        setBinYCountInput(newBinSize);
+      }
+
+      if (newBinSize && Number(newBinSize) > 1) {
+        handleBinSizeChange(Number(newBinSize), axis);
+      }
     },
     [handleBinSizeChange]
   );
+
+  const onReverseColorscale = useCallback(() => {
+    if (colorscaleInput) {
+      updateSettings({ colorscale: { ...colorscaleInput, reversed: !colorscaleInput?.reversed } });
+      setColorscaleInput((prev) => prev && { ...prev, reversed: !prev.reversed });
+    }
+  }, [colorscaleInput, updateSettings]);
 
   return (
     <Box
@@ -114,7 +134,7 @@ export const CytometrySettingsMenu = () => {
           container
           columns={2}
           rowSpacing={1}
-          sx={{ width: '400px' }}
+          sx={{ width: '300px' }}
         >
           <Grid
             alignContent={'center'}
@@ -144,15 +164,46 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Bin size:</Typography>
+            <Typography>Reverse colorscale:</Typography>
+          </Grid>
+          <Grid>
+            <GxCheckbox
+              value={colorscaleInput?.reversed}
+              onClick={onReverseColorscale}
+            />
+          </Grid>
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Bin count (X):</Typography>
+            <Typography sx={sx.helperText}>Min 2</Typography>
           </Grid>
           <Grid size={1}>
             <GxInput
               fullWidth
-              value={binSizeInput}
+              value={binXCountInput}
               type="number"
               variant="standard"
-              onChange={(e) => onBinSizeInput(e.target.value)}
+              error={+binXCountInput < 2}
+              onChange={(e) => onBinSizeInput(e.target.value, 'x')}
+            />
+          </Grid>
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Bin count (Y):</Typography>
+            <Typography sx={sx.helperText}>Min 2</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxInput
+              fullWidth
+              value={binYCountInput}
+              type="number"
+              variant="standard"
+              error={+binYCountInput < 2}
+              onChange={(e) => onBinSizeInput(e.target.value, 'y')}
             />
           </Grid>
           <Grid
@@ -223,5 +274,9 @@ const styles = (theme: Theme) => ({
     '& .MuiPaper-root': {
       padding: '8px'
     }
+  },
+  helperText: {
+    fontSize: '11px',
+    color: theme.palette.gx.mediumGrey[100]
   }
 });
