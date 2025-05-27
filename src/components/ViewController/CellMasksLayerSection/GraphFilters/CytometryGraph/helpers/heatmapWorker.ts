@@ -1,16 +1,19 @@
 import { Datum } from 'plotly.js';
 import WorkerScript from './script.ts?worker';
+import { AxisTypes } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 
 export type HeatmapWorkerInput = {
   xValues: number[];
   yValues: number[];
-  binSize: number;
+  binXCount: number;
+  binYCount: number;
+  axisType: AxisTypes;
 };
 
 export type HeatmapWorkerOutput = {
   progress?: number;
   completed?: boolean;
-  message?: boolean;
+  message?: string;
   data?: {
     x: Datum[];
     y: Datum[];
