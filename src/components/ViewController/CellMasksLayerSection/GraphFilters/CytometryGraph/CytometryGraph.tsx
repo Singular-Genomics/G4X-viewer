@@ -131,7 +131,7 @@ export const CytometryGraph = () => {
       y: heatmapData.y,
       mode: 'markers',
       marker: {
-        color: mapValuesToColors(heatmapData.z, settings.colorscale.value),
+        color: mapValuesToColors(heatmapData.z, settings.colorscale.value, settings.colorscale.reversed),
         size: settings.pointSize
       },
       showscale: true,

@@ -7,26 +7,25 @@ export function mapValuesToColors(values: number[], colorscale: [number, string]
   }
 
   return values.map((value) => {
-    if (value <= colorscale[0][0]) {
-      return colorscale[0][1];
+    if (value <= scale[0][0]) {
+      return scale[0][1];
     }
-    if (value >= colorscale[colorscale.length - 1][0]) {
-      return colorscale[colorscale.length - 1][1];
+    if (value >= scale[scale.length - 1][0]) {
+      return scale[scale.length - 1][1];
     }
 
-    // Find the two threshold points that bracket our value
     let lowerIndex = 0;
-    for (let i = 0; i < colorscale.length - 1; i++) {
-      if (value >= colorscale[i][0] && value <= colorscale[i + 1][0]) {
+    for (let i = 0; i < scale.length - 1; i++) {
+      if (value >= scale[i][0] && value <= scale[i + 1][0]) {
         lowerIndex = i;
         break;
       }
     }
 
-    const lowerThreshold = colorscale[lowerIndex][0];
-    const upperThreshold = colorscale[lowerIndex + 1][0];
-    const lowerColor = colorscale[lowerIndex][1];
-    const upperColor = colorscale[lowerIndex + 1][1];
+    const lowerThreshold = scale[lowerIndex][0];
+    const upperThreshold = scale[lowerIndex + 1][0];
+    const lowerColor = scale[lowerIndex][1];
+    const upperColor = scale[lowerIndex + 1][1];
 
     if (value === lowerThreshold) {
       return lowerColor;
