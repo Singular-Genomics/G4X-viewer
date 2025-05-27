@@ -1,8 +1,6 @@
-import { ColorScale } from 'plotly.js';
-
 export type ColorScaleOption = {
   label: string;
-  value: ColorScale;
+  value: [number, string][];
   reversed: boolean;
 };
 

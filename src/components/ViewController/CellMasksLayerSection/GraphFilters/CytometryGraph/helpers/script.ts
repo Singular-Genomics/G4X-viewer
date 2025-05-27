@@ -1,6 +1,5 @@
+import { Datum } from 'plotly.js';
 import { HeatmapWorkerInput } from './heatmapWorker';
-
-const MAX_DATA_SET_SIZE = 1_000_000;
 
 const findMinValue = (array: number[]): number => {
   return array.reduce((min, curr) => (curr < min ? curr : min), Infinity);
@@ -45,12 +44,35 @@ function findBin2D(x: number, y: number, xBins: number[], yBins: number[]) {
 }
 
 onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
-  const { xValues, yValues, binXCount, binYCount, axisType } = e.data;
+  const { maskData, xProteinName, yProteinName, binXCount, binYCount, axisType, subsamplingStep } = e.data;
 
-  const subSamplingValue = Math.ceil(Math.max(xValues.length / MAX_DATA_SET_SIZE, yValues.length / MAX_DATA_SET_SIZE));
+  const xValuesSampled = [];
+  const yValuesSampled = [];
 
-  const xValuesSampled = xValues.filter((_, idx) => !(idx % subSamplingValue));
-  const yValuesSampled = yValues.filter((_, idx) => !(idx % subSamplingValue));
+  if (!maskData.length) {
+    this.postMessage({
+      completed: true,
+      success: false,
+      message: 'Missing segmentation masks data'
+    });
+  } else if (!xProteinName || !yProteinName) {
+    this.postMessage({
+      completed: true,
+      success: false,
+      message: 'Missing protein names'
+    });
+  } else if (subsamplingStep <= 0) {
+    this.postMessage({
+      completed: true,
+      success: false,
+      message: 'Invalid subsampling step'
+    });
+  }
+
+  for (let i = 0; i < maskData.length; i += subsamplingStep) {
+    xValuesSampled.push(maskData[i].proteins[xProteinName]);
+    yValuesSampled.push(maskData[i].proteins[yProteinName]);
+  }
 
   const xMax = findMaxValue(xValuesSampled);
   const xMin = findMinValue(xValuesSampled);
@@ -70,12 +92,7 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
     const zMatrix = Array(binYCount + 1)
       .fill(0)
       .map(() => Array(binXCount + 1).fill(0));
-    const xAxis = Array(binXCount + 1)
-      .fill(0)
-      .map((_, i) => xMin + i * xBinSize);
-    const yAxis = Array(binYCount + 1)
-      .fill(0)
-      .map((_, i) => yMin + i * yBinSize);
+    const pointBinMap = new Map();
 
     this.postMessage({
       progress: 10,
@@ -100,25 +117,49 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
       const yBin = Math.floor((y - yMin) / yBinSize);
 
       zMatrix[yBin][xBin] += 1;
+      pointBinMap.set(i, { x: xBin, y: yBin });
     }
 
-    const heatmapData = {
-      z: zMatrix,
-      y: yAxis,
-      x: xAxis
+    const maxZ = findMaxValue(zMatrix.flat());
+
+    const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
+      z: [],
+      y: [],
+      x: []
     };
+
+    for (let i = 0; i < totalPoints; i++) {
+      if (i % 1000 === 0) {
+        const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
+        this.postMessage({
+          progress: progressPercentage,
+          completed: false,
+          message: `Normalizing data: ${i}/${totalPoints}`
+        });
+      }
+
+      const binIndex = pointBinMap.get(i);
+      if (!binIndex) continue;
+
+      const currentCount = zMatrix[binIndex.y][binIndex.x];
+      if (currentCount === 0) continue;
+
+      heatmapData.x.push(xValuesSampled[i]);
+      heatmapData.y.push(yValuesSampled[i]);
+      heatmapData.z.push(currentCount / maxZ);
+    }
 
     const heatmapMetadata = {
       xMax,
       xMin,
       yMax,
-      yMin,
-      subsampling: subSamplingValue
+      yMin
     };
 
     this.postMessage({
       progress: 100,
       completed: true,
+      success: true,
       message: 'Aggregation complete',
       data: heatmapData,
       metadata: heatmapMetadata
@@ -147,6 +188,7 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
     const yAxis = Array(binYCount)
       .fill(0)
       .map((_, i) => Math.pow(10, logMinY + i * logStepY));
+    const pointBinMap = new Map();
 
     this.postMessage({
       progress: 10,
@@ -157,7 +199,7 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
     const totalPoints = xValuesSampled.length;
     for (let i = 0; i < totalPoints; i++) {
       if (i % 1000 === 0) {
-        const progressPercentage = 20 + Math.floor((i / totalPoints) * 90);
+        const progressPercentage = 20 + Math.floor((i / totalPoints) * 40);
         this.postMessage({
           progress: progressPercentage,
           completed: false,
@@ -173,32 +215,54 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
       if (!index) continue;
 
       try {
-        zMatrix[index.x][index.y] += 1;
+        zMatrix[index.y][index.x] += 1;
+        pointBinMap.set(i, index);
       } catch {
         failed.push(index);
         continue;
       }
     }
 
-    const heatmapData = {
-      z: zMatrix,
-      y: yAxis,
-      x: xAxis
+    const maxZ = findMaxValue(zMatrix.flat());
+
+    const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
+      z: [],
+      y: [],
+      x: []
     };
 
-    console.table(failed);
+    for (let i = 0; i < totalPoints; i++) {
+      if (i % 1000 === 0) {
+        const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
+        this.postMessage({
+          progress: progressPercentage,
+          completed: false,
+          message: `Normalizing data: ${i}/${totalPoints}`
+        });
+      }
+
+      const binIndex = pointBinMap.get(i);
+      if (!binIndex) continue;
+
+      const currentCount = zMatrix[binIndex.y][binIndex.x];
+      if (currentCount === 0) continue;
+
+      heatmapData.x.push(xValuesSampled[i]);
+      heatmapData.y.push(yValuesSampled[i]);
+      heatmapData.z.push(currentCount / maxZ);
+    }
 
     const heatmapMetadata = {
       xMax,
       xMin,
       yMax,
-      yMin,
-      subsampling: subSamplingValue
+      yMin
     };
 
     this.postMessage({
       progress: 100,
       completed: true,
+      success: true,
       message: 'Aggregation complete',
       data: heatmapData,
       metadata: heatmapMetadata

@@ -1,30 +1,33 @@
 import { Datum } from 'plotly.js';
 import WorkerScript from './script.ts?worker';
 import { AxisTypes } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { SingleMask } from '../../../../../../shared/types';
 
 export type HeatmapWorkerInput = {
-  xValues: number[];
-  yValues: number[];
+  maskData: SingleMask[];
+  xProteinName: string;
+  yProteinName: string;
   binXCount: number;
   binYCount: number;
   axisType: AxisTypes;
+  subsamplingStep: number;
 };
 
 export type HeatmapWorkerOutput = {
   progress?: number;
   completed?: boolean;
+  success?: boolean;
   message?: string;
   data?: {
     x: Datum[];
     y: Datum[];
-    z: Datum[][];
+    z: number[];
   };
   metadata?: {
     xMax?: number;
     xMin?: number;
     yMax?: number;
     yMin?: number;
-    subsampling?: number;
   };
 };
 

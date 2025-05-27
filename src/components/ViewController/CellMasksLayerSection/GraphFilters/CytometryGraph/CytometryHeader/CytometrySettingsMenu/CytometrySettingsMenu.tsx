@@ -13,6 +13,11 @@ import { GxSelect } from '../../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../../shared/components/GxInput';
 import { GxCheckbox } from '../../../../../../../shared/components/GxCheckbox';
 
+const MIN_POINT_SIZE = 1;
+const MAX_POINT_SIZE = 10;
+const MIN_SUBSAMPLE_VALUE = 1;
+const MAX_SUBSAMPLE_VALUE = 20;
+
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -21,20 +26,25 @@ export const CytometrySettingsMenu = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const [binXCountInput, setBinXCountInput] = useState('');
   const [binYCountInput, setBinYCountInput] = useState('');
+  const [pointSizeInput, setPointSizeInput] = useState('');
+  const [subsamplingInput, setSubsamplingInput] = useState('');
   const [axisTypeInput, setAxisTypeInput] = useState<SelectOption | undefined>(undefined);
   const [exponentFormatInput, setExponentFormatInput] = useState<SelectOption | undefined>(undefined);
   const [colorscaleInput, setColorscaleInput] = useState<ColorScaleOption | undefined>(undefined);
 
   useEffect(() => {
-    const { binCountX, binCountY, colorscale, axisType, exponentFormat } = useCytometryGraphStore.getState().settings;
+    const { binCountX, binCountY, colorscale, axisType, exponentFormat, subsamplingValue, pointSize } =
+      useCytometryGraphStore.getState().settings;
 
     const matchingAxisOption = AVAILABLE_AXIS_TYPES.find((item) => item.value === axisType);
 
     const matchingExponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.value === exponentFormat);
 
     setColorscaleInput(colorscale);
-    setBinXCountInput(binCountX.toString());
-    setBinYCountInput(binCountY.toString());
+    setBinXCountInput((binCountX || 0).toString());
+    setBinYCountInput((binCountY || 0).toString());
+    setSubsamplingInput((subsamplingValue || 0).toString());
+    setPointSizeInput((pointSize || 0).toString());
 
     if (matchingAxisOption) {
       setAxisTypeInput(matchingAxisOption);
@@ -56,27 +66,21 @@ export const CytometrySettingsMenu = () => {
     [updateSettings, colorscaleInput?.reversed]
   );
 
-  const onAxisTypeSelect = useCallback(
-    (newAxisType: string) => {
-      const axisTypeOption = AVAILABLE_AXIS_TYPES.find((item) => item.label === newAxisType);
-      if (axisTypeOption) {
-        setAxisTypeInput(axisTypeOption);
-        updateSettings({ axisType: axisTypeOption.value });
-      }
-    },
-    [updateSettings]
-  );
+  const onAxisTypeSelect = (newAxisType: string) => {
+    const axisTypeOption = AVAILABLE_AXIS_TYPES.find((item) => item.label === newAxisType);
+    if (axisTypeOption) {
+      setAxisTypeInput(axisTypeOption);
+      updateSettings({ axisType: axisTypeOption.value });
+    }
+  };
 
-  const onExponentFormatSelect = useCallback(
-    (newExponentFormat: string) => {
-      const exponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.label === newExponentFormat);
-      if (exponentFormatOption) {
-        setExponentFormatInput(exponentFormatOption);
-        updateSettings({ exponentFormat: exponentFormatOption.value });
-      }
-    },
-    [updateSettings]
-  );
+  const onExponentFormatSelect = (newExponentFormat: string) => {
+    const exponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.label === newExponentFormat);
+    if (exponentFormatOption) {
+      setExponentFormatInput(exponentFormatOption);
+      updateSettings({ exponentFormat: exponentFormatOption.value });
+    }
+  };
 
   const handleBinSizeChange = useMemo(
     () =>
@@ -86,27 +90,60 @@ export const CytometrySettingsMenu = () => {
     [updateSettings]
   );
 
-  const onBinSizeInput = useCallback(
-    (newBinSize: string, axis: 'x' | 'y') => {
-      if (axis === 'x') {
-        setBinXCountInput(newBinSize);
-      } else {
-        setBinYCountInput(newBinSize);
-      }
+  const onBinSizeInput = (newBinSize: string, axis: 'x' | 'y') => {
+    if (axis === 'x') {
+      setBinXCountInput(newBinSize);
+    } else {
+      setBinYCountInput(newBinSize);
+    }
 
-      if (newBinSize && Number(newBinSize) > 1) {
-        handleBinSizeChange(Number(newBinSize), axis);
-      }
-    },
-    [handleBinSizeChange]
-  );
+    if (newBinSize && Number(newBinSize) > 1) {
+      handleBinSizeChange(Number(newBinSize), axis);
+    }
+  };
 
-  const onReverseColorscale = useCallback(() => {
+  const onReverseColorscale = () => {
     if (colorscaleInput) {
       updateSettings({ colorscale: { ...colorscaleInput, reversed: !colorscaleInput?.reversed } });
       setColorscaleInput((prev) => prev && { ...prev, reversed: !prev.reversed });
     }
-  }, [colorscaleInput, updateSettings]);
+  };
+
+  const debouncedSettingsUpdate = useMemo(
+    () =>
+      debounce((newSettings) => {
+        updateSettings(newSettings);
+      }, 250),
+    [updateSettings]
+  );
+
+  const handlePointSizeChange = (newValue: string) => {
+    setPointSizeInput(newValue);
+    if (
+      newValue &&
+      /^[0-9]*$/.test(newValue) &&
+      Number(newValue) >= MIN_POINT_SIZE &&
+      Number(newValue) <= MAX_POINT_SIZE
+    ) {
+      debouncedSettingsUpdate({
+        pointSize: Number(newValue)
+      });
+    }
+  };
+
+  const handleSubsamplingChange = (newValue: string) => {
+    setSubsamplingInput(newValue);
+    if (
+      newValue &&
+      /^[0-9]*$/.test(newValue) &&
+      Number(newValue) >= MIN_SUBSAMPLE_VALUE &&
+      Number(newValue) <= MAX_SUBSAMPLE_VALUE
+    ) {
+      debouncedSettingsUpdate({
+        subsamplingValue: Number(newValue)
+      });
+    }
+  };
 
   return (
     <Box
@@ -134,8 +171,9 @@ export const CytometrySettingsMenu = () => {
           container
           columns={2}
           rowSpacing={1}
-          sx={{ width: '300px' }}
+          sx={{ width: '350px' }}
         >
+          {/* Colorscale Select */}
           <Grid
             alignContent={'center'}
             size={1}
@@ -160,6 +198,7 @@ export const CytometrySettingsMenu = () => {
               ))}
             </GxSelect>
           </Grid>
+          {/* Reverse Colorscale Checkbox*/}
           <Grid
             alignContent={'center'}
             size={1}
@@ -172,6 +211,7 @@ export const CytometrySettingsMenu = () => {
               onClick={onReverseColorscale}
             />
           </Grid>
+          {/* Bin Count X */}
           <Grid
             alignContent={'center'}
             size={1}
@@ -189,6 +229,7 @@ export const CytometrySettingsMenu = () => {
               onChange={(e) => onBinSizeInput(e.target.value, 'x')}
             />
           </Grid>
+          {/* Bin Count Y */}
           <Grid
             alignContent={'center'}
             size={1}
@@ -206,6 +247,43 @@ export const CytometrySettingsMenu = () => {
               onChange={(e) => onBinSizeInput(e.target.value, 'y')}
             />
           </Grid>
+          {/* Subsampling Input */}
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Subsampling Step:</Typography>
+            <Typography sx={sx.helperText}>{`Min. ${MIN_SUBSAMPLE_VALUE} | Max. ${MAX_SUBSAMPLE_VALUE}`}</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxInput
+              fullWidth
+              type="number"
+              variant="standard"
+              value={subsamplingInput}
+              onChange={(e) => handleSubsamplingChange(e.target.value)}
+              error={Number(subsamplingInput) < MIN_SUBSAMPLE_VALUE || Number(subsamplingInput) > MAX_SUBSAMPLE_VALUE}
+            />
+          </Grid>
+          {/* Point Size Input */}
+          <Grid
+            alignContent={'center'}
+            size={1}
+          >
+            <Typography>Point Size:</Typography>
+            <Typography sx={sx.helperText}>{`Min. ${MIN_POINT_SIZE} | Max. ${MAX_POINT_SIZE}`}</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxInput
+              fullWidth
+              type="number"
+              variant="standard"
+              value={pointSizeInput}
+              onChange={(e) => handlePointSizeChange(e.target.value)}
+              error={Number(pointSizeInput) < MIN_SUBSAMPLE_VALUE || Number(pointSizeInput) > MAX_SUBSAMPLE_VALUE}
+            />
+          </Grid>
+          {/* Axis Type Select */}
           <Grid
             alignContent={'center'}
             size={1}
@@ -230,6 +308,7 @@ export const CytometrySettingsMenu = () => {
               ))}
             </GxSelect>
           </Grid>
+          {/* Exponent Format Select */}
           <Grid
             alignContent={'center'}
             size={1}

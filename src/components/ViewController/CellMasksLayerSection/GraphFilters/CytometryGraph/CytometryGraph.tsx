@@ -12,6 +12,7 @@ import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { LoaderInfo } from './CytometryGraph.types';
+import { mapValuesToColors } from './CytometryGraph.helpers';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
@@ -21,7 +22,7 @@ export const CytometryGraph = () => {
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { proteinNames, settings } = useCytometryGraphStore();
-  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: Datum[][] }>({
+  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: number[] }>({
     x: [],
     y: [],
     z: []
@@ -64,9 +65,14 @@ export const CytometryGraph = () => {
     if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binCountX && settings.binCountY) {
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
-        if (output.completed && output.data) {
+        if (output.completed && output.success && output.data) {
           setHeatmapData(output.data);
           setLoader(undefined);
+        } else if (output.completed && !output.success) {
+          enqueueSnackbar({
+            message: output.message,
+            variant: 'error'
+          });
         } else {
           setLoader({
             progress: output.progress,
@@ -76,11 +82,13 @@ export const CytometryGraph = () => {
       });
       worker.onError((error: any) => console.error(error));
       worker.postMessage({
-        xValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.xAxis as string]),
-        yValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.yAxis as string]),
+        maskData: cellMasksData,
+        xProteinName: proteinNames.xAxis,
+        yProteinName: proteinNames.yAxis,
         binXCount: settings.binCountX,
         binYCount: settings.binCountY,
-        axisType: settings.axisType
+        axisType: settings.axisType,
+        subsamplingStep: settings.subsamplingValue
       });
     }
   }, [
@@ -89,7 +97,9 @@ export const CytometryGraph = () => {
     proteinNames.yAxis,
     settings.binCountX,
     settings.binCountY,
-    settings.axisType
+    settings.axisType,
+    settings.subsamplingValue,
+    enqueueSnackbar
   ]);
 
   useEffect(() => {
@@ -116,15 +126,17 @@ export const CytometryGraph = () => {
 
   const plotData: Data[] = [
     {
-      type: 'heatmap',
+      type: 'scattergl',
       x: heatmapData.x,
       y: heatmapData.y,
-      z: heatmapData.z,
-      colorscale: settings.colorscale.value,
-      reversescale: settings.colorscale.reversed,
+      mode: 'markers',
+      marker: {
+        color: mapValuesToColors(heatmapData.z, settings.colorscale.value),
+        size: settings.pointSize
+      },
       showscale: true,
       hoverinfo: 'x+y+z',
-      hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
+      hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>'
     }
   ];
 
@@ -249,7 +261,7 @@ export const CytometryGraph = () => {
           </Box>
         )}
         <Plot
-          data={plotData}
+          data={loader ? [] : plotData}
           layout={layout as Partial<Layout>}
           config={{
             modeBarButtons: [

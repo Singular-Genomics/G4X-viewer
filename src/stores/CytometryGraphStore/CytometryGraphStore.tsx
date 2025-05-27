@@ -12,6 +12,8 @@ const DEFAULT_VALUES: CytometryGraphStoreValues = {
   proteinNames: {},
   ranges: undefined,
   settings: {
+    pointSize: 2,
+    subsamplingValue: 1,
     binCountX: 100,
     binCountY: 100,
     colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
