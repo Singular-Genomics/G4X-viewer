@@ -3,15 +3,23 @@ import { SingleMask } from '../../../../../shared/types';
 
 export async function getPlotData(
   cellMasksData: SingleMask[],
-  subsamplingValue: number
+  subsamplingValue: number = 1
 ): Promise<{ x: Datum[]; y: Datum[] }> {
-  return new Promise((resolve) => {
-    let xAxisValues = cellMasksData.map((mask) => mask.umapValues.umapX);
-    let yAxisValues = cellMasksData.map((mask) => mask.umapValues.umapY);
+  return new Promise((resolve, reject) => {
+    const xAxisValues = [];
+    const yAxisValues = [];
 
-    if (subsamplingValue) {
-      xAxisValues = xAxisValues.filter((_, idx) => !(idx % subsamplingValue));
-      yAxisValues = yAxisValues.filter((_, idx) => !(idx % subsamplingValue));
+    if (subsamplingValue <= 0) {
+      reject({
+        x: [],
+        y: []
+      });
+    }
+
+    for (let i = 0; i < cellMasksData.length; i += subsamplingValue) {
+      const mask = cellMasksData[i];
+      xAxisValues.push(mask.umapValues.umapX);
+      yAxisValues.push(mask.umapValues.umapY);
     }
 
     resolve({

@@ -5,9 +5,9 @@ import { InputErrors } from './UmapGraphHeader.types';
 import { useUmapGraphStore } from '../../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { debounce } from 'lodash';
 
-const MIN_POINT_SIZE = 0;
+const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
-const MIN_SUBSAMPLE_VALUE = 0;
+const MIN_SUBSAMPLE_VALUE = 1;
 const MAX_SUBSAMPLE_VALUE = 20;
 
 export const UmapGraphHeader = () => {

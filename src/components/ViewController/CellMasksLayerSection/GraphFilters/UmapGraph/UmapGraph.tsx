@@ -32,7 +32,15 @@ export const UmapGraph = () => {
 
   useEffect(() => {
     if (cellMasksData) {
-      getPlotData(cellMasksData, settings.subsamplingValue).then((results) => setPlotData(results));
+      getPlotData(cellMasksData, settings.subsamplingValue)
+        .then((results) => setPlotData(results))
+        .catch((reject) => {
+          setPlotData(reject);
+          enqueueSnackbar({
+            message: 'Invalid subsampling vaule',
+            variant: 'error'
+          });
+        });
     }
   }, [cellMasksData, enqueueSnackbar, settings.subsamplingValue]);
 
