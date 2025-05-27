@@ -7,7 +7,7 @@ import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { AxisTypes, HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { HeatmapWorker } from './helpers/heatmapWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
@@ -22,10 +22,11 @@ export const CytometryGraph = () => {
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { proteinNames, settings } = useCytometryGraphStore();
-  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: number[] }>({
+  const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: number[]; axisType: AxisTypes }>({
     x: [],
     y: [],
-    z: []
+    z: [],
+    axisType: 'linear'
   });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [selectionRange, setSelectionRange] = useState<HeatmapRanges | undefined>(undefined);
@@ -66,7 +67,10 @@ export const CytometryGraph = () => {
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
         if (output.completed && output.success && output.data) {
-          setHeatmapData(output.data);
+          setHeatmapData({
+            ...output.data,
+            axisType: settings.axisType
+          });
           setLoader(undefined);
         } else if (output.completed && !output.success) {
           enqueueSnackbar({
@@ -152,7 +156,7 @@ export const CytometryGraph = () => {
         text: proteinNames.xAxis,
         font: { size: 14 }
       },
-      type: settings.axisType,
+      type: heatmapData.axisType,
       autorange: true,
       linewidth: 2,
       mirror: true,
@@ -166,7 +170,7 @@ export const CytometryGraph = () => {
         font: { size: 14 },
         standoff: 10
       },
-      type: settings.axisType,
+      type: heatmapData.axisType,
       autorange: true,
       linewidth: 2,
       mirror: true,
