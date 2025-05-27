@@ -9,12 +9,15 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showData: boolean;
   showDiscardedPoints: boolean;
   disabledTiledView: boolean;
+  selectedPoints: any[];
 };
 
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
   points: any[];
+  unselectedPoints: any[];
+  selectedPoints: any[];
   outlierPoints: any[];
   tileData: { width: number; height: number };
   boundingBox: number[];
@@ -31,6 +34,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
+  selectedPoints: any[];
   onHover?: (pikingInfo: PickingInfo) => void;
 };
 

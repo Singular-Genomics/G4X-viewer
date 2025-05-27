@@ -10,6 +10,7 @@ export type TranscriptLayerStoreValues = {
   overrideLayers: boolean;
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
+  selectedPoints: any[];
 };
 
 export type GeneNameFilterType = string[];
@@ -24,5 +25,6 @@ export type TranscriptLayerStoreMethods = {
   setPointSize: (newPointSize: number) => void;
   setGeneNamesFilter: (geneNames: GeneNameFilterType) => void;
   clearGeneNameFilters: () => void;
+  setSelectedPoints: (points: any[]) => void;
   reset: () => void;
 };

@@ -106,7 +106,8 @@ export const useTranscriptLayer = () => {
     isGeneNameFilterActive,
     showFilteredPoints,
     overrideLayers,
-    maxVisibleLayers
+    maxVisibleLayers,
+    selectedPoints
   ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isTranscriptLayerOn,
@@ -117,7 +118,8 @@ export const useTranscriptLayer = () => {
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
       store.overrideLayers,
-      store.maxVisibleLayers
+      store.maxVisibleLayers,
+      store.selectedPoints
     ])
   );
 
@@ -137,6 +139,7 @@ export const useTranscriptLayer = () => {
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
+    selectedPoints,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -241,6 +244,7 @@ export const usePolygonDrawingLayer = () => {
     );
 
   const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const setSelectedPoints = useTranscriptLayerStore((store) => store.setSelectedPoints);
 
   const transcriptLayerRef = useRef<any>(null);
   const transcriptLayer = useTranscriptLayer();
@@ -377,11 +381,14 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: countByGeneName
           };
 
+          setSelectedPoints(uniquePointsInPolygon);
           updatePolygonFeatures(updatedData.features);
         }
       }
     } else if (editType === 'selectFeature') {
       selectFeature(featureIndexes[0]);
+    } else if (editType === 'removeFeature' || editType === 'moveFeature') {
+      setSelectedPoints([]);
     }
   };
 
@@ -393,6 +400,7 @@ export const usePolygonDrawingLayer = () => {
     onEdit,
     pickable: true,
     autoHighlight: true,
+    // coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
     getFillColor: [0, 200, 0, 100],
     getLineColor: [0, 200, 0, 200],
     lineWidthMinPixels: 2,

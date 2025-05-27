@@ -25,7 +25,8 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
     });
 
     // @ INFO TEXT LAYER
-    const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
+    const { index, textPosition, points, unselectedPoints, selectedPoints, outlierPoints, tileData } =
+      this.props.layerData[0];
 
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
@@ -63,9 +64,9 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showDiscardedPoints
     });
 
-    const pointsLayer = new ScatterplotLayer({
+    const unselectedPointsLayer = new ScatterplotLayer({
       id: `sub-point-layer-${this.props.id}`,
-      data: points,
+      data: unselectedPoints,
       getPosition: (d) => d.position,
       getFillColor: (d) => d.color,
       getRadius: this.props.pointSize,
@@ -73,7 +74,22 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       pickable: true
     });
 
-    return [boundingBoxLayer, textLayer, discardedPointsLayer, pointsLayer];
+    const selectedPointsLayer = new ScatterplotLayer({
+      id: `sub-selected-points-layer-${this.props.id}`,
+      data: selectedPoints,
+      getPosition: (d) => d.position,
+      getFillColor: (d) => d.color,
+      getLineColor: [255, 255, 255],
+      getLineWidth: 1.7,
+      getRadius: this.props.pointSize + 0.5,
+      stroked: true,
+      radiusUnits: 'pixels',
+      lineWidthUnits: 'pixels',
+      pickable: true,
+      visible: selectedPoints.length > 0
+    });
+
+    return [boundingBoxLayer, textLayer, discardedPointsLayer, unselectedPointsLayer, selectedPointsLayer];
   }
 }
 
@@ -132,6 +148,21 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           );
         }
 
+        const selectedPointsData = pointsData.filter((point: any) =>
+          this.props.selectedPoints.some(
+            (selectedPoint: any) =>
+              selectedPoint.position[0] === point.position[0] && selectedPoint.position[1] === point.position[1]
+          )
+        );
+
+        const unselectedPointsData = pointsData.filter(
+          (point: any) =>
+            !this.props.selectedPoints.some(
+              (selectedPoint: any) =>
+                selectedPoint.position[0] === point.position[0] && selectedPoint.position[1] === point.position[1]
+            )
+        );
+
         return [
           {
             index,
@@ -151,6 +182,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
               0
             ],
             points: pointsData,
+            unselectedPoints: unselectedPointsData,
+            selectedPoints: selectedPointsData,
             outlierPoints: outlierPointsData,
             tileData: {
               width: bbox.right - bbox.left,
@@ -185,7 +218,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
-          this.props.pointSize
+          this.props.pointSize,
+          this.props.selectedPoints
         ]
       },
       renderSubLayers: ({ id, data }) =>
@@ -195,7 +229,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           pointSize: this.props.pointSize,
           showBoundries: this.props.showTilesBoundries,
           showData: this.props.showTilesData,
-          showDiscardedPoints: this.props.showDiscardedPoints
+          showDiscardedPoints: this.props.showDiscardedPoints,
+          selectedPoints: this.props.selectedPoints
         })
     });
     return [tiledLayer];

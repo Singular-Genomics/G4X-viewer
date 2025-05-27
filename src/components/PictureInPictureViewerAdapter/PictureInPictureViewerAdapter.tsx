@@ -122,6 +122,12 @@ export const PictureInPictureViewerAdapter = () => {
     controller: {
       doubleClickZoom: false
     }
+    // getCursor: ({ isDragging }: any) => {
+    //   if (polygonDrawingLayer && (polygonDrawingLayer as any).props.mode) {
+    //     return 'crosshair';
+    //   }
+    //   return isDragging ? 'grabbing' : 'grab';
+    // }
   };
 
   if (brightfieldImageSource && !isImageLoading) {
