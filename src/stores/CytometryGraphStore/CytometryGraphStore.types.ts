@@ -16,12 +16,14 @@ export type CytometryGraphStoreMethods = {
 };
 
 type HeatmapSettings = {
-  binSize: number;
+  binCountX: number;
+  binCountY: number;
+  axisType: AxisTypes;
   colorscale: {
     label: string;
     value: ColorScale;
+    reversed: boolean;
   };
-  axisType: string;
   exponentFormat: string;
 };
 
@@ -36,6 +38,10 @@ export type HeatmapRanges = {
   yStart: number;
   yEnd: number;
 };
+
+export type AxisTypes = 'log' | 'linear';
+
+export type ExponentFormat = 'none' | 'power' | 'E' | 'e' | 'SI';
 
 export const AVAILABLE_COLORSCALES: { label: string; value: ColorScale }[] = [
   {
@@ -69,12 +75,12 @@ export const AVAILABLE_COLORSCALES: { label: string; value: ColorScale }[] = [
   { label: 'Bluered', value: 'Bluered' }
 ];
 
-export const AVAILABLE_AXIS_TYPES = [
+export const AVAILABLE_AXIS_TYPES: { label: string; value: AxisTypes }[] = [
   { label: 'Linear', value: 'linear' },
   { label: 'Logarythmic', value: 'log' }
 ];
 
-export const AVAILABLE_EXPONENT_FORMATS = [
+export const AVAILABLE_EXPONENT_FORMATS: { label: string; value: ExponentFormat }[] = [
   { label: 'None', value: 'none' },
   { label: 'Power', value: 'power' },
   { label: 'Exponent (E)', value: 'E' },

@@ -12,8 +12,9 @@ const DEFAULT_VALUES: CytometryGraphStoreValues = {
   proteinNames: {},
   ranges: undefined,
   settings: {
-    binSize: 100,
-    colorscale: AVAILABLE_COLORSCALES[0],
+    binCountX: 100,
+    binCountY: 100,
+    colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
     axisType: AVAILABLE_AXIS_TYPES[0].value,
     exponentFormat: AVAILABLE_EXPONENT_FORMATS[0].value
   }
