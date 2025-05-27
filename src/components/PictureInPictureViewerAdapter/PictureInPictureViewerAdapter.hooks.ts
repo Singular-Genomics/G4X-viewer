@@ -244,7 +244,9 @@ export const usePolygonDrawingLayer = () => {
     );
 
   const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
-  const setSelectedPoints = useTranscriptLayerStore((store) => store.setSelectedPoints);
+  const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
+    useShallow((store) => [store.selectedPoints, store.setSelectedPoints])
+  );
 
   const transcriptLayerRef = useRef<any>(null);
   const transcriptLayer = useTranscriptLayer();
@@ -381,7 +383,9 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: countByGeneName
           };
 
-          setSelectedPoints(uniquePointsInPolygon);
+          const combinedSelectedPoints = [...selectedPoints, ...uniquePointsInPolygon];
+          const uniqueCombinedPoints = cleanupDuplicatePoints(combinedSelectedPoints);
+          setSelectedPoints(uniqueCombinedPoints);
           updatePolygonFeatures(updatedData.features);
         }
       }
