@@ -1,21 +1,24 @@
-import { alpha, Box, useTheme } from '@mui/material';
+import { alpha, Box, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Datum, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GraphRangeInputs } from '../GraphRangeInputs';
-import { HeatmapWorker } from './helpers/heatmapWorker';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
+import { HeatmapWorker } from './helpers/heatmapWorker';
+import { GxLoader } from '../../../../../shared/components/GxLoader';
+import { LoaderInfo } from './CytometryGraph.types';
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
 
   const { enqueueSnackbar } = useSnackbar();
+  const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { proteinNames, settings } = useCytometryGraphStore();
   const [heatmapData, setHeatmapData] = useState<{ x: Datum[]; y: Datum[]; z: Datum[][] }>({
@@ -58,21 +61,36 @@ export const CytometryGraph = () => {
   }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
-    if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binSize) {
+    if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binCountX && settings.binCountY) {
       const worker = new HeatmapWorker();
       worker.onMessage((output) => {
         if (output.completed && output.data) {
           setHeatmapData(output.data);
+          setLoader(undefined);
+        } else {
+          setLoader({
+            progress: output.progress,
+            message: output.message
+          });
         }
       });
-      worker.onError((error) => console.error(error));
+      worker.onError((error: any) => console.error(error));
       worker.postMessage({
         xValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.xAxis as string]),
         yValues: cellMasksData.map((mask: any) => mask.proteins[proteinNames.yAxis as string]),
-        binSize: settings.binSize
+        binXCount: settings.binCountX,
+        binYCount: settings.binCountY,
+        axisType: settings.axisType
       });
     }
-  }, [cellMasksData, proteinNames.xAxis, proteinNames.yAxis, settings.binSize]);
+  }, [
+    cellMasksData,
+    proteinNames.xAxis,
+    proteinNames.yAxis,
+    settings.binCountX,
+    settings.binCountY,
+    settings.axisType
+  ]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -103,6 +121,7 @@ export const CytometryGraph = () => {
       y: heatmapData.y,
       z: heatmapData.z,
       colorscale: settings.colorscale.value,
+      reversescale: settings.colorscale.reversed,
       showscale: true,
       hoverinfo: 'x+y+z',
       hovertemplate: 'X: %{x}<br>Y: %{y}<br>Count: %{z}<extra></extra>'
@@ -180,29 +199,76 @@ export const CytometryGraph = () => {
         ref={containerRef}
         sx={sx.graphWrapper}
       >
-        {plotData && (
-          <Plot
-            data={plotData}
-            layout={layout as Partial<Layout>}
-            config={{
-              modeBarButtons: [
-                ['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews', 'toImage']
-              ],
-              scrollZoom: true,
-              displayModeBar: true
+        {loader && (
+          <Box
+            sx={{
+              position: 'absolute',
+              zIndex: 10,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
-            onSelected={(e) => {
-              if (e?.range) {
-                setSelectionRange({
-                  xStart: e.range.x[0],
-                  xEnd: e.range.x[1],
-                  yStart: e.range.y[1],
-                  yEnd: e.range.y[0]
-                });
-              }
-            }}
-          />
+          >
+            <Box
+              sx={{
+                width: '50%',
+                height: '50%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: '8px',
+                background: alpha(theme.palette.gx.darkGrey[500], 0.55)
+              }}
+            >
+              <GxLoader />
+              <Typography
+                sx={{
+                  color: theme.palette.gx.primary.white,
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  marginBlockStart: '16px'
+                }}
+              >
+                {`${loader?.progress} %`}
+              </Typography>
+              {loader?.message && (
+                <Typography
+                  sx={{
+                    color: theme.palette.gx.primary.white,
+                    fontSize: '24px',
+                    fontWeight: 700
+                  }}
+                >
+                  {loader.message}
+                </Typography>
+              )}
+            </Box>
+          </Box>
         )}
+        <Plot
+          data={plotData}
+          layout={layout as Partial<Layout>}
+          config={{
+            modeBarButtons: [
+              ['select2d', 'zoom2d', 'zoomIn2d', 'zoomOut2d', 'pan2d', 'autoScale2d', 'resetViews', 'toImage']
+            ],
+            scrollZoom: true,
+            displayModeBar: true
+          }}
+          onSelected={(e) => {
+            if (e?.range) {
+              setSelectionRange({
+                xStart: e.range.x[0],
+                xEnd: e.range.x[1],
+                yStart: e.range.y[1],
+                yEnd: e.range.y[0]
+              });
+            }
+          }}
+        />
       </Box>
       <GraphRangeInputs
         rangeSource={selectionRange}
@@ -231,6 +297,7 @@ const sx = {
   },
   graphWrapper: {
     overflow: 'hidden',
+    position: 'relative',
     height: '100%',
     width: '100%'
   },
