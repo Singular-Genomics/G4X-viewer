@@ -23,12 +23,16 @@ export type HeatmapWorkerOutput = {
     y: Datum[];
     z: number[];
   };
-  metadata?: {
-    xMax?: number;
-    xMin?: number;
-    yMax?: number;
-    yMin?: number;
-  };
+  metadata?: HeatmapWorkerMetadata;
+};
+
+export type HeatmapWorkerMetadata = {
+  xMax?: number;
+  xMin?: number;
+  yMax?: number;
+  yMin?: number;
+  zMin?: number;
+  zMax?: number;
 };
 
 export class HeatmapWorker {

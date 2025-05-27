@@ -120,7 +120,8 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
       pointBinMap.set(i, { x: xBin, y: yBin });
     }
 
-    const maxZ = findMaxValue(zMatrix.flat());
+    const zMax = findMaxValue(zMatrix.flat());
+    const zMin = findMinValue(zMatrix.flat());
 
     const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
       z: [],
@@ -146,14 +147,16 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
 
       heatmapData.x.push(xValuesSampled[i]);
       heatmapData.y.push(yValuesSampled[i]);
-      heatmapData.z.push(currentCount / maxZ);
+      heatmapData.z.push(currentCount / zMax);
     }
 
     const heatmapMetadata = {
       xMax,
       xMin,
       yMax,
-      yMin
+      yMin,
+      zMax,
+      zMin
     };
 
     this.postMessage({
@@ -223,7 +226,8 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
       }
     }
 
-    const maxZ = findMaxValue(zMatrix.flat());
+    const zMax = findMaxValue(zMatrix.flat());
+    const zMin = findMinValue(zMatrix.flat());
 
     const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
       z: [],
@@ -249,14 +253,16 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
 
       heatmapData.x.push(xValuesSampled[i]);
       heatmapData.y.push(yValuesSampled[i]);
-      heatmapData.z.push(currentCount / maxZ);
+      heatmapData.z.push(currentCount / zMax);
     }
 
     const heatmapMetadata = {
       xMax,
       xMin,
       yMax,
-      yMin
+      yMin,
+      zMax,
+      zMin
     };
 
     this.postMessage({
