@@ -12,7 +12,7 @@ import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
-import { mapValuesToColors } from './CytometryGraph.helpers';
+import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
 import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 
 export const CytometryGraph = () => {
@@ -152,7 +152,11 @@ export const CytometryGraph = () => {
         : {
             type: 'heatmap',
             z: heatmapData.data?.z,
-            colorscale: settings.colorscale.value,
+            colorscale: thresholdColorMap(
+              settings.colorscale.value,
+              settings.colorscale.upperThreshold,
+              settings.colorscale.lowerThreshold
+            ),
             reversescale: settings.colorscale.reversed,
             hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>',
             showscale: false
@@ -267,7 +271,6 @@ export const CytometryGraph = () => {
         <ColorscaleSlider
           min={heatmapData.metadata?.zMin}
           max={heatmapData.metadata?.zMax}
-          disabled={heatmapData.graphMode === 'heatmap'}
         />
       </Box>
       <GraphRangeInputs
