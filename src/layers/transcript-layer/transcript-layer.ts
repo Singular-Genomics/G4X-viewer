@@ -80,7 +80,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       getPosition: (d) => d.position,
       getFillColor: (d) => d.color,
       getLineColor: [255, 255, 255],
-      getLineWidth: 1.7,
+      getLineWidth: 1.5,
       getRadius: this.props.pointSize + 0.5,
       stroked: true,
       radiusUnits: 'pixels',
