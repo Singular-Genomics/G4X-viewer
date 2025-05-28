@@ -3,8 +3,3 @@ export type ColorScaleOption = {
   value: [number, string][];
   reversed: boolean;
 };
-
-export type SelectOption = {
-  label: string;
-  value: string;
-};

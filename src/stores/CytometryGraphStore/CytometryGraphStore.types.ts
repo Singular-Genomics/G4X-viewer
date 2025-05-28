@@ -26,7 +26,7 @@ type HeatmapSettings = {
     upperThreshold?: number;
     lowerThreshold?: number;
   };
-  exponentFormat: string;
+  exponentFormat: ExponentFormat;
 };
 
 export type ProteinNames = {

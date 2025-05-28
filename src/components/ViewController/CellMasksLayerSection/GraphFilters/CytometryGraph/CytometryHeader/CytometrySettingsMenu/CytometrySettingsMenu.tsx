@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Grid, IconButton, MenuItem, Popover, Theme, Typography, useTheme } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { SelectOption, ColorScaleOption } from './CytometrySettingsMenu.types';
+import { ColorScaleOption } from './CytometrySettingsMenu.types';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import {
   AVAILABLE_AXIS_TYPES,
   AVAILABLE_COLORSCALES,
-  AVAILABLE_EXPONENT_FORMATS
+  AVAILABLE_EXPONENT_FORMATS,
+  AxisTypes,
+  ExponentFormat
 } from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../../shared/components/GxInput';
@@ -21,38 +23,24 @@ const MAX_SUBSAMPLE_VALUE = 20;
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { updateSettings } = useCytometryGraphStore();
+  const { updateSettings, settings } = useCytometryGraphStore();
   const menenuAnchor = useRef(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [binXCountInput, setBinXCountInput] = useState('');
   const [binYCountInput, setBinYCountInput] = useState('');
   const [pointSizeInput, setPointSizeInput] = useState('');
   const [subsamplingInput, setSubsamplingInput] = useState('');
-  const [axisTypeInput, setAxisTypeInput] = useState<SelectOption | undefined>(undefined);
-  const [exponentFormatInput, setExponentFormatInput] = useState<SelectOption | undefined>(undefined);
   const [colorscaleInput, setColorscaleInput] = useState<ColorScaleOption | undefined>(undefined);
 
   useEffect(() => {
-    const { binCountX, binCountY, colorscale, axisType, exponentFormat, subsamplingValue, pointSize } =
+    const { binCountX, binCountY, colorscale, subsamplingValue, pointSize } =
       useCytometryGraphStore.getState().settings;
-
-    const matchingAxisOption = AVAILABLE_AXIS_TYPES.find((item) => item.value === axisType);
-
-    const matchingExponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.value === exponentFormat);
 
     setColorscaleInput(colorscale);
     setBinXCountInput((binCountX || 0).toString());
     setBinYCountInput((binCountY || 0).toString());
     setSubsamplingInput((subsamplingValue || 0).toString());
     setPointSizeInput((pointSize || 0).toString());
-
-    if (matchingAxisOption) {
-      setAxisTypeInput(matchingAxisOption);
-    }
-
-    if (matchingExponentFormatOption) {
-      setExponentFormatInput(matchingExponentFormatOption);
-    }
   }, []);
 
   const onColorscaleSelect = useCallback(
@@ -66,20 +54,12 @@ export const CytometrySettingsMenu = () => {
     [updateSettings, colorscaleInput?.reversed]
   );
 
-  const onAxisTypeSelect = (newAxisType: string) => {
-    const axisTypeOption = AVAILABLE_AXIS_TYPES.find((item) => item.label === newAxisType);
-    if (axisTypeOption) {
-      setAxisTypeInput(axisTypeOption);
-      updateSettings({ axisType: axisTypeOption.value });
-    }
+  const onAxisTypeSelect = (newAxisType: AxisTypes) => {
+    updateSettings({ axisType: newAxisType });
   };
 
-  const onExponentFormatSelect = (newExponentFormat: string) => {
-    const exponentFormatOption = AVAILABLE_EXPONENT_FORMATS.find((item) => item.label === newExponentFormat);
-    if (exponentFormatOption) {
-      setExponentFormatInput(exponentFormatOption);
-      updateSettings({ exponentFormat: exponentFormatOption.value });
-    }
+  const onExponentFormatSelect = (newExponentFormat: ExponentFormat) => {
+    updateSettings({ exponentFormat: newExponentFormat });
   };
 
   const handleBinSizeChange = useMemo(
@@ -294,14 +274,14 @@ export const CytometrySettingsMenu = () => {
             <GxSelect
               fullWidth
               size="small"
-              value={axisTypeInput?.label}
-              onChange={(e) => onAxisTypeSelect(e.target.value as string)}
+              value={settings.axisType}
+              onChange={(e) => onAxisTypeSelect(e.target.value as AxisTypes)}
               MenuProps={{ sx: { zIndex: 3000 } }}
             >
               {AVAILABLE_AXIS_TYPES.map((item) => (
                 <MenuItem
                   key={item.label}
-                  value={item.label}
+                  value={item.value}
                 >
                   {item.label}
                 </MenuItem>
@@ -319,14 +299,14 @@ export const CytometrySettingsMenu = () => {
             <GxSelect
               fullWidth
               size="small"
-              value={exponentFormatInput?.label}
-              onChange={(e) => onExponentFormatSelect(e.target.value as string)}
+              value={settings.exponentFormat}
+              onChange={(e) => onExponentFormatSelect(e.target.value as ExponentFormat)}
               MenuProps={{ sx: { zIndex: 3000 } }}
             >
               {AVAILABLE_EXPONENT_FORMATS.map((item) => (
                 <MenuItem
                   key={item.label}
-                  value={item.label}
+                  value={item.value}
                 >
                   {item.label}
                 </MenuItem>
