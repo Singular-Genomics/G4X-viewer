@@ -18,6 +18,7 @@ type HeatmapSettings = {
   binCountY: number;
   subsamplingValue: number;
   pointSize: number;
+  graphMode: GraphMode;
   axisType: AxisTypes;
   colorscale: {
     label: string;
@@ -41,9 +42,22 @@ export type HeatmapRanges = {
   yEnd: number;
 };
 
+export type GraphMode = 'heatmap' | 'scattergl';
+
 export type AxisTypes = 'log' | 'linear';
 
 export type ExponentFormat = 'none' | 'power' | 'E' | 'e' | 'SI';
+
+export const AVAILABLE_GRAPH_MODES: { label: string; value: GraphMode }[] = [
+  {
+    label: 'Scatter Plot',
+    value: 'scattergl'
+  },
+  {
+    label: 'Heatmap',
+    value: 'heatmap'
+  }
+];
 
 export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }[] = [
   {

@@ -1,5 +1,4 @@
-import { Datum } from 'plotly.js';
-import { HeatmapWorkerInput } from './heatmapWorker';
+import { CytometryWorkerHeatmapData, CytometryWorkerInput, CytometryWorkerScatterData } from './cytometryWorker';
 
 const findMinValue = (array: number[]): number => {
   return array.reduce((min, curr) => (curr < min ? curr : min), Infinity);
@@ -43,8 +42,8 @@ function findBin2D(x: number, y: number, xBins: number[], yBins: number[]) {
   return { x: xBinIndex, y: yBinIndex };
 }
 
-onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
-  const { maskData, xProteinName, yProteinName, binXCount, binYCount, axisType, subsamplingStep } = e.data;
+onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
+  const { maskData, xProteinName, yProteinName, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
 
   const xValuesSampled = [];
   const yValuesSampled = [];
@@ -123,50 +122,67 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
     const zMax = findMaxValue(zMatrix.flat());
     const zMin = findMinValue(zMatrix.flat());
 
-    const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
-      z: [],
-      y: [],
-      x: []
-    };
+    const heatmapMetadata = { xMax, xMin, yMax, yMin, zMax, zMin };
 
-    for (let i = 0; i < totalPoints; i++) {
-      if (i % 1000 === 0) {
-        const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
-        this.postMessage({
-          progress: progressPercentage,
-          completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
-        });
+    if (graphMode === 'heatmap') {
+      const xAxis = Array(binXCount + 1)
+        .fill(0)
+        .map((_, i) => xMin + i * xBinSize);
+      const yAxis = Array(binYCount + 1)
+        .fill(0)
+        .map((_, i) => yMin + i * yBinSize);
+
+      const heatmapData: CytometryWorkerHeatmapData = {
+        z: zMatrix,
+        y: yAxis,
+        x: xAxis
+      };
+
+      this.postMessage({
+        progress: 100,
+        completed: true,
+        success: true,
+        message: 'Aggregation complete',
+        data: heatmapData,
+        metadata: heatmapMetadata
+      });
+    } else {
+      const heatmapData: CytometryWorkerScatterData = {
+        z: [],
+        y: [],
+        x: []
+      };
+
+      for (let i = 0; i < totalPoints; i++) {
+        if (i % 1000 === 0) {
+          const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
+          this.postMessage({
+            progress: progressPercentage,
+            completed: false,
+            message: `Normalizing data: ${i}/${totalPoints}`
+          });
+        }
+
+        const binIndex = pointBinMap.get(i);
+        if (!binIndex) continue;
+
+        const currentCount = zMatrix[binIndex.y][binIndex.x];
+        if (currentCount === 0) continue;
+
+        heatmapData.x.push(xValuesSampled[i]);
+        heatmapData.y.push(yValuesSampled[i]);
+        heatmapData.z.push(currentCount / zMax);
       }
 
-      const binIndex = pointBinMap.get(i);
-      if (!binIndex) continue;
-
-      const currentCount = zMatrix[binIndex.y][binIndex.x];
-      if (currentCount === 0) continue;
-
-      heatmapData.x.push(xValuesSampled[i]);
-      heatmapData.y.push(yValuesSampled[i]);
-      heatmapData.z.push(currentCount / zMax);
+      this.postMessage({
+        progress: 100,
+        completed: true,
+        success: true,
+        message: 'Aggregation complete',
+        data: heatmapData,
+        metadata: heatmapMetadata
+      });
     }
-
-    const heatmapMetadata = {
-      xMax,
-      xMin,
-      yMax,
-      yMin,
-      zMax,
-      zMin
-    };
-
-    this.postMessage({
-      progress: 100,
-      completed: true,
-      success: true,
-      message: 'Aggregation complete',
-      data: heatmapData,
-      metadata: heatmapMetadata
-    });
   } else {
     this.postMessage({
       progress: 0,
@@ -229,49 +245,59 @@ onmessage = async function (e: MessageEvent<HeatmapWorkerInput>) {
     const zMax = findMaxValue(zMatrix.flat());
     const zMin = findMinValue(zMatrix.flat());
 
-    const heatmapData: { x: Datum[]; y: Datum[]; z: Datum[] } = {
-      z: [],
-      y: [],
-      x: []
-    };
+    const heatmapMetadata = { xMax, xMin, yMax, yMin, zMax, zMin };
 
-    for (let i = 0; i < totalPoints; i++) {
-      if (i % 1000 === 0) {
-        const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
-        this.postMessage({
-          progress: progressPercentage,
-          completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
-        });
+    if (graphMode === 'heatmap') {
+      const heatmapData: CytometryWorkerHeatmapData = {
+        z: zMatrix,
+        y: yAxis,
+        x: xAxis
+      };
+
+      this.postMessage({
+        progress: 100,
+        completed: true,
+        success: true,
+        message: 'Aggregation complete',
+        data: heatmapData,
+        metadata: heatmapMetadata
+      });
+    } else {
+      const heatmapData: CytometryWorkerScatterData = {
+        z: [],
+        y: [],
+        x: []
+      };
+
+      for (let i = 0; i < totalPoints; i++) {
+        if (i % 1000 === 0) {
+          const progressPercentage = 60 + Math.floor((i / totalPoints) * 30);
+          this.postMessage({
+            progress: progressPercentage,
+            completed: false,
+            message: `Normalizing data: ${i}/${totalPoints}`
+          });
+        }
+
+        const binIndex = pointBinMap.get(i);
+        if (!binIndex) continue;
+
+        const currentCount = zMatrix[binIndex.y][binIndex.x];
+        if (currentCount === 0) continue;
+
+        heatmapData.x.push(xValuesSampled[i]);
+        heatmapData.y.push(yValuesSampled[i]);
+        heatmapData.z.push(currentCount / zMax);
       }
 
-      const binIndex = pointBinMap.get(i);
-      if (!binIndex) continue;
-
-      const currentCount = zMatrix[binIndex.y][binIndex.x];
-      if (currentCount === 0) continue;
-
-      heatmapData.x.push(xValuesSampled[i]);
-      heatmapData.y.push(yValuesSampled[i]);
-      heatmapData.z.push(currentCount / zMax);
+      this.postMessage({
+        progress: 100,
+        completed: true,
+        success: true,
+        message: 'Aggregation complete',
+        data: heatmapData,
+        metadata: heatmapMetadata
+      });
     }
-
-    const heatmapMetadata = {
-      xMax,
-      xMin,
-      yMax,
-      yMin,
-      zMax,
-      zMin
-    };
-
-    this.postMessage({
-      progress: 100,
-      completed: true,
-      success: true,
-      message: 'Aggregation complete',
-      data: heatmapData,
-      metadata: heatmapMetadata
-    });
   }
 };

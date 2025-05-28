@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { debounce } from 'lodash';
 
-export const ColorscaleSlider = ({ min, max }: ColorscaleSliderProps) => {
+export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const [sliderValue, setSliderValues] = useState<number[]>([0, 1]);
@@ -49,9 +49,10 @@ export const ColorscaleSlider = ({ min, max }: ColorscaleSliderProps) => {
 
   return (
     <Slider
-      value={sliderValue}
+      value={disabled ? [0, 100] : sliderValue}
       onChange={handleChange}
       marks={marks}
+      disabled={disabled}
       min={0}
       max={1}
       step={0.01}

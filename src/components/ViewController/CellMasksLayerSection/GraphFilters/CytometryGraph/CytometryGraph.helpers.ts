@@ -1,10 +1,14 @@
 export function mapValuesToColors(
-  values: number[],
+  values: number[] | undefined,
   colorscale: [number, string][],
   upperLimit: number = 1,
   lowerLimit: number = 0,
   reverse?: boolean
 ) {
+  if (!values || !values.length) {
+    return [];
+  }
+
   let scale = colorscale;
 
   if (reverse) {

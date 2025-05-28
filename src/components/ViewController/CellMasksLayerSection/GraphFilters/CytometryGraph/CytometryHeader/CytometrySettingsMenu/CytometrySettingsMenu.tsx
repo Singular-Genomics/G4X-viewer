@@ -8,8 +8,10 @@ import {
   AVAILABLE_AXIS_TYPES,
   AVAILABLE_COLORSCALES,
   AVAILABLE_EXPONENT_FORMATS,
+  AVAILABLE_GRAPH_MODES,
   AxisTypes,
-  ExponentFormat
+  ExponentFormat,
+  GraphMode
 } from '../../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../../shared/components/GxInput';
@@ -42,6 +44,10 @@ export const CytometrySettingsMenu = () => {
     setSubsamplingInput((subsamplingValue || 0).toString());
     setPointSizeInput((pointSize || 0).toString());
   }, []);
+
+  const onGraphModeChange = (newGraphMode: GraphMode) => {
+    updateSettings({ graphMode: newGraphMode });
+  };
 
   const onColorscaleSelect = useCallback(
     (newColorScale: string) => {
@@ -153,6 +159,31 @@ export const CytometrySettingsMenu = () => {
           rowSpacing={1}
           sx={{ width: '350px' }}
         >
+          {/* Graph Mode Select */}
+          <Grid
+            size={1}
+            alignContent={'center'}
+          >
+            <Typography>Graph Mode:</Typography>
+          </Grid>
+          <Grid size={1}>
+            <GxSelect
+              fullWidth
+              size="small"
+              value={settings.graphMode}
+              onChange={(e) => onGraphModeChange(e.target.value as GraphMode)}
+              MenuProps={{ sx: { zIndex: 3000 } }}
+            >
+              {AVAILABLE_GRAPH_MODES.map((item) => (
+                <MenuItem
+                  key={item.value}
+                  value={item.value}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
+            </GxSelect>
+          </Grid>
           {/* Colorscale Select */}
           <Grid
             alignContent={'center'}

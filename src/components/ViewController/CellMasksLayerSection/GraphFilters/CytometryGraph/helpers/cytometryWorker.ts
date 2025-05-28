@@ -1,9 +1,9 @@
 import { Datum } from 'plotly.js';
 import WorkerScript from './script.ts?worker';
-import { AxisTypes } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { AxisTypes, GraphMode } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { SingleMask } from '../../../../../../shared/types';
 
-export type HeatmapWorkerInput = {
+export type CytometryWorkerInput = {
   maskData: SingleMask[];
   xProteinName: string;
   yProteinName: string;
@@ -11,22 +11,31 @@ export type HeatmapWorkerInput = {
   binYCount: number;
   axisType: AxisTypes;
   subsamplingStep: number;
+  graphMode: GraphMode;
 };
 
-export type HeatmapWorkerOutput = {
+export type CytometryWorkerOutput = {
   progress?: number;
   completed?: boolean;
   success?: boolean;
   message?: string;
-  data?: {
-    x: Datum[];
-    y: Datum[];
-    z: number[];
-  };
-  metadata?: HeatmapWorkerMetadata;
+  data?: CytometryWorkerHeatmapData | CytometryWorkerScatterData;
+  metadata?: CytometryWorkerMetadata;
 };
 
-export type HeatmapWorkerMetadata = {
+export type CytometryWorkerScatterData = {
+  x: Datum[];
+  y: Datum[];
+  z: number[];
+};
+
+export type CytometryWorkerHeatmapData = {
+  x: Datum[];
+  y: Datum[];
+  z: Datum[][];
+};
+
+export type CytometryWorkerMetadata = {
   xMax?: number;
   xMin?: number;
   yMax?: number;
@@ -35,7 +44,7 @@ export type HeatmapWorkerMetadata = {
   zMax?: number;
 };
 
-export class HeatmapWorker {
+export class CytometryWorker {
   private name = 'Heatmap Worker';
   private worker: Worker;
 
@@ -43,12 +52,12 @@ export class HeatmapWorker {
     this.worker = new WorkerScript();
   }
 
-  public postMessage(input: HeatmapWorkerInput): void {
+  public postMessage(input: CytometryWorkerInput): void {
     this.worker.postMessage(input);
   }
 
-  public onMessage(callback: (data: HeatmapWorkerOutput) => void): void {
-    this.worker.onmessage = (e) => callback(e.data as HeatmapWorkerOutput);
+  public onMessage(callback: (data: CytometryWorkerOutput) => void): void {
+    this.worker.onmessage = (e) => callback(e.data as CytometryWorkerOutput);
   }
 
   public onError(callback: (error: ErrorEvent) => void): void {

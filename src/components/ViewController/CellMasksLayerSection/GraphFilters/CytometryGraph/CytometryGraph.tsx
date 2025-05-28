@@ -9,7 +9,7 @@ import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
-import { HeatmapWorker } from './helpers/heatmapWorker';
+import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
 import { mapValuesToColors } from './CytometryGraph.helpers';
@@ -21,15 +21,10 @@ export const CytometryGraph = () => {
   const sx = styles(theme);
 
   const { enqueueSnackbar } = useSnackbar();
-  const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { proteinNames, settings } = useCytometryGraphStore();
-  const [heatmapData, setHeatmapData] = useState<GraphData>({
-    x: [],
-    y: [],
-    z: [],
-    axisType: 'linear'
-  });
+  const [loader, setLoader] = useState<LoaderInfo | undefined>();
+  const [heatmapData, setHeatmapData] = useState<GraphData>({ axisType: 'linear', graphMode: 'scattergl' });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [selectionRange, setSelectionRange] = useState<HeatmapRanges | undefined>(undefined);
   const [availableProteinNames, setAvailableProteinNames] = useState<string[]>([]);
@@ -66,12 +61,12 @@ export const CytometryGraph = () => {
 
   useEffect(() => {
     if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binCountX && settings.binCountY) {
-      const worker = new HeatmapWorker();
+      const worker = new CytometryWorker();
       worker.onMessage((output) => {
         if (output.completed && output.success && output.data) {
           setHeatmapData({
-            ...output.data,
-            metadata: output.metadata,
+            ...output,
+            graphMode: settings.graphMode,
             axisType: settings.axisType
           });
           setLoader(undefined);
@@ -95,7 +90,8 @@ export const CytometryGraph = () => {
         binXCount: settings.binCountX,
         binYCount: settings.binCountY,
         axisType: settings.axisType,
-        subsamplingStep: settings.subsamplingValue
+        subsamplingStep: settings.subsamplingValue,
+        graphMode: settings.graphMode
       });
     }
   }, [
@@ -106,6 +102,7 @@ export const CytometryGraph = () => {
     settings.binCountY,
     settings.axisType,
     settings.subsamplingValue,
+    settings.graphMode,
     enqueueSnackbar
   ]);
 
@@ -133,23 +130,33 @@ export const CytometryGraph = () => {
 
   const plotData: Data[] = [
     {
-      type: 'scattergl',
-      x: heatmapData.x,
-      y: heatmapData.y,
-      mode: 'markers',
-      marker: {
-        color: mapValuesToColors(
-          heatmapData.z,
-          settings.colorscale.value,
-          settings.colorscale.upperThreshold,
-          settings.colorscale.lowerThreshold,
-          settings.colorscale.reversed
-        ),
-        size: settings.pointSize
-      },
-      showscale: true,
+      x: heatmapData.data?.x,
+      y: heatmapData.data?.y,
       hoverinfo: 'x+y+z',
-      hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>'
+      ...(heatmapData.graphMode === 'scattergl'
+        ? {
+            type: 'scattergl',
+            mode: 'markers',
+            marker: {
+              color: mapValuesToColors(
+                heatmapData.data?.z as number[],
+                settings.colorscale.value,
+                settings.colorscale.upperThreshold,
+                settings.colorscale.lowerThreshold,
+                settings.colorscale.reversed
+              ),
+              size: settings.pointSize
+            },
+            hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>'
+          }
+        : {
+            type: 'heatmap',
+            z: heatmapData.data?.z,
+            colorscale: settings.colorscale.value,
+            reversescale: settings.colorscale.reversed,
+            hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>',
+            showscale: false
+          })
     }
   ];
 
@@ -260,6 +267,7 @@ export const CytometryGraph = () => {
         <ColorscaleSlider
           min={heatmapData.metadata?.zMin}
           max={heatmapData.metadata?.zMax}
+          disabled={heatmapData.graphMode === 'heatmap'}
         />
       </Box>
       <GraphRangeInputs

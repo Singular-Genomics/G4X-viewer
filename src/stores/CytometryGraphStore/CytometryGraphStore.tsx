@@ -12,6 +12,7 @@ const DEFAULT_VALUES: CytometryGraphStoreValues = {
   proteinNames: {},
   ranges: undefined,
   settings: {
+    graphMode: 'scattergl',
     pointSize: 2,
     subsamplingValue: 1,
     binCountX: 100,
@@ -34,6 +35,7 @@ export const useCytometryGraphStore = create<CytometryGraphStore>()(
     }),
     {
       name: 'heatmapSettings',
+      version: 1,
       partialize: (state) => ({ settings: state.settings })
     }
   )

@@ -1,6 +1,5 @@
-import { Datum } from 'plotly.js';
-import { AxisTypes } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
-import { HeatmapWorkerMetadata } from './helpers/heatmapWorker';
+import { AxisTypes, GraphMode } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { CytometryWorkerOutput } from './helpers/cytometryWorker';
 
 export type CytometryDataPoint = {
   value_X: number;
@@ -9,12 +8,9 @@ export type CytometryDataPoint = {
 };
 
 export type GraphData = {
-  x: Datum[];
-  y: Datum[];
-  z: number[];
   axisType: AxisTypes;
-  metadata?: HeatmapWorkerMetadata;
-};
+  graphMode: GraphMode;
+} & Pick<CytometryWorkerOutput, 'data' | 'metadata'>;
 
 export type LoaderInfo = {
   progress?: number;
