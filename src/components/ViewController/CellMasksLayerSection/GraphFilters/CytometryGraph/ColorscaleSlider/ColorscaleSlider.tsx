@@ -72,6 +72,18 @@ export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) 
                   .join(', ')})`
               }
             : {})
+        },
+        '& .MuiSlider-rail': {
+          backgroundColor: 'unset',
+          backgroundImage: `
+            linear-gradient(
+              ${colorscale.reversed ? '-90' : '90'}deg, 
+              ${colorscale.value[0][1]} ${Math.ceil(sliderValue[0] * 100)}%, 
+              ${colorscale.value[colorscale.value.length - 1][1]} ${Math.ceil(sliderValue[0] * 100)}%
+            )`,
+          height: '16px',
+          borderRadius: 'unset',
+          opacity: 1
         }
       }}
     />
@@ -83,12 +95,6 @@ const styles = (theme: Theme) => ({
     marginTop: '3px',
     '&.MuiSlider-root': {
       color: theme.palette.gx.accent.greenBlue
-    },
-    '& .MuiSlider-rail': {
-      backgroundColor: theme.palette.gx.lightGrey[300],
-      height: '16px',
-      borderRadius: 'unset',
-      opacity: 1
     },
     '& .MuiSlider-thumb': {
       borderRadius: 'unset',

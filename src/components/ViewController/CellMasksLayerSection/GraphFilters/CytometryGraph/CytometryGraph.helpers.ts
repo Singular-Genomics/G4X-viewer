@@ -17,8 +17,10 @@ export function mapValuesToColors(
   }
 
   return values.map((value) => {
-    if (value < lowerLimit || value > upperLimit) {
-      return '#d7d7d7';
+    if (value < lowerLimit) {
+      return colorscale[0][1];
+    } else if (value > upperLimit) {
+      return colorscale[colorscale.length - 1][1];
     }
 
     const normalizedValue = (value - lowerLimit) / (upperLimit - lowerLimit);
