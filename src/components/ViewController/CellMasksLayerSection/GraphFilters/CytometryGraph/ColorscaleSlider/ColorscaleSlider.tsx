@@ -77,9 +77,9 @@ export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) 
           backgroundColor: 'unset',
           backgroundImage: `
             linear-gradient(
-              ${colorscale.reversed ? '-90' : '90'}deg, 
-              ${colorscale.value[0][1]} ${Math.ceil(sliderValue[0] * 100)}%, 
-              ${colorscale.value[colorscale.value.length - 1][1]} ${Math.ceil(sliderValue[0] * 100)}%
+            90deg, 
+            ${colorscale.reversed ? colorscale.value[colorscale.value.length - 1][1] : colorscale.value[0][1]} ${Math.ceil(sliderValue[0] * 100)}%, 
+            ${!colorscale.reversed ? colorscale.value[colorscale.value.length - 1][1] : colorscale.value[0][1]} ${Math.ceil(sliderValue[1] * 100)}%
             )`,
           height: '16px',
           borderRadius: 'unset',

@@ -39,9 +39,9 @@ export function mapValuesToColors(
 
   return values.map((value) => {
     if (value < lowerLimit) {
-      return colorscale[0][1];
+      return scale[0][1];
     } else if (value > upperLimit) {
-      return colorscale[colorscale.length - 1][1];
+      return scale[scale.length - 1][1];
     }
 
     const normalizedValue = (value - lowerLimit) / (upperLimit - lowerLimit);
