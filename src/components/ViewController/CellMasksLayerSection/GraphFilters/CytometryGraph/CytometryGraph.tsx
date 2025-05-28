@@ -147,7 +147,8 @@ export const CytometryGraph = () => {
               ),
               size: settings.pointSize
             },
-            hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>'
+            text: heatmapData.data?.z ? heatmapData.data.z.map((e) => (e as number).toFixed(3)) : [],
+            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{text}<extra></extra>`
           }
         : {
             type: 'heatmap',
@@ -158,7 +159,7 @@ export const CytometryGraph = () => {
               settings.colorscale.lowerThreshold
             ),
             reversescale: settings.colorscale.reversed,
-            hovertemplate: 'X: %{x}<br>Y: %{y}<br><extra></extra>',
+            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{z:.2f}<extra></extra>`,
             showscale: false
           })
     }
@@ -240,7 +241,7 @@ export const CytometryGraph = () => {
           <Box sx={sx.loaderWrapper}>
             <Box sx={sx.loaderInfoBox}>
               <GxLoader />
-              <Typography sx={sx.loaderProgressValueText}>{`${loader?.progress} %`}</Typography>
+              <Typography sx={sx.loaderProgressValueText}>{`${loader?.progress} % `}</Typography>
               {loader?.message && <Typography sx={sx.loaderProgressMessage}>{loader.message}</Typography>}
             </Box>
           </Box>
