@@ -7,12 +7,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CancelIcon from '@mui/icons-material/Cancel';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
-
-interface PolygonDrawingMenuProps {
-  takeScreenshot: () => void;
-}
+import { useRef, useState } from 'react';
+import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
   const [
@@ -22,7 +22,10 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     setModifyMode,
     setViewMode,
     mode,
-    clearPolygons
+    clearPolygons,
+    exportPolygons,
+    importPolygons,
+    polygonFeatures
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -31,15 +34,51 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.setModifyMode,
       store.setViewMode,
       store.mode,
-      store.clearPolygons
+      store.clearPolygons,
+      store.exportPolygons,
+      store.importPolygons,
+      store.polygonFeatures
     ])
   );
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
 
   const theme = useTheme();
   const sx = styles(theme);
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setIsImporting(true);
+      try {
+        await importPolygons(file);
+      } catch (error) {
+        console.error('Failed to import polygons:', error);
+        alert('Failed to import polygons. Please check the file format.');
+      } finally {
+        setIsImporting(false);
+      }
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <Box sx={sx.menuContainer}>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".json"
+        style={{ display: 'none' }}
+      />
+
       <MuiTooltip
         title="Screenshot"
         placement="left"
@@ -50,6 +89,34 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           color="primary"
         >
           <PhotoCameraIcon />
+        </IconButton>
+      </MuiTooltip>
+
+      <MuiTooltip
+        title="Export Polygons"
+        placement="left"
+      >
+        <IconButton
+          sx={sx.controlButton}
+          onClick={exportPolygons}
+          color="primary"
+          disabled={polygonFeatures.length === 0}
+        >
+          <FileDownloadIcon />
+        </IconButton>
+      </MuiTooltip>
+
+      <MuiTooltip
+        title="Import Polygons"
+        placement="left"
+      >
+        <IconButton
+          sx={sx.controlButton}
+          onClick={handleImportClick}
+          color="primary"
+          disabled={isImporting}
+        >
+          <FileUploadIcon />
         </IconButton>
       </MuiTooltip>
 
@@ -176,6 +243,10 @@ const styles = (theme: Theme) => ({
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
+    },
+    '&.Mui-disabled': {
+      color: theme.palette.gx.darkGrey[500],
+      backgroundColor: alpha(theme.palette.gx.primary.black, 0.3)
     }
   }
 });
