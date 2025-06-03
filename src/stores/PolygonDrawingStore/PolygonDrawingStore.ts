@@ -2,8 +2,10 @@ import { create } from 'zustand';
 import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useBinaryFilesStore } from '../BinaryFilesStore';
+import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
+import { CellMasksSchema } from '../../layers/cell-masks-layer/cell-masks-schema';
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
 
 const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
@@ -22,6 +24,19 @@ const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
     }
   }
   return inside;
+};
+
+const checkCellPolygonInDrawnPolygon = (cellVertices: number[], coordinates: number[][]) => {
+  if (!cellVertices || cellVertices.length < 6) return false;
+
+  for (let i = 0; i < cellVertices.length; i += 2) {
+    const point: [number, number] = [cellVertices[i], cellVertices[i + 1]];
+    if (!isPointInPolygon(point, coordinates)) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 const removeDuplicates = (points: any[]) => {
@@ -81,11 +96,14 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
 
   clearPolygons: () => {
     useTranscriptLayerStore.getState().setSelectedPoints([]);
+    useCellSegmentationLayerStore.getState().setSelectedCells([]);
     set({ polygonFeatures: [], selectedFeatureIndex: null });
   },
 
   exportPolygons: () => {
-    const polygons = get().polygonFeatures.map((f) => f.geometry.coordinates[0]);
+    const { polygonFeatures } = get();
+    const polygons = polygonFeatures.map((f) => f.geometry.coordinates[0]);
+
     const blob = new Blob([JSON.stringify(polygons, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = Object.assign(document.createElement('a'), {
@@ -107,6 +125,7 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     });
 
     const polygons = JSON.parse(content);
+
     const features = polygons.map((coords: number[][], i: number) => ({
       type: 'Feature' as const,
       geometry: { type: 'Polygon' as const, coordinates: [coords] },
@@ -116,21 +135,52 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     set({ polygonFeatures: features, selectedFeatureIndex: null });
 
     const { files } = useBinaryFilesStore.getState();
-    if (!files.length) return;
+    if (files.length > 0) {
+      const allPoints: any[] = [];
+      const tilePromises = files
+        .filter((f: any) => f.name.includes('.bin'))
+        .map(async (file: any) => {
+          const tileData = (await loadTileData(file)) as any;
+          return (
+            tileData?.pointsData?.filter((point: any) =>
+              polygons.some((coords: number[][]) => isPointInPolygon([point.position[0], point.position[1]], coords))
+            ) || []
+          );
+        });
 
-    const allPoints: any[] = [];
-    const tilePromises = files
-      .filter((f: any) => f.name.includes('.bin'))
-      .map(async (file: any) => {
-        const tileData = (await loadTileData(file)) as any;
-        return (
-          tileData?.pointsData?.filter((point: any) =>
-            polygons.some((coords: number[][]) => isPointInPolygon([point.position[0], point.position[1]], coords))
-          ) || []
-        );
-      });
+      (await Promise.all(tilePromises)).forEach((points) => allPoints.push(...points));
+      useTranscriptLayerStore.getState().setSelectedPoints(removeDuplicates(allPoints));
+    }
 
-    (await Promise.all(tilePromises)).forEach((points) => allPoints.push(...points));
-    useTranscriptLayerStore.getState().setSelectedPoints(removeDuplicates(allPoints));
+    const { cellMasksData } = useCellSegmentationLayerStore.getState();
+    if (cellMasksData && polygons.length > 0) {
+      try {
+        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+        const decodedCellMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
+
+        const cellPolygonsInDrawnPolygons: any[] = [];
+
+        for (const cellMask of decodedCellMasks) {
+          if (
+            cellMask.vertices &&
+            polygons.some((coords: number[][]) => checkCellPolygonInDrawnPolygon(cellMask.vertices, coords))
+          ) {
+            cellPolygonsInDrawnPolygons.push({
+              cellId: cellMask.cellId,
+              clusterId: cellMask.clusterId,
+              area: cellMask.area,
+              totalCounts: cellMask.totalCounts,
+              totalGenes: cellMask.totalGenes,
+              vertices: cellMask.vertices,
+              color: cellMask.color
+            });
+          }
+        }
+
+        useCellSegmentationLayerStore.getState().setSelectedCells(cellPolygonsInDrawnPolygons);
+      } catch (error) {
+        console.error('Error processing cell masks during import:', error);
+      }
+    }
   }
 }));

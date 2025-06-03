@@ -11,6 +11,8 @@ import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { EditableGeoJsonLayer } from '@deck.gl-community/editable-layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import * as protobuf from 'protobufjs';
+import { CellMasksSchema } from '../../layers/cell-masks-layer/cell-masks-schema';
 
 // Checks if a point is inside a polygon using ray-casting algorithm
 const isPointInPolygon = (point: [number, number], polygon: any) => {
@@ -35,6 +37,19 @@ const isPointInPolygon = (point: [number, number], polygon: any) => {
 
 const checkPointInPolygon = (point: [number, number], polygon: any) => {
   return isPointInPolygon(point, polygon);
+};
+
+const checkCellPolygonInDrawnPolygon = (cellVertices: number[], drawnPolygon: any) => {
+  if (!cellVertices || cellVertices.length < 6) return false;
+
+  for (let i = 0; i < cellVertices.length; i += 2) {
+    const point: [number, number] = [cellVertices[i], cellVertices[i + 1]];
+    if (!isPointInPolygon(point, drawnPolygon)) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 // Removes duplicate points based on position values
@@ -159,7 +174,8 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters
+    cellNameFilters,
+    selectedCells
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -168,7 +184,8 @@ export const useCellSegmentationLayer = () => {
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters
+      store.cellNameFilters,
+      store.selectedCells
     ])
   );
 
@@ -184,6 +201,7 @@ export const useCellSegmentationLayer = () => {
     showDiscardedPoints: showFilteredCells,
     cellFilters: isCellNameFilterOn ? cellNameFilters : 'all',
     cellFillOpacity,
+    selectedCells,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -246,6 +264,11 @@ export const usePolygonDrawingLayer = () => {
   const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
   const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [store.selectedPoints, store.setSelectedPoints])
+  );
+
+  const [cellMasksData] = useCellSegmentationLayerStore(useShallow((store) => [store.cellMasksData]));
+  const [selectedCells, setSelectedCells] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.selectedCells, store.setSelectedCells])
   );
 
   const transcriptLayerRef = useRef<any>(null);
@@ -389,10 +412,80 @@ export const usePolygonDrawingLayer = () => {
           updatePolygonFeatures(updatedData.features);
         }
       }
+
+      if (cellMasksData) {
+        try {
+          const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+          const decodedCellMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
+
+          const cellPolygonsInDrawnPolygon: any[] = [];
+
+          for (const cellMask of decodedCellMasks) {
+            if (cellMask.vertices && checkCellPolygonInDrawnPolygon(cellMask.vertices, newPolygon)) {
+              cellPolygonsInDrawnPolygon.push({
+                cellId: cellMask.cellId,
+                clusterId: cellMask.clusterId,
+                area: cellMask.area,
+                totalCounts: cellMask.totalCounts,
+                totalGenes: cellMask.totalGenes,
+                vertices: cellMask.vertices,
+                color: cellMask.color
+              });
+            }
+          }
+
+          console.log(`Total cell polygons found inside drawn polygon: ${cellPolygonsInDrawnPolygon.length}`);
+
+          if (cellPolygonsInDrawnPolygon.length > 0) {
+            const countByClusterId: Record<string, number> = {};
+            for (const cellPolygon of cellPolygonsInDrawnPolygon) {
+              const clusterId = cellPolygon.clusterId || 'unknown';
+              countByClusterId[clusterId] = (countByClusterId[clusterId] || 0) + 1;
+            }
+
+            console.log('Cell polygons count by cluster ID:', countByClusterId);
+            console.log(
+              'First 5 cell polygons (sample):',
+              cellPolygonsInDrawnPolygon.slice(0, 5).map((c) => ({
+                cellId: c.cellId,
+                clusterId: c.clusterId,
+                area: c.area,
+                totalCounts: c.totalCounts,
+                totalGenes: c.totalGenes,
+                verticesCount: c.vertices ? c.vertices.length / 2 : 0
+              }))
+            );
+
+            console.log('Cell polygons coordinates (first 3):');
+            for (let i = 0; i < Math.min(3, cellPolygonsInDrawnPolygon.length); i++) {
+              const cell = cellPolygonsInDrawnPolygon[i];
+              const coordinates = [];
+              if (cell.vertices) {
+                for (let j = 0; j < cell.vertices.length; j += 2) {
+                  coordinates.push([cell.vertices[j], cell.vertices[j + 1]]);
+                }
+              }
+              console.log(`Cell ${cell.cellId} coordinates:`, coordinates);
+            }
+
+            newPolygon.properties = {
+              ...newPolygon.properties,
+              cellPolygonCount: cellPolygonsInDrawnPolygon.length,
+              cellClusterDistribution: countByClusterId
+            };
+
+            const combinedSelectedCells = [...selectedCells, ...cellPolygonsInDrawnPolygon];
+            setSelectedCells(combinedSelectedCells);
+          }
+        } catch (error) {
+          console.error('Error processing cell masks:', error);
+        }
+      }
     } else if (editType === 'selectFeature') {
       selectFeature(featureIndexes[0]);
     } else if (editType === 'removeFeature' || editType === 'moveFeature') {
       setSelectedPoints([]);
+      setSelectedCells([]);
     }
   };
 

@@ -6,6 +6,7 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
   cellFilters: string[] | 'all';
+  selectedCells: any[];
   onHover?: (pikingInfo: PickingInfo) => void;
 };
 

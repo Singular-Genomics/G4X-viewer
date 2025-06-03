@@ -10,7 +10,8 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   showFilteredCells: false,
   cellFillOpacity: 0.2,
   cellColormapConfig: [],
-  cellNameFilters: []
+  cellNameFilters: [],
+  selectedCells: []
 };
 
 export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>((set) => ({
@@ -23,5 +24,6 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   setCellColormapConfig: (config) => set({ cellColormapConfig: config }),
   setCellNameFilter: (cellNames) => set({ cellNameFilters: cellNames }),
   clearCellNameFilter: () => set({ cellNameFilters: [] }),
+  setSelectedCells: (cells) => set({ selectedCells: cells }),
   reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES })
 }));
