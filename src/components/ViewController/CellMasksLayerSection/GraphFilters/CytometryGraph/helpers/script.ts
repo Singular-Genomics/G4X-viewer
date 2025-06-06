@@ -1,8 +1,15 @@
 import { CytometryWorkerHeatmapData, CytometryWorkerInput, CytometryWorkerScatterData } from './cytometryWorker';
 
-const findMinMaxVlue = (array: number[]): [number, number] => {
+const findMinMaxValue = (array: number[], includeZero = true): [number, number] => {
+  if (includeZero) {
+    return array.reduce(
+      (out, curr) => [curr < out[0] ? curr : out[0], curr > out[1] ? curr : out[1]],
+      [Infinity, -Infinity]
+    );
+  }
+
   return array.reduce(
-    (out, curr) => [curr < out[0] ? curr : out[0], curr > out[1] ? curr : out[1]],
+    (out, curr) => [curr !== 0 && curr < out[0] ? curr : out[0], curr > out[1] ? curr : out[1]],
     [Infinity, -Infinity]
   );
 };
@@ -87,7 +94,7 @@ function processLinearBinning(
     pointBinMap.set(i, { x: xBin, y: yBin });
   }
 
-  const [zMin, zMax] = findMinMaxVlue(zMatrix.flat());
+  const [zMin, zMax] = findMinMaxValue(zMatrix.flat());
 
   const heatmapMetadata = { xMax, xMin, yMax, yMin, zMax, zMin };
 
@@ -153,6 +160,7 @@ function processLinearBinning(
 }
 
 function processLogarithmicBinning(
+  cellIdsSampled: string[],
   xValuesSampled: number[],
   yValuesSampled: number[],
   xMin: number,
@@ -164,13 +172,16 @@ function processLogarithmicBinning(
   graphMode: string,
   postMessage: (data: any) => void
 ) {
-  const logMaxX = xMax ? Math.ceil(Math.log10(xMax)) : 0;
-  const logMinX = xMin ? Math.floor(Math.log10(xMin)) : 0;
-  const logMaxY = yMax ? Math.ceil(Math.log10(yMax)) : 0;
-  const logMinY = yMin ? Math.floor(Math.log10(yMin)) : 0;
+  const adjustedXMin = xMin;
+  const adjustedYMin = yMin;
 
-  const logStepX = (logMaxX - logMinX) / binXCount;
-  const logStepY = (logMaxY - logMinY) / binYCount;
+  const logMinX = Math.log10(adjustedXMin);
+  const logMaxX = Math.log10(xMax);
+  const logMinY = Math.log10(adjustedYMin);
+  const logMaxY = Math.log10(yMax);
+
+  const logStepX = (logMaxX - logMinX + 1) / binXCount;
+  const logStepY = (logMaxY - logMinY + 1) / binYCount;
 
   const zMatrix = Array(binYCount)
     .fill(0)
@@ -188,6 +199,7 @@ function processLogarithmicBinning(
     completed: false,
     message: 'Bining data points...'
   });
+
   const failed = [];
   const totalPoints = xValuesSampled.length;
   for (let i = 0; i < totalPoints; i++) {
@@ -205,20 +217,31 @@ function processLogarithmicBinning(
 
     const index = findBin2D(x, y, xAxis, yAxis);
 
-    if (!index) continue;
+    if (!index) {
+      failed.push(cellIdsSampled[i]);
+      continue;
+    }
 
     try {
       zMatrix[index.y][index.x] += 1;
       pointBinMap.set(i, index);
     } catch {
-      failed.push(index);
+      failed.push(cellIdsSampled[i]);
       continue;
     }
   }
 
-  const [zMin, zMax] = findMinMaxVlue(zMatrix.flat());
+  const [zMin, zMax] = findMinMaxValue(zMatrix.flat());
 
-  const heatmapMetadata = { xMax, xMin, yMax, yMin, zMax, zMin };
+  const heatmapMetadata = {
+    xMax,
+    xMin,
+    yMax,
+    yMin,
+    zMax,
+    zMin,
+    failed
+  };
 
   if (graphMode === 'heatmap') {
     const heatmapData: CytometryWorkerHeatmapData = {
@@ -300,16 +323,18 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
   const sampledLength = Math.ceil(maskData.length / subsamplingStep);
   const xValuesSampled = new Array(sampledLength);
   const yValuesSampled = new Array(sampledLength);
+  const idsSampled = new Array(sampledLength);
 
   let sampleIndex = 0;
   for (let i = 0; i < maskData.length; i += subsamplingStep) {
-    xValuesSampled[sampleIndex] = maskData[i].proteins[xProteinName];
-    yValuesSampled[sampleIndex] = maskData[i].proteins[yProteinName];
+    xValuesSampled[sampleIndex] = maskData[i].proteins[xProteinName] + 1;
+    yValuesSampled[sampleIndex] = maskData[i].proteins[yProteinName] + 1;
+    idsSampled[sampleIndex] = maskData[i].cellId;
     sampleIndex++;
   }
 
-  const [xMin, xMax] = findMinMaxVlue(xValuesSampled);
-  const [yMin, yMax] = findMinMaxVlue(yValuesSampled);
+  const [xMin, xMax] = findMinMaxValue(xValuesSampled, false);
+  const [yMin, yMax] = findMinMaxValue(yValuesSampled, false);
 
   if (axisType === 'linear') {
     this.postMessage({
@@ -338,6 +363,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     });
 
     processLogarithmicBinning(
+      idsSampled,
       xValuesSampled,
       yValuesSampled,
       xMin,

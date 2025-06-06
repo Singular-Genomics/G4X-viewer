@@ -42,6 +42,7 @@ export type CytometryWorkerMetadata = {
   yMin?: number;
   zMin?: number;
   zMax?: number;
+  failed?: string[];
 };
 
 export class CytometryWorker {

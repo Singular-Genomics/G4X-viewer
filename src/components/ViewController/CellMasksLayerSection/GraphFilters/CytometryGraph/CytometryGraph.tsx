@@ -1,4 +1,4 @@
-import { alpha, Box, Theme, Typography, useTheme } from '@mui/material';
+import { alpha, Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Layout } from 'plotly.js';
 import { useEffect, useRef, useState } from 'react';
@@ -7,13 +7,49 @@ import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { HeatmapRanges } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges, ProteinNames } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
 import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
 import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
+import { SingleMask } from '../../../../../shared/types';
+import DownloadIcon from '@mui/icons-material/Download';
+
+export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinNames: ProteinNames) {
+  const handleDownload = () => {
+    const filteredCells = cellMasksData
+      .filter((mask) => failedIds.includes(mask.cellId))
+      .map((mask) => ({
+        cellId: mask.cellId,
+        proteins: Object.fromEntries(
+          Object.entries(mask.proteins).filter(([key]) => Object.values(proteinNames).includes(key))
+        )
+      }));
+
+    const blob = new Blob([JSON.stringify(filteredCells)], { type: 'application/json' });
+
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = 'FailedCells.json';
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  };
+
+  return (
+    <Box sx={messageSx.customErrorMessage}>
+      <Typography>Download failed cells data: </Typography>
+      <IconButton onClick={handleDownload}>
+        <DownloadIcon sx={messageSx.downloadIcon} />
+      </IconButton>
+    </Box>
+  );
+}
 
 export const CytometryGraph = () => {
   const containerRef = useRef(null);
@@ -34,7 +70,8 @@ export const CytometryGraph = () => {
       if (!cellMasksData.length) {
         enqueueSnackbar({
           message: 'Missing cell masks in given data set',
-          variant: 'error'
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         return;
       }
@@ -44,7 +81,8 @@ export const CytometryGraph = () => {
         enqueueSnackbar({
           message:
             'Data set contains only a single channel data. At least to channels are required for plotting the heatmap',
-          variant: 'error'
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         return;
       }
@@ -60,42 +98,58 @@ export const CytometryGraph = () => {
   }, [cellMasksData, enqueueSnackbar]);
 
   useEffect(() => {
-    if (cellMasksData && proteinNames.xAxis && proteinNames.yAxis && settings.binCountX && settings.binCountY) {
-      const worker = new CytometryWorker();
-      worker.onMessage((output) => {
-        if (output.completed && output.success && output.data) {
-          setHeatmapData({
-            ...output,
-            graphMode: settings.graphMode,
-            axisType: settings.axisType
-          });
-          setLoader(undefined);
-        } else if (output.completed && !output.success) {
+    if (!cellMasksData || !proteinNames.xAxis || !proteinNames.yAxis || !settings.binCountX || !settings.binCountY) {
+      return;
+    }
+
+    const worker = new CytometryWorker();
+
+    worker.onMessage((output) => {
+      if (output.completed && output.success && output.data) {
+        setHeatmapData({
+          ...output,
+          graphMode: settings.graphMode,
+          axisType: settings.axisType
+        });
+
+        if (output.metadata?.failed?.length) {
           enqueueSnackbar({
-            message: output.message,
-            variant: 'error'
-          });
-        } else {
-          setLoader({
-            progress: output.progress,
-            message: output.message
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            message: `Failed to bin ${output.metadata.failed.length} cells`,
+            customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinNames),
+            persist: true
           });
         }
-      });
-      worker.onError((error: any) => console.error(error));
-      worker.postMessage({
-        maskData: cellMasksData,
-        xProteinName: proteinNames.xAxis,
-        yProteinName: proteinNames.yAxis,
-        binXCount: settings.binCountX,
-        binYCount: settings.binCountY,
-        axisType: settings.axisType,
-        subsamplingStep: settings.subsamplingValue,
-        graphMode: settings.graphMode
-      });
-    }
+
+        setLoader(undefined);
+      } else if (output.completed && !output.success) {
+        enqueueSnackbar({
+          message: output.message,
+          variant: 'gxSnackbar',
+          titleMode: 'error'
+        });
+      } else {
+        setLoader({
+          progress: output.progress,
+          message: output.message
+        });
+      }
+    });
+    worker.onError((error: any) => console.error(error));
+    worker.postMessage({
+      maskData: cellMasksData,
+      xProteinName: proteinNames.xAxis,
+      yProteinName: proteinNames.yAxis,
+      binXCount: settings.binCountX,
+      binYCount: settings.binCountY,
+      axisType: settings.axisType,
+      subsamplingStep: settings.subsamplingValue,
+      graphMode: settings.graphMode
+    });
   }, [
     cellMasksData,
+    proteinNames,
     proteinNames.xAxis,
     proteinNames.yAxis,
     settings.binCountX,
@@ -127,6 +181,19 @@ export const CytometryGraph = () => {
       }
     };
   }, []);
+
+  const handleConfirmFilter = () => {
+    if (selectionRange) {
+      useCytometryGraphStore.setState({
+        ranges: {
+          xStart: selectionRange.xStart - 1,
+          yStart: selectionRange.yStart - 1,
+          xEnd: selectionRange.xEnd - 1,
+          yEnd: selectionRange.yEnd - 1
+        }
+      });
+    }
+  };
 
   const plotData: Data[] = [
     {
@@ -281,11 +348,7 @@ export const CytometryGraph = () => {
           setSelectionRange(undefined);
           useCytometryGraphStore.setState({ ranges: undefined });
         }}
-        onConfirm={() =>
-          useCytometryGraphStore.setState({
-            ranges: selectionRange
-          })
-        }
+        onConfirm={handleConfirmFilter}
       />
     </Box>
   );
@@ -338,3 +401,15 @@ const styles = (theme: Theme) => ({
     width: '100%'
   }
 });
+
+const messageSx = {
+  customErrorMessage: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingInline: '16px'
+  },
+  downloadIcon: {
+    color: (theme: Theme) => theme.palette.gx.darkGrey[700]
+  }
+};
