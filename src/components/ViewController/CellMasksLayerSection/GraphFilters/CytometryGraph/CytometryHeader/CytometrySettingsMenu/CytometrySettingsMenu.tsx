@@ -172,7 +172,7 @@ export const CytometrySettingsMenu = () => {
               size="small"
               value={settings.graphMode}
               onChange={(e) => onGraphModeChange(e.target.value as GraphMode)}
-              MenuProps={{ sx: { zIndex: 3000 } }}
+              MenuProps={{ sx: { zIndex: 100 } }}
             >
               {AVAILABLE_GRAPH_MODES.map((item) => (
                 <MenuItem
@@ -197,7 +197,7 @@ export const CytometrySettingsMenu = () => {
               size="small"
               value={colorscaleInput?.label}
               onChange={(e) => onColorscaleSelect(e.target.value as string)}
-              MenuProps={{ sx: { zIndex: 3000 } }}
+              MenuProps={{ sx: { zIndex: 100 } }}
             >
               {AVAILABLE_COLORSCALES.map((item) => (
                 <MenuItem
@@ -307,7 +307,7 @@ export const CytometrySettingsMenu = () => {
               size="small"
               value={settings.axisType}
               onChange={(e) => onAxisTypeSelect(e.target.value as AxisTypes)}
-              MenuProps={{ sx: { zIndex: 3000 } }}
+              MenuProps={{ sx: { zIndex: 100 } }}
             >
               {AVAILABLE_AXIS_TYPES.map((item) => (
                 <MenuItem
@@ -332,7 +332,7 @@ export const CytometrySettingsMenu = () => {
               size="small"
               value={settings.exponentFormat}
               onChange={(e) => onExponentFormatSelect(e.target.value as ExponentFormat)}
-              MenuProps={{ sx: { zIndex: 3000 } }}
+              MenuProps={{ sx: { zIndex: 100 } }}
             >
               {AVAILABLE_EXPONENT_FORMATS.map((item) => (
                 <MenuItem
@@ -360,7 +360,7 @@ const styles = (theme: Theme) => ({
     padding: '8px'
   },
   settingsMenu: {
-    zIndex: '3000',
+    zIndex: '100',
     '& .MuiPaper-root': {
       padding: '8px'
     }
