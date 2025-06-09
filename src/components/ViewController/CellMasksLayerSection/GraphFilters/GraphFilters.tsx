@@ -5,7 +5,7 @@ import { CytometryGraph } from './CytometryGraph/CytometryGraph';
 import { UmapGraph } from './UmapGraph/UmapGraph';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
-type GraphMode = undefined | 'Cytometry' | 'Umap';
+type GraphMode = undefined | 'flow_cytometry' | 'umap';
 
 export const GraphFilters = () => {
   const theme = useTheme();
@@ -31,22 +31,22 @@ export const GraphFilters = () => {
       >
         <ToggleButton
           sx={sx.toggleButton}
-          value="UMAP"
+          value="umap"
           disabled={!umapDataAvailable}
         >
           UMAP
         </ToggleButton>
         <ToggleButton
           sx={sx.toggleButton}
-          value="Cytometry"
+          value="flow_cytometry"
           disabled={!cytometryProteinsNames.length}
         >
-          Cytometry
+          Flow Cytometry
         </ToggleButton>
       </ToggleButtonGroup>
       {isWindowVisible && (
         <GxWindow
-          title={selectedGraph}
+          title={selectedGraph?.replace('_', ' ')}
           config={{
             startWidth: 800,
             startHeight: 400,
@@ -60,7 +60,7 @@ export const GraphFilters = () => {
             setSelectedGraph(undefined);
           }}
         >
-          {selectedGraph === 'Cytometry' ? <CytometryGraph /> : <UmapGraph />}
+          {selectedGraph === 'flow_cytometry' ? <CytometryGraph /> : <UmapGraph />}
         </GxWindow>
       )}
     </>
