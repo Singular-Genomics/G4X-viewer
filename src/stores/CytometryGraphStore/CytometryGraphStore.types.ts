@@ -405,7 +405,7 @@ export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }
 
 export const AVAILABLE_AXIS_TYPES: { label: string; value: AxisTypes }[] = [
   { label: 'Linear', value: 'linear' },
-  { label: 'Logarythmic', value: 'log' }
+  { label: 'Logarithmic', value: 'log' }
 ];
 
 export const AVAILABLE_EXPONENT_FORMATS: { label: string; value: ExponentFormat }[] = [
