@@ -1,9 +1,10 @@
-import { Box, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { GxInput } from '../../../../../../shared/components/GxInput';
 import { useEffect, useMemo, useState } from 'react';
 import { InputErrors } from './UmapGraphHeader.types';
 import { useUmapGraphStore } from '../../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { debounce } from 'lodash';
+import HelpIcon from '@mui/icons-material/Help';
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
@@ -93,7 +94,18 @@ export const UmapGraphHeader = () => {
         type="number"
         sx={sx.inputField}
       />
-      <Typography sx={sx.inputLabel}>Subsampling Value</Typography>
+      <Box sx={sx.subsamplingWrapper}>
+        <Typography sx={sx.inputLabel}>Subsampling Step</Typography>
+        <Tooltip
+          placement="top"
+          arrow
+          enterDelay={250}
+          title={'Determines tthe interval for sampling data set, reducing density and increasing performance'}
+        >
+          <HelpIcon sx={sx.helpIcon} />
+        </Tooltip>
+      </Box>
+
       <GxInput
         value={subsamplingInput}
         onChange={(e) => handleSubsamplingChange(e.target.value)}
@@ -119,6 +131,14 @@ const styles = (theme: Theme) => ({
     textWrap: 'nowrap',
     fontWeight: 'bold',
     marginTop: '16px'
+  },
+  helpIcon: {
+    marginTop: '16px',
+    color: theme.palette.gx.mediumGrey[100]
+  },
+  subsamplingWrapper: {
+    display: 'flex',
+    gap: '8px'
   },
   inputField: {
     '& .MuiFormHelperText-root': {
