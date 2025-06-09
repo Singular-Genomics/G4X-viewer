@@ -1,4 +1,4 @@
-import { Box, IconButton, Theme, useTheme } from '@mui/material';
+import { Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
@@ -94,7 +94,7 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         onMouseDown={handleMouseDown}
       />
       <Box sx={sx.windowHeader}>
-        {title && <Box sx={{ fontWeight: 700 }}>{title}</Box>}
+        {title && <Typography sx={sx.windowTitle}>{title}</Typography>}
         <IconButton
           onClick={onClose}
           disableTouchRipple
@@ -151,6 +151,10 @@ const styles = (theme: Theme) => ({
     borderTop: '1px solid',
     borderBottom: '1px solid',
     borderColor: theme.palette.gx.primary.black
+  },
+  windowTitle: {
+    fontWeight: 700,
+    textTransform: 'capitalize'
   },
   windowContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[300],
