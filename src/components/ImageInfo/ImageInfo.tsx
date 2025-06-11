@@ -2,6 +2,7 @@ import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { ScaleBar } from '../ScaleBar';
 export const ImageInfo = () => {
   const theme = useTheme();
@@ -9,9 +10,15 @@ export const ImageInfo = () => {
   const [pyramidResolution, hoverCoordinates] = useViewerStore(
     useShallow((store) => [store.pyramidResolution, store.hoverCoordinates])
   );
+  const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
   const level = loader[pyramidResolution];
+
+  const transcriptPercentage =
+    maxVisibleLayers !== null && maxVisibleLayers !== undefined
+      ? `${+(Math.pow(0.2, maxVisibleLayers) * 100).toPrecision(2) / 1}%`
+      : '--';
 
   return (
     <>
@@ -23,6 +30,7 @@ export const ImageInfo = () => {
             </Typography>
             <Typography sx={sx.footerText}>{`Layer: ${pyramidResolution + 1}/${loader.length}`}</Typography>
             <Typography sx={sx.footerText}>{`Shape: ${level.shape.join(', ')}`}</Typography>
+            <Typography sx={sx.footerText}>{`Transcripts: ${transcriptPercentage}`}</Typography>
           </Box>
           <ScaleBar />
         </>

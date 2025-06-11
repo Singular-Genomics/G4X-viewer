@@ -85,12 +85,16 @@ export const PictureInPictureViewerAdapter = () => {
       const height = containerSize.height;
       const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
 
+      const initialZoom = (defualtViewerState as any).zoom;
+      const initialPyramidResolution = Math.min(Math.max(Math.round(-initialZoom), 0), loader.length - 1);
+
       useViewerStore.setState({
         viewState: {
           ...defualtViewerState,
           id: DETAIL_VIEW_ID,
           width
-        }
+        },
+        pyramidResolution: initialPyramidResolution
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
