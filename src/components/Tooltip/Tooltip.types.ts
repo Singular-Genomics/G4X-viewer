@@ -1,3 +1,5 @@
+import { SingleMask } from '../../shared/types';
+
 export type TranscriptDatapointType = {
   position: number[];
   color: number[];
@@ -5,11 +7,4 @@ export type TranscriptDatapointType = {
   cellId: string;
 };
 
-export type CellMaskDatapointType = {
-  cellId: string;
-  clusterId: string;
-  color: number[];
-  area: string;
-  totalGenes: string;
-  totalCounts: string;
-};
+export type CellMaskDatapointType = SingleMask;

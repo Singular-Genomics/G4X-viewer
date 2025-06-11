@@ -11,7 +11,7 @@ export const LogoBanner = () => (
 const sx = {
   logoBannerContainer: {
     position: 'absolute',
-    zIndex: 1000,
+    zIndex: 50,
     top: 10,
     left: 20,
     display: 'flex',
