@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
@@ -19,7 +20,10 @@ export const useCellMasksFileHandler = () => {
     reader.onload = () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
       const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-      const colormapConfig = (protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any).colormap;
+      const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+
+      const colormapConfig = decodedData.colormap;
+      const cellMasks = decodedData.cellMasks;
 
       if (!colormapConfig || !colormapConfig.length) {
         enqueueSnackbar({
@@ -28,13 +32,31 @@ export const useCellMasksFileHandler = () => {
         });
       }
 
+      if (!cellMasks || !cellMasks.length) {
+        enqueueSnackbar({
+          message: 'Given file is missing cell segmentation masks data',
+          variant: 'error'
+        });
+      }
+
+      let listOfProteinNames: string[] = [];
+      let areUmapAvailable = false;
+
+      if (cellMasks.length) {
+        listOfProteinNames = Object.keys(cellMasks[0].proteins);
+        areUmapAvailable = !!cellMasks[0].umapValues;
+      }
+
       useCellSegmentationLayerStore.setState({
-        cellMasksData: cellDataBuffer,
+        cellMasksData: cellMasks || [],
         cellColormapConfig: colormapConfig.map((entry: any) => ({
           clusterId: entry.clusterId,
           color: entry.color
-        }))
+        })),
+        cytometryProteinsNames: listOfProteinNames,
+        umapDataAvailable: areUmapAvailable
       });
+      useCytometryGraphStore.getState().resetFilters();
     };
     reader.onerror = () => console.error('Something went wrong during file laod!');
     reader.readAsArrayBuffer(files[0]);

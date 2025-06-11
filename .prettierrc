@@ -11,6 +11,5 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "singleAttributePerLine": true,
-  "endOfLine": "lf",
-  "insertFinalNewline": false
+  "endOfLine": "lf"
 }

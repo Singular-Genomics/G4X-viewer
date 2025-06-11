@@ -98,7 +98,8 @@ const styles = (theme: Theme) => ({
   snackbarBase: {
     background: 'transparent',
     borderRadius: '8px',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    zIndex: '9999'
   },
   snackbarTitle: {
     padding: '8px 16px',
