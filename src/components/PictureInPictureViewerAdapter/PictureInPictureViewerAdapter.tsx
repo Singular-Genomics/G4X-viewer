@@ -80,18 +80,31 @@ export const PictureInPictureViewerAdapter = () => {
   }, [loader.length]);
 
   useEffect(() => {
-    if (!viewState && containerSize.width && containerSize.height) {
+    if (containerSize.width && containerSize.height) {
       const width = containerSize.width;
       const height = containerSize.height;
-      const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
 
-      useViewerStore.setState({
-        viewState: {
-          ...defualtViewerState,
-          id: DETAIL_VIEW_ID,
-          width
-        }
-      });
+      if (!viewState) {
+        // Create initial viewState
+        const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+        useViewerStore.setState({
+          viewState: {
+            ...defualtViewerState,
+            id: DETAIL_VIEW_ID,
+            width,
+            height
+          }
+        });
+      } else {
+        // Update existing viewState with new dimensions
+        useViewerStore.setState({
+          viewState: {
+            ...viewState,
+            width,
+            height
+          }
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, containerSize.width, containerSize.height]);
