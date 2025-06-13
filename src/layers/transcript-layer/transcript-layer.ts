@@ -169,6 +169,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       minZoom = layers - this.props.maxVisibleLayers;
     }
 
+    console.log(this.props.currentZoom);
+
     const tiledLayer = new TileLayer({
       id: 'tiled_layer',
       tileSize: tile_size,
@@ -178,6 +180,14 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
       pickable: true,
+      onTileLoad: (tile) => {
+        console.log('Load', tile.index.z);
+        this.props.onLayerUpdate?.(tile.index);
+      },
+      onTileUnload: (tile) => {
+        console.log('Unload', tile.index.z);
+        this.props.onLayerUpdate?.(tile.index);
+      },
       getTileData,
       updateTriggers: {
         getTileData: [
@@ -186,6 +196,14 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.geneFilters,
           this.props.showDiscardedPoints,
           this.props.pointSize
+        ],
+        onTileLoad: [
+          this.props.currentZoom
+          // Try re-triggering this callback on viewport changes.
+        ],
+        onTileUnload: [
+          this.props.currentZoom
+          // Try re-triggering this callback on viewport changes.
         ]
       },
       renderSubLayers: ({ id, data }) =>

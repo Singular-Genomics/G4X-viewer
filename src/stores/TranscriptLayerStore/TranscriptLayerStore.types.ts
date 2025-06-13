@@ -7,6 +7,7 @@ export type TranscriptLayerStoreValues = {
   showTilesBoundries: boolean;
   showTilesData: boolean;
   maxVisibleLayers: number;
+  currentVisibleLayer: number;
   overrideLayers: boolean;
   pointSize: number;
   geneNameFilters: GeneNameFilterType;

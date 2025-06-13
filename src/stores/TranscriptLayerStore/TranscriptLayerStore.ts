@@ -10,7 +10,8 @@ const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
   overrideLayers: false,
   pointSize: 1.5,
   geneNameFilters: [],
-  maxVisibleLayers: 0
+  maxVisibleLayers: 0,
+  currentVisibleLayer: 0
 };
 
 export const useTranscriptLayerStore = create<TranscriptLayerStore>((set) => ({

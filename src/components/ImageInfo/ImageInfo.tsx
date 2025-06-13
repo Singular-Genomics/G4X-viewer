@@ -10,14 +10,16 @@ export const ImageInfo = () => {
   const [pyramidResolution, hoverCoordinates] = useViewerStore(
     useShallow((store) => [store.pyramidResolution, store.hoverCoordinates])
   );
-  const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
+  const [maxVisibleLayers, currentVisibleLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.maxVisibleLayers, store.currentVisibleLayer])
+  );
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
   const level = loader[pyramidResolution];
 
   const transcriptPercentage =
     maxVisibleLayers !== null && maxVisibleLayers !== undefined
-      ? `${+(Math.pow(0.2, maxVisibleLayers) * 100).toPrecision(2) / 1}%`
+      ? `${+(Math.pow(0.2, maxVisibleLayers - currentVisibleLayer) * 100).toPrecision(2) / 1}%`
       : '--';
 
   return (
