@@ -80,22 +80,35 @@ export const PictureInPictureViewerAdapter = () => {
   }, [loader.length]);
 
   useEffect(() => {
-    if (!viewState && containerSize.width && containerSize.height) {
+    if (containerSize.width && containerSize.height) {
       const width = containerSize.width;
       const height = containerSize.height;
-      const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
 
-      const initialZoom = (defualtViewerState as any).zoom;
-      const initialPyramidResolution = Math.min(Math.max(Math.round(-initialZoom), 0), loader.length - 1);
+      if (!viewState) {
+        // Create initial viewState
+        const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+        const initialZoom = (defualtViewerState as any).zoom;
+        const initialPyramidResolution = Math.min(Math.max(Math.round(-initialZoom), 0), loader.length - 1);
 
-      useViewerStore.setState({
-        viewState: {
-          ...defualtViewerState,
-          id: DETAIL_VIEW_ID,
-          width
-        },
-        pyramidResolution: initialPyramidResolution
-      });
+        useViewerStore.setState({
+          viewState: {
+            ...defualtViewerState,
+            id: DETAIL_VIEW_ID,
+            width,
+            height
+          },
+          pyramidResolution: initialPyramidResolution
+        });
+      } else {
+        // Update existing viewState with new dimensions
+        useViewerStore.setState({
+          viewState: {
+            ...viewState,
+            width,
+            height
+          }
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, containerSize.width, containerSize.height]);

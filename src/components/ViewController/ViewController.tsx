@@ -14,6 +14,7 @@ import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ControllerHeader } from './ControllerHeader';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
+import { SocialIcons } from '../SocialIcons/SocialIcons';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -70,9 +71,13 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <GxCollapsibleSection
                 sectionTitle="Segmentation Layer Settings"
                 disabled={!imageLoaded || !cellMasksFiles?.length}
+                unmountOnExit={false}
               >
                 <CellMasksLayerSection />
               </GxCollapsibleSection>
+            </Box>
+            <Box sx={sx.socialIconsWrapper}>
+              <SocialIcons />
             </Box>
           </Box>
         </Box>
@@ -103,7 +108,7 @@ const styles = (theme: Theme) => ({
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
     borderTopLeftRadius: '32px',
-    padding: '16px 8px 16px 16px',
+    padding: '16px 8px 8px 16px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -128,5 +133,12 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     top: 0,
     right: 10
+  },
+  socialIconsWrapper: {
+    marginTop: 'auto',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingTop: '8px',
+    paddingRight: '16px'
   }
 });

@@ -10,6 +10,8 @@ import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useViewerStore } from '../../stores/ViewerStore';
+import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -124,6 +126,9 @@ export const useCellSegmentationLayer = () => {
     ])
   );
 
+  const { proteinNames, ranges } = useCytometryGraphStore();
+  const { ranges: umapRange } = useUmapGraphStore();
+
   if (!cellMasksData) {
     return undefined;
   }
@@ -134,7 +139,12 @@ export const useCellSegmentationLayer = () => {
     visible: !!cellMasksData && isCellLayerOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
-    cellFilters: isCellNameFilterOn ? cellNameFilters : 'all',
+    cellNameFilters: isCellNameFilterOn ? cellNameFilters : 'all',
+    cellCytometryFilter: {
+      proteins: proteinNames,
+      range: ranges
+    },
+    umapFilter: umapRange,
     cellFillOpacity,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({

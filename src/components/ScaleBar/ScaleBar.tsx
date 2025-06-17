@@ -2,7 +2,8 @@ import { Box, Typography, alpha, useTheme, Theme } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
 import { useChannelsStore } from '../../stores/ChannelsStore';
-import scaleBarIcon from '../../assets/img/scaleBarIcon.svg';
+import { makeBoundingBox } from './utils';
+import { ScaleBarIcon } from './ScaleBarIcon';
 
 export function ScaleBar() {
   const theme = useTheme();
@@ -13,29 +14,34 @@ export function ScaleBar() {
   const loader = getLoader();
   const physicalSize = loader[0]?.meta?.physicalSizes?.x;
 
-  const { zoom, width } = viewState || { zoom: 0, width: 0 };
-  const scale = Math.pow(2, zoom);
-  const viewLength = width / scale;
+  if (!viewState || !physicalSize) return null;
+
+  const boundingBox = makeBoundingBox(viewState);
+  const viewLength = boundingBox[2][0] - boundingBox[0][0];
   const barLength = viewLength * 0.05;
-  const displayNumber = barLength * (physicalSize?.size || 1);
 
-  const formattedNumber = displayNumber < 1 ? displayNumber.toFixed(1) : Math.round(displayNumber);
+  const unit = physicalSize?.unit || 'μm';
+  const size = physicalSize?.size || 1;
 
-  if (!displayNumber) return null;
+  const displayNumber = (barLength * size).toPrecision(5);
+  const displayUnit = unit;
+
+  const scale = Math.pow(2, viewState.zoom);
+  const barWidthInPixels = barLength * scale;
+
+  const numericValue = parseFloat(displayNumber);
+  const formattedNumber = numericValue.toFixed(1);
 
   return (
     <Box sx={sx.container}>
       <Box sx={sx.iconContainer}>
-        <img
-          src={scaleBarIcon}
-          alt="scale bar"
-        />
+        <ScaleBarIcon width={barWidthInPixels} />
       </Box>
       <Typography
         sx={sx.text}
         fontSize="14px"
       >
-        {formattedNumber} {physicalSize?.unit || 'µm'}
+        {formattedNumber} {displayUnit}
       </Typography>
     </Box>
   );
