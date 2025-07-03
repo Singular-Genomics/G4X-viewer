@@ -87,13 +87,17 @@ export const PictureInPictureViewerAdapter = () => {
       if (!viewState) {
         // Create initial viewState
         const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+        const initialZoom = (defualtViewerState as any).zoom;
+        const initialPyramidResolution = Math.min(Math.max(Math.round(-initialZoom), 0), loader.length - 1);
+
         useViewerStore.setState({
           viewState: {
             ...defualtViewerState,
             id: DETAIL_VIEW_ID,
             width,
             height
-          }
+          },
+          pyramidResolution: initialPyramidResolution
         });
       } else {
         // Update existing viewState with new dimensions
