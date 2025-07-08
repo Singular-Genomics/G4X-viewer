@@ -6,6 +6,7 @@ import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
 import { TranscriptLayerToggle } from './TranscriptLayerToggle';
 import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
 import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
+import { ZoomInput } from './ZoomInput';
 import { useMemo } from 'react';
 
 export const ViewControlsSection = () => {
@@ -23,6 +24,10 @@ export const ViewControlsSection = () => {
       <Box>
         <Typography sx={sx.subsectionTitle}>Global Selection</Typography>
         <GlobalSelectionSliders />
+      </Box>
+      <Box>
+        <Typography sx={sx.subsectionTitle}>Zoom Control</Typography>
+        <ZoomInput />
       </Box>
       <Box>
         <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>

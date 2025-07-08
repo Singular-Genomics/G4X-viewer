@@ -63,7 +63,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
         getFillColor: this.props.cellFillOpacity
       },
       getLineWidth: 0,
-      visible: this.props.showDiscardedPoints
+      visible: this.props.visible && this.props.showDiscardedPoints
     });
 
     const polygonLayer = new PolygonLayer({
@@ -79,7 +79,8 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
         getFillColor: this.props.cellFillOpacity
       },
       getLineWidth: 0,
-      pickable: true
+      pickable: true,
+      visible: this.props.visible
     });
 
     return [outliersPolygonLayer, polygonLayer];
