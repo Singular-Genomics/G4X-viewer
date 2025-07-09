@@ -44,7 +44,7 @@ export const BrightfieldImagesSection = () => {
         </Box>
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Available H&E Images</Typography>
+        <Typography sx={sx.subsectionTitle}>Available fH&E Images</Typography>
         <BrightfieldImageSelector images={availableImages} />
       </Box>
     </Box>

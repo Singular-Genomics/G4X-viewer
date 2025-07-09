@@ -33,7 +33,7 @@ export const AdvancedViewOptions = () => {
     <>
       <Box sx={sx.optionsToggleWrapper}>
         <FormControlLabel
-          label="Enable layers controls"
+          label="Enable transcript subsampling control"
           control={
             <GxSwitch
               checked={overrideLayers}
