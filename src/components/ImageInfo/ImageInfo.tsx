@@ -12,10 +12,10 @@ export const ImageInfo = () => {
   const [pyramidResolution, hoverCoordinates, viewState] = useViewerStore(
     useShallow((store) => [store.pyramidResolution, store.hoverCoordinates, store.viewState])
   );
-  const [maxVisibleLayers, getCurrentTileIndexForZoom] = useTranscriptLayerStore(
-    useShallow((store) => [store.maxVisibleLayers, store.getCurrentTileIndexForZoom, store.tileZoomBreakpoints])
+  const [maxVisibleLayers, getCurrentTileIndexForZoom, overrideLayers] = useTranscriptLayerStore(
+    useShallow((store) => [store.maxVisibleLayers, store.getCurrentTileIndexForZoom, store.overrideLayers])
   );
-  const transcriptFiles = useBinaryFilesStore((store) => store.files);
+  const [transcriptFiles, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
 
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
@@ -31,11 +31,27 @@ export const ImageInfo = () => {
       ? rawCurrentVisibleLayer
       : 0;
 
-  const transcriptPercentage = hasTranscriptFiles
-    ? maxVisibleLayers !== null && maxVisibleLayers !== undefined
-      ? `${+(Math.pow(0.2, maxVisibleLayers - currentVisibleLayer) * 100).toPrecision(2) / 1}%`
-      : '100%'
-    : 'N/A';
+  const getTranscriptPercentage = () => {
+    if (!hasTranscriptFiles) {
+      return 'N/A';
+    }
+
+    if (maxVisibleLayers === null || maxVisibleLayers === undefined) {
+      return '100%';
+    }
+
+    let effectiveCurrentLayer = currentVisibleLayer;
+
+    if (overrideLayers && layerConfig) {
+      const minZoom = layerConfig.layers - maxVisibleLayers;
+      effectiveCurrentLayer = Math.max(0, currentVisibleLayer - minZoom);
+    }
+
+    const percentage = Math.pow(0.2, maxVisibleLayers - effectiveCurrentLayer) * 100;
+    return `${+percentage.toPrecision(2) / 1}%`;
+  };
+
+  const transcriptPercentage = getTranscriptPercentage();
 
   return (
     <>
