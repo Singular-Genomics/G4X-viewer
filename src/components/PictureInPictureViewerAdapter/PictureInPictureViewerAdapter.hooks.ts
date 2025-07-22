@@ -327,9 +327,68 @@ export const usePolygonDrawingLayer = () => {
       }
     } else if (editType === 'selectFeature') {
       selectFeature(featureIndexes[0]);
-    } else if (editType === 'removeFeature' || editType === 'moveFeature') {
+    } else if (editType === 'removeFeature') {
       setSelectedPoints([]);
       setSelectedCells([]);
+    } else if (editType === 'finishMovePosition') {
+      let modifiedPolygon;
+      let polygonIndex;
+
+      if (featureIndexes && featureIndexes.length > 0) {
+        polygonIndex = featureIndexes[0];
+        modifiedPolygon = updatedData.features[polygonIndex];
+      } else if (selectedFeatureIndex !== null && selectedFeatureIndex < updatedData.features.length) {
+        polygonIndex = selectedFeatureIndex;
+        modifiedPolygon = updatedData.features[polygonIndex];
+      } else if (updatedData.features.length === 1) {
+        polygonIndex = 0;
+        modifiedPolygon = updatedData.features[0];
+      }
+
+      if (!modifiedPolygon) {
+        console.warn('Could not determine which polygon was modified');
+        return;
+      }
+
+      if (files.length > 0) {
+        try {
+          const result = await detectPointsInPolygon(modifiedPolygon, files);
+
+          console.log(`Points found in modified polygon: ${result.pointCount}`);
+          console.log('Count by gene name:', result.geneDistribution);
+
+          modifiedPolygon.properties = {
+            ...modifiedPolygon.properties,
+            pointCount: result.pointCount,
+            geneDistribution: result.geneDistribution
+          };
+
+          const uniquePoints = cleanupDuplicatePoints(result.pointsInPolygon);
+          setSelectedPoints(uniquePoints);
+          updatePolygonFeatures(updatedData.features);
+        } catch (error) {
+          console.error('Error detecting points in modified polygon:', error);
+        }
+      }
+
+      if (cellMasksData) {
+        try {
+          const result = await detectCellPolygonsInPolygon(modifiedPolygon, cellMasksData);
+
+          console.log(`Cell polygons found in modified polygon: ${result.cellPolygonCount}`);
+          console.log('Cell polygons count by cluster ID:', result.cellClusterDistribution);
+
+          modifiedPolygon.properties = {
+            ...modifiedPolygon.properties,
+            cellPolygonCount: result.cellPolygonCount,
+            cellClusterDistribution: result.cellClusterDistribution
+          };
+
+          setSelectedCells(result.cellPolygonsInDrawnPolygon);
+        } catch (error) {
+          console.error('Error detecting cell polygons in modified polygon:', error);
+        }
+      }
     }
   };
 
