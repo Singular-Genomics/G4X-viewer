@@ -23,6 +23,7 @@ import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useSnackbar } from 'notistack';
 import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -61,6 +62,8 @@ export const PictureInPictureViewerAdapter = () => {
       store.viewState
     ])
   );
+
+  const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
 
   useEffect(() => {
     if (!viewState && containerSize.width && containerSize.height) {
@@ -152,7 +155,7 @@ export const PictureInPictureViewerAdapter = () => {
             loader={loader}
             selections={selections}
             overview={DEFAULT_OVERVIEW}
-            overviewOn={isOverviewOn}
+            overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
             extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
