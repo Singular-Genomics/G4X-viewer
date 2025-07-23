@@ -1,7 +1,9 @@
+import { SingleMask } from '../../shared/types';
+
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
-  cellMasksData: Uint8Array | null;
+  cellMasksData: SingleMask[] | null;
   fileName: string;
   isCellLayerOn: boolean;
   isCellFillOn: boolean;
@@ -11,6 +13,8 @@ export type CellSegmentationLayerStoreValues = {
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
   selectedCells: any[];
+  cytometryProteinsNames: string[];
+  umapDataAvailable: boolean;
 };
 
 export type CellSegmentationLayerStoreMethods = {

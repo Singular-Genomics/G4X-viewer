@@ -1,10 +1,4 @@
-import {
-  AdditiveColormapExtension,
-  DETAIL_VIEW_ID,
-  getDefaultInitialViewState,
-  LensExtension,
-  PictureInPictureViewer
-} from '@hms-dbmi/viv';
+import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
@@ -24,6 +18,7 @@ import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useSnackbar } from 'notistack';
 import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import PictureInPictureViewer from '../PictureInPictureViewer';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -38,6 +33,8 @@ export const PictureInPictureViewerAdapter = () => {
   const polygonDrawingLayer = usePolygonDrawingLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
+
+  const debouncedUpdateRef = useRef<any>(null);
 
   useEffect(
     () =>
@@ -66,13 +63,50 @@ export const PictureInPictureViewerAdapter = () => {
   const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
 
   useEffect(() => {
-    if (!viewState && containerSize.width && containerSize.height) {
+    debouncedUpdateRef.current = debounce(
+      (zoom: number) => {
+        const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
+        useViewerStore.setState({
+          pyramidResolution: z
+        });
+      },
+      250,
+      { trailing: true }
+    );
+
+    return () => {
+      if (debouncedUpdateRef.current) {
+        debouncedUpdateRef.current.cancel();
+      }
+    };
+  }, [loader.length]);
+
+  useEffect(() => {
+    if (containerSize.width && containerSize.height) {
       const width = containerSize.width;
       const height = containerSize.height;
-      const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
-      useViewerStore.setState({
-        viewState: { ...defualtViewerState, id: DETAIL_VIEW_ID }
-      });
+
+      if (!viewState) {
+        // Create initial viewState
+        const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+        useViewerStore.setState({
+          viewState: {
+            ...defualtViewerState,
+            id: DETAIL_VIEW_ID,
+            width,
+            height
+          }
+        });
+      } else {
+        // Update existing viewState with new dimensions
+        useViewerStore.setState({
+          viewState: {
+            ...viewState,
+            width,
+            height
+          }
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, containerSize.width, containerSize.height]);
@@ -165,35 +199,35 @@ export const PictureInPictureViewerAdapter = () => {
             colormap={colormap}
             onViewportLoad={onViewportLoad}
             viewStates={viewState ? [viewState] : []}
-            onViewStateChange={debounce(
-              ({ viewState: newViewState, viewId }) => {
-                const z = Math.min(Math.max(Math.round(-(newViewState as any).zoom), 0), loader.length - 1);
-                useViewerStore.setState({
-                  pyramidResolution: z,
-                  viewState: { ...newViewState, id: viewId }
-                });
-              },
-              250,
-              { trailing: true }
-            )}
-            hoverHooks={{
-              handleValue: (values) =>
-                useViewerStore.setState({
-                  pixelValues: values.map((value) =>
-                    Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
-                  )
-                }),
-              // @ts-expect-error Error in Viv jsDOC declaration.
-              // TODO: Fix when issue has beeen resolved and new version has been released.
-              handleCoordnate: (coords: number[]) =>
-                coords &&
-                useViewerStore.setState({
-                  hoverCoordinates: {
-                    x: coords[0].toFixed(0).toString(),
-                    y: coords[1].toFixed(0).toString()
-                  }
-                })
+            onViewStateChange={({ viewState: newViewState, viewId }: { viewState: any; viewId: any }) => {
+              // Update the viewState immediately
+              useViewerStore.setState({
+                viewState: { ...newViewState, id: viewId }
+              });
+
+              // Update the pyramidResolution with debounce
+              if (debouncedUpdateRef.current) {
+                debouncedUpdateRef.current((newViewState as any).zoom);
+              }
             }}
+            hoverHooks={
+              {
+                handleValue: (values: any) =>
+                  useViewerStore.setState({
+                    pixelValues: values.map((value: any) =>
+                      Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
+                    )
+                  }),
+                handleCoordnate: (coords: number[]) =>
+                  coords &&
+                  useViewerStore.setState({
+                    hoverCoordinates: {
+                      x: coords[0].toFixed(0).toString(),
+                      y: coords[1].toFixed(0).toString()
+                    }
+                  })
+              } as any
+            }
           />
           <PolygonDrawingMenu takeScreenshot={takeScreenshot} />
           <Tooltip />

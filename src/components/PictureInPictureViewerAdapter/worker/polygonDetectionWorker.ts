@@ -1,6 +1,6 @@
 import * as protobuf from 'protobufjs';
-import { CellMasksSchema } from '../../../layers/cell-masks-layer/cell-masks-schema';
 import { TranscriptSchema } from '../../../layers/transcript-layer/transcript-schema';
+import { SingleMask } from '../../../shared/types';
 import type { PolygonTileData, PolygonWorkerMessage, PolygonWorkerResponse } from './polygonDetectionWorker.types';
 
 // Checks if a point is inside a polygon using ray-casting algorithm
@@ -136,14 +136,11 @@ const detectPointsInPolygon = async (polygon: any, files: any[]) => {
   };
 };
 
-const detectCellPolygonsInPolygon = async (polygon: any, cellMasksData: Uint8Array) => {
+const detectCellPolygonsInPolygon = async (polygon: any, cellMasksData: SingleMask[]) => {
   try {
-    const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-    const decodedCellMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
-
     const cellPolygonsInDrawnPolygon: any[] = [];
 
-    for (const cellMask of decodedCellMasks) {
+    for (const cellMask of cellMasksData) {
       if (cellMask.vertices && checkCellPolygonInDrawnPolygon(cellMask.vertices, polygon)) {
         cellPolygonsInDrawnPolygon.push({
           cellId: cellMask.cellId,

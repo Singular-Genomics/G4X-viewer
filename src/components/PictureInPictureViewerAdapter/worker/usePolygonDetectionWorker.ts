@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import type { PolygonWorkerMessage, PolygonWorkerResponse } from './polygonDetectionWorker.types';
+import { SingleMask } from '../../../shared/types';
 
 export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (
@@ -12,7 +13,7 @@ export type PolygonDetectionWorkerHook = {
   }>;
   detectCellPolygonsInPolygon: (
     polygon: any,
-    cellMasksData: Uint8Array
+    cellMasksData: SingleMask[]
   ) => Promise<{
     cellPolygonsInDrawnPolygon: any[];
     cellPolygonCount: number;
@@ -75,7 +76,7 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   );
 
   const detectCellPolygonsInPolygon = useCallback(
-    (polygon: any, cellMasksData: Uint8Array) => {
+    (polygon: any, cellMasksData: SingleMask[]) => {
       return new Promise<{
         cellPolygonsInDrawnPolygon: any[];
         cellPolygonCount: number;

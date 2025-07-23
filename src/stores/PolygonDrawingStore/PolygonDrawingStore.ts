@@ -5,8 +5,8 @@ import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
-import { CellMasksSchema } from '../../layers/cell-masks-layer/cell-masks-schema';
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
+import { SingleMask } from '../../shared/types';
 
 const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
   let inside = false;
@@ -155,12 +155,9 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     const { cellMasksData } = useCellSegmentationLayerStore.getState();
     if (cellMasksData && polygons.length > 0) {
       try {
-        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-        const decodedCellMasks = (protoRoot.lookupType('CellMasks').decode(cellMasksData) as any).cellMasks;
-
         const cellPolygonsInDrawnPolygons: any[] = [];
 
-        for (const cellMask of decodedCellMasks) {
+        for (const cellMask of cellMasksData as SingleMask[]) {
           if (
             cellMask.vertices &&
             polygons.some((coords: number[][]) => checkCellPolygonInDrawnPolygon(cellMask.vertices, coords))

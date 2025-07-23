@@ -12,6 +12,8 @@ import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { EditableGeoJsonLayer } from '@deck.gl-community/editable-layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
+import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 
 const cleanupDuplicatePoints = (points: any[]): any[] => {
   if (!points || points.length <= 1) return points || [];
@@ -149,6 +151,9 @@ export const useCellSegmentationLayer = () => {
     ])
   );
 
+  const { proteinNames, ranges } = useCytometryGraphStore();
+  const { ranges: umapRange } = useUmapGraphStore();
+
   if (!cellMasksData) {
     return undefined;
   }
@@ -159,7 +164,12 @@ export const useCellSegmentationLayer = () => {
     visible: !!cellMasksData && isCellLayerOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
-    cellFilters: isCellNameFilterOn ? cellNameFilters : 'all',
+    cellNameFilters: isCellNameFilterOn ? cellNameFilters : 'all',
+    cellCytometryFilter: {
+      proteins: proteinNames,
+      range: ranges
+    },
+    umapFilter: umapRange,
     cellFillOpacity,
     selectedCells,
     onHover: (pickingInfo) =>

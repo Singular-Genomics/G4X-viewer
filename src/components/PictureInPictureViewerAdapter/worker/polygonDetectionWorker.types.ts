@@ -1,3 +1,5 @@
+import { SingleMask } from '../../../shared/types';
+
 export type PolygonPointData = {
   position: number[];
   color: number[];
@@ -22,7 +24,7 @@ export type PolygonWorkerMessage =
       type: 'detectCellPolygonsInPolygon';
       payload: {
         polygon: any;
-        cellMasksData: Uint8Array;
+        cellMasksData: SingleMask[];
       };
     };
 

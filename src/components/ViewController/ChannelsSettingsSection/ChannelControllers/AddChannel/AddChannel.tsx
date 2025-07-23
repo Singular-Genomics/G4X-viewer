@@ -41,7 +41,7 @@ export const AddChannel = () => {
     }).then(({ domain, contrastLimits }) => {
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
-        contrastLimits,
+        contrastLimits: contrastLimits as [number, number],
         channelsVisible: true
       });
       useViewerStore.setState({

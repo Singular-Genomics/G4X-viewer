@@ -11,7 +11,9 @@ export const GlobalSelectionSliders = () => {
   const theme = useTheme();
   const sx = styles(theme);
 
-  const globalSelection = useViewerStore((store) => store.globalSelection);
+  const [globalSelection, isChannelLoading] = useViewerStore(
+    useShallow((store) => [store.globalSelection, store.isChannelLoading])
+  );
   const [selections, setPropertiesForChannel, getLoader] = useChannelsStore(
     useShallow((store) => [store.selections, store.setPropertiesForChannel, store.getLoader])
   );
@@ -20,6 +22,7 @@ export const GlobalSelectionSliders = () => {
   const { shape, labels } = loader[0];
 
   const globalControlLabels = labels.filter((label: any) => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label));
+  const isAnyChannelLoading = isChannelLoading.some((loading) => loading);
 
   const changeSelection = debounce(
     (_event, newValue, label) => {
@@ -70,6 +73,8 @@ export const GlobalSelectionSliders = () => {
       {globalControlLabels.length ? (
         globalControlLabels.map((label: any) => {
           const size = shape[labels.indexOf(label)];
+          const maxValue = size - 1;
+          const hasNavigationData = maxValue > 0;
 
           return (
             <Grid
@@ -79,15 +84,11 @@ export const GlobalSelectionSliders = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Grid
-                item
-                xs={1}
-              >
+              <Grid size={1}>
                 <Typography sx={sx.selectionLabel}>{label}</Typography>
               </Grid>
               <Grid
-                item
-                xs
+                size={'grow'}
                 sx={sx.sliderContainer}
               >
                 <Slider
@@ -108,9 +109,9 @@ export const GlobalSelectionSliders = () => {
                   valueLabelDisplay="auto"
                   step={1}
                   min={0}
-                  max={size - 1}
+                  max={maxValue}
                   sx={sx.slider}
-                  disabled
+                  disabled={isAnyChannelLoading || !hasNavigationData}
                 />
               </Grid>
             </Grid>
