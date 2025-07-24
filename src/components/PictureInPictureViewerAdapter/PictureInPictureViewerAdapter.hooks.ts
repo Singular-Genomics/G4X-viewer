@@ -15,6 +15,7 @@ import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
+import { SingleMask } from '../../shared/types';
 
 const cleanupDuplicatePoints = (points: any[]): any[] => {
   if (!points || points.length <= 1) return points || [];
@@ -157,9 +158,9 @@ export const useCellSegmentationLayer = () => {
   const { filterCells } = useCellFilteringWorker();
 
   const [filteredCells, setFilteredCells] = useState<{
-    selectedCellsData: any[];
-    unselectedCellsData: any[];
-    outlierCellsData: any[];
+    selectedCellsData: SingleMask[];
+    unselectedCellsData: SingleMask[];
+    outlierCellsData: SingleMask[];
   }>({ selectedCellsData: [], unselectedCellsData: [], outlierCellsData: [] });
 
   useEffect(() => {
@@ -172,7 +173,7 @@ export const useCellSegmentationLayer = () => {
       return;
     }
 
-    const selectedCellIds = selectedCells.map((cell: any) => cell.cellId);
+    const selectedCellIds = selectedCells.map((cell: SingleMask) => cell.cellId);
 
     filterCells(
       cellMasksData,
