@@ -14,6 +14,7 @@ import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
+import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 
 const cleanupDuplicatePoints = (points: any[]): any[] => {
   if (!points || points.length <= 1) return points || [];
@@ -153,6 +154,50 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinNames, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
+  const { filterCells } = useCellFilteringWorker();
+
+  const [filteredCells, setFilteredCells] = useState<{
+    selectedCellsData: any[];
+    unselectedCellsData: any[];
+    outlierCellsData: any[];
+  }>({ selectedCellsData: [], unselectedCellsData: [], outlierCellsData: [] });
+
+  useEffect(() => {
+    if (!cellMasksData) {
+      setFilteredCells({
+        selectedCellsData: [],
+        unselectedCellsData: [],
+        outlierCellsData: []
+      });
+      return;
+    }
+
+    const selectedCellIds = selectedCells.map((cell: any) => cell.cellId);
+
+    filterCells(
+      cellMasksData,
+      selectedCellIds,
+      isCellNameFilterOn ? cellNameFilters : 'all',
+      ranges && proteinNames.xAxis && proteinNames.yAxis
+        ? {
+            proteins: proteinNames,
+            range: ranges
+          }
+        : undefined,
+      umapRange
+    )
+      .then((result) => {
+        setFilteredCells(result);
+      })
+      .catch((error) => {
+        console.error('Cell filtering error:', error);
+        setFilteredCells({
+          selectedCellsData: [],
+          unselectedCellsData: cellMasksData,
+          outlierCellsData: []
+        });
+      });
+  }, [cellMasksData, selectedCells, isCellNameFilterOn, cellNameFilters, ranges, proteinNames, umapRange, filterCells]);
 
   if (!cellMasksData) {
     return undefined;
@@ -172,6 +217,9 @@ export const useCellSegmentationLayer = () => {
     umapFilter: umapRange,
     cellFillOpacity,
     selectedCells,
+    preFilteredSelectedCells: filteredCells.selectedCellsData,
+    preFilteredUnselectedCells: filteredCells.unselectedCellsData,
+    preFilteredOutlierCells: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
