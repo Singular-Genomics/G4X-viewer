@@ -2,14 +2,13 @@ import { Box, IconButton, Theme, alpha, useTheme } from '@mui/material';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 import CreateIcon from '@mui/icons-material/Create';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CloseIcon from '@mui/icons-material/Close';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
+import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
 import { useRef, useState } from 'react';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
@@ -20,7 +19,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     togglePolygonDrawing,
     setDrawPolygonMode,
     setModifyMode,
-    setViewMode,
     mode,
     clearPolygons,
     exportPolygons,
@@ -32,7 +30,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.togglePolygonDrawing,
       store.setDrawPolygonMode,
       store.setModifyMode,
-      store.setViewMode,
       store.mode,
       store.clearPolygons,
       store.exportPolygons,
@@ -136,7 +133,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       )}
 
       {isPolygonDrawingEnabled && (
-        <>
+        <Box sx={sx.expandedMenu}>
           <MuiTooltip
             title="Draw Polygon"
             placement="left"
@@ -171,26 +168,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               onClick={setModifyMode}
               color="primary"
             >
-              <EditIcon />
-            </IconButton>
-          </MuiTooltip>
-
-          <MuiTooltip
-            title="View Mode"
-            placement="left"
-          >
-            <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor:
-                  mode instanceof ViewMode
-                    ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                    : alpha(theme.palette.gx.primary.black, 0.5)
-              }}
-              onClick={setViewMode}
-              color="primary"
-            >
-              <VisibilityIcon />
+              <BorderColorIcon />
             </IconButton>
           </MuiTooltip>
 
@@ -212,17 +190,14 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
             placement="left"
           >
             <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.5)
-              }}
+              sx={sx.controlButton}
               onClick={togglePolygonDrawing}
               color="primary"
             >
-              <CancelIcon />
+              <CloseIcon />
             </IconButton>
           </MuiTooltip>
-        </>
+        </Box>
       )}
     </Box>
   );
@@ -234,6 +209,11 @@ const styles = (theme: Theme) => ({
     bottom: 8,
     right: 8,
     zIndex: 100,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 1
+  },
+  expandedMenu: {
     display: 'flex',
     flexDirection: 'column',
     gap: 1

@@ -20,7 +20,6 @@ export type PolygonDrawingStoreMethods = {
   togglePolygonDrawing: () => void;
   setDrawPolygonMode: () => void;
   setModifyMode: () => void;
-  setViewMode: () => void;
   updatePolygonFeatures: (features: PolygonFeature[]) => void;
   selectFeature: (index: number | null) => void;
   clearPolygons: () => void;

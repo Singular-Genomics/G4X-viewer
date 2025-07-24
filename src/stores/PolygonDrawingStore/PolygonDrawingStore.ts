@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DrawPolygonMode, ModifyMode, ViewMode } from '@deck.gl-community/editable-layers';
+import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -72,7 +72,7 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
   polygonFeatures: [],
   selectedFeatureIndex: null,
-  mode: new ViewMode()
+  mode: new DrawPolygonMode()
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -81,14 +81,12 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   togglePolygonDrawing: () =>
     set((state) => ({
       isPolygonDrawingEnabled: !state.isPolygonDrawingEnabled,
-      mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new ViewMode()
+      mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new DrawPolygonMode()
     })),
 
   setDrawPolygonMode: () => set({ mode: new DrawPolygonMode() }),
 
   setModifyMode: () => set({ mode: new ModifyMode() }),
-
-  setViewMode: () => set({ mode: new ViewMode() }),
 
   updatePolygonFeatures: (features) => set({ polygonFeatures: features }),
 
