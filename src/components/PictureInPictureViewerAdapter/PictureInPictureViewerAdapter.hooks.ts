@@ -16,6 +16,7 @@ import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/Cytomet
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 import { SingleMask } from '../../shared/types';
+import { useSnackbar } from 'notistack';
 
 const cleanupDuplicatePoints = (points: any[]): any[] => {
   if (!points || points.length <= 1) return points || [];
@@ -291,6 +292,7 @@ export const usePolygonDrawingLayer = () => {
   );
 
   const { detectPointsInPolygon, detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   if (!isPolygonDrawingEnabled) {
     return undefined;
@@ -311,6 +313,14 @@ export const usePolygonDrawingLayer = () => {
 
       console.log('Created polygon:', newPolygon);
       console.log('Polygon coordinates:', newPolygon.geometry.coordinates[0]);
+
+      const loadingSnackbarId = enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'info',
+        message: 'Detecting elements in polygon...',
+        persist: true,
+        autoHideDuration: 10000
+      });
 
       if (files.length > 0) {
         try {
@@ -384,6 +394,8 @@ export const usePolygonDrawingLayer = () => {
           console.error('Error detecting cell polygons in polygon:', error);
         }
       }
+
+      closeSnackbar(loadingSnackbarId);
     } else if (editType === 'selectFeature') {
       selectFeature(featureIndexes[0]);
     } else if (editType === 'removeFeature') {
@@ -408,6 +420,14 @@ export const usePolygonDrawingLayer = () => {
         console.warn('Could not determine which polygon was modified');
         return;
       }
+
+      const loadingSnackbarId = enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'info',
+        message: 'Updating polygon selection...',
+        persist: true,
+        autoHideDuration: 10000
+      });
 
       if (files.length > 0) {
         try {
@@ -448,6 +468,8 @@ export const usePolygonDrawingLayer = () => {
           console.error('Error detecting cell polygons in modified polygon:', error);
         }
       }
+
+      closeSnackbar(loadingSnackbarId);
     }
   };
 
@@ -459,7 +481,6 @@ export const usePolygonDrawingLayer = () => {
     onEdit,
     pickable: true,
     autoHighlight: true,
-    // coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
     getFillColor: [0, 200, 0, 100],
     getLineColor: [0, 200, 0, 200],
     lineWidthMinPixels: 2,
