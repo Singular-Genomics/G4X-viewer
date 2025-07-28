@@ -72,7 +72,8 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
   polygonFeatures: [],
   selectedFeatureIndex: null,
-  mode: new DrawPolygonMode()
+  mode: new DrawPolygonMode(),
+  isDetecting: false
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -91,6 +92,8 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   updatePolygonFeatures: (features) => set({ polygonFeatures: features }),
 
   selectFeature: (index) => set({ selectedFeatureIndex: index }),
+
+  setDetecting: (detecting) => set({ isDetecting: detecting }),
 
   clearPolygons: () => {
     useTranscriptLayerStore.getState().setSelectedPoints([]);

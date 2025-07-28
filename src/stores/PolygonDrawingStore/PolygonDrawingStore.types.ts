@@ -14,6 +14,7 @@ export type PolygonDrawingStoreValues = {
   polygonFeatures: PolygonFeature[];
   selectedFeatureIndex: number | null;
   mode: any;
+  isDetecting: boolean;
 };
 
 export type PolygonDrawingStoreMethods = {
@@ -25,4 +26,5 @@ export type PolygonDrawingStoreMethods = {
   clearPolygons: () => void;
   exportPolygons: () => void;
   importPolygons: (file: File) => Promise<void>;
+  setDetecting: (detecting: boolean) => void;
 };

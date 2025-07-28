@@ -269,17 +269,27 @@ export const useBrightfieldImageLayer = () => {
 };
 
 export const usePolygonDrawingLayer = () => {
-  const [isPolygonDrawingEnabled, polygonFeatures, selectedFeatureIndex, mode, updatePolygonFeatures, selectFeature] =
-    usePolygonDrawingStore(
-      useShallow((store) => [
-        store.isPolygonDrawingEnabled,
-        store.polygonFeatures,
-        store.selectedFeatureIndex,
-        store.mode,
-        store.updatePolygonFeatures,
-        store.selectFeature
-      ])
-    );
+  const [
+    isPolygonDrawingEnabled,
+    polygonFeatures,
+    selectedFeatureIndex,
+    mode,
+    updatePolygonFeatures,
+    selectFeature,
+    isDetecting,
+    setDetecting
+  ] = usePolygonDrawingStore(
+    useShallow((store) => [
+      store.isPolygonDrawingEnabled,
+      store.polygonFeatures,
+      store.selectedFeatureIndex,
+      store.mode,
+      store.updatePolygonFeatures,
+      store.selectFeature,
+      store.isDetecting,
+      store.setDetecting
+    ])
+  );
 
   const [files] = useBinaryFilesStore(useShallow((store) => [store.files]));
   const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
@@ -313,6 +323,8 @@ export const usePolygonDrawingLayer = () => {
 
       console.log('Created polygon:', newPolygon);
       console.log('Polygon coordinates:', newPolygon.geometry.coordinates[0]);
+
+      setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
         variant: 'gxSnackbar',
@@ -395,6 +407,7 @@ export const usePolygonDrawingLayer = () => {
         }
       }
 
+      setDetecting(false);
       closeSnackbar(loadingSnackbarId);
     } else if (editType === 'selectFeature') {
       selectFeature(featureIndexes[0]);
@@ -420,6 +433,8 @@ export const usePolygonDrawingLayer = () => {
         console.warn('Could not determine which polygon was modified');
         return;
       }
+
+      setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
         variant: 'gxSnackbar',
@@ -469,6 +484,7 @@ export const usePolygonDrawingLayer = () => {
         }
       }
 
+      setDetecting(false);
       closeSnackbar(loadingSnackbarId);
     }
   };
@@ -476,13 +492,13 @@ export const usePolygonDrawingLayer = () => {
   const polygonLayer = new EditableGeoJsonLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
     data: featureCollection as any,
-    mode,
+    mode: isDetecting ? undefined : mode,
     selectedFeatureIndexes: selectedFeatureIndex !== null ? [selectedFeatureIndex] : [],
     onEdit,
-    pickable: true,
+    pickable: !isDetecting,
     autoHighlight: true,
-    getFillColor: [0, 200, 0, 100],
-    getLineColor: [0, 200, 0, 200],
+    getFillColor: isDetecting ? [255, 255, 0, 100] : [0, 200, 0, 100],
+    getLineColor: isDetecting ? [255, 255, 0, 200] : [0, 200, 0, 200],
     lineWidthMinPixels: 2,
     pointRadiusMinPixels: 5,
     editHandlePointRadiusMinPixels: 5,
