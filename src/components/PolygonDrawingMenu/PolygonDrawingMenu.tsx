@@ -12,6 +12,8 @@ import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers'
 import MuiTooltip from '@mui/material/Tooltip';
 import { useRef, useState } from 'react';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
+import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
   const [
@@ -38,11 +40,19 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     ])
   );
 
+  const transcriptFiles = useBinaryFilesStore((store) => store.files);
+  const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
 
   const theme = useTheme();
   const sx = styles(theme);
+
+  // Check if any data is loaded
+  const hasTranscriptData = transcriptFiles.length > 0;
+  const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
+  const hasAnyData = hasTranscriptData || hasCellMaskData;
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
@@ -65,6 +75,26 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       fileInputRef.current.value = '';
     }
   };
+
+  // If no data is loaded, show only screenshot button
+  if (!hasAnyData) {
+    return (
+      <Box sx={sx.menuContainer}>
+        <MuiTooltip
+          title="Screenshot"
+          placement="left"
+        >
+          <IconButton
+            sx={sx.controlButton}
+            onClick={takeScreenshot}
+            color="primary"
+          >
+            <PhotoCameraIcon />
+          </IconButton>
+        </MuiTooltip>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={sx.menuContainer}>
