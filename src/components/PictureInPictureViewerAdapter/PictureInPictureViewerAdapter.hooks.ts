@@ -321,9 +321,7 @@ export const usePolygonDrawingLayer = () => {
       selectFeature(newFeatureIndex);
       const newPolygon = updatedData.features[newFeatureIndex];
 
-      console.log('Created polygon:', newPolygon);
-      console.log('Polygon coordinates:', newPolygon.geometry.coordinates[0]);
-
+      // Start detection process
       setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
@@ -338,17 +336,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectPointsInPolygon(newPolygon, files);
 
-          console.log(`Total points found inside polygon: ${result.pointCount}`);
-          console.log('Count by gene name:', result.geneDistribution);
-          console.log(
-            'First 10 points (sample):',
-            result.pointsInPolygon.slice(0, 10).map((p) => ({
-              position: p.position,
-              geneName: p.geneName,
-              cellId: p.cellId
-            }))
-          );
-
+          // Update polygon properties with detection results
           newPolygon.properties = {
             ...newPolygon.properties,
             pointCount: result.pointCount,
@@ -368,32 +356,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectCellPolygonsInPolygon(newPolygon, cellMasksData);
 
-          console.log(`Total cell polygons found inside drawn polygon: ${result.cellPolygonCount}`);
-          console.log('Cell polygons count by cluster ID:', result.cellClusterDistribution);
-          console.log(
-            'First 5 cell polygons (sample):',
-            result.cellPolygonsInDrawnPolygon.slice(0, 5).map((c) => ({
-              cellId: c.cellId,
-              clusterId: c.clusterId,
-              area: c.area,
-              totalCounts: c.totalCounts,
-              totalGenes: c.totalGenes,
-              verticesCount: c.vertices ? c.vertices.length / 2 : 0
-            }))
-          );
-
-          console.log('Cell polygons coordinates (first 3):');
-          for (let i = 0; i < Math.min(3, result.cellPolygonsInDrawnPolygon.length); i++) {
-            const cell = result.cellPolygonsInDrawnPolygon[i];
-            const coordinates = [];
-            if (cell.vertices) {
-              for (let j = 0; j < cell.vertices.length; j += 2) {
-                coordinates.push([cell.vertices[j], cell.vertices[j + 1]]);
-              }
-            }
-            console.log(`Cell ${cell.cellId} coordinates:`, coordinates);
-          }
-
+          // Update polygon properties with cell detection results
           newPolygon.properties = {
             ...newPolygon.properties,
             cellPolygonCount: result.cellPolygonCount,
@@ -434,6 +397,7 @@ export const usePolygonDrawingLayer = () => {
         return;
       }
 
+      // Start detection for modified polygon
       setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
@@ -448,9 +412,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectPointsInPolygon(modifiedPolygon, files);
 
-          console.log(`Points found in modified polygon: ${result.pointCount}`);
-          console.log('Count by gene name:', result.geneDistribution);
-
+          // Update modified polygon properties
           modifiedPolygon.properties = {
             ...modifiedPolygon.properties,
             pointCount: result.pointCount,
@@ -469,9 +431,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectCellPolygonsInPolygon(modifiedPolygon, cellMasksData);
 
-          console.log(`Cell polygons found in modified polygon: ${result.cellPolygonCount}`);
-          console.log('Cell polygons count by cluster ID:', result.cellClusterDistribution);
-
+          // Update modified polygon with cell detection results
           modifiedPolygon.properties = {
             ...modifiedPolygon.properties,
             cellPolygonCount: result.cellPolygonCount,
