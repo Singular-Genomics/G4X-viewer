@@ -269,27 +269,17 @@ export const useBrightfieldImageLayer = () => {
 };
 
 export const usePolygonDrawingLayer = () => {
-  const [
-    isPolygonDrawingEnabled,
-    polygonFeatures,
-    selectedFeatureIndex,
-    mode,
-    updatePolygonFeatures,
-    selectFeature,
-    isDetecting,
-    setDetecting
-  ] = usePolygonDrawingStore(
-    useShallow((store) => [
-      store.isPolygonDrawingEnabled,
-      store.polygonFeatures,
-      store.selectedFeatureIndex,
-      store.mode,
-      store.updatePolygonFeatures,
-      store.selectFeature,
-      store.isDetecting,
-      store.setDetecting
-    ])
-  );
+  const [isPolygonDrawingEnabled, polygonFeatures, mode, updatePolygonFeatures, isDetecting, setDetecting] =
+    usePolygonDrawingStore(
+      useShallow((store) => [
+        store.isPolygonDrawingEnabled,
+        store.polygonFeatures,
+        store.mode,
+        store.updatePolygonFeatures,
+        store.isDetecting,
+        store.setDetecting
+      ])
+    );
 
   const [files] = useBinaryFilesStore(useShallow((store) => [store.files]));
   const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
@@ -313,15 +303,14 @@ export const usePolygonDrawingLayer = () => {
     features: polygonFeatures
   };
 
-  const onEdit = async ({ updatedData, editType, featureIndexes }: any) => {
+  const onEdit = async ({ updatedData, editType }: any) => {
     updatePolygonFeatures(updatedData.features);
 
     if (editType === 'addFeature') {
       const newFeatureIndex = updatedData.features.length - 1;
-      selectFeature(newFeatureIndex);
       const newPolygon = updatedData.features[newFeatureIndex];
 
-      // Start detection process
+      // Start detection
       setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
@@ -336,7 +325,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectPointsInPolygon(newPolygon, files);
 
-          // Update polygon properties with detection results
+          // Update polygon properties
           newPolygon.properties = {
             ...newPolygon.properties,
             pointCount: result.pointCount,
@@ -356,7 +345,7 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectCellPolygonsInPolygon(newPolygon, cellMasksData);
 
-          // Update polygon properties with cell detection results
+          // Update polygon properties
           newPolygon.properties = {
             ...newPolygon.properties,
             cellPolygonCount: result.cellPolygonCount,
@@ -373,31 +362,20 @@ export const usePolygonDrawingLayer = () => {
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
     } else if (editType === 'selectFeature') {
-      selectFeature(featureIndexes[0]);
+      // All features always selected
     } else if (editType === 'removeFeature') {
       setSelectedPoints([]);
       setSelectedCells([]);
     } else if (editType === 'finishMovePosition') {
-      let modifiedPolygon;
-      let polygonIndex;
+      // Re-run detection on all polygons
+      const allPolygons = updatedData.features;
 
-      if (featureIndexes && featureIndexes.length > 0) {
-        polygonIndex = featureIndexes[0];
-        modifiedPolygon = updatedData.features[polygonIndex];
-      } else if (selectedFeatureIndex !== null && selectedFeatureIndex < updatedData.features.length) {
-        polygonIndex = selectedFeatureIndex;
-        modifiedPolygon = updatedData.features[polygonIndex];
-      } else if (updatedData.features.length === 1) {
-        polygonIndex = 0;
-        modifiedPolygon = updatedData.features[0];
-      }
-
-      if (!modifiedPolygon) {
-        console.warn('Could not determine which polygon was modified');
+      if (!allPolygons || allPolygons.length === 0) {
+        console.warn('No polygons to process');
         return;
       }
 
-      // Start detection for modified polygon
+      // Start detection
       setDetecting(true);
 
       const loadingSnackbarId = enqueueSnackbar({
@@ -408,39 +386,55 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
+      // Reset selections
+      setSelectedPoints([]);
+      setSelectedCells([]);
+
       if (files.length > 0) {
         try {
-          const result = await detectPointsInPolygon(modifiedPolygon, files);
+          let allPointsInPolygons: any[] = [];
 
-          // Update modified polygon properties
-          modifiedPolygon.properties = {
-            ...modifiedPolygon.properties,
-            pointCount: result.pointCount,
-            geneDistribution: result.geneDistribution
-          };
+          for (const polygon of allPolygons) {
+            const result = await detectPointsInPolygon(polygon, files);
 
-          const uniquePoints = cleanupDuplicatePoints(result.pointsInPolygon);
+            // Update polygon properties
+            polygon.properties = {
+              ...polygon.properties,
+              pointCount: result.pointCount,
+              geneDistribution: result.geneDistribution
+            };
+
+            allPointsInPolygons = [...allPointsInPolygons, ...result.pointsInPolygon];
+          }
+
+          const uniquePoints = cleanupDuplicatePoints(allPointsInPolygons);
           setSelectedPoints(uniquePoints);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
-          console.error('Error detecting points in modified polygon:', error);
+          console.error('Error detecting points in polygons:', error);
         }
       }
 
       if (cellMasksData) {
         try {
-          const result = await detectCellPolygonsInPolygon(modifiedPolygon, cellMasksData);
+          let allCellsInPolygons: any[] = [];
 
-          // Update modified polygon with cell detection results
-          modifiedPolygon.properties = {
-            ...modifiedPolygon.properties,
-            cellPolygonCount: result.cellPolygonCount,
-            cellClusterDistribution: result.cellClusterDistribution
-          };
+          for (const polygon of allPolygons) {
+            const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
 
-          setSelectedCells(result.cellPolygonsInDrawnPolygon);
+            // Update polygon properties
+            polygon.properties = {
+              ...polygon.properties,
+              cellPolygonCount: result.cellPolygonCount,
+              cellClusterDistribution: result.cellClusterDistribution
+            };
+
+            allCellsInPolygons = [...allCellsInPolygons, ...result.cellPolygonsInDrawnPolygon];
+          }
+
+          setSelectedCells(allCellsInPolygons);
         } catch (error) {
-          console.error('Error detecting cell polygons in modified polygon:', error);
+          console.error('Error detecting cell polygons in polygons:', error);
         }
       }
 
@@ -453,7 +447,7 @@ export const usePolygonDrawingLayer = () => {
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
     data: featureCollection as any,
     mode: isDetecting ? undefined : mode,
-    selectedFeatureIndexes: selectedFeatureIndex !== null ? [selectedFeatureIndex] : [],
+    selectedFeatureIndexes: polygonFeatures.map((_, index) => index),
     onEdit,
     pickable: !isDetecting,
     autoHighlight: true,
