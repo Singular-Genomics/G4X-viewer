@@ -11,6 +11,7 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useEffect, useCallback } from 'react';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
   const [
@@ -49,6 +50,78 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
   const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
   const hasAnyData = hasTranscriptData || hasCellMaskData;
 
+  // Keyboard shortcuts handler
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input field
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        (event.target as HTMLElement)?.contentEditable === 'true'
+      ) {
+        return;
+      }
+
+      // Don't trigger if any modifier keys are pressed (except for Escape)
+      if (event.key !== 'Escape' && (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey)) {
+        return;
+      }
+
+      switch (event.key.toLowerCase()) {
+        case 'd': // Drawing
+          if (hasAnyData) {
+            event.preventDefault();
+            if (!isPolygonDrawingEnabled) {
+              togglePolygonDrawing();
+            } else {
+              setDrawPolygonMode();
+            }
+          }
+          break;
+        case 'e': // Edit
+          if (hasAnyData && isPolygonDrawingEnabled) {
+            event.preventDefault();
+            setModifyMode();
+          }
+          break;
+        case 'x': // Clear
+          if (hasAnyData && isPolygonDrawingEnabled) {
+            event.preventDefault();
+            clearPolygons();
+          }
+          break;
+        case 's': // Screenshot
+          event.preventDefault();
+          takeScreenshot();
+          break;
+        case 'escape':
+          if (isPolygonDrawingEnabled) {
+            event.preventDefault();
+            togglePolygonDrawing();
+          }
+          break;
+      }
+    },
+    [
+      hasAnyData,
+      isPolygonDrawingEnabled,
+      togglePolygonDrawing,
+      setDrawPolygonMode,
+      setModifyMode,
+      clearPolygons,
+      takeScreenshot
+    ]
+  );
+
+  // Add keyboard event listeners
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   // const handleImportClick = () => {
   //   fileInputRef.current?.click();
   // };
@@ -76,7 +149,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     return (
       <Box sx={sx.menuContainer}>
         <MuiTooltip
-          title="Screenshot"
+          title="Screenshot (S)"
           placement="left"
         >
           <IconButton
@@ -103,7 +176,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       /> */}
 
       <MuiTooltip
-        title="Screenshot"
+        title="Screenshot (S)"
         placement="left"
       >
         <IconButton
@@ -147,7 +220,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
 
       {!isPolygonDrawingEnabled && (
         <MuiTooltip
-          title="Enable Drawing"
+          title="Enable Drawing (D)"
           placement="left"
         >
           <IconButton
@@ -163,7 +236,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       {isPolygonDrawingEnabled && (
         <Box sx={sx.expandedMenu}>
           <MuiTooltip
-            title="Draw Polygon"
+            title="Draw Polygon (D)"
             placement="left"
           >
             <IconButton
@@ -182,7 +255,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Modify Polygon"
+            title="Modify Polygon (E)"
             placement="left"
           >
             <IconButton
@@ -201,7 +274,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Clear All Polygons"
+            title="Clear All Polygons (X)"
             placement="left"
           >
             <IconButton
@@ -214,7 +287,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Disable Drawing"
+            title="Disable Drawing (Esc)"
             placement="left"
           >
             <IconButton
