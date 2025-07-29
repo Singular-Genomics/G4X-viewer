@@ -8,7 +8,7 @@ import { GraphFilters } from './GraphFilters/GraphFilters';
 
 const DisabledLayerWarning = () => (
   <Tooltip
-    title="Cell Masks layer is disabled"
+    title="Segmentation Layer is disabled"
     placement="top"
     arrow
     slotProps={{ popper: { sx: sx.warningTooltip } }}
