@@ -1,3 +1,5 @@
+import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
+
 export type PolygonDrawingStore = PolygonDrawingStoreValues & PolygonDrawingStoreMethods;
 
 export type PolygonFeature = {
@@ -13,7 +15,7 @@ export type PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: boolean;
   polygonFeatures: PolygonFeature[];
   selectedFeatureIndex: number | null;
-  mode: any;
+  mode: DrawPolygonMode | ModifyMode;
   isDetecting: boolean;
 };
 

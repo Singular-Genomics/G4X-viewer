@@ -15,17 +15,14 @@ import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
-import { SingleMask } from '../../shared/types';
+import { SingleMask, PointData } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 
-const cleanupDuplicatePoints = (points: any[]): any[] => {
+const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
   if (!points || points.length <= 1) return points || [];
 
   const seen = new Set<string>();
-  const uniquePoints: any[] = [];
-
-  uniquePoints.length = Math.ceil(points.length * 0.7);
-  uniquePoints.length = 0;
+  const uniquePoints: PointData[] = [];
 
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
@@ -299,7 +296,7 @@ export const usePolygonDrawingLayer = () => {
   }
 
   const featureCollection = {
-    type: 'FeatureCollection',
+    type: 'FeatureCollection' as const,
     features: polygonFeatures
   };
 
@@ -392,7 +389,7 @@ export const usePolygonDrawingLayer = () => {
 
       if (files.length > 0) {
         try {
-          let allPointsInPolygons: any[] = [];
+          let allPointsInPolygons: PointData[] = [];
 
           for (const polygon of allPolygons) {
             const result = await detectPointsInPolygon(polygon, files);
@@ -417,7 +414,7 @@ export const usePolygonDrawingLayer = () => {
 
       if (cellMasksData) {
         try {
-          let allCellsInPolygons: any[] = [];
+          let allCellsInPolygons: SingleMask[] = [];
 
           for (const polygon of allPolygons) {
             const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
@@ -445,7 +442,7 @@ export const usePolygonDrawingLayer = () => {
 
   const polygonLayer = new EditableGeoJsonLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
-    data: featureCollection as any,
+    data: featureCollection,
     mode: isDetecting ? undefined : mode,
     selectedFeatureIndexes: polygonFeatures.map((_, index) => index),
     onEdit,

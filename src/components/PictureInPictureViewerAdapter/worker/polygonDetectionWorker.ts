@@ -1,10 +1,16 @@
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from '../../../layers/transcript-layer/transcript-schema';
 import { SingleMask } from '../../../shared/types';
-import type { PolygonTileData, PolygonWorkerMessage, PolygonWorkerResponse } from './polygonDetectionWorker.types';
+import type {
+  PolygonPointData,
+  PolygonTileData,
+  PolygonWorkerMessage,
+  PolygonWorkerResponse
+} from './polygonDetectionWorker.types';
+import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 // Checks if a point is inside a polygon using ray-casting algorithm
-const isPointInPolygon = (point: [number, number], polygon: any) => {
+const isPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
   const vertices = polygon.geometry.coordinates[0];
   let inside = false;
   const x = point[0],
@@ -24,11 +30,11 @@ const isPointInPolygon = (point: [number, number], polygon: any) => {
   return inside;
 };
 
-const checkPointInPolygon = (point: [number, number], polygon: any) => {
+const checkPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
   return isPointInPolygon(point, polygon);
 };
 
-const checkCellPolygonInDrawnPolygon = (cellVertices: number[], drawnPolygon: any) => {
+const checkCellPolygonInDrawnPolygon = (cellVertices: number[], drawnPolygon: PolygonFeature) => {
   if (!cellVertices || cellVertices.length < 6) return false;
 
   for (let i = 0; i < cellVertices.length; i += 2) {
@@ -41,14 +47,11 @@ const checkCellPolygonInDrawnPolygon = (cellVertices: number[], drawnPolygon: an
   return true;
 };
 
-const cleanupDuplicatePoints = (points: any[]): any[] => {
+const cleanupDuplicatePoints = (points: PolygonPointData[]): PolygonPointData[] => {
   if (!points || points.length <= 1) return points || [];
 
   const seen = new Set<string>();
-  const uniquePoints: any[] = [];
-
-  uniquePoints.length = Math.ceil(points.length * 0.7);
-  uniquePoints.length = 0;
+  const uniquePoints: PolygonPointData[] = [];
 
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
@@ -65,7 +68,7 @@ const cleanupDuplicatePoints = (points: any[]): any[] => {
   return uniquePoints;
 };
 
-const loadTileData = async (file: any): Promise<PolygonTileData | null> => {
+const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   try {
     const response = await fetch(URL.createObjectURL(file));
     const arrayBuffer = await response.arrayBuffer();
@@ -80,8 +83,8 @@ const loadTileData = async (file: any): Promise<PolygonTileData | null> => {
   }
 };
 
-const detectPointsInPolygon = async (polygon: any, files: any[]) => {
-  const pointsInPolygon: any[] = [];
+const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[]) => {
+  const pointsInPolygon: PolygonPointData[] = [];
   const tileRegex = /\/(\d+)\/(\d+)\/(\d+)\.bin$/;
   const tilePromises: Promise<any>[] = [];
 
@@ -136,21 +139,13 @@ const detectPointsInPolygon = async (polygon: any, files: any[]) => {
   };
 };
 
-const detectCellPolygonsInPolygon = async (polygon: any, cellMasksData: SingleMask[]) => {
+const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksData: SingleMask[]) => {
   try {
-    const cellPolygonsInDrawnPolygon: any[] = [];
+    const cellPolygonsInDrawnPolygon: SingleMask[] = [];
 
     for (const cellMask of cellMasksData) {
       if (cellMask.vertices && checkCellPolygonInDrawnPolygon(cellMask.vertices, polygon)) {
-        cellPolygonsInDrawnPolygon.push({
-          cellId: cellMask.cellId,
-          clusterId: cellMask.clusterId,
-          area: cellMask.area,
-          totalCounts: cellMask.totalCounts,
-          totalGenes: cellMask.totalGenes,
-          vertices: cellMask.vertices,
-          color: cellMask.color
-        });
+        cellPolygonsInDrawnPolygon.push(cellMask);
       }
     }
 

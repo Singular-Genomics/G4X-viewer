@@ -1,21 +1,22 @@
 import { useCallback, useRef } from 'react';
-import type { PolygonWorkerMessage, PolygonWorkerResponse } from './polygonDetectionWorker.types';
+import type { PolygonWorkerMessage, PolygonWorkerResponse, PolygonPointData } from './polygonDetectionWorker.types';
 import { SingleMask } from '../../../shared/types';
+import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (
-    polygon: any,
-    files: any[]
+    polygon: PolygonFeature,
+    files: File[]
   ) => Promise<{
-    pointsInPolygon: any[];
+    pointsInPolygon: PolygonPointData[];
     pointCount: number;
     geneDistribution: Record<string, number>;
   }>;
   detectCellPolygonsInPolygon: (
-    polygon: any,
+    polygon: PolygonFeature,
     cellMasksData: SingleMask[]
   ) => Promise<{
-    cellPolygonsInDrawnPolygon: any[];
+    cellPolygonsInDrawnPolygon: SingleMask[];
     cellPolygonCount: number;
     cellClusterDistribution: Record<string, number>;
   }>;
@@ -33,9 +34,9 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   }, []);
 
   const detectPointsInPolygon = useCallback(
-    (polygon: any, files: any[]) => {
+    (polygon: PolygonFeature, files: File[]) => {
       return new Promise<{
-        pointsInPolygon: any[];
+        pointsInPolygon: PolygonPointData[];
         pointCount: number;
         geneDistribution: Record<string, number>;
       }>((resolve, reject) => {
@@ -76,9 +77,9 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   );
 
   const detectCellPolygonsInPolygon = useCallback(
-    (polygon: any, cellMasksData: SingleMask[]) => {
+    (polygon: PolygonFeature, cellMasksData: SingleMask[]) => {
       return new Promise<{
-        cellPolygonsInDrawnPolygon: any[];
+        cellPolygonsInDrawnPolygon: SingleMask[];
         cellPolygonCount: number;
         cellClusterDistribution: Record<string, number>;
       }>((resolve, reject) => {

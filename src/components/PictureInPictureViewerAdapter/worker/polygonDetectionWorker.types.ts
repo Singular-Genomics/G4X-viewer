@@ -1,4 +1,5 @@
 import { SingleMask } from '../../../shared/types';
+import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export type PolygonPointData = {
   position: number[];
@@ -16,14 +17,14 @@ export type PolygonWorkerMessage =
   | {
       type: 'detectPointsInPolygon';
       payload: {
-        polygon: any;
-        files: any[];
+        polygon: PolygonFeature;
+        files: File[];
       };
     }
   | {
       type: 'detectCellPolygonsInPolygon';
       payload: {
-        polygon: any;
+        polygon: PolygonFeature;
         cellMasksData: SingleMask[];
       };
     };
@@ -33,7 +34,7 @@ export type PolygonWorkerResponse =
       type: 'pointsDetected';
       payload: {
         success: true;
-        pointsInPolygon: any[];
+        pointsInPolygon: PolygonPointData[];
         pointCount: number;
         geneDistribution: Record<string, number>;
       };
@@ -42,7 +43,7 @@ export type PolygonWorkerResponse =
       type: 'cellPolygonsDetected';
       payload: {
         success: true;
-        cellPolygonsInDrawnPolygon: any[];
+        cellPolygonsInDrawnPolygon: SingleMask[];
         cellPolygonCount: number;
         cellClusterDistribution: Record<string, number>;
       };

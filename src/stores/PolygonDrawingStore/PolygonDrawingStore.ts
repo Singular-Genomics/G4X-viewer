@@ -156,22 +156,14 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     const { cellMasksData } = useCellSegmentationLayerStore.getState();
     if (cellMasksData && polygons.length > 0) {
       try {
-        const cellPolygonsInDrawnPolygons: any[] = [];
+        const cellPolygonsInDrawnPolygons: SingleMask[] = [];
 
         for (const cellMask of cellMasksData as SingleMask[]) {
           if (
             cellMask.vertices &&
             polygons.some((coords: number[][]) => checkCellPolygonInDrawnPolygon(cellMask.vertices, coords))
           ) {
-            cellPolygonsInDrawnPolygons.push({
-              cellId: cellMask.cellId,
-              clusterId: cellMask.clusterId,
-              area: cellMask.area,
-              totalCounts: cellMask.totalCounts,
-              totalGenes: cellMask.totalGenes,
-              vertices: cellMask.vertices,
-              color: cellMask.color
-            });
+            cellPolygonsInDrawnPolygons.push(cellMask);
           }
         }
 
