@@ -8,6 +8,8 @@ import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schem
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
 import { SingleMask } from '../../shared/types';
 
+// Ray Casting Algorithm: Casts a horizontal ray from the point to infinity and counts edge intersections.
+// Odd count = inside, even count = outside.
 const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
   let inside = false;
   const [x, y] = point;
@@ -16,6 +18,7 @@ const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
     const [xi, yi] = coordinates[i];
     const [xj, yj] = coordinates[j];
 
+    // Check if ray intersects edge: edge crosses y-level AND point is left of intersection
     if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
       inside = !inside;
     }
