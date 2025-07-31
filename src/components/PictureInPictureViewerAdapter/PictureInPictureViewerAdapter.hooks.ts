@@ -22,21 +22,19 @@ const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
   if (!points || points.length <= 1) return points || [];
 
   const seen = new Set<string>();
-  const uniquePoints: PointData[] = [];
 
-  for (let i = 0; i < points.length; i++) {
-    const point = points[i];
-    if (!point || !point.position || point.position.length < 2) continue;
+  return points.filter((point) => {
+    if (!point || !point.position || point.position.length < 2) {
+      return false;
+    }
 
     const key = point.position[0] + ',' + point.position[1];
 
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniquePoints.push(point);
-    }
-  }
+    if (seen.has(key)) return false;
 
-  return uniquePoints;
+    seen.add(key);
+    return true;
+  });
 };
 
 export const useResizableContainer = () => {

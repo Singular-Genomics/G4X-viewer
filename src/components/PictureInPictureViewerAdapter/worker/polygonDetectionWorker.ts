@@ -13,14 +13,11 @@ import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawi
 const isPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
   const vertices = polygon.geometry.coordinates[0];
   let inside = false;
-  const x = point[0],
-    y = point[1];
+  const [x, y] = point;
 
   for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-    const xi = vertices[i][0],
-      yi = vertices[i][1];
-    const xj = vertices[j][0],
-      yj = vertices[j][1];
+    const [xi, yi] = vertices[i];
+    const [xj, yj] = vertices[j];
 
     const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
 
@@ -51,21 +48,19 @@ const cleanupDuplicatePoints = (points: PolygonPointData[]): PolygonPointData[] 
   if (!points || points.length <= 1) return points || [];
 
   const seen = new Set<string>();
-  const uniquePoints: PolygonPointData[] = [];
 
-  for (let i = 0; i < points.length; i++) {
-    const point = points[i];
-    if (!point || !point.position || point.position.length < 2) continue;
+  return points.filter((point) => {
+    if (!point || !point.position || point.position.length < 2) {
+      return false;
+    }
 
     const key = point.position[0] + ',' + point.position[1];
 
-    if (!seen.has(key)) {
-      seen.add(key);
-      uniquePoints.push(point);
-    }
-  }
+    if (seen.has(key)) return false;
 
-  return uniquePoints;
+    seen.add(key);
+    return true;
+  });
 };
 
 const loadTileData = async (file: File): Promise<PolygonTileData | null> => {

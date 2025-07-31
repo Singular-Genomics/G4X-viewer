@@ -1,4 +1,4 @@
-import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
+import { GeoJsonEditMode } from '@deck.gl-community/editable-layers';
 
 export type PolygonDrawingStore = PolygonDrawingStoreValues & PolygonDrawingStoreMethods;
 
@@ -15,7 +15,7 @@ export type PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: boolean;
   polygonFeatures: PolygonFeature[];
   selectedFeatureIndex: number | null;
-  mode: DrawPolygonMode | ModifyMode;
+  mode: GeoJsonEditMode;
   isDetecting: boolean;
 };
 

@@ -10,14 +10,11 @@ import { SingleMask } from '../../shared/types';
 
 const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
   let inside = false;
-  const x = point[0],
-    y = point[1];
+  const [x, y] = point;
 
   for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
-    const xi = coordinates[i][0],
-      yi = coordinates[i][1];
-    const xj = coordinates[j][0],
-      yj = coordinates[j][1];
+    const [xi, yi] = coordinates[i];
+    const [xj, yj] = coordinates[j];
 
     if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
       inside = !inside;
