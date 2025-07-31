@@ -8,7 +8,7 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   showCellFill: boolean;
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
-  selectedCells: any[];
+  selectedCells: SingleMask[];
   cellNameFilters: string[] | 'all';
   cellCytometryFilter: {
     proteins: ProteinNames;

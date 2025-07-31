@@ -149,9 +149,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
         }
 
         const selectedPositionsSet = new Set(
-          this.props.selectedPoints.map(
-            (selectedPoint: any) => `${selectedPoint.position[0]},${selectedPoint.position[1]}`
-          )
+          this.props.selectedPoints.map((selectedPoint) => `${selectedPoint.position[0]},${selectedPoint.position[1]}`)
         );
 
         const selectedPointsData = [];

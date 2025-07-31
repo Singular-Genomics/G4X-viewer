@@ -1,3 +1,5 @@
+import { PointData } from '../../shared/types';
+
 export type TranscriptLayerStore = TranscriptLayerStoreValues & TranscriptLayerStoreMethods;
 
 export type TranscriptLayerStoreValues = {
@@ -10,7 +12,7 @@ export type TranscriptLayerStoreValues = {
   overrideLayers: boolean;
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
-  selectedPoints: any[];
+  selectedPoints: PointData[];
 };
 
 export type GeneNameFilterType = string[];
@@ -25,6 +27,6 @@ export type TranscriptLayerStoreMethods = {
   setPointSize: (newPointSize: number) => void;
   setGeneNamesFilter: (geneNames: GeneNameFilterType) => void;
   clearGeneNameFilters: () => void;
-  setSelectedPoints: (points: any[]) => void;
+  setSelectedPoints: (points: PointData[]) => void;
   reset: () => void;
 };

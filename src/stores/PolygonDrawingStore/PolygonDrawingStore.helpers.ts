@@ -105,7 +105,7 @@ export const importPolygons = async (file: File) => {
         const tileData = (await loadTileData(file)) as any;
         return (
           tileData?.pointsData?.filter((point: any) =>
-            polygons.some((coords: number[][]) => isPointInPolygon([point.position[0], point.position[1]], coords))
+            polygons.some((coords: number[][]) => isPointInPolygon(point.position, coords))
           ) || []
         );
       });

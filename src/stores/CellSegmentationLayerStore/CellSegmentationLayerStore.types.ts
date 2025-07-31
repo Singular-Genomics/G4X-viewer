@@ -12,7 +12,7 @@ export type CellSegmentationLayerStoreValues = {
   cellFillOpacity: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
-  selectedCells: any[];
+  selectedCells: SingleMask[];
   cytometryProteinsNames: string[];
   umapDataAvailable: boolean;
 };
@@ -26,7 +26,7 @@ export type CellSegmentationLayerStoreMethods = {
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
-  setSelectedCells: (cells: any[]) => void;
+  setSelectedCells: (cells: SingleMask[]) => void;
   reset: () => void;
 };
 

@@ -1,6 +1,7 @@
 import { PickingInfo } from '@deck.gl/core';
 import { LayerConfig } from '../../stores/BinaryFilesStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
+import { PointData } from '../../shared/types';
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -9,16 +10,16 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showData: boolean;
   showDiscardedPoints: boolean;
   disabledTiledView: boolean;
-  selectedPoints: any[];
+  selectedPoints: PointData[];
 };
 
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
-  points: any[];
-  unselectedPoints: any[];
-  selectedPoints: any[];
-  outlierPoints: any[];
+  points: PointData[];
+  unselectedPoints: PointData[];
+  selectedPoints: PointData[];
+  outlierPoints: PointData[];
   tileData: { width: number; height: number };
   boundingBox: number[];
 };
@@ -34,7 +35,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
-  selectedPoints: any[];
+  selectedPoints: PointData[];
   onHover?: (pikingInfo: PickingInfo) => void;
 };
 
