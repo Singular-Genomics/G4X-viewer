@@ -202,7 +202,6 @@ export const useCellSegmentationLayer = () => {
 
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
-    masksData: cellMasksData || new Uint8Array(),
     visible: !!cellMasksData && isCellLayerOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
