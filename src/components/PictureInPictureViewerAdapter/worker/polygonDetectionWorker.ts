@@ -8,40 +8,17 @@ import type {
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-
-// Checks if a point is inside a polygon using ray-casting algorithm
-const isPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
-  const vertices = polygon.geometry.coordinates[0];
-  let inside = false;
-  const [x, y] = point;
-
-  for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-    const [xi, yi] = vertices[i];
-    const [xj, yj] = vertices[j];
-
-    const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-
-    if (intersect) inside = !inside;
-  }
-
-  return inside;
-};
+import {
+  isPointInPolygon,
+  checkCellPolygonInDrawnPolygon
+} from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 
 const checkPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
-  return isPointInPolygon(point, polygon);
+  return isPointInPolygon(point, polygon.geometry.coordinates[0]);
 };
 
-const checkCellPolygonInDrawnPolygon = (cellVertices: number[], drawnPolygon: PolygonFeature) => {
-  if (!cellVertices || cellVertices.length < 6) return false;
-
-  for (let i = 0; i < cellVertices.length; i += 2) {
-    const point: [number, number] = [cellVertices[i], cellVertices[i + 1]];
-    if (!isPointInPolygon(point, drawnPolygon)) {
-      return false;
-    }
-  }
-
-  return true;
+const checkCellPolygonInDrawnPolygonWrapper = (cellVertices: number[], drawnPolygon: PolygonFeature) => {
+  return checkCellPolygonInDrawnPolygon(cellVertices, drawnPolygon.geometry.coordinates[0]);
 };
 
 const cleanupDuplicatePoints = (points: PolygonPointData[]): PolygonPointData[] => {
@@ -139,7 +116,7 @@ const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksDat
     const cellPolygonsInDrawnPolygon: SingleMask[] = [];
 
     for (const cellMask of cellMasksData) {
-      if (cellMask.vertices && checkCellPolygonInDrawnPolygon(cellMask.vertices, polygon)) {
+      if (cellMask.vertices && checkCellPolygonInDrawnPolygonWrapper(cellMask.vertices, polygon)) {
         cellPolygonsInDrawnPolygon.push(cellMask);
       }
     }

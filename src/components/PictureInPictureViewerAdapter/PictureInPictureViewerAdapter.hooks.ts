@@ -381,8 +381,6 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
-    } else if (editType === 'selectFeature') {
-      // All features always selected
     } else if (editType === 'removeFeature') {
       setSelectedPoints([]);
       setSelectedCells([]);
