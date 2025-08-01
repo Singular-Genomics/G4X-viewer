@@ -152,6 +152,7 @@ export const useCellSegmentationLayer = () => {
   const { proteinNames, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
   const { filterCells } = useCellFilteringWorker();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [filteredCells, setFilteredCells] = useState<{
     selectedCellsData: SingleMask[];
@@ -188,13 +189,28 @@ export const useCellSegmentationLayer = () => {
       })
       .catch((error) => {
         console.error('Cell filtering error:', error);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          message: 'Failed to filter cells. Please try again or contact support.'
+        });
         setFilteredCells({
           selectedCellsData: [],
           unselectedCellsData: cellMasksData,
           outlierCellsData: []
         });
       });
-  }, [cellMasksData, selectedCells, isCellNameFilterOn, cellNameFilters, ranges, proteinNames, umapRange, filterCells]);
+  }, [
+    cellMasksData,
+    selectedCells,
+    isCellNameFilterOn,
+    cellNameFilters,
+    ranges,
+    proteinNames,
+    umapRange,
+    filterCells,
+    enqueueSnackbar
+  ]);
 
   if (!cellMasksData) {
     return undefined;
@@ -332,6 +348,11 @@ export const usePolygonDrawingLayer = () => {
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            message: 'Failed to detect points in polygon'
+          });
         }
       }
 
@@ -350,6 +371,11 @@ export const usePolygonDrawingLayer = () => {
           setSelectedCells(combinedSelectedCells);
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            message: 'Failed to detect cells in polygon'
+          });
         }
       }
 
@@ -406,6 +432,11 @@ export const usePolygonDrawingLayer = () => {
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygons:', error);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            message: 'Failed to detect points in polygons'
+          });
         }
       }
 
@@ -429,6 +460,11 @@ export const usePolygonDrawingLayer = () => {
           setSelectedCells(allCellsInPolygons);
         } catch (error) {
           console.error('Error detecting cell polygons in polygons:', error);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            message: 'Failed to detect cells in polygons'
+          });
         }
       }
 
