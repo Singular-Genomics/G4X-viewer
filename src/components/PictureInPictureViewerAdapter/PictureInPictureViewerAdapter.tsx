@@ -9,7 +9,8 @@ import {
   useTranscriptLayer,
   useResizableContainer,
   useBrightfieldImageLayer,
-  usePolygonDrawingLayer
+  usePolygonDrawingLayer,
+  usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
 import { useEffect, useRef } from 'react';
 import { Tooltip } from '../Tooltip';
@@ -31,6 +32,7 @@ export const PictureInPictureViewerAdapter = () => {
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
   const polygonDrawingLayer = usePolygonDrawingLayer();
+  const polygonTextLayer = usePolygonTextLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -167,6 +169,10 @@ export const PictureInPictureViewerAdapter = () => {
 
   if (polygonDrawingLayer) {
     deckProps.layers = [...deckProps.layers, polygonDrawingLayer] as any;
+  }
+
+  if (polygonTextLayer) {
+    deckProps.layers = [...deckProps.layers, polygonTextLayer] as any;
   }
 
   return (

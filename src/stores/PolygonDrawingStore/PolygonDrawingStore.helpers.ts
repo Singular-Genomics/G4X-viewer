@@ -4,6 +4,7 @@ import { SingleMask } from '../../shared/types';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { PolygonFeature } from './PolygonDrawingStore.types';
 
 // Ray Casting Algorithm: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
@@ -45,6 +46,24 @@ export const removeDuplicates = (points: any[]) => {
     seen.add(key);
     return true;
   });
+};
+
+export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId: number) => {
+  const featuresWithIds = features.map((feature, index) => {
+    const updatedFeature = {
+      ...feature,
+      properties: {
+        ...feature.properties,
+        polygonId: index + 1
+      }
+    };
+    return updatedFeature;
+  });
+
+  return {
+    featuresWithIds,
+    nextPolygonId: features.length + 1
+  };
 };
 
 export const loadTileData = (file: File) => {

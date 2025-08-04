@@ -10,7 +10,9 @@ import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { EditableGeoJsonLayer } from '@deck.gl-community/editable-layers';
+import { TextLayer } from '@deck.gl/layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
@@ -279,7 +281,7 @@ export const useBrightfieldImageLayer = () => {
 };
 
 export const usePolygonDrawingLayer = () => {
-  const [isPolygonDrawingEnabled, polygonFeatures, mode, updatePolygonFeatures, isDetecting, setDetecting] =
+  const [isPolygonDrawingEnabled, polygonFeatures, mode, updatePolygonFeatures, isDetecting, setDetecting, isViewMode] =
     usePolygonDrawingStore(
       useShallow((store) => [
         store.isPolygonDrawingEnabled,
@@ -287,7 +289,8 @@ export const usePolygonDrawingLayer = () => {
         store.mode,
         store.updatePolygonFeatures,
         store.isDetecting,
-        store.setDetecting
+        store.setDetecting,
+        store.isViewMode
       ])
     );
 
@@ -474,13 +477,13 @@ export const usePolygonDrawingLayer = () => {
   const polygonLayer = new EditableGeoJsonLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
     data: featureCollection,
-    mode: isDetecting ? undefined : mode,
-    selectedFeatureIndexes: polygonFeatures.map((_, index) => index),
-    onEdit,
-    pickable: !isDetecting,
-    autoHighlight: true,
-    getFillColor: isDetecting ? [255, 255, 0, 100] : [0, 200, 0, 100],
-    getLineColor: isDetecting ? [255, 255, 0, 200] : [0, 200, 0, 200],
+    mode: isDetecting || isViewMode ? undefined : mode,
+    selectedFeatureIndexes: isViewMode ? [] : polygonFeatures.map((_, index) => index),
+    onEdit: isViewMode ? undefined : onEdit,
+    pickable: !isDetecting && !isViewMode,
+    autoHighlight: !isViewMode,
+    getFillColor: isDetecting ? [255, 255, 0, 100] : isViewMode ? [0, 200, 0, 50] : [0, 200, 0, 100],
+    getLineColor: isDetecting ? [255, 255, 0, 200] : isViewMode ? [0, 200, 0, 150] : [0, 200, 0, 200],
     lineWidthMinPixels: 2,
     pointRadiusMinPixels: 5,
     editHandlePointRadiusMinPixels: 5,
@@ -494,4 +497,54 @@ export const usePolygonDrawingLayer = () => {
   });
 
   return polygonLayer;
+};
+
+export const usePolygonTextLayer = () => {
+  const [isPolygonDrawingEnabled, polygonFeatures, isDetecting, isViewMode] = usePolygonDrawingStore(
+    useShallow((store) => [store.isPolygonDrawingEnabled, store.polygonFeatures, store.isDetecting, store.isViewMode])
+  );
+
+  if (!isPolygonDrawingEnabled || !polygonFeatures.length || isDetecting || !isViewMode) {
+    return undefined;
+  }
+
+  const getFirstPointFromPolygon = (polygon: PolygonFeature) => {
+    const coordinates = polygon.geometry.coordinates[0];
+    if (coordinates && coordinates.length > 0) {
+      const firstPoint = coordinates[0];
+      return firstPoint;
+    }
+    return null;
+  };
+
+  const textData = polygonFeatures
+    .map((feature) => {
+      const firstPoint = getFirstPointFromPolygon(feature);
+      if (!firstPoint || !feature.properties?.polygonId) {
+        return null;
+      }
+
+      return {
+        position: firstPoint,
+        text: feature.properties.polygonId.toString()
+      };
+    })
+    .filter(Boolean);
+
+  const textLayer = new TextLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-polygon-text-layer`,
+    data: textData,
+    getPosition: (d: any) => d.position,
+    getText: (d: any) => d.text,
+    getColor: [255, 255, 255, 255],
+    getSize: 30,
+    fontFamily: 'Arial, sans-serif',
+    fontWeight: 'bold',
+    getTextAnchor: 'middle',
+    getAlignmentBaseline: 'center',
+    billboard: true,
+    pickable: false
+  });
+
+  return textLayer;
 };

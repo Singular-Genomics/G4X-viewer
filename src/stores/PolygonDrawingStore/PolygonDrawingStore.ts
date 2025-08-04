@@ -3,14 +3,16 @@ import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers'
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
-import { exportPolygons, importPolygons } from './PolygonDrawingStore.helpers';
+import { exportPolygons, importPolygons, updatePolygonFeaturesWithIds } from './PolygonDrawingStore.helpers';
 
 const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
   polygonFeatures: [],
   selectedFeatureIndex: null,
   mode: new DrawPolygonMode(),
-  isDetecting: false
+  isDetecting: false,
+  nextPolygonId: 1,
+  isViewMode: false
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -19,14 +21,25 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   togglePolygonDrawing: () =>
     set((state) => ({
       isPolygonDrawingEnabled: !state.isPolygonDrawingEnabled,
-      mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new DrawPolygonMode()
+      mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new DrawPolygonMode(),
+      isViewMode: false
     })),
 
-  setDrawPolygonMode: () => set({ mode: new DrawPolygonMode() }),
+  setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false }),
 
-  setModifyMode: () => set({ mode: new ModifyMode() }),
+  setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false }),
 
-  updatePolygonFeatures: (features) => set({ polygonFeatures: features }),
+  setViewMode: () => set({ isViewMode: true, mode: undefined }),
+
+  updatePolygonFeatures: (features) => {
+    const { nextPolygonId } = get();
+    const { featuresWithIds, nextPolygonId: newNextId } = updatePolygonFeaturesWithIds(features, nextPolygonId);
+
+    set({
+      polygonFeatures: featuresWithIds,
+      nextPolygonId: newNextId
+    });
+  },
 
   selectFeature: (index) => set({ selectedFeatureIndex: index }),
 
@@ -35,7 +48,7 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   clearPolygons: () => {
     useTranscriptLayerStore.getState().setSelectedPoints([]);
     useCellSegmentationLayerStore.getState().setSelectedCells([]);
-    set({ polygonFeatures: [], selectedFeatureIndex: null });
+    set({ polygonFeatures: [], selectedFeatureIndex: null, nextPolygonId: 1, isViewMode: false });
   },
 
   exportPolygons: () => {

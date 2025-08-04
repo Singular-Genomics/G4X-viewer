@@ -6,6 +6,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
@@ -19,7 +20,9 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     togglePolygonDrawing,
     setDrawPolygonMode,
     setModifyMode,
+    setViewMode,
     mode,
+    isViewMode,
     clearPolygons
     // exportPolygons,
     // importPolygons,
@@ -29,7 +32,9 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.togglePolygonDrawing,
       store.setDrawPolygonMode,
       store.setModifyMode,
+      store.setViewMode,
       store.mode,
+      store.isViewMode,
       store.clearPolygons
       // store.exportPolygons,
       // store.importPolygons,
@@ -85,6 +90,12 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
             setModifyMode();
           }
           break;
+        case 'v': // View
+          if (hasAnyData && isPolygonDrawingEnabled) {
+            event.preventDefault();
+            setViewMode();
+          }
+          break;
         case 'x': // Clear
           if (hasAnyData && isPolygonDrawingEnabled) {
             event.preventDefault();
@@ -109,6 +120,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       togglePolygonDrawing,
       setDrawPolygonMode,
       setModifyMode,
+      setViewMode,
       clearPolygons,
       takeScreenshot
     ]
@@ -262,7 +274,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               sx={{
                 ...sx.controlButton,
                 backgroundColor:
-                  mode instanceof ModifyMode
+                  mode instanceof ModifyMode && !isViewMode
                     ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
                     : alpha(theme.palette.gx.primary.black, 0.5)
               }}
@@ -270,6 +282,24 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               color="primary"
             >
               <BorderColorIcon />
+            </IconButton>
+          </MuiTooltip>
+
+          <MuiTooltip
+            title="View Mode (V)"
+            placement="left"
+          >
+            <IconButton
+              sx={{
+                ...sx.controlButton,
+                backgroundColor: isViewMode
+                  ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
+                  : alpha(theme.palette.gx.primary.black, 0.5)
+              }}
+              onClick={setViewMode}
+              color="primary"
+            >
+              <VisibilityIcon />
             </IconButton>
           </MuiTooltip>
 
