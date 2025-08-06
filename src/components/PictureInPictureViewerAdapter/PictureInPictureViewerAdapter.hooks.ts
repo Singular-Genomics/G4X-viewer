@@ -537,13 +537,16 @@ export const usePolygonTextLayer = () => {
     getPosition: (d: any) => d.position,
     getText: (d: any) => d.text,
     getColor: [255, 255, 255, 255],
-    getSize: 30,
+    getSize: 18,
     fontFamily: 'Arial, sans-serif',
     fontWeight: 'bold',
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center',
     billboard: true,
-    pickable: false
+    pickable: false,
+    background: true,
+    getBackgroundColor: [0, 0, 0, 180],
+    backgroundPadding: [6, 6, 6, 6]
   });
 
   return textLayer;
