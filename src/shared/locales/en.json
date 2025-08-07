@@ -8,6 +8,10 @@
   "cloudUpload": "Cloud Upload",
   "fileCloud": "Cloud File",
   "fileLocal": "Local File",
+  "filterEnable": "Enable Filter",
+  "filterShowDiscarded": "Show Discarded",
+  "filterShowActiveOnly": "Show active filters only",
+  "filterMissingColormap": "Missing colormap config data - filtering disabled.",
 
   "sourceFiles": {
     "sectionTitle": "Source Files",
@@ -110,7 +114,21 @@
     "addImage": "Add fH&E Image"
   },
   "transcriptsSettings": {
-    "sectionTitle": "Transcript Layer Settings"
+    "sectionTitle": "Transcript Layer Settings",
+
+    "disabledLayerWarning": "Transcript layer is disabled",
+
+    "advancedOptions": "Advanced Options",
+    "subsamplingControlLabel": "Enable transcript subsampling control",
+    "subsamplingControlWarning": "You are about to override the number of visible transcript layers.<br />These operations demand significant computational resources and might cause the application to crash. Perform these operations if:",
+    "subsamplingControlWarning_caseOne": "Your PC is equiped with high-end components (mainly GPU and CPU) and allows for hardwere acceleration.",
+    "subsamplingControlWarning_caseTwo": "Your transcript dataset contains less than 5 million points",
+    "subsamplingSliderLabel": "Percent of transcripts shown",
+    "subsamplingSliderTootlip": "We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling",
+
+    "pointSize": "Point Size",
+
+    "pointFilters": "Point Filters"
   },
   "segmentationSettings": {
     "sectionTitle": "Segmentation Layer Settings"
