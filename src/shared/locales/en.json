@@ -16,6 +16,10 @@
   "filterShowActiveOnly": "Show active filters only",
   "filterMissingColormap": "Missing colormap config data - filtering disabled.",
 
+  "viewer": {
+    "noImageInfo": "Please upload an image file to view",
+    "loadingImage": "Loading Image"
+  },
   "sourceFiles": {
     "sectionTitle": "Source Files",
     "multiFileButtonLabel": "Multi-file",
