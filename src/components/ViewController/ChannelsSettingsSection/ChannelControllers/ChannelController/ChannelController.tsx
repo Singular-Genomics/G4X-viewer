@@ -7,6 +7,7 @@ import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
+import { useTranslation } from 'react-i18next';
 
 export const ChannelController = ({
   color,
@@ -23,6 +24,7 @@ export const ChannelController = ({
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
 
@@ -61,7 +63,7 @@ export const ChannelController = ({
             disabled={isLoading}
           />
           <Tooltip
-            title="Remove channel"
+            title={t('channelSettings.removeChannel')}
             arrow
           >
             <IconButton

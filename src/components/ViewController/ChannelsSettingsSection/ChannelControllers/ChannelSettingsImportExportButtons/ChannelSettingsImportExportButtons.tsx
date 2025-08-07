@@ -7,11 +7,13 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { PropertiesUpdateType, useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
+import { useTranslation } from 'react-i18next';
 
 export const ChannelSettingsImportExportButtons = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const [ids, selections, channelsVisible, colors, contrastLimits, channelsSettings, setPropertiesForChannel] =
     useChannelsStore(
@@ -66,7 +68,7 @@ export const ChannelSettingsImportExportButtons = () => {
       } catch (jsonError) {
         console.error('Error stringifying channel settings:', jsonError);
         enqueueSnackbar({
-          message: 'Error formatting channel settings for export',
+          message: t('channelSettings.channelFormatingError'),
           variant: 'error'
         });
         return;
@@ -101,13 +103,13 @@ export const ChannelSettingsImportExportButtons = () => {
       URL.revokeObjectURL(url);
 
       enqueueSnackbar({
-        message: 'Channel settings exported successfully',
+        message: t('channelSettings.channelExportSuccess'),
         variant: 'success'
       });
     } catch (error) {
       console.error('Error exporting channel settings:', error);
       enqueueSnackbar({
-        message: 'Error exporting channel settings',
+        message: t('channelSettings.channelExportError'),
         variant: 'error'
       });
     }
@@ -216,13 +218,13 @@ export const ChannelSettingsImportExportButtons = () => {
           }
 
           enqueueSnackbar({
-            message: 'Channel settings imported successfully',
+            message: t('channelSettings.channelImportSuccess'),
             variant: 'success'
           });
         } catch (error) {
           console.error('Error importing channel settings:', error);
           enqueueSnackbar({
-            message: 'Error importing channel settings',
+            message: t('channelSettings.channelImportError'),
             variant: 'error'
           });
         }
@@ -230,7 +232,7 @@ export const ChannelSettingsImportExportButtons = () => {
 
       reader.readAsText(file);
     },
-    [ids, channelOptions, setPropertiesForChannel, enqueueSnackbar]
+    [ids, channelOptions, setPropertiesForChannel, enqueueSnackbar, t]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -241,15 +243,15 @@ export const ChannelSettingsImportExportButtons = () => {
     maxFiles: 1
   });
 
-  let dynamicButtonText = 'Import';
+  let dynamicButtonText = t('import');
 
   if (isDragActive) {
     if (isDragAccept) {
-      dynamicButtonText = 'Drop Here';
+      dynamicButtonText = t('dropHere');
     } else if (isDragReject) {
-      dynamicButtonText = 'Invalid File';
+      dynamicButtonText = t('invalidFile');
     } else {
-      dynamicButtonText = 'Drop File';
+      dynamicButtonText = t('dropFile');
     }
   }
 
@@ -269,7 +271,7 @@ export const ChannelSettingsImportExportButtons = () => {
         sx={sx.exportButton}
         fullWidth
       >
-        Export
+        {t('export')}
       </Button>
       <Button
         variant="outlined"

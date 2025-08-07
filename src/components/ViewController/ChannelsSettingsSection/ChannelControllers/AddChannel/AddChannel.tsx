@@ -8,10 +8,12 @@ import { useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useMetadata } from '../../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../../legacy/utils';
 import { COLOR_PALLETE } from '../../../../../shared/constants';
+import { useTranslation } from 'react-i18next';
 
 export const AddChannel = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [globalSelection, isViewerLoading, setIsChannelLoading, addIsChannelLoading] = useViewerStore(
     useShallow((store) => [
@@ -82,7 +84,7 @@ export const AddChannel = () => {
       startIcon={<AddIcon />}
       sx={sx.addChannelButton}
     >
-      Add channel
+      {t('channelSettings.addChannel')}
     </Button>
   );
 };

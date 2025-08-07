@@ -1,4 +1,11 @@
 {
+  "none": "None",
+  "export": "Export",
+  "import": "Import",
+  "dropHere": "Drop Here",
+  "dropFile": "Drop File",
+  "invalidFiles": "Invalid File",
+
   "sourceFiles": {
     "sectionTitle": "Source Files",
     "multiFileButtonLabel": "Multi-file",
@@ -66,7 +73,21 @@
     "brightfieldLayer": "fH&E Image Layer"
   },
   "channelSettings": {
-    "sectionTitle": "Protein Channel Settings"
+    "sectionTitle": "Protein Channel Settings",
+
+    "colormapSelect": "Proteomics Colormap",
+    "channelControls": "Channel Controls",
+    "channelExportSuccess": "Channel settings exported successfully",
+    "channelExportError": "Error exporting channel settings",
+    "channelFormattingError": "Error formatting channel settings for export",
+    "channelImportSuccess": "Channel settings imported successfully",
+    "channelImportError": "Error importing channel settings",
+    "addChannel": "Add Channel",
+    "removeChannel": "Remove Channel",
+
+    "lens": "Lens",
+    "highlightedChannel": "Highlighted Channel",
+    "overview": "Overview"
   },
   "brightfieldImages": {
     "sectionTitle": "Brightfield Images Settings"
