@@ -5,6 +5,9 @@
   "dropHere": "Drop Here",
   "dropFile": "Drop File",
   "invalidFiles": "Invalid File",
+  "cloudUpload": "Cloud Upload",
+  "fileCloud": "Cloud File",
+  "fileLocal": "Local File",
 
   "sourceFiles": {
     "sectionTitle": "Source Files",
@@ -90,7 +93,21 @@
     "overview": "Overview"
   },
   "brightfieldImages": {
-    "sectionTitle": "Brightfield Images Settings"
+    "sectionTitle": "Brightfield Images Settings",
+
+    "layerOpacityLabel": "Layer Opacity",
+    "availableImage": "Available fH&E Images",
+    "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
+    "duplicateImageError": "Image with same name already has been loaded",
+
+    "imageCloudUploadDescription": "Enter URL to .ome.tiff or .tif file",
+    "imageCloudUploadLabel": "fH&E Image URL",
+    "imageClousUploadSuccess": "Successfully loaded fH&E image from URL: {{file}}",
+
+    "imageUploadMutlipleError": "Invalid input file. Only single .ome.tiff files allowed",
+
+    "noImages": "No fH&E images have been loaded",
+    "addImage": "Add fH&E Image"
   },
   "transcriptsSettings": {
     "sectionTitle": "Transcript Layer Settings"

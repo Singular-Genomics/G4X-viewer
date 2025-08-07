@@ -4,6 +4,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { GxRadio } from '../../../../../shared/components/GxRadio';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudIcon from '@mui/icons-material/Cloud';
+import { useTranslation } from 'react-i18next';
 
 export const BrightfieldImageSelectorEntry = ({
   imageEntry,
@@ -14,6 +15,7 @@ export const BrightfieldImageSelectorEntry = ({
 }: BrightfieldImageSelectorEntryProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
 
@@ -56,7 +58,7 @@ export const BrightfieldImageSelectorEntry = ({
           }
         }}
         sx={sx.entryTypeTooltip}
-        title={entryType === 'local-file' ? 'Local file' : 'Cloud File'}
+        title={entryType === 'local-file' ? t('fileLocal') : t('fileCloud')}
       >
         {entryType === 'local-file' ? <InsertDriveFileIcon fontSize="small" /> : <CloudIcon fontSize="small" />}
       </Tooltip>
