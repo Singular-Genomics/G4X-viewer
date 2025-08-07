@@ -50,5 +50,20 @@
     "segmentationFileUploadButton": "Upload Segmentation File",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
     "segmentationMissingData": "Given file is missing cell segmentation masks data"
+  },
+  "viewSettings": {
+    "sectionTitle": "View Settings"
+  },
+  "channelSettings": {
+    "sectionTitle": "Protein Channel Settings"
+  },
+  "brightfieldImages": {
+    "sectionTitle": "Brightfield Images Settings"
+  },
+  "transcriptsSettings": {
+    "sectionTitle": "Transcript Layer Settings"
+  },
+  "segmentationSettings": {
+    "sectionTitle": "Segmentation Layer Settings"
   }
 }

@@ -46,32 +46,32 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <SourceFilesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="View Settings"
+                sectionTitle={t('viewSettings.sectionTitle')}
                 disabled={!imageLoaded}
               >
                 <ViewControlsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Protein Channel Settings"
+                sectionTitle={t('channelSettings.sectionTitle')}
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Brightfield Images Settings"
+                sectionTitle={t('brightfieldImages.sectionTitle')}
                 disabled={!imageLoaded}
               >
                 <BrightfieldImagesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Transcript Layer Settings"
+                sectionTitle={t('transcriptsSettings.sectionTitle')}
                 disabled={!imageLoaded || !metadataFiles.length}
                 unmountOnExit={false}
               >
                 <TranscriptLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Segmentation Layer Settings"
+                sectionTitle={t('segmentationSettings.sectionTitle')}
                 disabled={!imageLoaded || !cellMasksFiles?.length}
                 unmountOnExit={false}
               >
