@@ -4,10 +4,12 @@ import { GxSelect } from '../../../../../../shared/components/GxSelect';
 import { CytometryHeaderProps } from './CytometryHeader.types';
 import { useEffect, useState } from 'react';
 import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useTranslation } from 'react-i18next';
 
 export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [xAxisProtein, setXAxisProtein] = useState('');
   const [yAxisProtein, setYAxisProtein] = useState('');
@@ -44,7 +46,7 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
   return (
     <Box sx={sx.headerWrapper}>
       <Box sx={sx.selectWrapper}>
-        <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
+        <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphXAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
           value={xAxisProtein}
@@ -63,7 +65,7 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
             </MenuItem>
           ))}
         </GxSelect>
-        <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
+        <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphYAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
           value={yAxisProtein}
@@ -78,7 +80,7 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
               value={proteinName}
               disabled={proteinName === xAxisProtein}
             >
-              {proteinName}
+              {proteinName.replace('_', ' ')}
             </MenuItem>
           ))}
         </GxSelect>

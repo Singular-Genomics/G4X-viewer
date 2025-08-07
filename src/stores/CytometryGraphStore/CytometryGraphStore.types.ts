@@ -403,15 +403,6 @@ export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }
   }
 ];
 
-export const AVAILABLE_AXIS_TYPES: { label: string; value: AxisTypes }[] = [
-  { label: 'Linear', value: 'linear' },
-  { label: 'Logarithmic', value: 'log' }
-];
+export const AVAILABLE_AXIS_TYPES: AxisTypes[] = ['linear', 'log'];
 
-export const AVAILABLE_EXPONENT_FORMATS: { label: string; value: ExponentFormat }[] = [
-  { label: 'None', value: 'none' },
-  { label: 'Power', value: 'power' },
-  { label: 'Exponent (E)', value: 'E' },
-  { label: 'Exponent (e)', value: 'e' },
-  { label: 'International System', value: 'SI' }
-];
+export const AVAILABLE_EXPONENT_FORMATS: ExponentFormat[] = ['none', 'power', 'E', 'e', 'SI'];

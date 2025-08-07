@@ -2,9 +2,12 @@
   "none": "None",
   "export": "Export",
   "import": "Import",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
   "dropHere": "Drop Here",
   "dropFile": "Drop File",
   "invalidFiles": "Invalid File",
+  "invalidValue": "Invalid Value",
   "cloudUpload": "Cloud Upload",
   "fileCloud": "Cloud File",
   "fileLocal": "Local File",
@@ -131,6 +134,41 @@
     "pointFilters": "Point Filters"
   },
   "segmentationSettings": {
-    "sectionTitle": "Segmentation Layer Settings"
+    "sectionTitle": "Segmentation Layer Settings",
+
+    "disabledLayerWarning": "Segmentation Layer is disabled",
+
+    "cellFillLabel": "Cell Fill",
+    "cellFillShow": "Show cell fill",
+    "cellFiltersLabel": "Cell Filters",
+    "graphFiltersLabel": "Graph Filters",
+    "graphFilterUmapLabel": "UMAP",
+    "graphFilterCytometryLabel": "Flow Cytometry",
+
+    "cytometryDownloadFailedLabel": "Download failed cells data",
+    "cytometryGraphMissingDataError": "Missing cell masks in given data set",
+    "cytometryGraphMissingChannelsError": "Data set contains only a single channel data. At least two channels are required for plotting the heatmap",
+    "cytometryGraphBinningError": "Failed to bin {{count}} cells",
+    "cytometryGraphXAxisSource": "X Axis Source",
+    "cytometryGraphYAxisSource": "Y Axis Source",
+    "cytometryMenuMode": "Graph Mode",
+    "cytometryMenuColorscale": "Colorscale",
+    "cytometryMenuReverseColorscale": "Reverse colorscale",
+    "cytometryMenuBinCount": "Bin Count",
+    "cytometryMenuSubsamplingStep": "Subsampling Step",
+    "cytometryMenuPointSize": "Point Size",
+    "cytometryMenuAxisTypeLabel": "Axis type",
+    "cytometryMenuAxisType-log": "Logarithmic",
+    "cytometryMenuAxisType-linear": "Linear",
+    "cytometryMenuFormatLabel": "Exponent format",
+    "cytometryMenuFormat-none": "None",
+    "cytometryMenuFormat-power": "Power",
+    "cytometryMenuFormat-E": "Exponent (E)",
+    "cytometryMenuFormat-e": "Exponent (e)",
+    "cytometryMenuFormat-SI": "International System",
+
+    "umapMenuPointSize": "Point Size",
+    "umapMenuSubsamplingStep": "Subsampling Step",
+    "umapMenuSubsamplingStepTooltip": "Determines the interval for sampling data set, reducing density and increasing performance"
   }
 }

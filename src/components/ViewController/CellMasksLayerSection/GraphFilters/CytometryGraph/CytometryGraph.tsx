@@ -16,8 +16,10 @@ import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
 import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 import { SingleMask } from '../../../../../shared/types';
 import DownloadIcon from '@mui/icons-material/Download';
+import { useTranslation } from 'react-i18next';
 
 export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinNames: ProteinNames) {
+  const { t } = useTranslation();
   const handleDownload = () => {
     const filteredCells = cellMasksData
       .filter((mask) => failedIds.includes(mask.cellId))
@@ -43,7 +45,7 @@ export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMas
 
   return (
     <Box sx={messageSx.customErrorMessage}>
-      <Typography>Download failed cells data: </Typography>
+      <Typography>{`${t('cytometryDownloadFailedLabel')}: `}</Typography>
       <IconButton onClick={handleDownload}>
         <DownloadIcon sx={messageSx.downloadIcon} />
       </IconButton>
@@ -55,6 +57,7 @@ export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
@@ -69,7 +72,7 @@ export const CytometryGraph = () => {
     if (cellMasksData) {
       if (!cellMasksData.length) {
         enqueueSnackbar({
-          message: 'Missing cell masks in given data set',
+          message: t('segmentationSettings.cytometryGraphMissingDataError'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -79,8 +82,7 @@ export const CytometryGraph = () => {
       const listOfProteinNames = Object.keys(cellMasksData[0].proteins);
       if (listOfProteinNames.length < 2) {
         enqueueSnackbar({
-          message:
-            'Data set contains only a single channel data. At least to channels are required for plotting the heatmap',
+          message: t('segmentationSettings.cytometryGraphMissingChannelsError'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -95,7 +97,7 @@ export const CytometryGraph = () => {
         setSelectionRange(ranges);
       }
     }
-  }, [cellMasksData, enqueueSnackbar]);
+  }, [cellMasksData, enqueueSnackbar, t]);
 
   useEffect(() => {
     if (!cellMasksData || !proteinNames.xAxis || !proteinNames.yAxis || !settings.binCountX || !settings.binCountY) {
@@ -116,7 +118,7 @@ export const CytometryGraph = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: `Failed to bin ${output.metadata.failed.length} cells`,
+            message: t('segmentationSettings.cytometryGraphBinningError', { count: output.metadata.failed.length }),
             customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinNames),
             persist: true
           });
@@ -157,7 +159,8 @@ export const CytometryGraph = () => {
     settings.axisType,
     settings.subsamplingValue,
     settings.graphMode,
-    enqueueSnackbar
+    enqueueSnackbar,
+    t
   ]);
 
   useEffect(() => {

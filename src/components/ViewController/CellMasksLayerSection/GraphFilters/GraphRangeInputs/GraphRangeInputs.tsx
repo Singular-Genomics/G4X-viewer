@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { GxInput } from '../../../../../shared/components/GxInput';
 import { Box, Button, Theme, useTheme } from '@mui/material';
 import { GraphRangeInputsProps, InputConfig, InputErrors, InputFieldType, InputRange } from './GraphRangeInputs.types';
+import { useTranslation } from 'react-i18next';
 
 const INPUT_FIELDS: InputConfig[] = [
   {
@@ -49,6 +50,7 @@ export function GraphRangeInputs({
   onClear,
   onConfirm
 }: GraphRangeInputsProps) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -137,7 +139,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.clearButton}
       >
-        Clear
+        {t('cancel')}
       </Button>
       <Button
         onClick={onConfirm}
@@ -145,7 +147,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.confirmButton}
       >
-        Confirm
+        {t('confirm')}
       </Button>
     </Box>
   );
