@@ -52,7 +52,18 @@
     "segmentationMissingData": "Given file is missing cell segmentation masks data"
   },
   "viewSettings": {
-    "sectionTitle": "View Settings"
+    "sectionTitle": "View Settings",
+
+    "globalSelection": "Global Selection",
+    "globalSelectionNoData": "No global selection data",
+    "zoomControl": "Zoom Control",
+    "scale": "Scale",
+    "layerToggles": "Layer Toggles",
+    "noActiveLayers": "No active layers available",
+
+    "transcriptLayer": "Transcript Layer",
+    "segmentationLayer": "Segmentation Layer",
+    "brightfieldLayer": "fH&E Image Layer"
   },
   "channelSettings": {
     "sectionTitle": "Protein Channel Settings"
