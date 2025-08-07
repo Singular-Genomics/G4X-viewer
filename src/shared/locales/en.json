@@ -1,0 +1,54 @@
+{
+  "sourceFiles": {
+    "sectionTitle": "Source Files",
+    "multiFileButtonLabel": "Multi-file",
+    "singleFileButtonLabel": "Single-file",
+
+    "collectiveInputLabel": "Collective file upload",
+    "collectiveInputButton": "Upload G4X file",
+    "collectiveProtein": "Protein image file",
+    "collectiveImageData": "Protein image data config",
+    "collectiveH&E": "H&E images directory",
+    "collectiveTranscripts": "Transcripts TAR file",
+    "collectiveSegmentation": "Cell segmentation BIN file",
+    "collectiveMissingOneError": "Data set config is missing {{error}} source definition",
+    "collectiveMissingManyError": "Data set config is missing {{count}} source definitions.",
+    "collectiveMissingTranscriptsConfig": "Missing transcript config file in TAR archive",
+    "collectiveErrorTranscriptUnpacking": "Error unpacking transcript TAR file",
+    "collectiveMissingProtein": "Missing protein image file",
+    "collectiveMissingImageData": "Missing protein image data JSON",
+    "collectiveMissingTranscripts": "Missing transcript file",
+    "collectiveMissingSegmentation": "Missing cell segmentation file",
+    "collectiveMissingH&E": "Missing H&E images source",
+    "collectiveMissingDatasetConfig": "Missing data set config file.",
+    "collectiveSkippedFiles": "{{count}} missing files were skipped during parsing",
+    "collectiveUnsupportedFile": "File type not supported",
+    "collectiveWarningTitle": "You are about use a collective TAR file upload button.",
+    "collectiveWarningDescription": "When working using this mode, remember that this option may require significantly more time to load all the contents, depending on their size.",
+
+    "imageInputLabel": "Image File Name",
+    "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
+    "imageUploadButton": "Upload Image File",
+    "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
+    "imageSuccess": "Successfully loaded image from URL: {{filename}}",
+
+    "metadataInputLabel": "Metada File",
+    "metadataUploadButton": "Upload Metadata",
+    "metadataMultipleFileError": "Please upload a single details file",
+    "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
+    "metadataUploadSuccess": "General details file loaded successfully",
+    "metadataParsingError": "Error parsing JSON file: {{message}}",
+
+    "transcriptsFileInputLabel": "Transcript File Name",
+    "transcriptsFileUploadButton": "Upload Transcript File",
+    "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
+    "transcriptsUnpackSuccess": "Successfully unpacked",
+    "transcriptsUnpackError": "Error unpacking {{file}}",
+    "transcriptsUnsupportedError": "File type not supported",
+
+    "segmentationFileInputLabel": "Segmentation Filename",
+    "segmentationFileUploadButton": "Upload Segmentation File",
+    "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
+    "segmentationMissingData": "Given file is missing cell segmentation masks data"
+  }
+}
