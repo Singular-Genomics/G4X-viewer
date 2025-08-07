@@ -6,12 +6,14 @@ import ZipWorker from './zipWorker.js?worker';
 import TarWorker from './tarWorker.js?worker';
 import { parseJsonFromFile } from '../../../../../utils/utils';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { useTranslation } from 'react-i18next';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
 export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { setFiles, setLayerConfig, setFileName, setColormapConfig } = useBinaryFilesStore();
 
@@ -27,7 +29,7 @@ export const useFileHandler = () => {
         const { color_map, ...layerConfig } = parsedConfig;
         if (!color_map) {
           enqueueSnackbar({
-            message: 'Missing colormap config, cell segmentation filtering will be unavailable',
+            message: t('sourceFiles.transcriptsMissingColormap'),
             variant: 'warning'
           });
         }
@@ -40,7 +42,7 @@ export const useFileHandler = () => {
       }
 
       setFiles(e.data.files);
-      enqueueSnackbar({ message: 'Successfully unpacked', variant: 'success' });
+      enqueueSnackbar({ message: t('sourceFiles.transcriptsUnpackSuccess'), variant: 'success' });
       setLoading(false);
     }
   };
@@ -55,7 +57,7 @@ export const useFileHandler = () => {
     worker.onerror = function (error: ErrorEvent) {
       console.error(`Error in ${WorkerType.name}:`, error);
       enqueueSnackbar({
-        message: `Error unpacking ${file.type}`,
+        message: t('sourceFiles.transcriptsUnpackError', { file: file.type }),
         variant: 'error'
       });
       setLoading(false);
@@ -80,7 +82,7 @@ export const useFileHandler = () => {
         break;
       default:
         enqueueSnackbar({
-          message: 'File type not supported',
+          message: t('sourceFiles.transcriptsUnsupportedError'),
           variant: 'warning'
         });
     }

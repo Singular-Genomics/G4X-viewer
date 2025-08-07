@@ -15,9 +15,11 @@ import { ControllerHeader } from './ControllerHeader';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
+import { useTranslation } from 'react-i18next';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
@@ -38,7 +40,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
             <ControllerHeader onCloseController={() => setIsControllerOn(false)} />
             <Box sx={sx.viewControllerSectionsWrapper}>
               <GxCollapsibleSection
-                sectionTitle="Source Files"
+                sectionTitle={t('sourceFiles.sectionTitle')}
                 defultState="open"
               >
                 <SourceFilesSection />

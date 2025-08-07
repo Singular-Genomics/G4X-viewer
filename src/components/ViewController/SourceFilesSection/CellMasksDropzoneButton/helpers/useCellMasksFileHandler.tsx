@@ -5,11 +5,13 @@ import { useSnackbar } from 'notistack';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useTranslation } from 'react-i18next';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
@@ -27,14 +29,14 @@ export const useCellMasksFileHandler = () => {
 
       if (!colormapConfig || !colormapConfig.length) {
         enqueueSnackbar({
-          message: 'Missing colormap config, transcript metadata filtering will be unavailable',
+          message: t('sourceFiles.segmentationMissingColormap'),
           variant: 'warning'
         });
       }
 
       if (!cellMasks || !cellMasks.length) {
         enqueueSnackbar({
-          message: 'Given file is missing cell segmentation masks data',
+          message: t('sourceFiles.segmentationMissingData'),
           variant: 'error'
         });
       }
