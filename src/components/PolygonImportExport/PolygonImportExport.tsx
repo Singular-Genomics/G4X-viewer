@@ -156,9 +156,9 @@ export const PolygonImportExport = ({
                 JSON - Segmentation
               </Button>
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={handleCsvExportCells}
-                sx={sx.csvButton}
+                sx={sx.formatButton}
                 disabled={!hasSegmentationData}
                 fullWidth
               >
@@ -178,9 +178,9 @@ export const PolygonImportExport = ({
                 JSON - Transcripts
               </Button>
               <Button
-                variant="outlined"
+                variant="contained"
                 onClick={handleCsvExportTranscripts}
-                sx={sx.csvButton}
+                sx={sx.formatButton}
                 disabled={!hasTranscriptData}
                 fullWidth
               >
