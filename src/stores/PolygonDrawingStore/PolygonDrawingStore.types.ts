@@ -22,7 +22,8 @@ export type PolygonDrawingStoreMethods = {
   updatePolygonFeatures: (features: PolygonFeature[]) => void;
   selectFeature: (index: number | null) => void;
   clearPolygons: () => void;
-  exportPolygons: () => void;
+  exportPolygonsWithCells: () => void;
+  exportPolygonsWithTranscripts: () => void;
   importPolygons: (file: File) => Promise<void>;
   setDetecting: (detecting: boolean) => void;
 };

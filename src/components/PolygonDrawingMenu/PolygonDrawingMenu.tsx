@@ -12,6 +12,7 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { PolygonImportExport } from '../PolygonImportExport';
 import { useEffect, useCallback } from 'react';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
@@ -23,9 +24,11 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     setViewMode,
     mode,
     isViewMode,
-    clearPolygons
-    // exportPolygons,
-    // importPolygons,
+    clearPolygons,
+    exportPolygonsWithCells,
+    exportPolygonsWithTranscripts,
+    importPolygons,
+    polygonFeatures
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -35,17 +38,16 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.setViewMode,
       store.mode,
       store.isViewMode,
-      store.clearPolygons
-      // store.exportPolygons,
-      // store.importPolygons,
+      store.clearPolygons,
+      store.exportPolygonsWithCells,
+      store.exportPolygonsWithTranscripts,
+      store.importPolygons,
+      store.polygonFeatures
     ])
   );
 
   const transcriptFiles = useBinaryFilesStore((store) => store.files);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
-
-  // const fileInputRef = useRef<HTMLInputElement>(null);
-  // const [isImporting, setIsImporting] = useState(false);
 
   const theme = useTheme();
   const sx = styles(theme);
@@ -134,28 +136,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     };
   }, [handleKeyDown]);
 
-  // const handleImportClick = () => {
-  //   fileInputRef.current?.click();
-  // };
-
-  // const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     setIsImporting(true);
-  //     try {
-  //       await importPolygons(file);
-  //     } catch (error) {
-  //       console.error('Failed to import polygons:', error);
-  //       alert('Failed to import polygons. Please check the file format.');
-  //     } finally {
-  //       setIsImporting(false);
-  //     }
-  //   }
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.value = '';
-  //   }
-  // };
-
   // If no data is loaded, show only screenshot button
   if (!hasAnyData) {
     return (
@@ -178,15 +158,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
 
   return (
     <Box sx={sx.menuContainer}>
-      {/* TODO: Import/Export functionality - work in progress */}
-      {/* <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept=".json"
-        style={{ display: 'none' }}
-      /> */}
-
       <MuiTooltip
         title="Screenshot (S)"
         placement="left"
@@ -200,35 +171,12 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
         </IconButton>
       </MuiTooltip>
 
-      {/* TODO: Export functionality - work in progress */}
-      {/* <MuiTooltip
-        title="Export Polygons"
-        placement="left"
-      >
-        <IconButton
-          sx={sx.controlButton}
-          onClick={exportPolygons}
-          color="primary"
-          disabled={polygonFeatures.length === 0}
-        >
-          <FileDownloadIcon />
-        </IconButton>
-      </MuiTooltip> */}
-
-      {/* TODO: Import functionality - work in progress */}
-      {/* <MuiTooltip
-        title="Import Polygons"
-        placement="left"
-      >
-        <IconButton
-          sx={sx.controlButton}
-          onClick={handleImportClick}
-          color="primary"
-          disabled={isImporting}
-        >
-          <FileUploadIcon />
-        </IconButton>
-      </MuiTooltip> */}
+      <PolygonImportExport
+        exportPolygonsWithCells={exportPolygonsWithCells}
+        exportPolygonsWithTranscripts={exportPolygonsWithTranscripts}
+        importPolygons={importPolygons}
+        polygonFeatures={polygonFeatures}
+      />
 
       {!isPolygonDrawingEnabled && (
         <MuiTooltip

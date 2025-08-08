@@ -3,7 +3,12 @@ import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers'
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
-import { exportPolygons, importPolygons, updatePolygonFeaturesWithIds } from './PolygonDrawingStore.helpers';
+import {
+  exportPolygonsWithCells,
+  exportPolygonsWithTranscripts,
+  importPolygons,
+  updatePolygonFeaturesWithIds
+} from './PolygonDrawingStore.helpers';
 
 const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
@@ -51,9 +56,14 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     set({ polygonFeatures: [], selectedFeatureIndex: null, nextPolygonId: 1, isViewMode: false });
   },
 
-  exportPolygons: () => {
+  exportPolygonsWithCells: () => {
     const { polygonFeatures } = get();
-    exportPolygons(polygonFeatures);
+    exportPolygonsWithCells(polygonFeatures);
+  },
+
+  exportPolygonsWithTranscripts: () => {
+    const { polygonFeatures } = get();
+    exportPolygonsWithTranscripts(polygonFeatures);
   },
 
   importPolygons: async (file: File) => {
