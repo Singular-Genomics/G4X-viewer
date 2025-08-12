@@ -19,6 +19,7 @@ import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 import { SingleMask, PointData } from '../../shared/types';
 import { useSnackbar } from 'notistack';
+import { generatePolygonColor } from '../../utils/utils';
 
 const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
   if (!points || points.length <= 1) return points || [];
@@ -307,6 +308,27 @@ export const usePolygonDrawingLayer = () => {
   const { detectPointsInPolygon, detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const getPolygonColor = (
+    feature: any,
+    alphaFill: number,
+    alphaLine: number
+  ): { fill: [number, number, number, number]; line: [number, number, number, number] } => {
+    if (isDetecting) {
+      return {
+        fill: [255, 255, 0, 100],
+        line: [255, 255, 0, 200]
+      };
+    }
+
+    const polygonId = feature?.properties?.polygonId || 1;
+    const [r, g, b] = generatePolygonColor(polygonId - 1);
+
+    return {
+      fill: [r, g, b, alphaFill],
+      line: [r, g, b, alphaLine]
+    };
+  };
+
   if (!isPolygonDrawingEnabled) {
     return undefined;
   }
@@ -482,8 +504,14 @@ export const usePolygonDrawingLayer = () => {
     onEdit: isViewMode ? undefined : onEdit,
     pickable: !isDetecting && !isViewMode,
     autoHighlight: !isViewMode,
-    getFillColor: isDetecting ? [255, 255, 0, 100] : isViewMode ? [0, 200, 0, 50] : [0, 200, 0, 100],
-    getLineColor: isDetecting ? [255, 255, 0, 200] : isViewMode ? [0, 200, 0, 150] : [0, 200, 0, 200],
+    getFillColor: (feature: any) => {
+      const alphaFill = isViewMode ? 50 : 100;
+      return getPolygonColor(feature, alphaFill, 0).fill;
+    },
+    getLineColor: (feature: any) => {
+      const alphaLine = isViewMode ? 150 : 200;
+      return getPolygonColor(feature, 0, alphaLine).line;
+    },
     lineWidthMinPixels: 2,
     pointRadiusMinPixels: 5,
     editHandlePointRadiusMinPixels: 5,
