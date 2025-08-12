@@ -8,7 +8,11 @@ import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
 import { PolygonImportExportProps } from './PolygonImportExport.types';
-import { exportPolygonsWithCellsCSV, exportPolygonsWithTranscriptsCSV } from './PolygonImportExport.helpers';
+import {
+  exportPolygonsWithCellsCSV,
+  exportPolygonsWithTranscriptsCSV,
+  exportROIMetadataCSV
+} from './PolygonImportExport.helpers';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
@@ -53,11 +57,13 @@ export const PolygonImportExport = ({
 
   const handleCsvExportCells = () => {
     exportPolygonsWithCellsCSV(polygonFeatures);
+    exportROIMetadataCSV(polygonFeatures);
     setIsExportModalOpen(false);
   };
 
   const handleCsvExportTranscripts = () => {
     exportPolygonsWithTranscriptsCSV(polygonFeatures);
+    exportROIMetadataCSV(polygonFeatures);
     setIsExportModalOpen(false);
   };
 

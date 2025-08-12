@@ -107,3 +107,61 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
     downloadText(csv, `${roiName}_transcripts.csv`);
   });
 };
+
+export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
+  const { cellMasksData } = useCellSegmentationLayerStore.getState();
+  const { selectedPoints } = useTranscriptLayerStore.getState();
+
+  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts'];
+  const rows: (string | number)[][] = [header];
+
+  polygonFeatures.forEach((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const coordinates = feature.geometry.coordinates[0];
+
+    // Convert coordinates to string format
+    const coordinatesStr = JSON.stringify(coordinates);
+
+    // Calculate cell statistics
+    let totalCells = 0;
+    let totalCounts = 0;
+    let totalGenes = 0;
+
+    if (cellMasksData && Array.isArray(cellMasksData)) {
+      for (const cellMask of cellMasksData) {
+        if (
+          cellMask.vertices &&
+          cellMask.vertices.length > 0 &&
+          checkCellPolygonInDrawnPolygon(cellMask.vertices, coordinates)
+        ) {
+          totalCells++;
+          totalCounts += parseInt(cellMask.totalCounts, 10) || 0;
+          totalGenes += parseInt(cellMask.totalGenes, 10) || 0;
+        }
+      }
+    }
+
+    // Calculate transcript statistics
+    let totalTranscripts = 0;
+    if (selectedPoints && Array.isArray(selectedPoints)) {
+      for (const transcript of selectedPoints) {
+        if (
+          transcript.position &&
+          transcript.position.length >= 2 &&
+          isPointInPolygon([transcript.position[0], transcript.position[1]], coordinates)
+        ) {
+          totalTranscripts++;
+        }
+      }
+    }
+
+    // Calculate means
+    const meanCounts = totalCells > 0 ? Math.round((totalCounts / totalCells) * 100) / 100 : 0;
+    const meanGenes = totalCells > 0 ? Math.round((totalGenes / totalCells) * 100) / 100 : 0;
+
+    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, totalCells, totalTranscripts]);
+  });
+
+  const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
+  downloadText(csv, 'ROI_metadata.csv');
+};
