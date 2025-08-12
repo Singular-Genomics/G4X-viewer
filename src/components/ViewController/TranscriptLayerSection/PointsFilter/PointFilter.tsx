@@ -18,7 +18,7 @@ export const PointFilter = () => {
       {!isColormapConfigValid && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
-          <Typography sx={sx.errorText}>{t('filterMissingColormap')}</Typography>
+          <Typography sx={sx.errorText}>{t('general.filterMissingColormap')}</Typography>
         </Box>
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>

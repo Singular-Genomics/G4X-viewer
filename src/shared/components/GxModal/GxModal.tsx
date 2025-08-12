@@ -79,7 +79,7 @@ export const GxModal = ({
               <hr />
               <FormControlLabel
                 sx={sx.chechboxWrapper}
-                label={t('dontAskAgain')}
+                label={t('general.dontAskAgain')}
                 control={<GxCheckbox inputRef={checkboxRef} />}
               />
             </>

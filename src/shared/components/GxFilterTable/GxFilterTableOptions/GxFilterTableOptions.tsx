@@ -14,7 +14,7 @@ export const GxFilterTableOptions = ({
   return (
     <Box sx={sx.optionsContainer}>
       <FormControlLabel
-        label={t('filterEnable')}
+        label={t('general.filterEnable')}
         control={
           <GxSwitch
             disableTouchRipple
@@ -24,7 +24,7 @@ export const GxFilterTableOptions = ({
         }
       />
       <FormControlLabel
-        label={t('filterShowDiscarded')}
+        label={t('general.filterShowDiscarded')}
         control={
           <GxSwitch
             disableTouchRipple

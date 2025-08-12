@@ -24,7 +24,7 @@ export const ColormapSelector = () => {
           value=""
           disableTouchRipple
         >
-          <Typography sx={sx.colormapSelectText}>{t('none')}</Typography>
+          <Typography sx={sx.colormapSelectText}>{t('general.none')}</Typography>
         </MenuItem>
         {COLORMAP_OPTIONS.map((option) => (
           <MenuItem

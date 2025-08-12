@@ -140,7 +140,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           onClick={handleCloudUploadClick}
           startIcon={<CloudUploadIcon />}
         >
-          {t('cloudUpload')}
+          {t('general.cloudUpload')}
         </Button>
       </Box>
 
@@ -150,7 +150,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         onSubmit={handleCloudSubmit}
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
-        title={t('cloudUpload')}
+        title={t('general.cloudUpload')}
         placeholder={t('brightfieldImages.imageCloudUploadDescription')}
         label={'brightfieldImages.imageCloudUploadLabel'}
       />

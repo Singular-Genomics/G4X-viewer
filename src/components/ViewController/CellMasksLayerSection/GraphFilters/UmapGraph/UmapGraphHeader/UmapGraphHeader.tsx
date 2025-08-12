@@ -51,7 +51,7 @@ export const UmapGraphHeader = () => {
       setErrors((prev) => ({ ...prev, pointSize: '' }));
       return;
     } else if (!/^[0-9]*$/.test(newValue)) {
-      setErrors((prev) => ({ ...prev, pointSize: t('invalidValue') }));
+      setErrors((prev) => ({ ...prev, pointSize: t('general.invalidValue') }));
       return;
     } else if (Number(newValue) < MIN_POINT_SIZE) {
       setErrors((prev) => ({ ...prev, pointSize: `Min. ${MIN_POINT_SIZE}` }));
@@ -70,7 +70,7 @@ export const UmapGraphHeader = () => {
       setErrors((prev) => ({ ...prev, subsamplingValue: '' }));
       return;
     } else if (!/^[0-9]*$/.test(newValue)) {
-      setErrors((prev) => ({ ...prev, subsamplingValue: t('invalidValue') }));
+      setErrors((prev) => ({ ...prev, subsamplingValue: t('general.invalidValue') }));
       return;
     } else if (Number(newValue) < MIN_SUBSAMPLE_VALUE) {
       setErrors((prev) => ({ ...prev, subsamplingValue: `Min. ${MIN_SUBSAMPLE_VALUE}` }));

@@ -58,7 +58,7 @@ export const BrightfieldImageSelectorEntry = ({
           }
         }}
         sx={sx.entryTypeTooltip}
-        title={entryType === 'local-file' ? t('fileLocal') : t('fileCloud')}
+        title={entryType === 'local-file' ? t('general.fileLocal') : t('general.fileCloud')}
       >
         {entryType === 'local-file' ? <InsertDriveFileIcon fontSize="small" /> : <CloudIcon fontSize="small" />}
       </Tooltip>

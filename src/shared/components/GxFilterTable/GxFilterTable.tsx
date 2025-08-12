@@ -75,7 +75,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
         />
       </Box>
       <FormControlLabel
-        label={t('filterShowActiveOnly')}
+        label={t('general.filterShowActiveOnly')}
         labelPlacement="end"
         sx={sx.activeFiltersSwitchWrapper}
         control={

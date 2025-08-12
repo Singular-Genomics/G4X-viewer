@@ -243,15 +243,15 @@ export const ChannelSettingsImportExportButtons = () => {
     maxFiles: 1
   });
 
-  let dynamicButtonText = t('import');
+  let dynamicButtonText = t('general.import');
 
   if (isDragActive) {
     if (isDragAccept) {
-      dynamicButtonText = t('dropHere');
+      dynamicButtonText = t('general.dropHere');
     } else if (isDragReject) {
-      dynamicButtonText = t('invalidFile');
+      dynamicButtonText = t('general.invalidFile');
     } else {
-      dynamicButtonText = t('dropFile');
+      dynamicButtonText = t('general.dropFile');
     }
   }
 
@@ -271,7 +271,7 @@ export const ChannelSettingsImportExportButtons = () => {
         sx={sx.exportButton}
         fullWidth
       >
-        {t('export')}
+        {t('general.export')}
       </Button>
       <Button
         variant="outlined"

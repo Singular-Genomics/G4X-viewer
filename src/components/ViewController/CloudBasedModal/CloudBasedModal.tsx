@@ -22,7 +22,7 @@ export const CloudBasedModal = ({
   const handleSubmit = () => {
     if (!url.trim()) {
       enqueueSnackbar({
-        message: t('invalidURL'),
+        message: t('general.invalidURL'),
         variant: 'error'
       });
       return;

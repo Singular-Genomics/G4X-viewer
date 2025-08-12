@@ -79,9 +79,9 @@ export default function ImageDropzoneButton() {
         onSubmit={handleSubmit}
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
-        title={t('cloudUpload')}
+        title={t('general.cloudUpload')}
         placeholder={t('sourceFiles.imageInputPlaceholder')}
-        label={t('imageURL')}
+        label={t('general.imageURL')}
       />
     </Box>
   );
