@@ -24,7 +24,6 @@
     "sectionTitle": "Source Files",
     "multiFileButtonLabel": "Multi-file",
     "singleFileButtonLabel": "Single-file",
-
     "collectiveInputLabel": "Collective file upload",
     "collectiveInputButton": "Upload G4X file",
     "collectiveProtein": "Protein image file",
@@ -46,27 +45,23 @@
     "collectiveUnsupportedFile": "File type not supported",
     "collectiveWarningTitle": "You are about use a collective TAR file upload button.",
     "collectiveWarningDescription": "When working using this mode, remember that this option may require significantly more time to load all the contents, depending on their size.",
-
     "imageInputLabel": "Image File Name",
     "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
     "imageUploadButton": "Upload Image File",
     "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
-
     "metadataInputLabel": "Metada File",
     "metadataUploadButton": "Upload Metadata",
     "metadataMultipleFileError": "Please upload a single details file",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataUploadSuccess": "General details file loaded successfully",
     "metadataParsingError": "Error parsing JSON file: {{message}}",
-
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackSuccess": "Successfully unpacked",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnsupportedError": "File type not supported",
-
     "segmentationFileInputLabel": "Segmentation Filename",
     "segmentationFileUploadButton": "Upload Segmentation File",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
@@ -74,21 +69,18 @@
   },
   "viewSettings": {
     "sectionTitle": "View Settings",
-
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "zoomControl": "Zoom Control",
     "scale": "Scale",
     "layerToggles": "Layer Toggles",
     "noActiveLayers": "No active layers available",
-
     "transcriptLayer": "Transcript Layer",
     "segmentationLayer": "Segmentation Layer",
     "brightfieldLayer": "fH&E Image Layer"
   },
   "channelSettings": {
     "sectionTitle": "Protein Channel Settings",
-
     "colormapSelect": "Proteomics Colormap",
     "channelControls": "Channel Controls",
     "channelExportSuccess": "Channel settings exported successfully",
@@ -98,33 +90,26 @@
     "channelImportError": "Error importing channel settings",
     "addChannel": "Add Channel",
     "removeChannel": "Remove Channel",
-
     "lens": "Lens",
     "highlightedChannel": "Highlighted Channel",
     "overview": "Overview"
   },
   "brightfieldImages": {
     "sectionTitle": "Brightfield Images Settings",
-
     "layerOpacityLabel": "Layer Opacity",
     "availableImage": "Available fH&E Images",
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
     "duplicateImageError": "Image with same name already has been loaded",
-
     "imageCloudUploadDescription": "Enter URL to .ome.tiff or .tif file",
     "imageCloudUploadLabel": "fH&E Image URL",
     "imageClousUploadSuccess": "Successfully loaded fH&E image from URL: {{file}}",
-
     "imageUploadMutlipleError": "Invalid input file. Only single .ome.tiff files allowed",
-
     "noImages": "No fH&E images have been loaded",
     "addImage": "Add fH&E Image"
   },
   "transcriptsSettings": {
     "sectionTitle": "Transcript Layer Settings",
-
     "disabledLayerWarning": "Transcript layer is disabled",
-
     "advancedOptions": "Advanced Options",
     "subsamplingControlLabel": "Enable transcript subsampling control",
     "subsamplingControlWarning": "You are about to override the number of visible transcript layers.<br />These operations demand significant computational resources and might cause the application to crash. Perform these operations if:",
@@ -132,23 +117,18 @@
     "subsamplingControlWarning_caseTwo": "Your transcript dataset contains less than 5 million points",
     "subsamplingSliderLabel": "Percent of transcripts shown",
     "subsamplingSliderTootlip": "We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling",
-
     "pointSize": "Point Size",
-
     "pointFilters": "Point Filters"
   },
   "segmentationSettings": {
     "sectionTitle": "Segmentation Layer Settings",
-
     "disabledLayerWarning": "Segmentation Layer is disabled",
-
     "cellFillLabel": "Cell Fill",
     "cellFillShow": "Show cell fill",
     "cellFiltersLabel": "Cell Filters",
     "graphFiltersLabel": "Graph Filters",
     "graphFilterUmapLabel": "UMAP",
     "graphFilterCytometryLabel": "Flow Cytometry",
-
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphMissingDataError": "Missing cell masks in given data set",
     "cytometryGraphMissingChannelsError": "Data set contains only a single channel data. At least two channels are required for plotting the heatmap",
@@ -170,7 +150,6 @@
     "cytometryMenuFormat-E": "Exponent (E)",
     "cytometryMenuFormat-e": "Exponent (e)",
     "cytometryMenuFormat-SI": "International System",
-
     "umapMenuPointSize": "Point Size",
     "umapMenuSubsamplingStep": "Subsampling Step",
     "umapMenuSubsamplingStepTooltip": "Determines the interval for sampling data set, reducing density and increasing performance"
