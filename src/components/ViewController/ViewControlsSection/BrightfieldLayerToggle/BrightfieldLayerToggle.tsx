@@ -11,7 +11,7 @@ export const BrightfieldLayerToggle = () => {
   return (
     <Box>
       <FormControlLabel
-        label="H&E Image Layer"
+        label="fH&E Image Layer"
         control={
           <GxCheckbox
             onChange={toggleImageLayer}

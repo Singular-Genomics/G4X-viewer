@@ -89,7 +89,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
     setCloudImageUrl('');
 
     enqueueSnackbar({
-      message: `Successfully loaded H&E image from URL: ${filename}`,
+      message: `Successfully loaded fH&E image from URL: ${filename}`,
       variant: 'success'
     });
   };
@@ -101,7 +101,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         value={activeImageName}
       >
         {!images.length ? (
-          <Typography sx={sx.imageSelectorEmptyText}>No H&E images have been loaded</Typography>
+          <Typography sx={sx.imageSelectorEmptyText}>No fH&E images have been loaded</Typography>
         ) : (
           images.map((entry, index) => {
             const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
@@ -128,7 +128,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           {...dropzoneProps.getRootProps()}
         >
           <input {...dropzoneProps.getInputProps()} />
-          Add H&E Image
+          Add fH&E Image
         </Button>
         <Button
           variant="outlined"
@@ -150,7 +150,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         onUrlChange={setCloudImageUrl}
         title="Cloud Upload"
         placeholder="Enter URL to .ome.tiff or .tif file"
-        label="H&E Image URL"
+        label="fH&E Image URL"
       />
     </Box>
   );

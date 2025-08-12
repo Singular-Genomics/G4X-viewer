@@ -4,13 +4,8 @@ import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 
 export const TranscriptLayerToggle = () => {
-  const [isTranscriptLayerOn, showTilesBoundries, toggleTranscriptLayer, toggleTileBoundries] = useTranscriptLayerStore(
-    useShallow((store) => [
-      store.isTranscriptLayerOn,
-      store.showTilesBoundries,
-      store.toggleTranscriptLayer,
-      store.toggleTileBoundries
-    ])
+  const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
   );
 
   return (
@@ -26,7 +21,7 @@ export const TranscriptLayerToggle = () => {
             />
           }
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           label="Show Tile Boundaries"
           control={
             <GxCheckbox
@@ -35,7 +30,7 @@ export const TranscriptLayerToggle = () => {
               checked={showTilesBoundries}
             />
           }
-        />
+        /> */}
       </Box>
     </>
   );
