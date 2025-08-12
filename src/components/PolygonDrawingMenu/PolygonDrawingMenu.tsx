@@ -13,7 +13,8 @@ import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonImportExport } from '../PolygonImportExport';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { GxModal } from '../../shared/components/GxModal';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
   const [
@@ -49,6 +50,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
   const transcriptFiles = useBinaryFilesStore((store) => store.files);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -56,6 +59,23 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
   const hasTranscriptData = transcriptFiles.length > 0;
   const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
   const hasAnyData = hasTranscriptData || hasCellMaskData;
+
+  const handleClearPolygons = useCallback(() => {
+    if (polygonFeatures.length > 1) {
+      setIsConfirmModalOpen(true);
+    } else {
+      clearPolygons();
+    }
+  }, [polygonFeatures.length, clearPolygons]);
+
+  const handleConfirmClearPolygons = () => {
+    clearPolygons();
+    setIsConfirmModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsConfirmModalOpen(false);
+  };
 
   // Keyboard shortcuts handler
   const handleKeyDown = useCallback(
@@ -101,7 +121,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
         case 'x': // Clear
           if (hasAnyData && isPolygonDrawingEnabled) {
             event.preventDefault();
-            clearPolygons();
+            handleClearPolygons();
           }
           break;
         case 's': // Screenshot
@@ -123,7 +143,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       setDrawPolygonMode,
       setModifyMode,
       setViewMode,
-      clearPolygons,
+      handleClearPolygons,
       takeScreenshot
     ]
   );
@@ -257,7 +277,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           >
             <IconButton
               sx={sx.controlButton}
-              onClick={clearPolygons}
+              onClick={handleClearPolygons}
               color="primary"
             >
               <DeleteIcon />
@@ -278,6 +298,18 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
         </Box>
       )}
+
+      <GxModal
+        isOpen={isConfirmModalOpen}
+        onClose={handleCloseModal}
+        onContinue={handleConfirmClearPolygons}
+        title="Remove All Polygons"
+        colorVariant="danger"
+        iconVariant="danger"
+        size="small"
+      >
+        Are you sure you want to remove all {polygonFeatures.length} polygons? This action cannot be undone.
+      </GxModal>
     </Box>
   );
 };
