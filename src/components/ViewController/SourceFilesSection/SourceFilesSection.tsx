@@ -74,7 +74,7 @@ export const SourceFilesSection = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onContinue={onContinue}
-        title="Warning"
+        title={t('warning')}
         colorVariant="singular"
         iconVariant="info"
         dontShowFlag={DONT_SHOW_FLAG}

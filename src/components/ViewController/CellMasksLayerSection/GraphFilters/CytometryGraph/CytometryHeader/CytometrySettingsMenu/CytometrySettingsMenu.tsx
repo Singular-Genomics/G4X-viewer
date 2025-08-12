@@ -178,10 +178,10 @@ export const CytometrySettingsMenu = () => {
             >
               {AVAILABLE_GRAPH_MODES.map((item) => (
                 <MenuItem
-                  key={item.value}
-                  value={item.value}
+                  key={item}
+                  value={item}
                 >
-                  {item.label}
+                  {t(`cytometryMenuGraph-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>

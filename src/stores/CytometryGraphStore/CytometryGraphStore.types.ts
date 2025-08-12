@@ -48,17 +48,6 @@ export type AxisTypes = 'log' | 'linear';
 
 export type ExponentFormat = 'none' | 'power' | 'E' | 'e' | 'SI';
 
-export const AVAILABLE_GRAPH_MODES: { label: string; value: GraphMode }[] = [
-  {
-    label: 'Scatter Plot',
-    value: 'scattergl'
-  },
-  {
-    label: 'Heatmap',
-    value: 'heatmap'
-  }
-];
-
 export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }[] = [
   {
     label: 'Singular',
@@ -402,6 +391,8 @@ export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }
     ]
   }
 ];
+
+export const AVAILABLE_GRAPH_MODES: GraphMode[] = ['scattergl', 'heatmap'];
 
 export const AVAILABLE_AXIS_TYPES: AxisTypes[] = ['linear', 'log'];
 

@@ -49,7 +49,7 @@ export const AdvancedViewOptions = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onContinue={onContinue}
-        title="Warning"
+        title={t('warning')}
         colorVariant="danger"
         iconVariant="danger"
         dontShowFlag="disableTiledLayerWarning_DSA"

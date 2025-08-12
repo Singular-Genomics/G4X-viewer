@@ -4,10 +4,13 @@
   "import": "Import",
   "cancel": "Cancel",
   "confirm": "Confirm",
+  "dontAskAgain": "Don't ask me again",
   "dropHere": "Drop Here",
   "dropFile": "Drop File",
+  "imageURL": "Image URL",
   "invalidFiles": "Invalid File",
   "invalidValue": "Invalid Value",
+  "invalidURL": "Please enter a valid URL",
   "cloudUpload": "Cloud Upload",
   "fileCloud": "Cloud File",
   "fileLocal": "Local File",
@@ -15,10 +18,12 @@
   "filterShowDiscarded": "Show Discarded",
   "filterShowActiveOnly": "Show active filters only",
   "filterMissingColormap": "Missing colormap config data - filtering disabled.",
-
+  "warning": "Warning",
   "viewer": {
     "noImageInfo": "Please upload an image file to view",
-    "loadingImage": "Loading Image"
+    "loadingImage": "Loading Image",
+    "screenshotTooltip": "Screenshot",
+    "screenshotError": "Screenshot capture failed: {{message}}"
   },
   "sourceFiles": {
     "sectionTitle": "Source Files",
@@ -107,6 +112,20 @@
     "noImages": "No fH&E images have been loaded",
     "addImage": "Add fH&E Image"
   },
+  "transcript": {
+    "postion": "Position",
+    "color": "Color",
+    "cellId": "Cell ID",
+    "geneName": "Gene Name"
+  },
+  "segmentation": {
+    "cellId": "Cell ID",
+    "clusterId": "Cluster ID",
+    "color": "Color",
+    "area": "Area",
+    "totalCounts": "Total Counts",
+    "totalGenes": "Total Genes"
+  },
   "transcriptsSettings": {
     "sectionTitle": "Transcript Layer Settings",
     "disabledLayerWarning": "Transcript layer is disabled",
@@ -141,6 +160,8 @@
     "cytometryMenuBinCount": "Bin Count",
     "cytometryMenuSubsamplingStep": "Subsampling Step",
     "cytometryMenuPointSize": "Point Size",
+    "cytometryMenuGraph-scattergl": "Scatter Plot",
+    "cytometryMenuGraph-heatmap": "Heatmap",
     "cytometryMenuAxisTypeLabel": "Axis type",
     "cytometryMenuAxisType-log": "Logarithmic",
     "cytometryMenuAxisType-linear": "Linear",

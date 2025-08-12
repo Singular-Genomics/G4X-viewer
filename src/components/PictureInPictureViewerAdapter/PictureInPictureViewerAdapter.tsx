@@ -17,6 +17,7 @@ import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { useSnackbar } from 'notistack';
 import PictureInPictureViewer from '../PictureInPictureViewer';
+import { useTranslation } from 'react-i18next';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -24,6 +25,7 @@ export const PictureInPictureViewerAdapter = () => {
     useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
   );
   const loader = getLoader();
+  const { t } = useTranslation();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
@@ -141,7 +143,7 @@ export const PictureInPictureViewerAdapter = () => {
       document.body.removeChild(link);
     } catch (error) {
       enqueueSnackbar({
-        message: 'Screenshot capture failed: ' + (error as Error).message,
+        message: t('viewer.screenshotError', { message: (error as Error).message }),
         variant: 'gxSnackbar',
         titleMode: 'error'
       });
@@ -214,7 +216,7 @@ export const PictureInPictureViewerAdapter = () => {
               } as any
             }
           />
-          <MuiTooltip title="Screenshot">
+          <MuiTooltip title={t('viewer.screenshotTooltip')}>
             <IconButton
               sx={sx.screenshotButton}
               onClick={takeScreenshot}

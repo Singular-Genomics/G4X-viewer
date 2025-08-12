@@ -5,6 +5,7 @@ import { GxCheckbox } from '../GxCheckbox';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import InfoIcon from '@mui/icons-material/Info';
+import { useTranslation } from 'react-i18next';
 
 export const GxModal = ({
   isOpen,
@@ -18,6 +19,7 @@ export const GxModal = ({
   dontShowFlag
 }: GxModalProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const sx = styles(theme, size);
   const stylesVaraint = colorVariants[colorVariant as keyof typeof colorVariants];
 
@@ -77,7 +79,7 @@ export const GxModal = ({
               <hr />
               <FormControlLabel
                 sx={sx.chechboxWrapper}
-                label="Don't ask me again"
+                label={t('dontAskAgain')}
                 control={<GxCheckbox inputRef={checkboxRef} />}
               />
             </>
