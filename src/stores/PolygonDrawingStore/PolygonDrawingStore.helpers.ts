@@ -5,6 +5,12 @@ import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonFeature } from './PolygonDrawingStore.types';
+import {
+  ExportedCellData,
+  CellsExportData,
+  TranscriptsExportData,
+  ExportedTranscriptData
+} from '../../components/PolygonImportExport/PolygonImportExport.types';
 
 // Ray Casting Algorithm: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
@@ -87,17 +93,14 @@ export const loadTileData = (file: File) => {
 export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
   const { cellMasksData } = useCellSegmentationLayerStore.getState();
 
-  const exportData: Record<
-    string,
-    { coordinates: [number, number][]; cells: { cell_id: string; totalCounts: number }[] }
-  > = {};
+  const exportData: CellsExportData = {};
 
   polygonFeatures.forEach((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
     const roiName = `ROI_${polygonId}`;
     const coordinates = feature.geometry.coordinates[0];
 
-    const cellsInPolygon: { cell_id: string; totalCounts: number }[] = [];
+    const cellsInPolygon: ExportedCellData[] = [];
 
     if (cellMasksData && Array.isArray(cellMasksData)) {
       for (const cellMask of cellMasksData) {
@@ -106,10 +109,26 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
           cellMask.vertices.length > 0 &&
           checkCellPolygonInDrawnPolygon(cellMask.vertices, coordinates)
         ) {
-          cellsInPolygon.push({
+          const cellData: ExportedCellData = {
             cell_id: cellMask.cellId,
-            totalCounts: parseInt(cellMask.totalCounts) || 0
-          });
+            totalCounts: parseInt(cellMask.totalCounts) || 0,
+            totalGenes: parseInt(cellMask.totalGenes) || 0,
+            area: parseFloat(cellMask.area) || 0,
+            clusterId: cellMask.clusterId || '',
+            umapX: cellMask.umapValues?.umapX || 0,
+            umapY: cellMask.umapValues?.umapY || 0,
+            vertices: cellMask.vertices || [],
+            color: cellMask.color || []
+          };
+
+          // Add protein data
+          if (cellMask.proteins) {
+            Object.entries(cellMask.proteins).forEach(([proteinName, value]) => {
+              cellData[proteinName] = value;
+            });
+          }
+
+          cellsInPolygon.push(cellData);
         }
       }
     }
@@ -135,19 +154,18 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
 export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[]) => {
   const { selectedPoints } = useTranscriptLayerStore.getState();
 
-  const exportData: Record<
-    string,
-    { coordinates: [number, number][]; transcripts: { gene_name: string; count: number }[] }
-  > = {};
+  const exportData: TranscriptsExportData = {};
 
   polygonFeatures.forEach((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
     const roiName = `ROI_${polygonId}`;
     const coordinates = feature.geometry.coordinates[0];
 
+    const transcriptsInPolygon: ExportedTranscriptData[] = [];
     const geneCountMap: Map<string, number> = new Map();
 
     if (selectedPoints && Array.isArray(selectedPoints)) {
+      // First pass: collect transcripts and count genes
       for (const transcript of selectedPoints) {
         if (
           transcript.position &&
@@ -158,12 +176,25 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
           geneCountMap.set(geneName, (geneCountMap.get(geneName) || 0) + 1);
         }
       }
-    }
 
-    const transcriptsInPolygon = Array.from(geneCountMap.entries()).map(([gene_name, count]) => ({
-      gene_name,
-      count
-    }));
+      // Second pass: add transcripts with count data
+      for (const transcript of selectedPoints) {
+        if (
+          transcript.position &&
+          transcript.position.length >= 2 &&
+          isPointInPolygon([transcript.position[0], transcript.position[1]], coordinates)
+        ) {
+          const geneName = transcript.geneName || 'unknown';
+          transcriptsInPolygon.push({
+            gene_name: geneName,
+            count: geneCountMap.get(geneName) || 0,
+            position: transcript.position || [],
+            color: transcript.color || [],
+            cellId: transcript.cellId || ''
+          });
+        }
+      }
+    }
 
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
