@@ -6,6 +6,7 @@ export type PolygonFeature = FeatureOf<Polygon>;
 
 export type PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: boolean;
+  isPolygonLayerVisible: boolean;
   polygonFeatures: PolygonFeature[];
   selectedFeatureIndex: number | null;
   mode: GeoJsonEditMode;
@@ -16,6 +17,7 @@ export type PolygonDrawingStoreValues = {
 
 export type PolygonDrawingStoreMethods = {
   togglePolygonDrawing: () => void;
+  togglePolygonLayerVisibility: () => void;
   setDrawPolygonMode: () => void;
   setModifyMode: () => void;
   setViewMode: () => void;

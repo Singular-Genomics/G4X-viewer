@@ -84,8 +84,7 @@ export const useTranscriptLayer = () => {
     isGeneNameFilterActive,
     showFilteredPoints,
     overrideLayers,
-    maxVisibleLayers,
-    selectedPoints
+    maxVisibleLayers
   ] = useTranscriptLayerStore(
     useShallow((store) => [
       store.isTranscriptLayerOn,
@@ -96,8 +95,7 @@ export const useTranscriptLayer = () => {
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
       store.overrideLayers,
-      store.maxVisibleLayers,
-      store.selectedPoints
+      store.maxVisibleLayers
     ])
   );
 
@@ -117,7 +115,6 @@ export const useTranscriptLayer = () => {
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
-    selectedPoints,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -158,15 +155,13 @@ export const useCellSegmentationLayer = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [filteredCells, setFilteredCells] = useState<{
-    selectedCellsData: SingleMask[];
     unselectedCellsData: SingleMask[];
     outlierCellsData: SingleMask[];
-  }>({ selectedCellsData: [], unselectedCellsData: [], outlierCellsData: [] });
+  }>({ unselectedCellsData: [], outlierCellsData: [] });
 
   useEffect(() => {
     if (!cellMasksData) {
       setFilteredCells({
-        selectedCellsData: [],
         unselectedCellsData: [],
         outlierCellsData: []
       });
@@ -198,7 +193,6 @@ export const useCellSegmentationLayer = () => {
           message: 'Failed to filter cells. Please try again or contact support.'
         });
         setFilteredCells({
-          selectedCellsData: [],
           unselectedCellsData: cellMasksData,
           outlierCellsData: []
         });
@@ -232,7 +226,6 @@ export const useCellSegmentationLayer = () => {
     umapFilter: umapRange,
     cellFillOpacity,
     selectedCells,
-    preFilteredSelectedCells: filteredCells.selectedCellsData,
     preFilteredUnselectedCells: filteredCells.unselectedCellsData,
     preFilteredOutlierCells: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
@@ -282,18 +275,27 @@ export const useBrightfieldImageLayer = () => {
 };
 
 export const usePolygonDrawingLayer = () => {
-  const [isPolygonDrawingEnabled, polygonFeatures, mode, updatePolygonFeatures, isDetecting, setDetecting, isViewMode] =
-    usePolygonDrawingStore(
-      useShallow((store) => [
-        store.isPolygonDrawingEnabled,
-        store.polygonFeatures,
-        store.mode,
-        store.updatePolygonFeatures,
-        store.isDetecting,
-        store.setDetecting,
-        store.isViewMode
-      ])
-    );
+  const [
+    isPolygonDrawingEnabled,
+    isPolygonLayerVisible,
+    polygonFeatures,
+    mode,
+    updatePolygonFeatures,
+    isDetecting,
+    setDetecting,
+    isViewMode
+  ] = usePolygonDrawingStore(
+    useShallow((store) => [
+      store.isPolygonDrawingEnabled,
+      store.isPolygonLayerVisible,
+      store.polygonFeatures,
+      store.mode,
+      store.updatePolygonFeatures,
+      store.isDetecting,
+      store.setDetecting,
+      store.isViewMode
+    ])
+  );
 
   const [files] = useBinaryFilesStore(useShallow((store) => [store.files]));
   const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
@@ -329,7 +331,7 @@ export const usePolygonDrawingLayer = () => {
     };
   };
 
-  if (!isPolygonDrawingEnabled) {
+  if (!isPolygonLayerVisible || (!isPolygonDrawingEnabled && polygonFeatures.length === 0)) {
     return undefined;
   }
 
@@ -528,11 +530,23 @@ export const usePolygonDrawingLayer = () => {
 };
 
 export const usePolygonTextLayer = () => {
-  const [isPolygonDrawingEnabled, polygonFeatures, isDetecting, isViewMode] = usePolygonDrawingStore(
-    useShallow((store) => [store.isPolygonDrawingEnabled, store.polygonFeatures, store.isDetecting, store.isViewMode])
-  );
+  const [isPolygonDrawingEnabled, isPolygonLayerVisible, polygonFeatures, isDetecting, isViewMode] =
+    usePolygonDrawingStore(
+      useShallow((store) => [
+        store.isPolygonDrawingEnabled,
+        store.isPolygonLayerVisible,
+        store.polygonFeatures,
+        store.isDetecting,
+        store.isViewMode
+      ])
+    );
 
-  if (!isPolygonDrawingEnabled || !polygonFeatures.length || isDetecting || !isViewMode) {
+  if (!isPolygonLayerVisible || !polygonFeatures.length || isDetecting) {
+    return undefined;
+  }
+
+  // Show text only in view mode (when polygon drawing is disabled or explicitly in view mode)
+  if (isPolygonDrawingEnabled && !isViewMode) {
     return undefined;
   }
 

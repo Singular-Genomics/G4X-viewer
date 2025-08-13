@@ -12,6 +12,7 @@ import {
 
 const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
+  isPolygonLayerVisible: true,
   polygonFeatures: [],
   selectedFeatureIndex: null,
   mode: new DrawPolygonMode(),
@@ -27,7 +28,12 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     set((state) => ({
       isPolygonDrawingEnabled: !state.isPolygonDrawingEnabled,
       mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new DrawPolygonMode(),
-      isViewMode: false
+      isViewMode: state.isPolygonDrawingEnabled ? true : false
+    })),
+
+  togglePolygonLayerVisibility: () =>
+    set((state) => ({
+      isPolygonLayerVisible: !state.isPolygonLayerVisible
     })),
 
   setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false }),
