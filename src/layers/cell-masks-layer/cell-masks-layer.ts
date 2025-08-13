@@ -13,8 +13,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   }
 
   renderLayers() {
-    const selectedCellsData = this.props.preFilteredSelectedCells || [];
-    const unselectedCellsData = this.props.preFilteredUnselectedCells || [];
+    const cellsData = this.props.preFilteredUnselectedCells || [];
     const outlierCellsData = this.props.preFilteredOutlierCells || [];
 
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
@@ -35,9 +34,9 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       visible: this.props.visible && this.props.showDiscardedPoints
     });
 
-    const unselectedPolygonLayer = new PolygonLayer({
+    const cellsPolygonLayer = new PolygonLayer({
       id: `sub-cells-layer-${this.props.id}`,
-      data: unselectedCellsData,
+      data: cellsData,
       positionFormat: 'XY',
       stroked: false,
       filled: this.props.showCellFill,
@@ -52,22 +51,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       visible: this.props.visible
     });
 
-    const selectedPolygonLayer = new PolygonLayer({
-      id: `sub-selected-cells-layer-${this.props.id}`,
-      data: selectedCellsData,
-      positionFormat: 'XY',
-      stroked: true,
-      filled: this.props.showCellFill,
-      getPolygon: (d) => d.vertices,
-      getLineColor: [255, 255, 255],
-      getFillColor: (d) => [...d.color, opacityValue] as any,
-      getLineWidth: 1,
-      lineWidthUnits: 'pixels',
-      pickable: true,
-      visible: selectedCellsData.length > 0
-    });
-
-    return [outliersPolygonLayer, unselectedPolygonLayer, selectedPolygonLayer];
+    return [outliersPolygonLayer, cellsPolygonLayer];
   }
 }
 

@@ -15,7 +15,6 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   };
   umapFilter?: UmapRange;
   onHover?: (pikingInfo: PickingInfo) => void;
-  preFilteredSelectedCells?: SingleMask[];
   preFilteredUnselectedCells?: SingleMask[];
   preFilteredOutlierCells?: SingleMask[];
 };
