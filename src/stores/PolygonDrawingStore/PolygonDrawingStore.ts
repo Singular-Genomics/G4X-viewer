@@ -7,7 +7,8 @@ import {
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
   importPolygons,
-  updatePolygonFeaturesWithIds
+  updatePolygonFeaturesWithIds,
+  getHighestPolygonId
 } from './PolygonDrawingStore.helpers';
 
 const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
@@ -18,7 +19,8 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   mode: new DrawPolygonMode(),
   isDetecting: false,
   nextPolygonId: 1,
-  isViewMode: false
+  isViewMode: false,
+  isDeleteMode: false
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -28,7 +30,8 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     set((state) => ({
       isPolygonDrawingEnabled: !state.isPolygonDrawingEnabled,
       mode: !state.isPolygonDrawingEnabled ? new DrawPolygonMode() : new DrawPolygonMode(),
-      isViewMode: state.isPolygonDrawingEnabled ? true : false
+      isViewMode: state.isPolygonDrawingEnabled ? true : false,
+      isDeleteMode: false
     })),
 
   togglePolygonLayerVisibility: () =>
@@ -36,11 +39,40 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
       isPolygonLayerVisible: !state.isPolygonLayerVisible
     })),
 
-  setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false }),
+  setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false, isDeleteMode: false }),
 
-  setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false }),
+  setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false, isDeleteMode: false }),
 
-  setViewMode: () => set({ isViewMode: true, mode: undefined }),
+  setViewMode: () => set({ isViewMode: true, mode: undefined, isDeleteMode: false }),
+
+  setDeleteMode: () => set({ isDeleteMode: true, isViewMode: false, mode: undefined }),
+
+  deletePolygon: (index) => {
+    const { polygonFeatures } = get();
+    const updatedFeatures = polygonFeatures.filter((_, i) => i !== index);
+
+    // Calculate nextPolygonId based on highest existing ID
+    const maxExistingId = getHighestPolygonId(updatedFeatures);
+
+    // If no polygons left, switch to drawing mode
+    if (updatedFeatures.length === 0) {
+      set({
+        polygonFeatures: updatedFeatures,
+        selectedFeatureIndex: null,
+        isDeleteMode: false,
+        mode: new DrawPolygonMode(),
+        isViewMode: false,
+        nextPolygonId: 1
+      });
+    } else {
+      // Keep delete mode active if polygons still exist, preserve existing IDs
+      set({
+        polygonFeatures: updatedFeatures,
+        selectedFeatureIndex: null,
+        nextPolygonId: maxExistingId + 1
+      });
+    }
+  },
 
   updatePolygonFeatures: (features) => {
     const { nextPolygonId } = get();
@@ -73,7 +105,15 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   },
 
   importPolygons: async (file: File) => {
-    const features = await importPolygons(file);
-    set({ polygonFeatures: features, selectedFeatureIndex: null });
+    const importedFeatures = await importPolygons(file);
+
+    const maxImportedId = getHighestPolygonId(importedFeatures);
+
+    // Replace all existing polygons with imported ones
+    set({
+      polygonFeatures: importedFeatures,
+      selectedFeatureIndex: null,
+      nextPolygonId: maxImportedId + 1
+    });
   }
 }));

@@ -170,13 +170,35 @@ export const removeDuplicates = (points: any[]) => {
   });
 };
 
+export const getHighestPolygonId = (features: PolygonFeature[]): number => {
+  const existingIds = features
+    .map((feature) => feature.properties?.polygonId)
+    .filter((id) => typeof id === 'number' && id > 0) as number[];
+
+  return existingIds.length > 0 ? Math.max(...existingIds) : 0;
+};
+
 export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId: number) => {
-  const featuresWithIds = features.map((feature, index) => {
+  const maxExistingId = getHighestPolygonId(features);
+  let currentMaxId = maxExistingId;
+
+  const featuresWithIds = features.map((feature) => {
+    // If feature already has a valid polygonId, keep it
+    if (
+      feature.properties?.polygonId &&
+      typeof feature.properties.polygonId === 'number' &&
+      feature.properties.polygonId > 0
+    ) {
+      return feature;
+    }
+
+    // Otherwise assign next available ID
+    currentMaxId += 1;
     const updatedFeature = {
       ...feature,
       properties: {
         ...feature.properties,
-        polygonId: index + 1
+        polygonId: currentMaxId
       }
     };
     return updatedFeature;
@@ -184,7 +206,7 @@ export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId
 
   return {
     featuresWithIds,
-    nextPolygonId: features.length + 1
+    nextPolygonId: currentMaxId + 1
   };
 };
 
@@ -251,7 +273,8 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
 
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells: cellsInPolygon
+      cells: cellsInPolygon,
+      polygonId: polygonId
     };
   });
 
@@ -314,7 +337,8 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
 
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      transcripts: transcriptsInPolygon
+      transcripts: transcriptsInPolygon,
+      polygonId: polygonId
     };
   });
 
@@ -346,20 +370,28 @@ export const importPolygons = async (file: File) => {
     !Array.isArray(importedData) &&
     Object.keys(importedData).some((key) => key.startsWith('ROI_'));
 
-  let polygons: number[][][];
+  let polygonsWithData: Array<{ coordinates: number[][]; polygonId?: number }>;
 
   if (isNewFormat) {
-    // New format: extract coordinates from ROI structure
-    polygons = Object.values(importedData).map((roi: any) => roi.coordinates);
+    // New format: extract coordinates and polygonId from ROI structure
+    polygonsWithData = Object.values(importedData).map((roi: any) => ({
+      coordinates: roi.coordinates,
+      polygonId: roi.polygonId
+    }));
   } else {
-    // Legacy format: array of coordinates
-    polygons = importedData;
+    // Legacy format: array of coordinates without polygonId
+    polygonsWithData = importedData.map((coords: number[][]) => ({
+      coordinates: coords
+    }));
   }
 
-  const features = polygons.map((coords: number[][], i: number) => ({
+  const features = polygonsWithData.map((polygonData, i: number) => ({
     type: 'Feature' as const,
-    geometry: { type: 'Polygon' as const, coordinates: [coords] },
-    properties: { id: i, polygonId: i + 1 }
+    geometry: { type: 'Polygon' as const, coordinates: [polygonData.coordinates] },
+    properties: {
+      id: i,
+      polygonId: polygonData.polygonId || i + 1 // Use original ID if available, otherwise sequential
+    }
   }));
 
   const { files } = useBinaryFilesStore.getState();
@@ -371,7 +403,7 @@ export const importPolygons = async (file: File) => {
         const tileData = (await loadTileData(file)) as any;
         return (
           tileData?.pointsData?.filter((point: any) =>
-            polygons.some((coords: number[][]) => isPointInPolygon(point.position, coords))
+            polygonsWithData.some((polygonData) => isPointInPolygon(point.position, polygonData.coordinates))
           ) || []
         );
       });
@@ -381,14 +413,16 @@ export const importPolygons = async (file: File) => {
   }
 
   const { cellMasksData } = useCellSegmentationLayerStore.getState();
-  if (cellMasksData && polygons.length > 0) {
+  if (cellMasksData && polygonsWithData.length > 0) {
     try {
       const cellPolygonsInDrawnPolygons: SingleMask[] = [];
 
       for (const cellMask of cellMasksData) {
         if (
           cellMask.vertices &&
-          polygons.some((coords: number[][]) => checkCellPolygonInDrawnPolygon(cellMask.vertices, coords))
+          polygonsWithData.some((polygonData) =>
+            checkCellPolygonInDrawnPolygon(cellMask.vertices, polygonData.coordinates)
+          )
         ) {
           cellPolygonsInDrawnPolygons.push(cellMask);
         }

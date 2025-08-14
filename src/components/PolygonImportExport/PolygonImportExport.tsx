@@ -28,7 +28,7 @@ export const PolygonImportExport = ({
   const [selectedFileName, setSelectedFileName] = useState<string>('');
   const theme = useTheme();
   const sx = styles(theme);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // Check if data is available
   const transcriptFiles = useBinaryFilesStore((store) => store.files);
@@ -75,22 +75,25 @@ export const PolygonImportExport = ({
         setIsImporting(true);
         setIsImportModalOpen(false);
 
-        enqueueSnackbar('Processing polygon import...', {
+        const loadingSnackbarId = enqueueSnackbar('Processing polygon import...', {
           variant: 'info',
-          persist: false
+          persist: true,
+          key: 'polygon-import-loading'
         });
 
         try {
           await importPolygons(file);
+          closeSnackbar(loadingSnackbarId);
           enqueueSnackbar('Polygons imported successfully!', {
             variant: 'success',
-            persist: false
+            autoHideDuration: 3000
           });
         } catch (error) {
           console.error('Failed to import polygons:', error);
+          closeSnackbar(loadingSnackbarId);
           enqueueSnackbar('Failed to import polygons. Please check the file format.', {
             variant: 'error',
-            persist: false
+            autoHideDuration: 5000
           });
         } finally {
           setIsImporting(false);
@@ -98,7 +101,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [importPolygons, enqueueSnackbar]
+    [importPolygons, enqueueSnackbar, closeSnackbar]
   );
 
   const dropzoneProps = useDropzone({

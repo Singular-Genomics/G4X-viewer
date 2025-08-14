@@ -25,6 +25,7 @@ export type PolygonDrawingStoreValues = {
   isDetecting: boolean;
   nextPolygonId: number;
   isViewMode: boolean;
+  isDeleteMode: boolean;
 };
 
 export type PolygonDrawingStoreMethods = {
@@ -33,6 +34,8 @@ export type PolygonDrawingStoreMethods = {
   setDrawPolygonMode: () => void;
   setModifyMode: () => void;
   setViewMode: () => void;
+  setDeleteMode: () => void;
+  deletePolygon: (index: number) => void;
   updatePolygonFeatures: (features: PolygonFeature[]) => void;
   selectFeature: (index: number | null) => void;
   clearPolygons: () => void;

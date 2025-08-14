@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import CreateIcon from '@mui/icons-material/Create';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -23,8 +24,10 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     setDrawPolygonMode,
     setModifyMode,
     setViewMode,
+    setDeleteMode,
     mode,
     isViewMode,
+    isDeleteMode,
     clearPolygons,
     exportPolygonsWithCells,
     exportPolygonsWithTranscripts,
@@ -37,8 +40,10 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.setDrawPolygonMode,
       store.setModifyMode,
       store.setViewMode,
+      store.setDeleteMode,
       store.mode,
       store.isViewMode,
+      store.isDeleteMode,
       store.clearPolygons,
       store.exportPolygonsWithCells,
       store.exportPolygonsWithTranscripts,
@@ -124,6 +129,12 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
             handleClearPolygons();
           }
           break;
+        case 'r': // Delete mode
+          if (hasAnyData && isPolygonDrawingEnabled) {
+            event.preventDefault();
+            setDeleteMode();
+          }
+          break;
         case 's': // Screenshot
           event.preventDefault();
           takeScreenshot();
@@ -143,6 +154,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       setDrawPolygonMode,
       setModifyMode,
       setViewMode,
+      setDeleteMode,
       handleClearPolygons,
       takeScreenshot
     ]
@@ -268,6 +280,24 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               color="primary"
             >
               <VisibilityIcon />
+            </IconButton>
+          </MuiTooltip>
+
+          <MuiTooltip
+            title="Delete Polygon (R)"
+            placement="left"
+          >
+            <IconButton
+              sx={{
+                ...sx.controlButton,
+                backgroundColor: isDeleteMode
+                  ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
+                  : alpha(theme.palette.gx.primary.black, 0.5)
+              }}
+              onClick={setDeleteMode}
+              color="primary"
+            >
+              <DeleteOutlineIcon />
             </IconButton>
           </MuiTooltip>
 

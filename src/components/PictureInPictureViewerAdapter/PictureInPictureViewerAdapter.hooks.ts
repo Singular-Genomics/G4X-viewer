@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import { EditableGeoJsonLayer } from '@deck.gl-community/editable-layers';
+import { EditableGeoJsonLayer, ViewMode } from '@deck.gl-community/editable-layers';
 import { TextLayer } from '@deck.gl/layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
@@ -284,7 +284,9 @@ export const usePolygonDrawingLayer = () => {
     updatePolygonFeatures,
     isDetecting,
     setDetecting,
-    isViewMode
+    isViewMode,
+    isDeleteMode,
+    deletePolygon
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -294,7 +296,9 @@ export const usePolygonDrawingLayer = () => {
       store.updatePolygonFeatures,
       store.isDetecting,
       store.setDetecting,
-      store.isViewMode
+      store.isViewMode,
+      store.isDeleteMode,
+      store.deletePolygon
     ])
   );
 
@@ -542,14 +546,23 @@ export const usePolygonDrawingLayer = () => {
     }
   };
 
+  const onPolygonClickForDeletion = (info: any) => {
+    if (isDeleteMode && info.index !== undefined && info.index >= 0) {
+      deletePolygon(info.index);
+      return true; // Prevent further event propagation
+    }
+    return false;
+  };
+
   const polygonLayer = new EditableGeoJsonLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
     data: featureCollection,
-    mode: isDetecting || isViewMode ? undefined : mode,
-    selectedFeatureIndexes: isViewMode ? [] : polygonFeatures.map((_, index) => index),
-    onEdit: isViewMode ? undefined : onEdit,
-    pickable: !isDetecting && !isViewMode,
-    autoHighlight: !isViewMode,
+    mode: isDetecting ? undefined : isViewMode || isDeleteMode ? new ViewMode() : mode,
+    selectedFeatureIndexes: isViewMode || isDeleteMode ? [] : polygonFeatures.map((_, index) => index),
+    onEdit: isViewMode || isDeleteMode ? undefined : onEdit,
+    onClick: isDeleteMode ? onPolygonClickForDeletion : undefined,
+    pickable: !isDetecting && (!isViewMode || isDeleteMode),
+    autoHighlight: isDeleteMode,
     getFillColor: (feature: any) => {
       const alphaFill = isViewMode ? 50 : 100;
       return getPolygonColor(feature, alphaFill, 0).fill;
@@ -558,6 +571,7 @@ export const usePolygonDrawingLayer = () => {
       const alphaLine = isViewMode ? 150 : 200;
       return getPolygonColor(feature, 0, alphaLine).line;
     },
+    highlightColor: isDeleteMode ? [255, 0, 0, 120] : undefined,
     lineWidthMinPixels: 2,
     pointRadiusMinPixels: 5,
     editHandlePointRadiusMinPixels: 5,
@@ -574,14 +588,15 @@ export const usePolygonDrawingLayer = () => {
 };
 
 export const usePolygonTextLayer = () => {
-  const [isPolygonDrawingEnabled, isPolygonLayerVisible, polygonFeatures, isDetecting, isViewMode] =
+  const [isPolygonDrawingEnabled, isPolygonLayerVisible, polygonFeatures, isDetecting, isViewMode, isDeleteMode] =
     usePolygonDrawingStore(
       useShallow((store) => [
         store.isPolygonDrawingEnabled,
         store.isPolygonLayerVisible,
         store.polygonFeatures,
         store.isDetecting,
-        store.isViewMode
+        store.isViewMode,
+        store.isDeleteMode
       ])
     );
 
@@ -589,8 +604,8 @@ export const usePolygonTextLayer = () => {
     return undefined;
   }
 
-  // Show text only in view mode (when polygon drawing is disabled or explicitly in view mode)
-  if (isPolygonDrawingEnabled && !isViewMode) {
+  // Show text only in view mode or delete mode (when polygon drawing is disabled or explicitly in view/delete mode)
+  if (isPolygonDrawingEnabled && !isViewMode && !isDeleteMode) {
     return undefined;
   }
 

@@ -25,6 +25,7 @@ export type CellsExportData = Record<
   {
     coordinates: [number, number][];
     cells: ExportedCellData[];
+    polygonId: number;
   }
 >;
 
@@ -41,5 +42,6 @@ export type TranscriptsExportData = Record<
   {
     coordinates: [number, number][];
     transcripts: ExportedTranscriptData[];
+    polygonId: number;
   }
 >;
