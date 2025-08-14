@@ -20,6 +20,7 @@ import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 import { SingleMask, PointData } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
+import { checkPolygonSelfIntersections } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 
 const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
   if (!points || points.length <= 1) return points || [];
@@ -341,6 +342,49 @@ export const usePolygonDrawingLayer = () => {
   };
 
   const onEdit = async ({ updatedData, editType }: any) => {
+    // Store previous state for rollback if validation fails
+    const previousFeatures = [...polygonFeatures];
+
+    // Validate only the affected polygon for self-intersections
+    let polygonToValidate: PolygonFeature | null = null;
+
+    if (editType === 'addFeature') {
+      // Validate only the newly added polygon
+      polygonToValidate = updatedData.features[updatedData.features.length - 1];
+    } else if (
+      editType === 'finishMovePosition' ||
+      editType === 'movePosition' ||
+      editType === 'addPosition' ||
+      editType === 'removePosition'
+    ) {
+      // Simple approach: validate all polygons for any intersection
+      for (const feature of updatedData.features) {
+        const validationResult = checkPolygonSelfIntersections(feature);
+        if (validationResult.hasIntersection) {
+          polygonToValidate = feature;
+          break;
+        }
+      }
+    }
+
+    // Validate the specific polygon if found
+    if (polygonToValidate) {
+      const validationResult = checkPolygonSelfIntersections(polygonToValidate);
+      if (validationResult.hasIntersection) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          preventDuplicate: true,
+          key: 'polygon-intersection-error',
+          message: 'Polygon cannot intersect with itself. Operation cancelled.'
+        });
+
+        // Restore previous polygon features (rollback)
+        updatePolygonFeatures(previousFeatures);
+        return;
+      }
+    }
+
     updatePolygonFeatures(updatedData.features);
 
     if (editType === 'addFeature') {

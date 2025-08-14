@@ -4,6 +4,18 @@ export type PolygonDrawingStore = PolygonDrawingStoreValues & PolygonDrawingStor
 
 export type PolygonFeature = FeatureOf<Polygon>;
 
+export type Point2D = [number, number];
+
+export type LineSegment = {
+  start: Point2D;
+  end: Point2D;
+  id: number;
+};
+
+export type IntersectionResult = {
+  hasIntersection: boolean;
+};
+
 export type PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: boolean;
   isPolygonLayerVisible: boolean;

@@ -4,13 +4,129 @@ import { SingleMask } from '../../shared/types';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { PolygonFeature } from './PolygonDrawingStore.types';
+import { PolygonFeature, Point2D, LineSegment, IntersectionResult } from './PolygonDrawingStore.types';
 import {
   ExportedCellData,
   CellsExportData,
   TranscriptsExportData,
   ExportedTranscriptData
 } from '../../components/PolygonImportExport/PolygonImportExport.types';
+
+// Epsilon for floating point comparisons
+const EPSILON = 1e-10;
+
+// Check if two points are equal within epsilon tolerance
+const pointsEqual = (p1: Point2D, p2: Point2D): boolean => {
+  return Math.abs(p1[0] - p2[0]) < EPSILON && Math.abs(p1[1] - p2[1]) < EPSILON;
+};
+
+// Calculate cross product for orientation test
+const crossProduct = (a: Point2D, b: Point2D, c: Point2D): number => {
+  return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+};
+
+// Check if point lies on line segment
+const pointOnSegment = (p: Point2D, seg: LineSegment): boolean => {
+  const { start, end } = seg;
+
+  if (Math.abs(crossProduct(start, end, p)) > EPSILON) return false;
+
+  // Check if point is within segment bounds
+  const minX = Math.min(start[0], end[0]);
+  const maxX = Math.max(start[0], end[0]);
+  const minY = Math.min(start[1], end[1]);
+  const maxY = Math.max(start[1], end[1]);
+
+  return p[0] >= minX - EPSILON && p[0] <= maxX + EPSILON && p[1] >= minY - EPSILON && p[1] <= maxY + EPSILON;
+};
+
+// Check if two line segments intersect
+const segmentsIntersect = (seg1: LineSegment, seg2: LineSegment): boolean => {
+  const { start: p1, end: q1 } = seg1;
+  const { start: p2, end: q2 } = seg2;
+
+  // Skip if segments share an endpoint
+  if (pointsEqual(p1, p2) || pointsEqual(p1, q2) || pointsEqual(q1, p2) || pointsEqual(q1, q2)) {
+    return false;
+  }
+
+  const d1 = crossProduct(p2, q2, p1);
+  const d2 = crossProduct(p2, q2, q1);
+  const d3 = crossProduct(p1, q1, p2);
+  const d4 = crossProduct(p1, q1, q2);
+
+  // Check for proper intersection
+  if (
+    ((d1 > EPSILON && d2 < -EPSILON) || (d1 < -EPSILON && d2 > EPSILON)) &&
+    ((d3 > EPSILON && d4 < -EPSILON) || (d3 < -EPSILON && d4 > EPSILON))
+  ) {
+    return true;
+  }
+
+  // Check for collinear intersection
+  if (Math.abs(d1) < EPSILON && pointOnSegment(p1, seg2)) return true;
+  if (Math.abs(d2) < EPSILON && pointOnSegment(q1, seg2)) return true;
+  if (Math.abs(d3) < EPSILON && pointOnSegment(p2, seg1)) return true;
+  if (Math.abs(d4) < EPSILON && pointOnSegment(q2, seg1)) return true;
+
+  return false;
+};
+
+// Convert polygon coordinates to line segments
+const polygonToSegments = (coordinates: number[][]): LineSegment[] => {
+  const segments: LineSegment[] = [];
+
+  for (let i = 0; i < coordinates.length; i++) {
+    const start: Point2D = [coordinates[i][0], coordinates[i][1]];
+    const end: Point2D = [coordinates[(i + 1) % coordinates.length][0], coordinates[(i + 1) % coordinates.length][1]];
+
+    if (!pointsEqual(start, end)) {
+      segments.push({ start, end, id: i });
+    }
+  }
+
+  return segments;
+};
+
+// Detect self-intersections in polygon - O(n²) algorithm
+export const checkPolygonSelfIntersection = (coordinates: number[][]): IntersectionResult => {
+  if (coordinates.length < 3) {
+    return { hasIntersection: false };
+  }
+
+  const segments = polygonToSegments(coordinates);
+
+  if (segments.length < 4) {
+    return { hasIntersection: false };
+  }
+
+  // Check all pairs of non-adjacent segments
+  for (let i = 0; i < segments.length; i++) {
+    for (let j = i + 2; j < segments.length; j++) {
+      // Skip adjacent segments (first and last are also adjacent)
+      if (i === 0 && j === segments.length - 1) {
+        continue;
+      }
+
+      if (segmentsIntersect(segments[i], segments[j])) {
+        // Early exit on first intersection found - optimization
+        return { hasIntersection: true };
+      }
+    }
+  }
+
+  return { hasIntersection: false };
+};
+
+// Check if polygon feature has self-intersections
+export const checkPolygonSelfIntersections = (feature: PolygonFeature): IntersectionResult => {
+  if (!feature.geometry || !feature.geometry.coordinates || !feature.geometry.coordinates[0]) {
+    return { hasIntersection: false };
+  }
+
+  const coordinates = feature.geometry.coordinates[0];
+  return checkPolygonSelfIntersection(coordinates);
+};
 
 // Ray Casting Algorithm: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
