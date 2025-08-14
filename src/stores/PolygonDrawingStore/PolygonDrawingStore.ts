@@ -20,7 +20,8 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isDetecting: false,
   nextPolygonId: 1,
   isViewMode: false,
-  isDeleteMode: false
+  isDeleteMode: false,
+  polygonOpacity: 0.5
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -115,5 +116,7 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
       selectedFeatureIndex: null,
       nextPolygonId: maxImportedId + 1
     });
-  }
+  },
+
+  setPolygonOpacity: (opacity: number) => set({ polygonOpacity: opacity })
 }));

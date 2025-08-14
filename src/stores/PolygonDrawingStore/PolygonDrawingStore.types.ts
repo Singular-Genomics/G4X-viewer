@@ -26,6 +26,7 @@ export type PolygonDrawingStoreValues = {
   nextPolygonId: number;
   isViewMode: boolean;
   isDeleteMode: boolean;
+  polygonOpacity: number;
 };
 
 export type PolygonDrawingStoreMethods = {
@@ -43,4 +44,5 @@ export type PolygonDrawingStoreMethods = {
   exportPolygonsWithTranscripts: () => void;
   importPolygons: (file: File) => Promise<void>;
   setDetecting: (detecting: boolean) => void;
+  setPolygonOpacity: (opacity: number) => void;
 };

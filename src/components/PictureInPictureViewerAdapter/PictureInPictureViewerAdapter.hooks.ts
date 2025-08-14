@@ -286,7 +286,8 @@ export const usePolygonDrawingLayer = () => {
     setDetecting,
     isViewMode,
     isDeleteMode,
-    deletePolygon
+    deletePolygon,
+    polygonOpacity
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -298,7 +299,8 @@ export const usePolygonDrawingLayer = () => {
       store.setDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.deletePolygon
+      store.deletePolygon,
+      store.polygonOpacity
     ])
   );
 
@@ -322,8 +324,8 @@ export const usePolygonDrawingLayer = () => {
   ): { fill: [number, number, number, number]; line: [number, number, number, number] } => {
     if (isDetecting) {
       return {
-        fill: [255, 255, 0, 100],
-        line: [255, 255, 0, 200]
+        fill: [255, 255, 0, Math.round(polygonOpacity * 255)],
+        line: [255, 255, 0, Math.round(polygonOpacity * 255)]
       };
     }
 
@@ -331,8 +333,8 @@ export const usePolygonDrawingLayer = () => {
     const [r, g, b] = generatePolygonColor(polygonId - 1);
 
     return {
-      fill: [r, g, b, alphaFill],
-      line: [r, g, b, alphaLine]
+      fill: [r, g, b, Math.round(alphaFill * polygonOpacity)],
+      line: [r, g, b, Math.round(alphaLine * polygonOpacity)]
     };
   };
 
@@ -588,17 +590,25 @@ export const usePolygonDrawingLayer = () => {
 };
 
 export const usePolygonTextLayer = () => {
-  const [isPolygonDrawingEnabled, isPolygonLayerVisible, polygonFeatures, isDetecting, isViewMode, isDeleteMode] =
-    usePolygonDrawingStore(
-      useShallow((store) => [
-        store.isPolygonDrawingEnabled,
-        store.isPolygonLayerVisible,
-        store.polygonFeatures,
-        store.isDetecting,
-        store.isViewMode,
-        store.isDeleteMode
-      ])
-    );
+  const [
+    isPolygonDrawingEnabled,
+    isPolygonLayerVisible,
+    polygonFeatures,
+    isDetecting,
+    isViewMode,
+    isDeleteMode,
+    polygonOpacity
+  ] = usePolygonDrawingStore(
+    useShallow((store) => [
+      store.isPolygonDrawingEnabled,
+      store.isPolygonLayerVisible,
+      store.polygonFeatures,
+      store.isDetecting,
+      store.isViewMode,
+      store.isDeleteMode,
+      store.polygonOpacity
+    ])
+  );
 
   if (!isPolygonLayerVisible || !polygonFeatures.length || isDetecting) {
     return undefined;
@@ -637,7 +647,7 @@ export const usePolygonTextLayer = () => {
     data: textData,
     getPosition: (d: any) => d.position,
     getText: (d: any) => d.text,
-    getColor: [255, 255, 255, 255],
+    getColor: [255, 255, 255, Math.round(polygonOpacity * 255)],
     getSize: 18,
     fontFamily: 'Arial, sans-serif',
     fontWeight: 'bold',
@@ -646,7 +656,7 @@ export const usePolygonTextLayer = () => {
     billboard: true,
     pickable: false,
     background: true,
-    getBackgroundColor: [0, 0, 0, 180],
+    getBackgroundColor: [0, 0, 0, Math.round(polygonOpacity * 180)],
     backgroundPadding: [6, 6, 6, 6]
   });
 

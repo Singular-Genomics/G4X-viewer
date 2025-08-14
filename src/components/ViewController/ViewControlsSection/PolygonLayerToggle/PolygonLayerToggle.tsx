@@ -1,7 +1,8 @@
 import { useShallow } from 'zustand/react/shallow';
-import { FormControlLabel } from '@mui/material';
+import { Box, FormControlLabel } from '@mui/material';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
+import { PolygonOpacitySettings } from '../PolygonOpacitySettings';
 
 export const PolygonLayerToggle = () => {
   const [isPolygonLayerVisible, togglePolygonLayerVisibility] = usePolygonDrawingStore(
@@ -9,15 +10,18 @@ export const PolygonLayerToggle = () => {
   );
 
   return (
-    <FormControlLabel
-      label="ROI Polygons"
-      control={
-        <GxCheckbox
-          onChange={togglePolygonLayerVisibility}
-          checked={isPolygonLayerVisible}
-          disableTouchRipple
-        />
-      }
-    />
+    <Box>
+      <FormControlLabel
+        label="ROI Polygons"
+        control={
+          <GxCheckbox
+            onChange={togglePolygonLayerVisibility}
+            checked={isPolygonLayerVisible}
+            disableTouchRipple
+          />
+        }
+      />
+      {isPolygonLayerVisible && <PolygonOpacitySettings />}
+    </Box>
   );
 };
