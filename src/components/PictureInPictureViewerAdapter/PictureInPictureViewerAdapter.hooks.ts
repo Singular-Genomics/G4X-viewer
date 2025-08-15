@@ -169,11 +169,8 @@ export const useCellSegmentationLayer = () => {
       return;
     }
 
-    const selectedCellIds = selectedCells.map((cell: SingleMask) => cell.cellId);
-
     filterCells(
       cellMasksData,
-      selectedCellIds,
       isCellNameFilterOn ? cellNameFilters : 'all',
       ranges && proteinNames.xAxis && proteinNames.yAxis
         ? {
@@ -200,7 +197,6 @@ export const useCellSegmentationLayer = () => {
       });
   }, [
     cellMasksData,
-    selectedCells,
     isCellNameFilterOn,
     cellNameFilters,
     ranges,

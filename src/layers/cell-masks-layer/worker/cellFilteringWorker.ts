@@ -4,7 +4,6 @@ import { partition } from 'lodash';
 
 const filterCells = (
   cellsData: SingleMask[],
-  selectedCellIds: string[],
   cellNameFilters?: string[] | 'all',
   cytometryFilter?: {
     proteins: { xAxis?: string; yAxis?: string };
@@ -47,40 +46,10 @@ const filterCells = (
       );
     }
 
-    // Separate selected and unselected cells
-    if (selectedCellIds.length === 0) {
-      return {
-        selectedCellsData: [],
-        unselectedCellsData: filteredCellsData,
-        outlierCellsData
-      };
-    }
-
-    const selectedCellIdsSet = new Set(selectedCellIds);
-
-    if (selectedCellIdsSet.size >= filteredCellsData.length) {
-      return {
-        selectedCellsData: filteredCellsData,
-        unselectedCellsData: [],
-        outlierCellsData
-      };
-    }
-
-    const selectedCellsData: SingleMask[] = [];
-    const unselectedCellsData: SingleMask[] = [];
-
-    for (let i = 0; i < filteredCellsData.length; i++) {
-      const cell = filteredCellsData[i];
-      if (selectedCellIdsSet.has(cell.cellId)) {
-        selectedCellsData.push(cell);
-      } else {
-        unselectedCellsData.push(cell);
-      }
-    }
-
+    // Since we always pass empty selectedCellIds array, always return all cells as unselected
     return {
-      selectedCellsData,
-      unselectedCellsData,
+      selectedCellsData: [],
+      unselectedCellsData: filteredCellsData,
       outlierCellsData
     };
   } catch (error) {
@@ -95,7 +64,6 @@ onmessage = async (e: MessageEvent<CellFilteringWorkerMessage>) => {
     if (type === 'filterCells') {
       const result = filterCells(
         payload.cellsData,
-        payload.selectedCellIds,
         payload.cellNameFilters,
         payload.cytometryFilter,
         payload.umapFilter

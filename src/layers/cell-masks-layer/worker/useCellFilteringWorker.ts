@@ -7,7 +7,6 @@ import { UmapRange } from '../../../stores/UmapGraphStore/UmapGraphStore.types';
 export type CellFilteringWorkerHook = {
   filterCells: (
     cellsData: SingleMask[],
-    selectedCellIds: string[],
     cellNameFilters?: string[] | 'all',
     cytometryFilter?: {
       proteins: ProteinNames;
@@ -35,7 +34,6 @@ export const useCellFilteringWorker = (): CellFilteringWorkerHook => {
   const filterCells = useCallback(
     (
       cellsData: SingleMask[],
-      selectedCellIds: string[],
       cellNameFilters?: string[] | 'all',
       cytometryFilter?: {
         proteins: ProteinNames;
@@ -74,7 +72,6 @@ export const useCellFilteringWorker = (): CellFilteringWorkerHook => {
           type: 'filterCells',
           payload: {
             cellsData,
-            selectedCellIds,
             cellNameFilters,
             cytometryFilter,
             umapFilter

@@ -6,7 +6,6 @@ export type CellFilteringWorkerMessage = {
   type: 'filterCells';
   payload: {
     cellsData: SingleMask[];
-    selectedCellIds: string[];
     cellNameFilters?: string[] | 'all';
     cytometryFilter?: {
       proteins: ProteinNames;
