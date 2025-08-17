@@ -354,6 +354,51 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
   URL.revokeObjectURL(url);
 };
 
+export const findEditedPolygon = (
+  currentFeatures: PolygonFeature[],
+  previousFeatures: PolygonFeature[]
+): { editedPolygon: PolygonFeature | null; editedPolygonIndex: number } => {
+  let editedPolygon: PolygonFeature | null = null;
+  let editedPolygonIndex = -1;
+
+  // First try to find changed polygon by comparing coordinates
+  for (let i = 0; i < currentFeatures.length; i++) {
+    const polygon = currentFeatures[i];
+    const previousPolygon = previousFeatures[i];
+
+    if (!previousPolygon) {
+      // New polygon at this index
+      editedPolygon = polygon;
+      editedPolygonIndex = i;
+      break;
+    }
+
+    // Compare coordinates with tolerance for floating point precision
+    const coordsChanged = polygon.geometry.coordinates[0].some((coord: number[], coordIndex: number) => {
+      const prevCoord = previousPolygon.geometry.coordinates[0][coordIndex];
+      if (!prevCoord) return true;
+
+      const tolerance = 0.0001;
+      return Math.abs(coord[0] - prevCoord[0]) > tolerance || Math.abs(coord[1] - prevCoord[1]) > tolerance;
+    });
+
+    if (coordsChanged) {
+      editedPolygon = polygon;
+      editedPolygonIndex = i;
+      break;
+    }
+  }
+
+  // If no specific polygon found, assume the last one was edited (fallback)
+  if (!editedPolygon && currentFeatures.length > 0) {
+    editedPolygon = currentFeatures[currentFeatures.length - 1];
+    editedPolygonIndex = currentFeatures.length - 1;
+    console.warn('Could not identify specific edited polygon, using last polygon as fallback');
+  }
+
+  return { editedPolygon, editedPolygonIndex };
+};
+
 export const importPolygons = async (file: File) => {
   const content = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();

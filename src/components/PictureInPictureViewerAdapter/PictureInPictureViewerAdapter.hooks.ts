@@ -20,7 +20,10 @@ import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 import { SingleMask, PointData } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
-import { checkPolygonSelfIntersections } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
+import {
+  checkPolygonSelfIntersections,
+  findEditedPolygon
+} from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 
 const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
   if (!points || points.length <= 1) return points || [];
@@ -359,12 +362,12 @@ export const usePolygonDrawingLayer = () => {
       editType === 'addPosition' ||
       editType === 'removePosition'
     ) {
-      // Simple approach: validate all polygons for any intersection
-      for (const feature of updatedData.features) {
-        const validationResult = checkPolygonSelfIntersections(feature);
+      // Validate only the edited polygon for self-intersections
+      const { editedPolygon } = findEditedPolygon(updatedData.features, previousFeatures);
+      if (editedPolygon) {
+        const validationResult = checkPolygonSelfIntersections(editedPolygon);
         if (validationResult.hasIntersection) {
-          polygonToValidate = feature;
-          break;
+          polygonToValidate = editedPolygon;
         }
       }
     }
@@ -458,11 +461,12 @@ export const usePolygonDrawingLayer = () => {
       setSelectedPoints([]);
       setSelectedCells([]);
     } else if (editType === 'finishMovePosition') {
-      // Re-run detection on all polygons
+      // Find the edited polygon by comparing with previous state
       const allPolygons = updatedData.features;
+      const { editedPolygon, editedPolygonIndex } = findEditedPolygon(allPolygons, previousFeatures);
 
-      if (!allPolygons || allPolygons.length === 0) {
-        console.warn('No polygons to process');
+      if (!editedPolygon) {
+        console.warn('No polygon found to process');
         return;
       }
 
@@ -477,64 +481,82 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
-      // Reset selections
-      setSelectedPoints([]);
-      setSelectedCells([]);
+      // Update selection incrementally - remove old selection for this polygon and add new
+      let updatedSelectedPoints = [...selectedPoints];
+      let updatedSelectedCells = [...selectedCells];
 
       if (files.length > 0) {
         try {
-          let allPointsInPolygons: PointData[] = [];
+          const result = await detectPointsInPolygon(editedPolygon, files);
 
-          for (const polygon of allPolygons) {
-            const result = await detectPointsInPolygon(polygon, files);
+          // Update polygon properties
+          editedPolygon.properties = {
+            ...editedPolygon.properties,
+            pointCount: result.pointCount,
+            geneDistribution: result.geneDistribution
+          };
 
-            // Update polygon properties
-            polygon.properties = {
-              ...polygon.properties,
-              pointCount: result.pointCount,
-              geneDistribution: result.geneDistribution
-            };
+          // Find the previous polygon's points and remove them
+          const previousPolygon = previousFeatures[editedPolygonIndex];
 
-            allPointsInPolygons = [...allPointsInPolygons, ...result.pointsInPolygon];
+          if (previousPolygon && previousPolygon.properties?.pointCount > 0) {
+            // Remove points that were in the previous version of this polygon
+            const previousResult = await detectPointsInPolygon(previousPolygon, files);
+            updatedSelectedPoints = updatedSelectedPoints.filter(
+              (point) =>
+                !previousResult.pointsInPolygon.some(
+                  (prevPoint) =>
+                    prevPoint.position[0] === point.position[0] && prevPoint.position[1] === point.position[1]
+                )
+            );
           }
 
-          const uniquePoints = cleanupDuplicatePoints(allPointsInPolygons);
+          // Add new points from the updated polygon
+          updatedSelectedPoints = [...updatedSelectedPoints, ...result.pointsInPolygon];
+          const uniquePoints = cleanupDuplicatePoints(updatedSelectedPoints);
           setSelectedPoints(uniquePoints);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
-          console.error('Error detecting points in polygons:', error);
+          console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect points in polygons'
+            message: 'Failed to detect points in polygon'
           });
         }
       }
 
       if (cellMasksData) {
         try {
-          let allCellsInPolygons: SingleMask[] = [];
+          const result = await detectCellPolygonsInPolygon(editedPolygon, cellMasksData);
 
-          for (const polygon of allPolygons) {
-            const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
+          // Update polygon properties
+          editedPolygon.properties = {
+            ...editedPolygon.properties,
+            cellPolygonCount: result.cellPolygonCount,
+            cellClusterDistribution: result.cellClusterDistribution
+          };
 
-            // Update polygon properties
-            polygon.properties = {
-              ...polygon.properties,
-              cellPolygonCount: result.cellPolygonCount,
-              cellClusterDistribution: result.cellClusterDistribution
-            };
+          // Find the previous polygon's cells and remove them
+          const previousPolygon = previousFeatures[editedPolygonIndex];
 
-            allCellsInPolygons = [...allCellsInPolygons, ...result.cellPolygonsInDrawnPolygon];
+          if (previousPolygon && previousPolygon.properties?.cellPolygonCount > 0) {
+            // Remove cells that were in the previous version of this polygon
+            const previousResult = await detectCellPolygonsInPolygon(previousPolygon, cellMasksData);
+            updatedSelectedCells = updatedSelectedCells.filter(
+              (cell) => !previousResult.cellPolygonsInDrawnPolygon.some((prevCell) => prevCell.cellId === cell.cellId)
+            );
           }
 
-          setSelectedCells(allCellsInPolygons);
+          // Add new cells from the updated polygon
+          updatedSelectedCells = [...updatedSelectedCells, ...result.cellPolygonsInDrawnPolygon];
+          setSelectedCells(updatedSelectedCells);
         } catch (error) {
-          console.error('Error detecting cell polygons in polygons:', error);
+          console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect cells in polygons'
+            message: 'Failed to detect cells in polygon'
           });
         }
       }
