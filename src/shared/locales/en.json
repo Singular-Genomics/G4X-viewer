@@ -28,6 +28,7 @@
     "sectionTitle": "Protein Channel Settings"
   },
   "general": {
+    "appTitle": "G4X Viewer",
     "cancel": "Cancel",
     "cloudUpload": "Cloud Upload",
     "confirm": "Confirm",
