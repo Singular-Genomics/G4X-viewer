@@ -127,14 +127,14 @@ export const CytometryGraph = () => {
         setLoader(undefined);
       } else if (output.completed && !output.success) {
         enqueueSnackbar({
-          message: output.message,
+          message: t(`segmentationSettings.cytometryGraphWorker-${output.status}`),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
       } else {
         setLoader({
           progress: output.progress,
-          message: output.message
+          message: t(`segmentationSettings.cytometryGraphWorker-${output.status}`)
         });
       }
     });
