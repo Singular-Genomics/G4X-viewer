@@ -186,7 +186,6 @@ export const PictureInPictureViewerAdapter = () => {
             onViewportLoad={onViewportLoad}
             viewStates={viewState ? [viewState] : []}
             onViewStateChange={({ viewState: newViewState, viewId }: { viewState: any; viewId: any }) => {
-              console.log(newViewState.zoom);
               // Update the viewState immediately
               useViewerStore.setState({
                 viewState: { ...newViewState, id: viewId }
