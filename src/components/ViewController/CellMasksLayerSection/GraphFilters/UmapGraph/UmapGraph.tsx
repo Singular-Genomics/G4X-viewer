@@ -44,7 +44,7 @@ export const UmapGraph = () => {
           });
         });
     }
-  }, [cellMasksData, enqueueSnackbar, settings.subsamplingValue]);
+  }, [cellMasksData, enqueueSnackbar, settings.subsamplingValue, t]);
 
   useEffect(() => {
     const containerEl = containerRef.current;
