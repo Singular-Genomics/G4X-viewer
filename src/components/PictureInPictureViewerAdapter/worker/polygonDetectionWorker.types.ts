@@ -1,5 +1,6 @@
 import { SingleMask } from '../../../shared/types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
+import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
 
 export type PolygonPointData = {
   position: number[];
@@ -19,6 +20,7 @@ export type PolygonWorkerMessage =
       payload: {
         polygon: PolygonFeature;
         files: File[];
+        layerConfig: LayerConfig;
       };
     }
   | {

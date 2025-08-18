@@ -8,6 +8,7 @@ import type {
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
+import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
 import {
   isPointInPolygon,
   checkCellPolygonInDrawnPolygon
@@ -19,25 +20,6 @@ const checkPointInPolygon = (point: [number, number], polygon: PolygonFeature) =
 
 const checkCellPolygonInDrawnPolygonWrapper = (cellVertices: number[], drawnPolygon: PolygonFeature) => {
   return checkCellPolygonInDrawnPolygon(cellVertices, drawnPolygon.geometry.coordinates[0]);
-};
-
-const cleanupDuplicatePoints = (points: PolygonPointData[]): PolygonPointData[] => {
-  if (!points || points.length <= 1) return points || [];
-
-  const seen = new Set<string>();
-
-  return points.filter((point) => {
-    if (!point || !point.position || point.position.length < 2) {
-      return false;
-    }
-
-    const key = point.position[0] + ',' + point.position[1];
-
-    if (seen.has(key)) return false;
-
-    seen.add(key);
-    return true;
-  });
 };
 
 const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
@@ -55,15 +37,24 @@ const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   }
 };
 
-const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[]) => {
+const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
   const pointsInPolygon: PolygonPointData[] = [];
   const tileRegex = /\/(\d+)\/(\d+)\/(\d+)\.bin$/;
   const tilePromises: Promise<any>[] = [];
+
+  // Use the highest zoom level from layerConfig where all points are visible without clustering
+  const maxZoomLevel = layerConfig.layers;
 
   for (const file of files) {
     const match = file.name.match(tileRegex);
     if (match) {
       const zoom = parseInt(match[1], 10);
+
+      // Only process the highest zoom level where all points are visible without clustering
+      if (zoom !== maxZoomLevel) {
+        continue;
+      }
+
       const x = parseInt(match[2], 10);
       const y = parseInt(match[3], 10);
 
@@ -96,17 +87,15 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[]) => 
     pointsInPolygon.push(...pointArray);
   });
 
-  const uniquePointsInPolygon = cleanupDuplicatePoints(pointsInPolygon);
-
   const countByGeneName: Record<string, number> = {};
-  for (const point of uniquePointsInPolygon) {
+  for (const point of pointsInPolygon) {
     const geneName = point.geneName || 'unknown';
     countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
   return {
-    pointsInPolygon: uniquePointsInPolygon,
-    pointCount: uniquePointsInPolygon.length,
+    pointsInPolygon: pointsInPolygon,
+    pointCount: pointsInPolygon.length,
     geneDistribution: countByGeneName
   };
 };
@@ -142,7 +131,7 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
 
   try {
     if (type === 'detectPointsInPolygon') {
-      const result = await detectPointsInPolygon(payload.polygon, payload.files);
+      const result = await detectPointsInPolygon(payload.polygon, payload.files, payload.layerConfig);
 
       postMessage({
         type: 'pointsDetected',

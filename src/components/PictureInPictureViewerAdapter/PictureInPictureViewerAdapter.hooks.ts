@@ -17,32 +17,13 @@ import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
-import { SingleMask, PointData } from '../../shared/types';
+import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
   checkPolygonSelfIntersections,
   findEditedPolygon
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
-
-const cleanupDuplicatePoints = (points: PointData[]): PointData[] => {
-  if (!points || points.length <= 1) return points || [];
-
-  const seen = new Set<string>();
-
-  return points.filter((point) => {
-    if (!point || !point.position || point.position.length < 2) {
-      return false;
-    }
-
-    const key = point.position[0] + ',' + point.position[1];
-
-    if (seen.has(key)) return false;
-
-    seen.add(key);
-    return true;
-  });
-};
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -303,7 +284,7 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files] = useBinaryFilesStore(useShallow((store) => [store.files]));
+  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
   const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [store.selectedPoints, store.setSelectedPoints])
   );
@@ -409,7 +390,7 @@ export const usePolygonDrawingLayer = () => {
 
       if (files.length > 0) {
         try {
-          const result = await detectPointsInPolygon(newPolygon, files);
+          const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
 
           // Update polygon properties
           newPolygon.properties = {
@@ -419,8 +400,8 @@ export const usePolygonDrawingLayer = () => {
           };
 
           const combinedSelectedPoints = [...selectedPoints, ...result.pointsInPolygon];
-          const uniqueCombinedPoints = cleanupDuplicatePoints(combinedSelectedPoints);
-          setSelectedPoints(uniqueCombinedPoints);
+          setSelectedPoints(combinedSelectedPoints);
+          console.log('🚀 Combined selected points:', combinedSelectedPoints);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
@@ -487,7 +468,7 @@ export const usePolygonDrawingLayer = () => {
 
       if (files.length > 0) {
         try {
-          const result = await detectPointsInPolygon(editedPolygon, files);
+          const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
 
           // Update polygon properties
           editedPolygon.properties = {
@@ -501,7 +482,7 @@ export const usePolygonDrawingLayer = () => {
 
           if (previousPolygon && previousPolygon.properties?.pointCount > 0) {
             // Remove points that were in the previous version of this polygon
-            const previousResult = await detectPointsInPolygon(previousPolygon, files);
+            const previousResult = await detectPointsInPolygon(previousPolygon, files, layerConfig);
             updatedSelectedPoints = updatedSelectedPoints.filter(
               (point) =>
                 !previousResult.pointsInPolygon.some(
@@ -513,8 +494,7 @@ export const usePolygonDrawingLayer = () => {
 
           // Add new points from the updated polygon
           updatedSelectedPoints = [...updatedSelectedPoints, ...result.pointsInPolygon];
-          const uniquePoints = cleanupDuplicatePoints(updatedSelectedPoints);
-          setSelectedPoints(uniquePoints);
+          setSelectedPoints(updatedSelectedPoints);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
