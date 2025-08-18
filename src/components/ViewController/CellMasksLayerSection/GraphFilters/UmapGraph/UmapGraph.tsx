@@ -10,12 +10,14 @@ import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.t
 import { UmapGraphHeader } from './UmapGraphHeader/UmapGraphHeader';
 import { debounce } from 'lodash';
 import { getPlotData } from './UmapGraph.helpers';
+import { useTranslation } from 'react-i18next';
 
 export const UmapGraph = () => {
   const theme = useTheme();
   const sx = styles();
 
   const containerRef = useRef(null);
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
   const { settings } = useUmapGraphStore();
@@ -37,7 +39,7 @@ export const UmapGraph = () => {
         .catch((reject) => {
           setPlotData(reject);
           enqueueSnackbar({
-            message: 'Invalid subsampling vaule',
+            message: t('segmentationSettings.graphInvalidSubsampling'),
             variant: 'error'
           });
         });

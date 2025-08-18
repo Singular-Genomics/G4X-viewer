@@ -95,6 +95,7 @@
     "cytometryMenuReverseColorscale": "Reverse colorscale",
     "cytometryMenuSubsamplingStep": "Subsampling Step",
     "disabledLayerWarning": "Segmentation Layer is disabled",
+    "graphInvalidSubsampling": "Invalid subsampling vaule",
     "graphFilterCytometryLabel": "Flow Cytometry",
     "graphFilterUmapLabel": "UMAP",
     "graphFiltersLabel": "Graph Filters",

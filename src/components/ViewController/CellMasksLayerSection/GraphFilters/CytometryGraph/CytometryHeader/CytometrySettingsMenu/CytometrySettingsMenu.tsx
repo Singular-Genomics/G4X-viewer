@@ -166,7 +166,7 @@ export const CytometrySettingsMenu = () => {
             size={1}
             alignContent={'center'}
           >
-            <Typography>`${t('segmentationSettings.cytometryMenuMode')}:`</Typography>
+            <Typography>{t('segmentationSettings.cytometryMenuMode')}:</Typography>
           </Grid>
           <Grid size={1}>
             <GxSelect
@@ -181,7 +181,7 @@ export const CytometrySettingsMenu = () => {
                   key={item}
                   value={item}
                 >
-                  {t(`cytometryMenuGraph-${item}`)}
+                  {t(`segmentationSettings.cytometryMenuGraph-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>
@@ -316,7 +316,7 @@ export const CytometrySettingsMenu = () => {
                   key={item}
                   value={item}
                 >
-                  {t(`segmentationSettings.cytometryMenuAxisTypeLabel-${item}`)}
+                  {t(`segmentationSettings.cytometryMenuAxisType-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>
