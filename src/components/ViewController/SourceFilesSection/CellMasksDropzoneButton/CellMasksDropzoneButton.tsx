@@ -19,9 +19,9 @@ export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButt
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="Cell Mask Filename"
+        labelTitle="Segmentation Filename"
         labelText={fileName}
-        buttonText="Upload Cell Mask"
+        buttonText="Upload Segmentation"
         disabled={!source}
         {...dropzoneProps}
       />

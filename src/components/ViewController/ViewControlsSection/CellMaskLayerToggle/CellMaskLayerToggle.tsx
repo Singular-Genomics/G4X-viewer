@@ -10,7 +10,7 @@ export const CellMaskLayerToggle = () => {
 
   return (
     <FormControlLabel
-      label="Cell Masks Layer"
+      label="Segmentation Layer"
       control={
         <GxCheckbox
           onChange={toggleCellLayer}

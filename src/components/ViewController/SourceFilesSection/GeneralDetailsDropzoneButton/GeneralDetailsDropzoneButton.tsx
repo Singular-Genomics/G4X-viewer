@@ -11,9 +11,9 @@ export default function GeneralDetailsDropzoneButton() {
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="General Details File"
+        labelTitle="Metadata File"
         labelText={detailsName}
-        buttonText="Upload general details"
+        buttonText="Upload Metadata"
         disabled={isDisabled}
         {...dropzoneProps}
       />

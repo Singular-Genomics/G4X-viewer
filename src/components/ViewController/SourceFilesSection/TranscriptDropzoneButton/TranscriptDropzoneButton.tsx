@@ -22,7 +22,7 @@ export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDr
       <GxDropzoneButton
         labelTitle="Transcript File Name"
         labelText={fileName}
-        buttonText="Upload points file"
+        buttonText="Upload Transcript File"
         disabled={!source}
         {...dropzoneProps}
       />
