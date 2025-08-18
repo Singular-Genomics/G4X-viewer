@@ -6,28 +6,22 @@ import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
 import { GxModal } from '../../../../shared/components/GxModal';
-import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
 
 export const AdvancedViewOptions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
   );
-  const { layers } = useBinaryFilesStore((store) => store.layerConfig);
 
   const toggleLayerControls = useCallback(() => {
     const disableModal = localStorage.getItem('disableTiledLayerWarning_DSA');
     if (disableModal || overrideLayers) {
       toggleOverrideLayer();
-      // Reset maxVisibleLayers
-      if (overrideLayers) {
-        useTranscriptLayerStore.setState({ maxVisibleLayers: layers });
-      }
       triggerViewerRerender();
     } else {
       setIsModalOpen(true);
     }
-  }, [toggleOverrideLayer, overrideLayers, layers]);
+  }, [toggleOverrideLayer, overrideLayers]);
 
   const onContinue = useCallback(() => {
     setIsModalOpen(false);

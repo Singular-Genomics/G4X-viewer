@@ -31,9 +31,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
-  currentZoom: number;
   onHover?: (pikingInfo: PickingInfo) => void;
-  onLayerUpdate?: (index: { x: number; y: number; z: number }, currentZoom: number) => void;
 };
 
 export type getTileDataProps = {

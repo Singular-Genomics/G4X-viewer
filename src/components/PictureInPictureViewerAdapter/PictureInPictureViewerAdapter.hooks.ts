@@ -9,7 +9,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import { useViewerStore } from '../../stores/ViewerStore';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 
@@ -72,8 +71,6 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  const viewerZoom = useViewerStore.getState().viewState?.zoom;
-
   if (!files.length) {
     return undefined;
   }
@@ -90,16 +87,12 @@ export const useTranscriptLayer = () => {
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
-    currentZoom: viewerZoom,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
         object: pickingInfo.object,
         type: 'Transcript'
-      }),
-    onLayerUpdate(index, currentZoom) {
-      useTranscriptLayerStore.getState().updateTileZoomBreakpoint(index.z, currentZoom);
-    }
+      })
   });
 
   return metadataLayer;

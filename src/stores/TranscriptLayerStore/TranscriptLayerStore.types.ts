@@ -1,10 +1,5 @@
 export type TranscriptLayerStore = TranscriptLayerStoreValues & TranscriptLayerStoreMethods;
 
-export type TileZoomBreakpoint = {
-  tileIndex: number;
-  zoomThreshold: number;
-};
-
 export type TranscriptLayerStoreValues = {
   isTranscriptLayerOn: boolean;
   isGeneNameFilterActive: boolean;
@@ -16,7 +11,6 @@ export type TranscriptLayerStoreValues = {
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
   currentVisibleLayer: number;
-  tileZoomBreakpoints: TileZoomBreakpoint[];
 };
 
 export type GeneNameFilterType = string[];
@@ -31,7 +25,5 @@ export type TranscriptLayerStoreMethods = {
   setPointSize: (newPointSize: number) => void;
   setGeneNamesFilter: (geneNames: GeneNameFilterType) => void;
   clearGeneNameFilters: () => void;
-  updateTileZoomBreakpoint: (tileIndex: number, currentZoom: number) => void;
-  getCurrentTileIndexForZoom: (zoom: number) => number;
   reset: () => void;
 };

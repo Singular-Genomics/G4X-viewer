@@ -178,9 +178,6 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
       pickable: true,
-      onTileLoad: (tile) => {
-        this.props.onLayerUpdate?.(tile.index, this.props.currentZoom);
-      },
       getTileData,
       updateTriggers: {
         getTileData: [
@@ -189,8 +186,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.geneFilters,
           this.props.showDiscardedPoints,
           this.props.pointSize
-        ],
-        onTileLoad: [this.props.currentZoom]
+        ]
       },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
