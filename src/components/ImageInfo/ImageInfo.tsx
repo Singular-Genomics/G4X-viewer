@@ -2,6 +2,7 @@ import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 import { ScaleBar } from '../ScaleBar';
+import { PercentageOfTranscripts } from './PercentageOfTranscripts';
 import { HoverInfo } from './HoverInfo/HoverInfo';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,6 +23,7 @@ export const ImageInfo = () => {
             <HoverInfo />
             <Typography sx={sx.footerText}>{`Layer: ${pyramidResolution + 1}/${loader.length}`}</Typography>
             <Typography sx={sx.footerText}>{`Shape: ${level.shape.join(', ')}`}</Typography>
+            <PercentageOfTranscripts />
           </Box>
           <ScaleBar />
         </>
