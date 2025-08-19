@@ -556,9 +556,9 @@ export const usePolygonDrawingLayer = () => {
   const polygonLayer = new EditableGeoJsonLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-polygon-drawing-layer`,
     data: featureCollection,
-    mode: isDetecting ? undefined : isViewMode || isDeleteMode ? new ViewMode() : mode,
-    selectedFeatureIndexes: isViewMode || isDeleteMode ? [] : polygonFeatures.map((_, index) => index),
-    onEdit: isViewMode || isDeleteMode ? undefined : onEdit,
+    mode: isDetecting ? new ViewMode() : isViewMode || isDeleteMode ? new ViewMode() : mode,
+    selectedFeatureIndexes: isViewMode || isDeleteMode || isDetecting ? [] : polygonFeatures.map((_, index) => index),
+    onEdit: isViewMode || isDeleteMode || isDetecting ? undefined : onEdit,
     onClick: isDeleteMode ? onPolygonClickForDeletion : undefined,
     pickable: !isDetecting && (!isViewMode || isDeleteMode),
     autoHighlight: isDeleteMode,
