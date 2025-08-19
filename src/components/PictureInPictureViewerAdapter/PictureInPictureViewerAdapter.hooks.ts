@@ -401,7 +401,6 @@ export const usePolygonDrawingLayer = () => {
 
           const combinedSelectedPoints = [...selectedPoints, ...result.pointsInPolygon];
           setSelectedPoints(combinedSelectedPoints);
-          console.log('🚀 Combined selected points:', combinedSelectedPoints);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);

@@ -32,18 +32,48 @@ const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
 
     return data;
   } catch (error) {
-    console.error('Error loading tile data:', error);
+    console.error(`❌ [Load ${file.name}] Error loading tile data:`, error);
     return null;
   }
 };
 
+const processBatch = async (
+  batchFiles: Array<{ file: File; zoom: number; x: number; y: number }>,
+  polygon: PolygonFeature
+) => {
+  const batchPromises = batchFiles.map(async ({ file, zoom, x, y }) => {
+    try {
+      const tileData = await loadTileData(file);
+
+      if (tileData && Array.isArray(tileData.pointsData)) {
+        const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
+          if (!point || !point.position || point.position.length < 2) return false;
+          const pointPosition = [point.position[0], point.position[1]];
+          return checkPointInPolygon(pointPosition as [number, number], polygon);
+        });
+
+        return pointsFoundInTile;
+      }
+      return [];
+    } catch (error) {
+      console.error(`❌ Error processing tile ${zoom}/${y}/${x}:`, error);
+      return [];
+    }
+  });
+
+  return await Promise.all(batchPromises);
+};
+
 const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
+  const startTime = performance.now();
+
   const pointsInPolygon: PolygonPointData[] = [];
   const tileRegex = /\/(\d+)\/(\d+)\/(\d+)\.bin$/;
-  const tilePromises: Promise<any>[] = [];
 
   // Use the highest zoom level from layerConfig where all points are visible without clustering
   const maxZoomLevel = layerConfig.layers;
+
+  const filesToProcess: Array<{ file: File; zoom: number; x: number; y: number }> = [];
 
   for (const file of files) {
     const match = file.name.match(tileRegex);
@@ -58,31 +88,27 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], lay
       const x = parseInt(match[2], 10);
       const y = parseInt(match[3], 10);
 
-      tilePromises.push(
-        (async () => {
-          try {
-            const tileData = await loadTileData(file);
-
-            if (tileData && Array.isArray(tileData.pointsData)) {
-              const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
-                if (!point || !point.position || point.position.length < 2) return false;
-                const pointPosition = [point.position[0], point.position[1]];
-                return checkPointInPolygon(pointPosition as [number, number], polygon);
-              });
-
-              return pointsFoundInTile;
-            }
-            return [];
-          } catch (error) {
-            console.error(`Error processing tile ${zoom}/${y}/${x}:`, error);
-            return [];
-          }
-        })()
-      );
+      filesToProcess.push({ file, zoom, x, y });
     }
   }
 
-  const allPointArrays = await Promise.all(tilePromises);
+  // Process files in batches to avoid overwhelming the system
+  const BATCH_SIZE = 20;
+  const batches = [];
+
+  for (let i = 0; i < filesToProcess.length; i += BATCH_SIZE) {
+    batches.push(filesToProcess.slice(i, i + BATCH_SIZE));
+  }
+
+  const allPointArrays: any[] = [];
+
+  for (let i = 0; i < batches.length; i++) {
+    const batch = batches[i];
+
+    const batchResults = await processBatch(batch, polygon);
+    allPointArrays.push(...batchResults);
+  }
+
   allPointArrays.forEach((pointArray) => {
     pointsInPolygon.push(...pointArray);
   });
@@ -93,6 +119,12 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], lay
     countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
+  const totalTime = performance.now() - startTime;
+
+  console.log(
+    `✅ [ROI Detection] Found ${pointsInPolygon.length} points across ${Object.keys(countByGeneName).length} genes in ${totalTime.toFixed(0)}ms`
+  );
+
   return {
     pointsInPolygon: pointsInPolygon,
     pointCount: pointsInPolygon.length,
@@ -102,11 +134,14 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], lay
 
 const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksData: SingleMask[]) => {
   try {
-    const cellPolygonsInDrawnPolygon: SingleMask[] = [];
+    const startTime = performance.now();
 
+    const cellPolygonsInDrawnPolygon: SingleMask[] = [];
     for (const cellMask of cellMasksData) {
-      if (cellMask.vertices && checkCellPolygonInDrawnPolygonWrapper(cellMask.vertices, polygon)) {
-        cellPolygonsInDrawnPolygon.push(cellMask);
+      if (cellMask.vertices) {
+        if (checkCellPolygonInDrawnPolygonWrapper(cellMask.vertices, polygon)) {
+          cellPolygonsInDrawnPolygon.push(cellMask);
+        }
       }
     }
 
@@ -116,12 +151,19 @@ const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksDat
       countByClusterId[clusterId] = (countByClusterId[clusterId] || 0) + 1;
     }
 
+    const totalTime = performance.now() - startTime;
+
+    console.log(
+      `✅ [Cell Detection] Found ${cellPolygonsInDrawnPolygon.length} cells across ${Object.keys(countByClusterId).length} clusters in ${totalTime.toFixed(0)}ms`
+    );
+
     return {
       cellPolygonsInDrawnPolygon,
       cellPolygonCount: cellPolygonsInDrawnPolygon.length,
       cellClusterDistribution: countByClusterId
     };
   } catch (error) {
+    console.error(`❌ [Cell Detection] Error:`, error);
     throw new Error(`Error processing cell masks: ${error}`);
   }
 };
@@ -152,6 +194,8 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
       } as PolygonWorkerResponse);
     }
   } catch (error) {
+    console.error(`💥 [Worker] Error:`, error);
+
     postMessage({
       type: 'error',
       payload: {

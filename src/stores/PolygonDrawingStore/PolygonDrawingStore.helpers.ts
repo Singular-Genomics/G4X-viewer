@@ -128,12 +128,33 @@ export const checkPolygonSelfIntersections = (feature: PolygonFeature): Intersec
   return checkPolygonSelfIntersection(coordinates);
 };
 
-// Ray Casting Algorithm: Casts a horizontal ray from the point to infinity and counts edge intersections.
+// Ray Casting Algorithm with early exit optimization: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
 export const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
   let inside = false;
   const [x, y] = point;
 
+  // Quick bounds check - if point is outside polygon bounding box
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
+
+  // Calculate bounding box in single pass
+  for (let i = 0; i < coordinates.length; i++) {
+    const [xi, yi] = coordinates[i];
+    if (xi < minX) minX = xi;
+    if (xi > maxX) maxX = xi;
+    if (yi < minY) minY = yi;
+    if (yi > maxY) maxY = yi;
+  }
+
+  // Early exit if point is outside bounding box
+  if (x < minX || x > maxX || y < minY || y > maxY) {
+    return false;
+  }
+
+  // Ray casting algorithm
   for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
     const [xi, yi] = coordinates[i];
     const [xj, yj] = coordinates[j];
@@ -149,9 +170,42 @@ export const isPointInPolygon = (point: [number, number], coordinates: number[][
 export const checkCellPolygonInDrawnPolygon = (cellVertices: number[], coordinates: number[][]) => {
   if (!cellVertices || cellVertices.length < 6) return false;
 
+  // Pre-calculate polygon bounding box once for all vertex checks
+  let minX = Infinity,
+    maxX = -Infinity,
+    minY = Infinity,
+    maxY = -Infinity;
+
+  for (let i = 0; i < coordinates.length; i++) {
+    const [xi, yi] = coordinates[i];
+    if (xi < minX) minX = xi;
+    if (xi > maxX) maxX = xi;
+    if (yi < minY) minY = yi;
+    if (yi > maxY) maxY = yi;
+  }
+
+  // Check each vertex of the cell polygon
   for (let i = 0; i < cellVertices.length; i += 2) {
-    const point: [number, number] = [cellVertices[i], cellVertices[i + 1]];
-    if (!isPointInPolygon(point, coordinates)) {
+    const x = cellVertices[i];
+    const y = cellVertices[i + 1];
+
+    // Early exit if vertex is outside bounding box
+    if (x < minX || x > maxX || y < minY || y > maxY) {
+      return false;
+    }
+
+    // Use ray casting for precise check
+    let inside = false;
+    for (let j = 0, k = coordinates.length - 1; j < coordinates.length; k = j++) {
+      const [xi, yi] = coordinates[j];
+      const [xj, yj] = coordinates[k];
+
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+
+    if (!inside) {
       return false;
     }
   }
