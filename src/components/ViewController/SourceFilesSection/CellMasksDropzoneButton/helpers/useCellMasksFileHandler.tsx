@@ -58,7 +58,7 @@ export const useCellMasksFileHandler = () => {
       });
       useCytometryGraphStore.getState().resetFilters();
     };
-    reader.onerror = () => console.error('Something went wrong during file laod!');
+    reader.onerror = () => console.error('Something went wrong during file load!');
     reader.readAsArrayBuffer(files[0]);
     reader.addEventListener('progress', (event: ProgressEvent<FileReader>) =>
       setProgress(Math.round((event.loaded / event.total) * 100))
@@ -74,7 +74,11 @@ export const useCellMasksFileHandler = () => {
     onDrop,
     multiple: false,
     accept: {
-      'application/octet-stream': ['.bin']
+      'application/octet-stream': ['.bin'],
+      'application/macbinary': ['.bin'],
+      'application/binary': ['.bin'],
+      '': ['.bin'],
+      '*': ['.bin']
     }
   });
 
