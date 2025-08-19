@@ -463,26 +463,21 @@ export const importPolygons = async (file: File) => {
 
   const importedData = JSON.parse(content);
 
-  // Check if it's the new format (with ROI structure) or legacy format (array of coordinates)
-  const isNewFormat =
-    typeof importedData === 'object' &&
-    !Array.isArray(importedData) &&
-    Object.keys(importedData).some((key) => key.startsWith('ROI_'));
-
-  let polygonsWithData: Array<{ coordinates: number[][]; polygonId?: number }>;
-
-  if (isNewFormat) {
-    // New format: extract coordinates and polygonId from ROI structure
-    polygonsWithData = Object.values(importedData).map((roi: any) => ({
-      coordinates: roi.coordinates,
-      polygonId: roi.polygonId
-    }));
-  } else {
-    // Legacy format: array of coordinates without polygonId
-    polygonsWithData = importedData.map((coords: number[][]) => ({
-      coordinates: coords
-    }));
+  // Only support ROI format
+  if (!importedData || typeof importedData !== 'object' || Array.isArray(importedData)) {
+    throw new Error('Invalid file format. Expected ROI format with ROI_ prefixed keys.');
   }
+
+  const roiKeys = Object.keys(importedData).filter((key) => key.startsWith('ROI_'));
+  if (roiKeys.length === 0) {
+    throw new Error('Invalid file format. No ROI data found. Expected ROI format with ROI_ prefixed keys.');
+  }
+
+  // Extract coordinates and polygonId from ROI structure
+  const polygonsWithData = Object.values(importedData).map((roi: any) => ({
+    coordinates: roi.coordinates,
+    polygonId: roi.polygonId
+  }));
 
   const features = polygonsWithData.map((polygonData, i: number) => ({
     type: 'Feature' as const,
