@@ -373,6 +373,9 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
+      let totalFoundPoints = 0;
+      let totalFoundCells = 0;
+
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
@@ -385,6 +388,7 @@ export const usePolygonDrawingLayer = () => {
           };
 
           addSelectedPoints({ data: result.pointsInPolygon, roiId: newPolygonId });
+          totalFoundPoints = result.pointCount;
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -407,6 +411,7 @@ export const usePolygonDrawingLayer = () => {
           };
 
           addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: newPolygonId });
+          totalFoundCells = result.cellPolygonCount;
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -419,6 +424,12 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
+
+      enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'success',
+        message: `Detected ${totalFoundPoints ? `${totalFoundPoints} points` : ''}${totalFoundPoints && totalFoundCells ? ' and ' : ''}${totalFoundCells ? `${totalFoundCells} cells` : ''} in polygon with id ${newPolygonId}`
+      });
     } else if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
       // Validate only the edited polygon for self-intersections
       const { editedPolygon, editedPolygonIndex } = findEditedPolygon(updatedData.features, previousFeatures);
