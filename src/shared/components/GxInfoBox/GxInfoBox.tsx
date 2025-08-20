@@ -3,7 +3,7 @@ import { Box, Button, Collapse, Typography, SxProps, Theme, useTheme } from '@mu
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GxInfoBoxProps } from './GxInfoBox.types';
 
-export const GxInfoBox = ({ title, counter, content, position, defaultExpanded = false }: GxInfoBoxProps) => {
+export const GxInfoBox = ({ title, tag, content, position, defaultExpanded = false }: GxInfoBoxProps) => {
   const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
 
   const theme = useTheme();
@@ -36,12 +36,12 @@ export const GxInfoBox = ({ title, counter, content, position, defaultExpanded =
           >
             {title}
           </Typography>
-          {counter !== undefined && (
+          {tag !== undefined && (
             <Typography
               variant="body2"
-              sx={sx.counter}
+              sx={sx.tag}
             >
-              {counter}
+              {tag}
             </Typography>
           )}
         </Box>
@@ -103,7 +103,7 @@ const styles = (theme: Theme) => ({
     gap: 1,
     whiteSpace: 'nowrap'
   },
-  counter: {
+  tag: {
     backgroundColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.primary.white,
     padding: '2px 6px',

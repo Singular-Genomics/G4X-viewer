@@ -24,7 +24,7 @@ export const ActiveFilters = () => {
           ))}
         </Box>
       }
-      counter={activeFilters.length}
+      tag={activeFilters.length}
       position={{ top: '90px', left: '20px' }}
     />
   );

@@ -1,6 +1,6 @@
 export type GxInfoBoxProps = {
   title: string;
-  counter?: number | string;
+  tag?: number | string;
   content: React.ReactNode;
   position: {
     top?: string | number;
