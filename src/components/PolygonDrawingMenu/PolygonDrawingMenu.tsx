@@ -31,7 +31,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     clearPolygons,
     exportPolygonsWithCells,
     exportPolygonsWithTranscripts,
-    importPolygons,
+    // importPolygons,
     polygonFeatures,
     isDetecting
   ] = usePolygonDrawingStore(
@@ -48,7 +48,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.clearPolygons,
       store.exportPolygonsWithCells,
       store.exportPolygonsWithTranscripts,
-      store.importPolygons,
+      // store.importPolygons,
       store.polygonFeatures,
       store.isDetecting
     ])
@@ -209,7 +209,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       <PolygonImportExport
         exportPolygonsWithCells={exportPolygonsWithCells}
         exportPolygonsWithTranscripts={exportPolygonsWithTranscripts}
-        importPolygons={importPolygons}
+        // importPolygons={importPolygons}
         polygonFeatures={polygonFeatures}
         isDetecting={isDetecting}
       />

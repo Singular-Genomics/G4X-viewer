@@ -16,6 +16,18 @@ export type IntersectionResult = {
   hasIntersection: boolean;
 };
 
+export type SelectionData<T> = {
+  roiId: number;
+  data: T[];
+};
+
+export type BoundingBox = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
 export type PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: boolean;
   isPolygonLayerVisible: boolean;
@@ -42,7 +54,7 @@ export type PolygonDrawingStoreMethods = {
   clearPolygons: () => void;
   exportPolygonsWithCells: () => void;
   exportPolygonsWithTranscripts: () => void;
-  importPolygons: (file: File) => Promise<void>;
+  // importPolygons: (importedFeatures: PolygonFeature[]) => void;
   setDetecting: (detecting: boolean) => void;
   setPolygonOpacity: (opacity: number) => void;
 };

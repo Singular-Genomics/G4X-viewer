@@ -19,7 +19,7 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
-  importPolygons,
+  // importPolygons,
   polygonFeatures,
   isDetecting = false
 }: PolygonImportExportProps) => {
@@ -83,7 +83,7 @@ export const PolygonImportExport = ({
         });
 
         try {
-          await importPolygons(file);
+          // await importPolygons(file);
           closeSnackbar(loadingSnackbarId);
           enqueueSnackbar('Polygons imported successfully!', {
             variant: 'success',
@@ -102,7 +102,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [importPolygons, enqueueSnackbar, closeSnackbar]
+    [enqueueSnackbar, closeSnackbar]
   );
 
   const dropzoneProps = useDropzone({

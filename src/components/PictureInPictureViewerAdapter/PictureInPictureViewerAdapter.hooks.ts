@@ -119,8 +119,7 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters,
-    selectedCells
+    cellNameFilters
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -129,8 +128,7 @@ export const useCellSegmentationLayer = () => {
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters,
-      store.selectedCells
+      store.cellNameFilters
     ])
   );
 
@@ -206,7 +204,6 @@ export const useCellSegmentationLayer = () => {
     },
     umapFilter: umapRange,
     cellFillOpacity,
-    selectedCells,
     preFilteredUnselectedCells: filteredCells.unselectedCellsData,
     preFilteredOutlierCells: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
@@ -285,13 +282,23 @@ export const usePolygonDrawingLayer = () => {
   );
 
   const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
-  const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
-    useShallow((store) => [store.selectedPoints, store.setSelectedPoints])
+  const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
+    useShallow((store) => [
+      store.setSelectedPoints,
+      store.updateSelectedPoints,
+      store.addSelectedPoints,
+      store.deleteSelectedPoints
+    ])
   );
 
   const [cellMasksData] = useCellSegmentationLayerStore(useShallow((store) => [store.cellMasksData]));
-  const [selectedCells, setSelectedCells] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.selectedCells, store.setSelectedCells])
+  const [setSelectedCells, updateSelectedCells, addSelectedCells, deleteSelectedCells] = useCellSegmentationLayerStore(
+    useShallow((store) => [
+      store.setSelectedCells,
+      store.updateSelectedCells,
+      store.addSelectedCells,
+      store.deleteSelectedCells
+    ])
   );
 
   const { detectPointsInPolygon, detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
@@ -399,8 +406,7 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: result.geneDistribution
           };
 
-          const combinedSelectedPoints = [...selectedPoints, ...result.pointsInPolygon];
-          setSelectedPoints(combinedSelectedPoints);
+          addSelectedPoints({ data: result.pointsInPolygon, roiId: 2 });
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
@@ -423,8 +429,7 @@ export const usePolygonDrawingLayer = () => {
             cellClusterDistribution: result.cellClusterDistribution
           };
 
-          const combinedSelectedCells = [...selectedCells, ...result.cellPolygonsInDrawnPolygon];
-          setSelectedCells(combinedSelectedCells);
+          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: 2 });
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -461,10 +466,6 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
-      // Update selection incrementally - remove old selection for this polygon and add new
-      let updatedSelectedPoints = [...selectedPoints];
-      let updatedSelectedCells = [...selectedCells];
-
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
@@ -476,24 +477,7 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: result.geneDistribution
           };
 
-          // Find the previous polygon's points and remove them
-          const previousPolygon = previousFeatures[editedPolygonIndex];
-
-          if (previousPolygon && previousPolygon.properties?.pointCount > 0) {
-            // Remove points that were in the previous version of this polygon
-            const previousResult = await detectPointsInPolygon(previousPolygon, files, layerConfig);
-            updatedSelectedPoints = updatedSelectedPoints.filter(
-              (point) =>
-                !previousResult.pointsInPolygon.some(
-                  (prevPoint) =>
-                    prevPoint.position[0] === point.position[0] && prevPoint.position[1] === point.position[1]
-                )
-            );
-          }
-
-          // Add new points from the updated polygon
-          updatedSelectedPoints = [...updatedSelectedPoints, ...result.pointsInPolygon];
-          setSelectedPoints(updatedSelectedPoints);
+          updateSelectedPoints(result.pointsInPolygon, editedPolygonIndex);
           updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
@@ -516,20 +500,8 @@ export const usePolygonDrawingLayer = () => {
             cellClusterDistribution: result.cellClusterDistribution
           };
 
-          // Find the previous polygon's cells and remove them
-          const previousPolygon = previousFeatures[editedPolygonIndex];
-
-          if (previousPolygon && previousPolygon.properties?.cellPolygonCount > 0) {
-            // Remove cells that were in the previous version of this polygon
-            const previousResult = await detectCellPolygonsInPolygon(previousPolygon, cellMasksData);
-            updatedSelectedCells = updatedSelectedCells.filter(
-              (cell) => !previousResult.cellPolygonsInDrawnPolygon.some((prevCell) => prevCell.cellId === cell.cellId)
-            );
-          }
-
           // Add new cells from the updated polygon
-          updatedSelectedCells = [...updatedSelectedCells, ...result.cellPolygonsInDrawnPolygon];
-          setSelectedCells(updatedSelectedCells);
+          updateSelectedCells(result.cellPolygonsInDrawnPolygon, editedPolygonIndex);
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -548,6 +520,8 @@ export const usePolygonDrawingLayer = () => {
   const onPolygonClickForDeletion = (info: any) => {
     if (isDeleteMode && info.index !== undefined && info.index >= 0) {
       deletePolygon(info.index);
+      deleteSelectedCells(info.index);
+      deleteSelectedPoints(info.index);
       return true; // Prevent further event propagation
     }
     return false;

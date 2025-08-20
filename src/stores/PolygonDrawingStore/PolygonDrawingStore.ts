@@ -6,7 +6,6 @@ import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawing
 import {
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
-  importPolygons,
   updatePolygonFeaturesWithIds,
   getHighestPolygonId
 } from './PolygonDrawingStore.helpers';
@@ -105,18 +104,18 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     exportPolygonsWithTranscripts(polygonFeatures);
   },
 
-  importPolygons: async (file: File) => {
-    const importedFeatures = await importPolygons(file);
+  // importPolygons: async (file: File) => {
+  //   const importedFeatures = await importPolygons(file);
 
-    const maxImportedId = getHighestPolygonId(importedFeatures);
+  //   const maxImportedId = getHighestPolygonId(importedFeatures);
 
-    // Replace all existing polygons with imported ones
-    set({
-      polygonFeatures: importedFeatures,
-      selectedFeatureIndex: null,
-      nextPolygonId: maxImportedId + 1
-    });
-  },
+  //   // Replace all existing polygons with imported ones
+  //   set({
+  //     polygonFeatures: importedFeatures,
+  //     selectedFeatureIndex: null,
+  //     nextPolygonId: maxImportedId + 1
+  //   });
+  // },
 
   setPolygonOpacity: (opacity: number) => set({ polygonOpacity: opacity })
 }));

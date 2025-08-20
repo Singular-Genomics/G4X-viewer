@@ -1,4 +1,5 @@
 import { SingleMask } from '../../shared/types';
+import { SelectionData } from '../PolygonDrawingStore';
 
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
@@ -12,7 +13,7 @@ export type CellSegmentationLayerStoreValues = {
   cellFillOpacity: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
-  selectedCells: SingleMask[];
+  selectedCells: SelectionData<SingleMask>[];
   cytometryProteinsNames: string[];
   umapDataAvailable: boolean;
 };
@@ -26,7 +27,10 @@ export type CellSegmentationLayerStoreMethods = {
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
-  setSelectedCells: (cells: SingleMask[]) => void;
+  setSelectedCells: (selectionData: SelectionData<SingleMask>[]) => void;
+  addSelectedCells: (newSelectionData: SelectionData<SingleMask>) => void;
+  updateSelectedCells: (updatedData: SingleMask[], selectionId: number) => void;
+  deleteSelectedCells: (selectionId: number) => void;
   reset: () => void;
 };
 
