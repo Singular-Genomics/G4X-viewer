@@ -32,7 +32,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     exportPolygonsWithCells,
     exportPolygonsWithTranscripts,
     importPolygons,
-    polygonFeatures
+    polygonFeatures,
+    isDetecting
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -48,7 +49,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.exportPolygonsWithCells,
       store.exportPolygonsWithTranscripts,
       store.importPolygons,
-      store.polygonFeatures
+      store.polygonFeatures,
+      store.isDetecting
     ])
   );
 
@@ -102,7 +104,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
 
       switch (event.key.toLowerCase()) {
         case 'd': // Drawing
-          if (hasAnyData) {
+          if (hasAnyData && !isDetecting) {
             event.preventDefault();
             if (!isPolygonDrawingEnabled) {
               togglePolygonDrawing();
@@ -112,25 +114,25 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           }
           break;
         case 'e': // Edit
-          if (hasAnyData && isPolygonDrawingEnabled) {
+          if (hasAnyData && isPolygonDrawingEnabled && !isDetecting) {
             event.preventDefault();
             setModifyMode();
           }
           break;
         case 'v': // View
-          if (hasAnyData && isPolygonDrawingEnabled) {
+          if (hasAnyData && isPolygonDrawingEnabled && !isDetecting) {
             event.preventDefault();
             setViewMode();
           }
           break;
         case 'x': // Clear
-          if (hasAnyData && isPolygonDrawingEnabled) {
+          if (hasAnyData && isPolygonDrawingEnabled && !isDetecting) {
             event.preventDefault();
             handleClearPolygons();
           }
           break;
         case 'r': // Delete mode
-          if (hasAnyData && isPolygonDrawingEnabled) {
+          if (hasAnyData && isPolygonDrawingEnabled && !isDetecting) {
             event.preventDefault();
             setDeleteMode();
           }
@@ -140,7 +142,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           takeScreenshot();
           break;
         case 'escape':
-          if (isPolygonDrawingEnabled) {
+          if (isPolygonDrawingEnabled && !isDetecting) {
             event.preventDefault();
             togglePolygonDrawing();
           }
@@ -150,6 +152,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     [
       hasAnyData,
       isPolygonDrawingEnabled,
+      isDetecting,
       togglePolygonDrawing,
       setDrawPolygonMode,
       setModifyMode,
@@ -208,6 +211,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
         exportPolygonsWithTranscripts={exportPolygonsWithTranscripts}
         importPolygons={importPolygons}
         polygonFeatures={polygonFeatures}
+        isDetecting={isDetecting}
       />
 
       {!isPolygonDrawingEnabled && (
@@ -219,6 +223,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
             sx={sx.controlButton}
             onClick={togglePolygonDrawing}
             color="primary"
+            disabled={isDetecting}
           >
             <CreateIcon />
           </IconButton>
@@ -241,6 +246,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               }}
               onClick={setDrawPolygonMode}
               color="primary"
+              disabled={isDetecting}
             >
               <CreateIcon />
             </IconButton>
@@ -260,6 +266,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               }}
               onClick={setModifyMode}
               color="primary"
+              disabled={isDetecting}
             >
               <BorderColorIcon />
             </IconButton>
@@ -278,6 +285,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               }}
               onClick={setViewMode}
               color="primary"
+              disabled={isDetecting}
             >
               <VisibilityIcon />
             </IconButton>
@@ -296,6 +304,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               }}
               onClick={setDeleteMode}
               color="primary"
+              disabled={isDetecting}
             >
               <DeleteOutlineIcon />
             </IconButton>
@@ -309,6 +318,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               sx={sx.controlButton}
               onClick={handleClearPolygons}
               color="primary"
+              disabled={isDetecting}
             >
               <DeleteIcon />
             </IconButton>
@@ -322,6 +332,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               sx={sx.controlButton}
               onClick={togglePolygonDrawing}
               color="primary"
+              disabled={isDetecting}
             >
               <CloseIcon />
             </IconButton>
@@ -362,12 +373,14 @@ const styles = (theme: Theme) => ({
   controlButton: {
     color: theme.palette.gx.lightGrey[300],
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    transition: 'color 100ms ease-in-out',
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[500],
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.3)
+      color: theme.palette.gx.darkGrey[900],
+      backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+      cursor: 'default'
     }
   }
 });

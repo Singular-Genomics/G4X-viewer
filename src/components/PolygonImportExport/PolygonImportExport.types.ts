@@ -5,6 +5,7 @@ export interface PolygonImportExportProps {
   exportPolygonsWithTranscripts: () => void;
   importPolygons: (file: File) => Promise<void>;
   polygonFeatures: PolygonFeature[];
+  isDetecting?: boolean;
 }
 
 export type ExportedCellData = {

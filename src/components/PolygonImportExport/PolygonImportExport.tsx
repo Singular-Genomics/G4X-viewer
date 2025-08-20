@@ -20,7 +20,8 @@ export const PolygonImportExport = ({
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
   importPolygons,
-  polygonFeatures
+  polygonFeatures,
+  isDetecting = false
 }: PolygonImportExportProps) => {
   const [isImporting, setIsImporting] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -122,7 +123,7 @@ export const PolygonImportExport = ({
           sx={sx.controlButton}
           onClick={handleExportClick}
           color="primary"
-          disabled={polygonFeatures.length === 0}
+          disabled={polygonFeatures.length === 0 || isDetecting}
         >
           <FileDownloadIcon />
         </IconButton>
@@ -136,7 +137,7 @@ export const PolygonImportExport = ({
           sx={sx.controlButton}
           onClick={handleImportClick}
           color="primary"
-          disabled={isImporting}
+          disabled={isImporting || isDetecting}
         >
           <FileUploadIcon />
         </IconButton>
@@ -234,12 +235,13 @@ const styles = (theme: Theme) => ({
   controlButton: {
     color: theme.palette.gx.lightGrey[300],
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    transition: 'color 100ms ease-in-out',
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[500],
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.3)
+      color: theme.palette.gx.darkGrey[900],
+      backgroundColor: alpha(theme.palette.gx.primary.black, 0.5)
     }
   },
   controlButtonDisabled: {
