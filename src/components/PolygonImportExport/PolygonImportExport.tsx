@@ -15,11 +15,11 @@ import {
 } from './PolygonImportExport.helpers';
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
-  // importPolygons,
   polygonFeatures,
   isDetecting = false
 }: PolygonImportExportProps) => {
@@ -30,6 +30,7 @@ export const PolygonImportExport = ({
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const importPolygons = usePolygonsFileImport();
 
   // Check if data is available
   const transcriptFiles = useBinaryFilesStore((store) => store.files);
@@ -83,7 +84,7 @@ export const PolygonImportExport = ({
         });
 
         try {
-          // await importPolygons(file);
+          await importPolygons(file);
           closeSnackbar(loadingSnackbarId);
           enqueueSnackbar('Polygons imported successfully!', {
             variant: 'success',
@@ -102,7 +103,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [enqueueSnackbar, closeSnackbar]
+    [enqueueSnackbar, closeSnackbar, importPolygons]
   );
 
   const dropzoneProps = useDropzone({

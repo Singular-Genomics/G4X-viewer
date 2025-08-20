@@ -39,6 +39,12 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false, isDeleteMode: false }),
   setViewMode: () => set({ isViewMode: true, mode: undefined, isDeleteMode: false }),
   setDeleteMode: () => set({ isDeleteMode: true, isViewMode: false, mode: undefined }),
+  setPolygons: (features) =>
+    set((store) => ({
+      ...DEFAULT_POLYGON_DRAWING_STORE_VALUES,
+      polygonOpacity: store.polygonOpacity,
+      polygonFeatures: features
+    })),
   addPolygon: (feature) => {
     const { polygonFeatures } = get();
     const newPolygonId = getHighestPolygonId(polygonFeatures) + 1;

@@ -47,6 +47,7 @@ export type PolygonDrawingStoreMethods = {
   setModifyMode: () => void;
   setViewMode: () => void;
   setDeleteMode: () => void;
+  setPolygons: (features: PolygonFeature[]) => void;
   addPolygon: (features: PolygonFeature) => number;
   updatePolygon: (updatedFeature: PolygonFeature, polygonId: number) => void;
   deletePolygon: (index: number) => void;
@@ -54,7 +55,6 @@ export type PolygonDrawingStoreMethods = {
   clearPolygons: () => void;
   exportPolygonsWithCells: () => void;
   exportPolygonsWithTranscripts: () => void;
-  // importPolygons: (importedFeatures: PolygonFeature[]) => void;
   setDetecting: (detecting: boolean) => void;
   setPolygonOpacity: (opacity: number) => void;
 };

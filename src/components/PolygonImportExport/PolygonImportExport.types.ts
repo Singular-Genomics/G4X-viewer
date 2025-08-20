@@ -4,7 +4,6 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 export interface PolygonImportExportProps {
   exportPolygonsWithCells: () => void;
   exportPolygonsWithTranscripts: () => void;
-  // importPolygons: (file: File) => Promise<void>;
   polygonFeatures: PolygonFeature[];
   isDetecting?: boolean;
 }
