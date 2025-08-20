@@ -18,7 +18,6 @@ export const useActiveFilters = () => {
   );
   const [umapRanges] = useUmapGraphStore(useShallow((store) => [store.ranges]));
 
-  // Channel visibility filters
   const [channelsVisible] = useChannelsStore(useShallow((store) => [store.channelsVisible]));
 
   const getActiveFilters = () => {
