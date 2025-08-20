@@ -71,7 +71,7 @@ const styles = (theme: Theme) => ({
     position: 'fixed',
     width: 'auto',
     minWidth: 'fit-content',
-    maxWidth: 350,
+    maxWidth: 400,
     backgroundColor: theme.palette.gx.darkGrey[100],
     borderRadius: 2,
     overflow: 'visible',
@@ -108,7 +108,7 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.primary.white,
     padding: '2px 6px',
     borderRadius: 1,
-    fontSize: '0.75rem',
+    fontSize: '12px',
     minWidth: '20px',
     textAlign: 'center'
   },
@@ -122,7 +122,7 @@ const styles = (theme: Theme) => ({
   contentContainer: {
     padding: 2,
     borderTop: 1,
-    borderColor: theme.palette.gx.lightGrey[900],
+    borderColor: theme.palette.gx.darkGrey[900],
     color: theme.palette.gx.lightGrey[900]
   }
 });

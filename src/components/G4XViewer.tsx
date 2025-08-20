@@ -11,6 +11,7 @@ import { ImageInfo } from './ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
+import { ActiveFilters } from './ActiveFilters';
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -56,6 +57,7 @@ export default function G4XViewer() {
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
+      <ActiveFilters />
     </Box>
   );
 }
