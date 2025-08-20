@@ -359,7 +359,7 @@ export const findEditedPolygon = (
 
     if (coordsChanged) {
       editedPolygon = polygon;
-      editedPolygonIndex = i;
+      editedPolygonIndex = previousPolygon.properties?.polygonId;
       break;
     }
   }

@@ -258,12 +258,13 @@ export const usePolygonDrawingLayer = () => {
     isPolygonLayerVisible,
     polygonFeatures,
     mode,
-    updatePolygonFeatures,
+    addPolygon,
+    updatePolygon,
+    deletePolygon,
     isDetecting,
     setDetecting,
     isViewMode,
     isDeleteMode,
-    deletePolygon,
     polygonOpacity
   ] = usePolygonDrawingStore(
     useShallow((store) => [
@@ -271,12 +272,13 @@ export const usePolygonDrawingLayer = () => {
       store.isPolygonLayerVisible,
       store.polygonFeatures,
       store.mode,
-      store.updatePolygonFeatures,
+      store.addPolygon,
+      store.updatePolygon,
+      store.deletePolygon,
       store.isDetecting,
       store.setDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.deletePolygon,
       store.polygonOpacity
     ])
   );
@@ -338,31 +340,15 @@ export const usePolygonDrawingLayer = () => {
     // Store previous state for rollback if validation fails
     const previousFeatures = [...polygonFeatures];
 
-    // Validate only the affected polygon for self-intersections
-    let polygonToValidate: PolygonFeature | null = null;
+    if (editType === 'finishMovePosition') {
+      console.log("I'm gonna kill myself");
+    }
 
     if (editType === 'addFeature') {
       // Validate only the newly added polygon
-      polygonToValidate = updatedData.features[updatedData.features.length - 1];
-    } else if (
-      editType === 'finishMovePosition' ||
-      editType === 'movePosition' ||
-      editType === 'addPosition' ||
-      editType === 'removePosition'
-    ) {
-      // Validate only the edited polygon for self-intersections
-      const { editedPolygon } = findEditedPolygon(updatedData.features, previousFeatures);
-      if (editedPolygon) {
-        const validationResult = checkPolygonSelfIntersections(editedPolygon);
-        if (validationResult.hasIntersection) {
-          polygonToValidate = editedPolygon;
-        }
-      }
-    }
+      const newPolygon = updatedData.features[updatedData.features.length - 1];
 
-    // Validate the specific polygon if found
-    if (polygonToValidate) {
-      const validationResult = checkPolygonSelfIntersections(polygonToValidate);
+      const validationResult = checkPolygonSelfIntersections(newPolygon);
       if (validationResult.hasIntersection) {
         enqueueSnackbar({
           variant: 'gxSnackbar',
@@ -371,18 +357,10 @@ export const usePolygonDrawingLayer = () => {
           key: 'polygon-intersection-error',
           message: 'Polygon cannot intersect with itself. Operation cancelled.'
         });
-
-        // Restore previous polygon features (rollback)
-        updatePolygonFeatures(previousFeatures);
         return;
       }
-    }
 
-    updatePolygonFeatures(updatedData.features);
-
-    if (editType === 'addFeature') {
-      const newFeatureIndex = updatedData.features.length - 1;
-      const newPolygon = updatedData.features[newFeatureIndex];
+      const newPolygonId = addPolygon(newPolygon);
 
       // Start detection
       setDetecting(true);
@@ -406,8 +384,7 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: result.geneDistribution
           };
 
-          addSelectedPoints({ data: result.pointsInPolygon, roiId: 2 });
-          updatePolygonFeatures(updatedData.features);
+          addSelectedPoints({ data: result.pointsInPolygon, roiId: newPolygonId });
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -429,7 +406,7 @@ export const usePolygonDrawingLayer = () => {
             cellClusterDistribution: result.cellClusterDistribution
           };
 
-          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: 2 });
+          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: newPolygonId });
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -442,10 +419,33 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
+    } else if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
+      // Validate only the edited polygon for self-intersections
+      const { editedPolygon, editedPolygonIndex } = findEditedPolygon(updatedData.features, previousFeatures);
+
+      if (!editedPolygon) {
+        return;
+      }
+
+      const validationResult = checkPolygonSelfIntersections(editedPolygon);
+      if (validationResult.hasIntersection) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          preventDuplicate: true,
+          key: 'polygon-intersection-error',
+          message: 'Polygon cannot intersect with itself. Operation cancelled.'
+        });
+        return;
+      }
+
+      updatePolygon(editedPolygon, editedPolygonIndex);
     } else if (editType === 'removeFeature') {
       setSelectedPoints([]);
       setSelectedCells([]);
-    } else if (editType === 'finishMovePosition') {
+    }
+
+    if (editType === 'finishMovePosition') {
       // Find the edited polygon by comparing with previous state
       const allPolygons = updatedData.features;
       const { editedPolygon, editedPolygonIndex } = findEditedPolygon(allPolygons, previousFeatures);
@@ -478,7 +478,6 @@ export const usePolygonDrawingLayer = () => {
           };
 
           updateSelectedPoints(result.pointsInPolygon, editedPolygonIndex);
-          updatePolygonFeatures(updatedData.features);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
