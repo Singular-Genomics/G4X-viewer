@@ -340,10 +340,6 @@ export const usePolygonDrawingLayer = () => {
     // Store previous state for rollback if validation fails
     const previousFeatures = [...polygonFeatures];
 
-    if (editType === 'finishMovePosition') {
-      console.log("I'm gonna kill myself");
-    }
-
     if (editType === 'addFeature') {
       // Validate only the newly added polygon
       const newPolygon = updatedData.features[updatedData.features.length - 1];
