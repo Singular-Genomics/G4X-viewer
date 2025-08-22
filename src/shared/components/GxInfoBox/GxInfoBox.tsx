@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Box, Button, Collapse, Typography, SxProps, Theme, useTheme } from '@mui/material';
+import { Box, Button, Collapse, Typography, Theme, useTheme } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GxInfoBoxProps } from './GxInfoBox.types';
 
-export const GxInfoBox = ({ title, tag, content, position, defaultExpanded = false }: GxInfoBoxProps) => {
+export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxInfoBoxProps) => {
   const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
 
   const theme = useTheme();
@@ -14,17 +14,7 @@ export const GxInfoBox = ({ title, tag, content, position, defaultExpanded = fal
   };
 
   return (
-    <Box
-      sx={
-        {
-          ...sx.container,
-          top: position.top,
-          right: position.right,
-          bottom: position.bottom,
-          left: position.left
-        } as SxProps
-      }
-    >
+    <Box sx={sx.container}>
       <Button
         onClick={handleToggleExpand}
         sx={sx.headerButton}
@@ -68,14 +58,12 @@ export const GxInfoBox = ({ title, tag, content, position, defaultExpanded = fal
 
 const styles = (theme: Theme) => ({
   container: {
-    position: 'fixed',
     width: 'auto',
     minWidth: 'fit-content',
     maxWidth: 400,
     backgroundColor: theme.palette.gx.darkGrey[100],
     borderRadius: 2,
     overflow: 'visible',
-    zIndex: 1000,
     transition: 'all 300ms ease-in-out',
     '&:hover': {
       '& .expand-icon': {

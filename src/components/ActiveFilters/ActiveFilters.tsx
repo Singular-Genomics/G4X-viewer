@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { GxInfoBox } from '../../shared/components/GxInfoBox';
+import { GxInfoSection } from '../../shared/components/GxInfoSection';
 import { useActiveFilters } from './ActiveFilters.helpers';
 
 export const ActiveFilters = () => {
@@ -10,22 +10,26 @@ export const ActiveFilters = () => {
   }
 
   return (
-    <GxInfoBox
-      title="Active filters"
-      content={
-        <Box>
-          {activeFilters.map((filter, index) => (
-            <Typography
-              key={index}
-              sx={sx.filterItem}
-            >
-              • {filter}
-            </Typography>
-          ))}
-        </Box>
-      }
-      tag={activeFilters.length}
+    <GxInfoSection
       position={{ top: '90px', left: '20px' }}
+      infoBoxes={[
+        {
+          title: 'Active filters',
+          content: (
+            <Box>
+              {activeFilters.map((filter, index) => (
+                <Typography
+                  key={index}
+                  sx={sx.filterItem}
+                >
+                  • {filter}
+                </Typography>
+              ))}
+            </Box>
+          ),
+          tag: activeFilters.length
+        }
+      ]}
     />
   );
 };
