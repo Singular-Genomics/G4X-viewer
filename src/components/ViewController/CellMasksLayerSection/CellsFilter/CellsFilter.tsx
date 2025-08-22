@@ -3,8 +3,10 @@ import { CellsFilterOptions } from './CellsFilterOptions';
 import { CellsFilterTable } from './CellsFilterTable';
 import { Box, Theme, Typography, useTheme } from '@mui/material';
 import ErrorIcon from '@mui/icons-material/Error';
+import { useTranslation } from 'react-i18next';
 
 export const CellsFilter = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
   const colormapConfig = useCellSegmentationLayerStore((store) => store.cellColormapConfig);
@@ -16,7 +18,7 @@ export const CellsFilter = () => {
       {!isColormapConfigValid && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
-          <Typography sx={sx.errorText}>Missing colormap config data - filtering disabled.</Typography>
+          <Typography sx={sx.errorText}>{t('general.filterMissingColormap')}</Typography>
         </Box>
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>

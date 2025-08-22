@@ -15,9 +15,11 @@ import { ControllerHeader } from './ControllerHeader';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
+import { useTranslation } from 'react-i18next';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
@@ -38,38 +40,38 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
             <ControllerHeader onCloseController={() => setIsControllerOn(false)} />
             <Box sx={sx.viewControllerSectionsWrapper}>
               <GxCollapsibleSection
-                sectionTitle="Source Files"
+                sectionTitle={t('sourceFiles.sectionTitle')}
                 defultState="open"
               >
                 <SourceFilesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="View Settings"
+                sectionTitle={t('viewSettings.sectionTitle')}
                 disabled={!imageLoaded}
               >
                 <ViewControlsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Protein Channel Settings"
+                sectionTitle={t('channelSettings.sectionTitle')}
                 disabled={!imageLoaded || isRgb}
               >
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Brightfield Images Settings"
+                sectionTitle={t('brightfieldImages.sectionTitle')}
                 disabled={!imageLoaded}
               >
                 <BrightfieldImagesSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Transcript Layer Settings"
+                sectionTitle={t('transcriptsSettings.sectionTitle')}
                 disabled={!imageLoaded || !metadataFiles.length}
                 unmountOnExit={false}
               >
                 <TranscriptLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle="Segmentation Layer Settings"
+                sectionTitle={t('segmentationSettings.sectionTitle')}
                 disabled={!imageLoaded || !cellMasksFiles?.length}
                 unmountOnExit={false}
               >

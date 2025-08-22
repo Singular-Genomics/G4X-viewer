@@ -4,6 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
 import { GxCheckbox } from '../GxCheckbox';
+import { useTranslation } from 'react-i18next';
 
 const GxFiltersSearch = () => {
   const theme = useTheme();
@@ -31,6 +32,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
 }: GxFilterTableProps<T>) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const [activeOnly, setActiveOnly] = useState<boolean>(false);
 
   rows = useMemo(
@@ -73,7 +75,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
         />
       </Box>
       <FormControlLabel
-        label="Show active filters only"
+        label={t('general.filterShowActiveOnly')}
         labelPlacement="end"
         sx={sx.activeFiltersSwitchWrapper}
         control={

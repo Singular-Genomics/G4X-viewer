@@ -4,10 +4,12 @@ import { useChannelsStore } from '../../../../stores/ChannelsStore/ChannelsStore
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
+import { useTranslation } from 'react-i18next';
 
 export const LensToggle = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const selections = useChannelsStore((store) => store.selections);
   const [isLensOn, lensSelection, channelOptions, toggleLens] = useViewerStore(
     useShallow((store) => [store.isLensOn, store.lensSelection, store.channelOptions, store.toggleLens])
@@ -18,7 +20,7 @@ export const LensToggle = () => {
   return (
     <Box>
       <FormControlLabel
-        label="Lens"
+        label={t('channelSettings.lens')}
         control={
           <GxCheckbox
             onChange={toggleLens}
@@ -31,7 +33,7 @@ export const LensToggle = () => {
         in={isLensOn}
         sx={sx.subSectionWrapper}
       >
-        <Typography sx={sx.selectTitle}>Highlighted Channel: </Typography>
+        <Typography sx={sx.selectTitle}>{`${t('channelSettings.highlightedChannel')}:`}</Typography>
         <GxSelect
           value={lensSelection}
           fullWidth

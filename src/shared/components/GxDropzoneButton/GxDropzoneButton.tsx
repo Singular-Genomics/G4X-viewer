@@ -1,6 +1,7 @@
 import { Box, Button, TextField, Theme, alpha, useTheme, IconButton } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
+import { useTranslation } from 'react-i18next';
 
 export const GxDropzoneButton = ({
   getRootProps,
@@ -17,16 +18,17 @@ export const GxDropzoneButton = ({
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   let dynamicButtonText = buttonText;
 
   if (isDragActive) {
     if (isDragAccept) {
-      dynamicButtonText = 'Drop file here';
+      dynamicButtonText = t('general.dropHere');
     } else if (isDragReject) {
-      dynamicButtonText = 'File type not accepted';
+      dynamicButtonText = t('general.invalidFile');
     } else {
-      dynamicButtonText = 'Drop to upload';
+      dynamicButtonText = t('general.dropFile');
     }
   }
 

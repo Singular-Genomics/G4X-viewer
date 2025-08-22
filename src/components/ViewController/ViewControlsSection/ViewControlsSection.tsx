@@ -10,8 +10,10 @@ import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
 import { useMemo } from 'react';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
+import { useTranslation } from 'react-i18next';
 
 export const ViewControlsSection = () => {
+  const { t } = useTranslation();
   const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
@@ -25,17 +27,19 @@ export const ViewControlsSection = () => {
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Global Selection</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('viewSettings.globalSelection')}</Typography>
         <GlobalSelectionSliders />
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Zoom Control</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
         <ZoomInput />
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Layers Toggles</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('viewSettings.layerToggles')}</Typography>
         <Box sx={sx.togglesSubSection}>
-          {!areLayersAvailable && <Typography sx={sx.placeholderMessage}>No active layers available</Typography>}
+          {!areLayersAvailable && (
+            <Typography sx={sx.placeholderMessage}>{t('viewSettings.noActiveLayers')}</Typography>
+          )}
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}

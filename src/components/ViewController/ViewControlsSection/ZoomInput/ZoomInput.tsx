@@ -5,9 +5,11 @@ import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useChannelsStore } from '../../../../stores/ChannelsStore';
 import { GxInput } from '../../../../shared/components/GxInput';
 import { makeBoundingBox } from '../../../ScaleBar/utils';
+import { useTranslation } from 'react-i18next';
 
 export const ZoomInput = () => {
   const sx = styles();
+  const { t } = useTranslation();
 
   const viewState = useViewerStore(useShallow((store) => store.viewState));
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -70,7 +72,7 @@ export const ZoomInput = () => {
 
   return (
     <Box sx={sx.container}>
-      <Typography sx={sx.label}>Scale</Typography>
+      <Typography sx={sx.label}>{t('viewSettings.scale')}</Typography>
       <Box sx={sx.inputContainer}>
         <GxInput
           value={isEditing ? inputValue : displayValue}

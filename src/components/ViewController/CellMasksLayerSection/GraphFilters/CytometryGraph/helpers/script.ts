@@ -1,4 +1,9 @@
-import { CytometryWorkerHeatmapData, CytometryWorkerInput, CytometryWorkerScatterData } from './cytometryWorker';
+import {
+  CytometryWorkerHeatmapData,
+  CytometryWorkerInput,
+  CytometryWorkerScatterData,
+  CytometryWorkerStatus
+} from './cytometryWorker';
 
 const findMinMaxValue = (array: number[], includeZero = true): [number, number] => {
   if (includeZero) {
@@ -71,7 +76,7 @@ function processLinearBinning(
   postMessage({
     progress: 10,
     completed: false,
-    message: 'Bining data points...'
+    status: CytometryWorkerStatus.BINING
   });
   const totalPoints = xValuesSampled.length;
   for (let i = 0; i < totalPoints; i++) {
@@ -80,7 +85,7 @@ function processLinearBinning(
       postMessage({
         progress: progressPercentage,
         completed: false,
-        message: `Processing data points: ${i}/${totalPoints}`
+        status: CytometryWorkerStatus.PROCESSING
       });
     }
 
@@ -116,7 +121,7 @@ function processLinearBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -133,7 +138,7 @@ function processLinearBinning(
         postMessage({
           progress: progressPercentage,
           completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
+          status: CytometryWorkerStatus.NORMALIZING
         });
       }
 
@@ -152,7 +157,7 @@ function processLinearBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -197,7 +202,7 @@ function processLogarithmicBinning(
   postMessage({
     progress: 10,
     completed: false,
-    message: 'Bining data points...'
+    status: CytometryWorkerStatus.BINING
   });
 
   const failed = [];
@@ -208,7 +213,7 @@ function processLogarithmicBinning(
       postMessage({
         progress: progressPercentage,
         completed: false,
-        message: `Processing data points: ${i}/${totalPoints}`
+        status: CytometryWorkerStatus.PROCESSING
       });
     }
 
@@ -254,7 +259,7 @@ function processLogarithmicBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -271,7 +276,7 @@ function processLogarithmicBinning(
         postMessage({
           progress: progressPercentage,
           completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
+          status: CytometryWorkerStatus.NORMALIZING
         });
       }
 
@@ -290,7 +295,7 @@ function processLogarithmicBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -304,19 +309,19 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Missing segmentation masks data'
+      status: CytometryWorkerStatus.NO_MASK
     });
   } else if (!xProteinName || !yProteinName) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Missing protein names'
+      status: CytometryWorkerStatus.NO_PROTEIN
     });
   } else if (subsamplingStep <= 0) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Invalid subsampling step'
+      status: CytometryWorkerStatus.INVALID
     });
   }
 
@@ -340,7 +345,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     this.postMessage({
       progress: 0,
       completed: false,
-      message: 'Processing bins for a linear axis'
+      status: CytometryWorkerStatus.MODE_LINEAR
     });
 
     processLinearBinning(
@@ -359,7 +364,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     this.postMessage({
       progress: 0,
       completed: false,
-      message: 'Processing bins for a logarithmic axis'
+      status: CytometryWorkerStatus.MODE_LOG
     });
 
     processLogarithmicBinning(

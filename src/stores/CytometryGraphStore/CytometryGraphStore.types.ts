@@ -48,17 +48,6 @@ export type AxisTypes = 'log' | 'linear';
 
 export type ExponentFormat = 'none' | 'power' | 'E' | 'e' | 'SI';
 
-export const AVAILABLE_GRAPH_MODES: { label: string; value: GraphMode }[] = [
-  {
-    label: 'Scatter Plot',
-    value: 'scattergl'
-  },
-  {
-    label: 'Heatmap',
-    value: 'heatmap'
-  }
-];
-
 export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }[] = [
   {
     label: 'Singular',
@@ -403,15 +392,8 @@ export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }
   }
 ];
 
-export const AVAILABLE_AXIS_TYPES: { label: string; value: AxisTypes }[] = [
-  { label: 'Linear', value: 'linear' },
-  { label: 'Logarithmic', value: 'log' }
-];
+export const AVAILABLE_GRAPH_MODES: GraphMode[] = ['scattergl', 'heatmap'];
 
-export const AVAILABLE_EXPONENT_FORMATS: { label: string; value: ExponentFormat }[] = [
-  { label: 'None', value: 'none' },
-  { label: 'Power', value: 'power' },
-  { label: 'Exponent (E)', value: 'E' },
-  { label: 'Exponent (e)', value: 'e' },
-  { label: 'International System', value: 'SI' }
-];
+export const AVAILABLE_AXIS_TYPES: AxisTypes[] = ['linear', 'log'];
+
+export const AVAILABLE_EXPONENT_FORMATS: ExponentFormat[] = ['none', 'power', 'E', 'e', 'SI'];
