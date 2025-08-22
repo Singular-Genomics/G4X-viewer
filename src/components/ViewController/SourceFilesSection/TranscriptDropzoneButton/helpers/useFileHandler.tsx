@@ -26,10 +26,10 @@ export const useFileHandler = () => {
     }
     if (e.data.files && e.data.completed) {
       const configFile = e.data.files.find((f: File) => f.name.endsWith('config.json'));
-
+      let parsedConfigFile;
       if (configFile) {
-        const parsedConfig = (await parseJsonFromFile(configFile)) as ConfigFileData;
-        const { color_map, ...layerConfig } = parsedConfig;
+        parsedConfigFile = (await parseJsonFromFile(configFile)) as ConfigFileData;
+        const { color_map, ...layerConfig } = parsedConfigFile;
         if (!color_map) {
           enqueueSnackbar({
             message: 'Missing colormap config, cell segmentation filtering will be unavailable',
@@ -46,7 +46,7 @@ export const useFileHandler = () => {
 
       const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
 
-      if (polygonFeatures.length > 0) {
+      if (polygonFeatures.length > 0 && parsedConfigFile) {
         setDetecting(true);
         enqueueSnackbar({
           variant: 'gxSnackbar',
@@ -56,7 +56,7 @@ export const useFileHandler = () => {
 
         setSelectedPoints([]);
         for (const polygon of polygonFeatures) {
-          const result = await detectPointsInPolygon(polygon, e.data.files, configFile);
+          const result = await detectPointsInPolygon(polygon, e.data.files, parsedConfigFile);
 
           polygon.properties = {
             ...polygon.properties,
