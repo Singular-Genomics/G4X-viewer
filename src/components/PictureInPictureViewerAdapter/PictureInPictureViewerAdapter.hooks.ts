@@ -421,11 +421,19 @@ export const usePolygonDrawingLayer = () => {
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
 
-      enqueueSnackbar({
-        variant: 'gxSnackbar',
-        titleMode: 'success',
-        message: `Detected ${totalFoundPoints ? `${totalFoundPoints} points` : ''}${totalFoundPoints && totalFoundCells ? ' and ' : ''}${totalFoundCells ? `${totalFoundCells} cells` : ''} in polygon with id ${newPolygonId}`
-      });
+      if (!totalFoundPoints && !totalFoundCells) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'warning',
+          message: `No data detected in polygon with id ${newPolygonId}`
+        });
+      } else {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'success',
+          message: `Detected ${totalFoundPoints ? `${totalFoundPoints} points` : ''}${totalFoundPoints && totalFoundCells ? ' and ' : ''}${totalFoundCells ? `${totalFoundCells} cells` : ''} in polygon with id ${newPolygonId}`
+        });
+      }
     } else if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
       // Validate only the edited polygon for self-intersections
       const { editedPolygon, editedPolygonIndex } = findEditedPolygon(updatedData.features, previousFeatures);
