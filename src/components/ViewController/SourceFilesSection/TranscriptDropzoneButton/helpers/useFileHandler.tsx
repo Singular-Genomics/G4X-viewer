@@ -6,6 +6,8 @@ import ZipWorker from './zipWorker.js?worker';
 import TarWorker from './tarWorker.js?worker';
 import { parseJsonFromFile } from '../../../../../utils/utils';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
+import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
@@ -14,6 +16,8 @@ export const useFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
   const { setFiles, setLayerConfig, setFileName, setColormapConfig } = useBinaryFilesStore();
+  const { addSelectedPoints, setSelectedPoints } = useTranscriptLayerStore();
+  const { detectPointsInPolygon } = usePolygonDetectionWorker();
 
   const handleWorkerProgress = async (e: any) => {
     if (e.data.progress) {
@@ -37,6 +41,29 @@ export const useFileHandler = () => {
         useTranscriptLayerStore.setState({
           maxVisibleLayers: layerConfig.layers
         });
+      }
+
+      const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
+
+      if (polygonFeatures.length > 0) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'info',
+          message: 'Detecting new points in polygon selections'
+        });
+
+        setSelectedPoints([]);
+        for (const polygon of polygonFeatures) {
+          const result = await detectPointsInPolygon(polygon, e.data.files, configFile);
+
+          polygon.properties = {
+            ...polygon.properties,
+            pointCount: result.pointCount,
+            geneDistribution: result.geneDistribution
+          };
+
+          addSelectedPoints({ data: result.pointsInPolygon, roiId: polygon.properties.polygonId });
+        }
       }
 
       setFiles(e.data.files);
