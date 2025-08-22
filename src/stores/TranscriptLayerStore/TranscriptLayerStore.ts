@@ -25,6 +25,22 @@ export const useTranscriptLayerStore = create<TranscriptLayerStore>((set) => ({
   setPointSize: (newPointSize) => set({ pointSize: newPointSize }),
   setGeneNamesFilter: (geneNames) => set({ geneNameFilters: geneNames }),
   clearGeneNameFilters: () => set({ geneNameFilters: [] }),
-  setSelectedPoints: (points) => set({ selectedPoints: points }),
+  setSelectedPoints: (selectionData) => set({ selectedPoints: selectionData }),
+  addSelectedPoints: (newSelectionData) =>
+    set((store) => ({ selectedPoints: [...store.selectedPoints, newSelectionData] })),
+  updateSelectedPoints: (updatedData, selectionId) =>
+    set((store) => ({
+      selectedPoints: store.selectedPoints.map((selection) => {
+        if (selection.roiId !== selectionId) {
+          return selection;
+        }
+        return {
+          ...selection,
+          data: updatedData
+        };
+      })
+    })),
+  deleteSelectedPoints: (selectionId) =>
+    set((store) => ({ selectedPoints: store.selectedPoints.filter((selection) => selection.roiId !== selectionId) })),
   reset: () => set({ ...DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES })
 }));

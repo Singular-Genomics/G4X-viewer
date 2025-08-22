@@ -6,8 +6,6 @@ import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawing
 import {
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
-  importPolygons,
-  updatePolygonFeaturesWithIds,
   getHighestPolygonId
 } from './PolygonDrawingStore.helpers';
 
@@ -18,7 +16,6 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   selectedFeatureIndex: null,
   mode: new DrawPolygonMode(),
   isDetecting: false,
-  nextPolygonId: 1,
   isViewMode: false,
   isDeleteMode: false,
   polygonOpacity: 0.5
@@ -34,87 +31,97 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
       isViewMode: state.isPolygonDrawingEnabled ? true : false,
       isDeleteMode: false
     })),
-
   togglePolygonLayerVisibility: () =>
     set((state) => ({
       isPolygonLayerVisible: !state.isPolygonLayerVisible
     })),
-
   setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false, isDeleteMode: false }),
-
   setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false, isDeleteMode: false }),
-
   setViewMode: () => set({ isViewMode: true, mode: undefined, isDeleteMode: false }),
-
   setDeleteMode: () => set({ isDeleteMode: true, isViewMode: false, mode: undefined }),
+  setPolygons: (features) =>
+    set((store) => ({
+      ...DEFAULT_POLYGON_DRAWING_STORE_VALUES,
+      polygonOpacity: store.polygonOpacity,
+      polygonFeatures: features
+    })),
+  addPolygon: (feature) => {
+    const { polygonFeatures } = get();
+    const newPolygonId = getHighestPolygonId(polygonFeatures) + 1;
 
+    set({
+      polygonFeatures: [
+        ...polygonFeatures,
+        {
+          ...feature,
+          properties: {
+            ...feature.properties,
+            polygonId: newPolygonId
+          }
+        }
+      ]
+    });
+
+    return newPolygonId;
+  },
   deletePolygon: (index) => {
     const { polygonFeatures } = get();
     const updatedFeatures = polygonFeatures.filter((_, i) => i !== index);
-
-    // Calculate nextPolygonId based on highest existing ID
-    const maxExistingId = getHighestPolygonId(updatedFeatures);
-
-    // If no polygons left, switch to drawing mode
     if (updatedFeatures.length === 0) {
       set({
         polygonFeatures: updatedFeatures,
         selectedFeatureIndex: null,
         isDeleteMode: false,
         mode: new DrawPolygonMode(),
-        isViewMode: false,
-        nextPolygonId: 1
+        isViewMode: false
       });
     } else {
-      // Keep delete mode active if polygons still exist, preserve existing IDs
       set({
         polygonFeatures: updatedFeatures,
-        selectedFeatureIndex: null,
-        nextPolygonId: maxExistingId + 1
+        selectedFeatureIndex: null
       });
     }
   },
+  updatePolygon: (updatedFeature, polygonId) => {
+    const { polygonFeatures } = get();
+    const updatedData = polygonFeatures.map((feature) => {
+      if (feature.properties?.polygonId !== polygonId) {
+        return feature;
+      }
 
-  updatePolygonFeatures: (features) => {
-    const { nextPolygonId } = get();
-    const { featuresWithIds, nextPolygonId: newNextId } = updatePolygonFeaturesWithIds(features, nextPolygonId);
+      return {
+        ...feature,
+        ...updatedFeature,
+        properties: {
+          ...feature.properties,
+          polygonId: polygonId
+        }
+      };
+    });
 
     set({
-      polygonFeatures: featuresWithIds,
-      nextPolygonId: newNextId
+      polygonFeatures: updatedData
     });
   },
-
   selectFeature: (index) => set({ selectedFeatureIndex: index }),
-
   setDetecting: (detecting) => set({ isDetecting: detecting }),
-
   clearPolygons: () => {
     useTranscriptLayerStore.getState().setSelectedPoints([]);
     useCellSegmentationLayerStore.getState().setSelectedCells([]);
-    set({ polygonFeatures: [], selectedFeatureIndex: null, nextPolygonId: 1, isViewMode: false });
+    set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false });
   },
-
   exportPolygonsWithCells: () => {
     const { polygonFeatures } = get();
     exportPolygonsWithCells(polygonFeatures);
   },
-
   exportPolygonsWithTranscripts: () => {
     const { polygonFeatures } = get();
     exportPolygonsWithTranscripts(polygonFeatures);
   },
-
-  importPolygons: async (file: File) => {
-    const importedFeatures = await importPolygons(file);
-
-    const maxImportedId = getHighestPolygonId(importedFeatures);
-
-    // Replace all existing polygons with imported ones
+  importPolygons: (importedFeatures: any) => {
     set({
       polygonFeatures: importedFeatures,
-      selectedFeatureIndex: null,
-      nextPolygonId: maxImportedId + 1
+      selectedFeatureIndex: null
     });
   },
 

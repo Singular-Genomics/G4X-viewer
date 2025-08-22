@@ -7,20 +7,14 @@ import type {
   PolygonWorkerMessage,
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
-import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
+import { BoundingBox, PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
 import {
-  isPointInPolygon,
-  checkCellPolygonInDrawnPolygon
+  getPolygonBoundingBox,
+  isPointInSelection,
+  isPolygonInSelection,
+  isPolygonWithinBoundingBox
 } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
-
-const checkPointInPolygon = (point: [number, number], polygon: PolygonFeature) => {
-  return isPointInPolygon(point, polygon.geometry.coordinates[0]);
-};
-
-const checkCellPolygonInDrawnPolygonWrapper = (cellVertices: number[], drawnPolygon: PolygonFeature) => {
-  return checkCellPolygonInDrawnPolygon(cellVertices, drawnPolygon.geometry.coordinates[0]);
-};
 
 const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   try {
@@ -37,26 +31,24 @@ const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   }
 };
 
-const processBatch = async (
-  batchFiles: Array<{ file: File; zoom: number; x: number; y: number }>,
-  polygon: PolygonFeature
-) => {
-  const batchPromises = batchFiles.map(async ({ file, zoom, x, y }) => {
+const processBatch = async (batchFiles: Array<File>, polygon: PolygonFeature, polygonBoundingBox: BoundingBox) => {
+  const batchPromises = batchFiles.map(async (file) => {
     try {
       const tileData = await loadTileData(file);
-
       if (tileData && Array.isArray(tileData.pointsData)) {
         const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
-          if (!point || !point.position || point.position.length < 2) return false;
-          const pointPosition = [point.position[0], point.position[1]];
-          return checkPointInPolygon(pointPosition as [number, number], polygon);
+          if (!point || !point.position || point.position.length < 2) {
+            return false;
+          }
+
+          return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
         });
 
         return pointsFoundInTile;
       }
       return [];
     } catch (error) {
-      console.error(`❌ Error processing tile ${zoom}/${y}/${x}:`, error);
+      console.error(`❌ Error processing tile: ${file.name}`, error);
       return [];
     }
   });
@@ -64,33 +56,50 @@ const processBatch = async (
   return await Promise.all(batchPromises);
 };
 
-const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
+const detectPointsInPolygon = async (
+  polygon: PolygonFeature,
+  polygonBoundingBox: BoundingBox,
+  files: File[],
+  layerConfig: LayerConfig
+) => {
   const startTime = performance.now();
-
-  const pointsInPolygon: PolygonPointData[] = [];
-  const tileRegex = /\/(\d+)\/(\d+)\/(\d+)\.bin$/;
 
   // Use the highest zoom level from layerConfig where all points are visible without clustering
   const maxZoomLevel = layerConfig.layers;
+  // Calculate the tile size for the max zoom level
+  const tileSize = layerConfig.tile_size / Math.pow(2, maxZoomLevel);
 
-  const filesToProcess: Array<{ file: File; zoom: number; x: number; y: number }> = [];
+  const pointsInPolygon: PolygonPointData[] = [];
+  const tileFileRegex = new RegExp(String.raw`${maxZoomLevel}\/(\d+)\/(\d+)\.bin$`, 'ig');
 
+  const filesToProcess: Array<File> = [];
+
+  // Filter out files from other zoom levels and for tiles that do not intersect the selection ploygon bounding box.
   for (const file of files) {
-    const match = file.name.match(tileRegex);
+    const match = file.name.match(tileFileRegex);
     if (match) {
-      const zoom = parseInt(match[1], 10);
+      const [_, x, y] = match[0].split('.')[0].split('/').map(Number);
 
-      // Only process the highest zoom level where all points are visible without clustering
-      if (zoom !== maxZoomLevel) {
-        continue;
+      const tileCoords: BoundingBox = {
+        left: tileSize * y,
+        top: tileSize * x,
+        right: tileSize * (y + 1),
+        bottom: tileSize * (x + 1)
+      };
+
+      const intersects =
+        tileCoords.left < polygonBoundingBox.right &&
+        tileCoords.right > polygonBoundingBox.left &&
+        tileCoords.bottom > polygonBoundingBox.top &&
+        tileCoords.top < polygonBoundingBox.bottom;
+
+      if (intersects) {
+        filesToProcess.push(file);
       }
-
-      const x = parseInt(match[2], 10);
-      const y = parseInt(match[3], 10);
-
-      filesToProcess.push({ file, zoom, x, y });
     }
   }
+
+  console.log(`📁: ${filesToProcess.length} files selected for processing`);
 
   // Process files in batches to avoid overwhelming the system
   const BATCH_SIZE = 20;
@@ -105,7 +114,7 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], lay
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
 
-    const batchResults = await processBatch(batch, polygon);
+    const batchResults = await processBatch(batch, polygon, polygonBoundingBox);
     allPointArrays.push(...batchResults);
   }
 
@@ -132,14 +141,22 @@ const detectPointsInPolygon = async (polygon: PolygonFeature, files: File[], lay
   };
 };
 
-const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksData: SingleMask[]) => {
+const detectCellPolygonsInPolygon = async (
+  polygon: PolygonFeature,
+  polygonBoundingBox: BoundingBox,
+  cellMasksData: SingleMask[]
+) => {
   try {
     const startTime = performance.now();
 
     const cellPolygonsInDrawnPolygon: SingleMask[] = [];
     for (const cellMask of cellMasksData) {
       if (cellMask.vertices) {
-        if (checkCellPolygonInDrawnPolygonWrapper(cellMask.vertices, polygon)) {
+        if (!isPolygonWithinBoundingBox(cellMask.vertices, polygonBoundingBox)) {
+          continue;
+        }
+
+        if (isPolygonInSelection(cellMask.vertices, polygon.geometry.coordinates[0], polygonBoundingBox)) {
           cellPolygonsInDrawnPolygon.push(cellMask);
         }
       }
@@ -171,9 +188,16 @@ const detectCellPolygonsInPolygon = async (polygon: PolygonFeature, cellMasksDat
 onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
   const { type, payload } = e.data;
 
+  const polygonBoundingBox = getPolygonBoundingBox(payload.polygon.geometry.coordinates[0]);
+
   try {
     if (type === 'detectPointsInPolygon') {
-      const result = await detectPointsInPolygon(payload.polygon, payload.files, payload.layerConfig);
+      const result = await detectPointsInPolygon(
+        payload.polygon,
+        polygonBoundingBox,
+        payload.files,
+        payload.layerConfig
+      );
 
       postMessage({
         type: 'pointsDetected',
@@ -183,7 +207,7 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
         }
       } as PolygonWorkerResponse);
     } else if (type === 'detectCellPolygonsInPolygon') {
-      const result = await detectCellPolygonsInPolygon(payload.polygon, payload.cellMasksData);
+      const result = await detectCellPolygonsInPolygon(payload.polygon, polygonBoundingBox, payload.cellMasksData);
 
       postMessage({
         type: 'cellPolygonsDetected',

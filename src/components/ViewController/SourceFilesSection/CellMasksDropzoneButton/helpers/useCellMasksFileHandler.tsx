@@ -5,11 +5,16 @@ import { useSnackbar } from 'notistack';
 import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
+import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
+  const { setSelectedCells, addSelectedCells } = useCellSegmentationLayerStore();
+  const { setDetecting } = usePolygonDrawingStore();
 
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
@@ -17,7 +22,7 @@ export const useCellMasksFileHandler = () => {
     }
     setLoading(true);
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
       const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
       const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
@@ -45,6 +50,32 @@ export const useCellMasksFileHandler = () => {
       if (cellMasks.length) {
         listOfProteinNames = Object.keys(cellMasks[0].proteins);
         areUmapAvailable = !!cellMasks[0].umapValues;
+      }
+
+      const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
+
+      if (polygonFeatures.length > 0) {
+        setDetecting(true);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'info',
+          message: 'Detecting new cells in polygon selections'
+        });
+
+        setSelectedCells([]);
+        for (const polygon of polygonFeatures) {
+          const result = await detectCellPolygonsInPolygon(polygon, cellMasks);
+
+          polygon.properties = {
+            ...polygon.properties,
+            cellPolygonCount: result.cellPolygonCount,
+            cellClusterDistribution: result.cellClusterDistribution
+          };
+
+          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: polygon.properties.polygonId });
+        }
+
+        setDetecting(false);
       }
 
       useCellSegmentationLayerStore.setState({

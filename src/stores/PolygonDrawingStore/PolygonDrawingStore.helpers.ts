@@ -1,16 +1,9 @@
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
-import { SingleMask } from '../../shared/types';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
-import { useBinaryFilesStore } from '../BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { PolygonFeature, Point2D, LineSegment, IntersectionResult } from './PolygonDrawingStore.types';
-import {
-  ExportedCellData,
-  CellsExportData,
-  TranscriptsExportData,
-  ExportedTranscriptData
-} from '../../components/PolygonImportExport/PolygonImportExport.types';
+import { PolygonFeature, Point2D, LineSegment, IntersectionResult, BoundingBox } from './PolygonDrawingStore.types';
+import { CellsExportData, TranscriptsExportData } from '../../components/PolygonImportExport/PolygonImportExport.types';
 
 // Epsilon for floating point comparisons
 const EPSILON = 1e-10;
@@ -128,33 +121,59 @@ export const checkPolygonSelfIntersections = (feature: PolygonFeature): Intersec
   return checkPolygonSelfIntersection(coordinates);
 };
 
-// Ray Casting Algorithm with early exit optimization: Casts a horizontal ray from the point to infinity and counts edge intersections.
-// Odd count = inside, even count = outside.
-export const isPointInPolygon = (point: [number, number], coordinates: number[][]) => {
-  let inside = false;
-  const [x, y] = point;
+export const getPolygonBoundingBox = (coordinates: number[][]): BoundingBox => {
+  let minX = coordinates[0][0];
+  let maxX = coordinates[0][0];
+  let minY = coordinates[0][1];
+  let maxY = coordinates[0][1];
 
-  // Quick bounds check - if point is outside polygon bounding box
-  let minX = Infinity,
-    maxX = -Infinity,
-    minY = Infinity,
-    maxY = -Infinity;
+  for (let i = 1; i < coordinates.length; i++) {
+    const [x, y] = coordinates[i];
 
-  // Calculate bounding box in single pass
-  for (let i = 0; i < coordinates.length; i++) {
-    const [xi, yi] = coordinates[i];
-    if (xi < minX) minX = xi;
-    if (xi > maxX) maxX = xi;
-    if (yi < minY) minY = yi;
-    if (yi > maxY) maxY = yi;
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
   }
 
-  // Early exit if point is outside bounding box
-  if (x < minX || x > maxX || y < minY || y > maxY) {
+  return {
+    left: minX,
+    top: minY,
+    right: maxX,
+    bottom: maxY
+  };
+};
+
+// Check if point is inside a rectangular bounding box
+export const isPointWitinBoundingBox = (point: [number, number], boundingBox: BoundingBox): boolean => {
+  return (
+    point[0] > boundingBox.left &&
+    point[0] < boundingBox.right &&
+    point[1] > boundingBox.top &&
+    point[1] < boundingBox.bottom
+  );
+};
+
+// Check if polygon is fullt inside a rectangular bounding box
+export const isPolygonWithinBoundingBox = (cellVertices: number[], boundingBox: BoundingBox): boolean => {
+  for (let i = 0; i < cellVertices.length; i += 2) {
+    if (!isPointWitinBoundingBox([cellVertices[i], cellVertices[i + 1]], boundingBox)) {
+      return false;
+    }
+  }
+  return true;
+};
+
+// Ray Casting Algorithm with early exit optimization: Casts a horizontal ray from the point to infinity and counts edge intersections.
+// Odd count = inside, even count = outside.
+export const isPointInSelection = (point: [number, number], coordinates: number[][], boundingBox: BoundingBox) => {
+  if (!isPointWitinBoundingBox(point, boundingBox)) {
     return false;
   }
 
   // Ray casting algorithm
+  let inside = false;
+  const [x, y] = point;
   for (let i = 0, j = coordinates.length - 1; i < coordinates.length; j = i++) {
     const [xi, yi] = coordinates[i];
     const [xj, yj] = coordinates[j];
@@ -167,45 +186,15 @@ export const isPointInPolygon = (point: [number, number], coordinates: number[][
   return inside;
 };
 
-export const checkCellPolygonInDrawnPolygon = (cellVertices: number[], coordinates: number[][]) => {
+export const isPolygonInSelection = (cellVertices: number[], coordinates: number[][], boundingBox: BoundingBox) => {
   if (!cellVertices || cellVertices.length < 6) return false;
-
-  // Pre-calculate polygon bounding box once for all vertex checks
-  let minX = Infinity,
-    maxX = -Infinity,
-    minY = Infinity,
-    maxY = -Infinity;
-
-  for (let i = 0; i < coordinates.length; i++) {
-    const [xi, yi] = coordinates[i];
-    if (xi < minX) minX = xi;
-    if (xi > maxX) maxX = xi;
-    if (yi < minY) minY = yi;
-    if (yi > maxY) maxY = yi;
-  }
 
   // Check each vertex of the cell polygon
   for (let i = 0; i < cellVertices.length; i += 2) {
     const x = cellVertices[i];
     const y = cellVertices[i + 1];
 
-    // Early exit if vertex is outside bounding box
-    if (x < minX || x > maxX || y < minY || y > maxY) {
-      return false;
-    }
-
-    // Use ray casting for precise check
-    let inside = false;
-    for (let j = 0, k = coordinates.length - 1; j < coordinates.length; k = j++) {
-      const [xi, yi] = coordinates[j];
-      const [xj, yj] = coordinates[k];
-
-      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
-        inside = !inside;
-      }
-    }
-
-    if (!inside) {
+    if (!isPointInSelection([x, y], coordinates, boundingBox)) {
       return false;
     }
   }
@@ -248,7 +237,7 @@ export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId
 
     // Otherwise assign next available ID
     currentMaxId += 1;
-    const updatedFeature = {
+    const updatedFeature: PolygonFeature = {
       ...feature,
       properties: {
         ...feature.properties,
@@ -283,7 +272,7 @@ export const loadTileData = (file: File) => {
 };
 
 export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
-  const { cellMasksData } = useCellSegmentationLayerStore.getState();
+  const { selectedCells } = useCellSegmentationLayerStore.getState();
 
   const exportData: CellsExportData = {};
 
@@ -292,42 +281,9 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
     const roiName = `ROI_${polygonId}`;
     const coordinates = feature.geometry.coordinates[0];
 
-    const cellsInPolygon: ExportedCellData[] = [];
-
-    if (cellMasksData && Array.isArray(cellMasksData)) {
-      for (const cellMask of cellMasksData) {
-        if (
-          cellMask.vertices &&
-          cellMask.vertices.length > 0 &&
-          checkCellPolygonInDrawnPolygon(cellMask.vertices, coordinates)
-        ) {
-          const cellData: ExportedCellData = {
-            cell_id: cellMask.cellId,
-            totalCounts: parseInt(cellMask.totalCounts) || 0,
-            totalGenes: parseInt(cellMask.totalGenes) || 0,
-            area: parseFloat(cellMask.area) || 0,
-            clusterId: cellMask.clusterId || '',
-            umapX: cellMask.umapValues?.umapX || 0,
-            umapY: cellMask.umapValues?.umapY || 0,
-            vertices: cellMask.vertices || [],
-            color: cellMask.color || []
-          };
-
-          // Add protein data
-          if (cellMask.proteins) {
-            Object.entries(cellMask.proteins).forEach(([proteinName, value]) => {
-              cellData[proteinName] = value;
-            });
-          }
-
-          cellsInPolygon.push(cellData);
-        }
-      }
-    }
-
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells: cellsInPolygon,
+      cells: selectedCells.find((selection) => selection.roiId === polygonId)?.data || [],
       polygonId: polygonId
     };
   });
@@ -354,44 +310,9 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
     const roiName = `ROI_${polygonId}`;
     const coordinates = feature.geometry.coordinates[0];
 
-    const transcriptsInPolygon: ExportedTranscriptData[] = [];
-    const geneCountMap: Map<string, number> = new Map();
-
-    if (selectedPoints && Array.isArray(selectedPoints)) {
-      // First pass: collect transcripts and count genes
-      for (const transcript of selectedPoints) {
-        if (
-          transcript.position &&
-          transcript.position.length >= 2 &&
-          isPointInPolygon([transcript.position[0], transcript.position[1]], coordinates)
-        ) {
-          const geneName = transcript.geneName || 'unknown';
-          geneCountMap.set(geneName, (geneCountMap.get(geneName) || 0) + 1);
-        }
-      }
-
-      // Second pass: add transcripts with count data
-      for (const transcript of selectedPoints) {
-        if (
-          transcript.position &&
-          transcript.position.length >= 2 &&
-          isPointInPolygon([transcript.position[0], transcript.position[1]], coordinates)
-        ) {
-          const geneName = transcript.geneName || 'unknown';
-          transcriptsInPolygon.push({
-            gene_name: geneName,
-            count: geneCountMap.get(geneName) || 0,
-            position: transcript.position || [],
-            color: transcript.color || [],
-            cellId: transcript.cellId || ''
-          });
-        }
-      }
-    }
-
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      transcripts: transcriptsInPolygon,
+      transcripts: selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [],
       polygonId: polygonId
     };
   });
@@ -438,7 +359,7 @@ export const findEditedPolygon = (
 
     if (coordsChanged) {
       editedPolygon = polygon;
-      editedPolygonIndex = i;
+      editedPolygonIndex = previousPolygon.properties?.polygonId;
       break;
     }
   }
@@ -451,82 +372,4 @@ export const findEditedPolygon = (
   }
 
   return { editedPolygon, editedPolygonIndex };
-};
-
-export const importPolygons = async (file: File) => {
-  const content = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsText(file);
-  });
-
-  const importedData = JSON.parse(content);
-
-  // Only support ROI format
-  if (!importedData || typeof importedData !== 'object' || Array.isArray(importedData)) {
-    throw new Error('Invalid file format. Expected ROI format with ROI_ prefixed keys.');
-  }
-
-  const roiKeys = Object.keys(importedData).filter((key) => key.startsWith('ROI_'));
-  if (roiKeys.length === 0) {
-    throw new Error('Invalid file format. No ROI data found. Expected ROI format with ROI_ prefixed keys.');
-  }
-
-  // Extract coordinates and polygonId from ROI structure
-  const polygonsWithData = Object.values(importedData).map((roi: any) => ({
-    coordinates: roi.coordinates,
-    polygonId: roi.polygonId
-  }));
-
-  const features = polygonsWithData.map((polygonData, i: number) => ({
-    type: 'Feature' as const,
-    geometry: { type: 'Polygon' as const, coordinates: [polygonData.coordinates] },
-    properties: {
-      id: i,
-      polygonId: polygonData.polygonId || i + 1 // Use original ID if available, otherwise sequential
-    }
-  }));
-
-  const { files } = useBinaryFilesStore.getState();
-  if (files.length > 0) {
-    const allPoints: any[] = [];
-    const tilePromises = files
-      .filter((f: any) => f.name.includes('.bin'))
-      .map(async (file: any) => {
-        const tileData = (await loadTileData(file)) as any;
-        return (
-          tileData?.pointsData?.filter((point: any) =>
-            polygonsWithData.some((polygonData) => isPointInPolygon(point.position, polygonData.coordinates))
-          ) || []
-        );
-      });
-
-    (await Promise.all(tilePromises)).forEach((points) => allPoints.push(...points));
-    useTranscriptLayerStore.getState().setSelectedPoints(removeDuplicates(allPoints));
-  }
-
-  const { cellMasksData } = useCellSegmentationLayerStore.getState();
-  if (cellMasksData && polygonsWithData.length > 0) {
-    try {
-      const cellPolygonsInDrawnPolygons: SingleMask[] = [];
-
-      for (const cellMask of cellMasksData) {
-        if (
-          cellMask.vertices &&
-          polygonsWithData.some((polygonData) =>
-            checkCellPolygonInDrawnPolygon(cellMask.vertices, polygonData.coordinates)
-          )
-        ) {
-          cellPolygonsInDrawnPolygons.push(cellMask);
-        }
-      }
-
-      useCellSegmentationLayerStore.getState().setSelectedCells(cellPolygonsInDrawnPolygons);
-    } catch (error) {
-      console.error('Error processing cell masks during import:', error);
-    }
-  }
-
-  return features;
 };

@@ -119,8 +119,7 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters,
-    selectedCells
+    cellNameFilters
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -129,8 +128,7 @@ export const useCellSegmentationLayer = () => {
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters,
-      store.selectedCells
+      store.cellNameFilters
     ])
   );
 
@@ -206,7 +204,6 @@ export const useCellSegmentationLayer = () => {
     },
     umapFilter: umapRange,
     cellFillOpacity,
-    selectedCells,
     preFilteredUnselectedCells: filteredCells.unselectedCellsData,
     preFilteredOutlierCells: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
@@ -261,12 +258,13 @@ export const usePolygonDrawingLayer = () => {
     isPolygonLayerVisible,
     polygonFeatures,
     mode,
-    updatePolygonFeatures,
+    addPolygon,
+    updatePolygon,
+    deletePolygon,
     isDetecting,
     setDetecting,
     isViewMode,
     isDeleteMode,
-    deletePolygon,
     polygonOpacity
   ] = usePolygonDrawingStore(
     useShallow((store) => [
@@ -274,24 +272,35 @@ export const usePolygonDrawingLayer = () => {
       store.isPolygonLayerVisible,
       store.polygonFeatures,
       store.mode,
-      store.updatePolygonFeatures,
+      store.addPolygon,
+      store.updatePolygon,
+      store.deletePolygon,
       store.isDetecting,
       store.setDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.deletePolygon,
       store.polygonOpacity
     ])
   );
 
   const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
-  const [selectedPoints, setSelectedPoints] = useTranscriptLayerStore(
-    useShallow((store) => [store.selectedPoints, store.setSelectedPoints])
+  const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
+    useShallow((store) => [
+      store.setSelectedPoints,
+      store.updateSelectedPoints,
+      store.addSelectedPoints,
+      store.deleteSelectedPoints
+    ])
   );
 
   const [cellMasksData] = useCellSegmentationLayerStore(useShallow((store) => [store.cellMasksData]));
-  const [selectedCells, setSelectedCells] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.selectedCells, store.setSelectedCells])
+  const [setSelectedCells, updateSelectedCells, addSelectedCells, deleteSelectedCells] = useCellSegmentationLayerStore(
+    useShallow((store) => [
+      store.setSelectedCells,
+      store.updateSelectedCells,
+      store.addSelectedCells,
+      store.deleteSelectedCells
+    ])
   );
 
   const { detectPointsInPolygon, detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
@@ -331,31 +340,11 @@ export const usePolygonDrawingLayer = () => {
     // Store previous state for rollback if validation fails
     const previousFeatures = [...polygonFeatures];
 
-    // Validate only the affected polygon for self-intersections
-    let polygonToValidate: PolygonFeature | null = null;
-
     if (editType === 'addFeature') {
       // Validate only the newly added polygon
-      polygonToValidate = updatedData.features[updatedData.features.length - 1];
-    } else if (
-      editType === 'finishMovePosition' ||
-      editType === 'movePosition' ||
-      editType === 'addPosition' ||
-      editType === 'removePosition'
-    ) {
-      // Validate only the edited polygon for self-intersections
-      const { editedPolygon } = findEditedPolygon(updatedData.features, previousFeatures);
-      if (editedPolygon) {
-        const validationResult = checkPolygonSelfIntersections(editedPolygon);
-        if (validationResult.hasIntersection) {
-          polygonToValidate = editedPolygon;
-        }
-      }
-    }
+      const newPolygon = updatedData.features[updatedData.features.length - 1];
 
-    // Validate the specific polygon if found
-    if (polygonToValidate) {
-      const validationResult = checkPolygonSelfIntersections(polygonToValidate);
+      const validationResult = checkPolygonSelfIntersections(newPolygon);
       if (validationResult.hasIntersection) {
         enqueueSnackbar({
           variant: 'gxSnackbar',
@@ -364,18 +353,10 @@ export const usePolygonDrawingLayer = () => {
           key: 'polygon-intersection-error',
           message: 'Polygon cannot intersect with itself. Operation cancelled.'
         });
-
-        // Restore previous polygon features (rollback)
-        updatePolygonFeatures(previousFeatures);
         return;
       }
-    }
 
-    updatePolygonFeatures(updatedData.features);
-
-    if (editType === 'addFeature') {
-      const newFeatureIndex = updatedData.features.length - 1;
-      const newPolygon = updatedData.features[newFeatureIndex];
+      const newPolygonId = addPolygon(newPolygon);
 
       // Start detection
       setDetecting(true);
@@ -388,6 +369,9 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
+      let totalFoundPoints = 0;
+      let totalFoundCells = 0;
+
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
@@ -399,9 +383,8 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: result.geneDistribution
           };
 
-          const combinedSelectedPoints = [...selectedPoints, ...result.pointsInPolygon];
-          setSelectedPoints(combinedSelectedPoints);
-          updatePolygonFeatures(updatedData.features);
+          addSelectedPoints({ data: result.pointsInPolygon, roiId: newPolygonId });
+          totalFoundPoints = result.pointCount;
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -423,8 +406,8 @@ export const usePolygonDrawingLayer = () => {
             cellClusterDistribution: result.cellClusterDistribution
           };
 
-          const combinedSelectedCells = [...selectedCells, ...result.cellPolygonsInDrawnPolygon];
-          setSelectedCells(combinedSelectedCells);
+          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: newPolygonId });
+          totalFoundCells = result.cellPolygonCount;
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -437,10 +420,47 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
+
+      if (!totalFoundPoints && !totalFoundCells) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'warning',
+          message: `No data detected in polygon with id ${newPolygonId}`
+        });
+      } else {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'success',
+          message: `Detected ${totalFoundPoints ? `${totalFoundPoints} points` : ''}${totalFoundPoints && totalFoundCells ? ' and ' : ''}${totalFoundCells ? `${totalFoundCells} cells` : ''} in polygon with id ${newPolygonId}`
+        });
+      }
+    } else if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
+      // Validate only the edited polygon for self-intersections
+      const { editedPolygon, editedPolygonIndex } = findEditedPolygon(updatedData.features, previousFeatures);
+
+      if (!editedPolygon) {
+        return;
+      }
+
+      const validationResult = checkPolygonSelfIntersections(editedPolygon);
+      if (validationResult.hasIntersection) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          preventDuplicate: true,
+          key: 'polygon-intersection-error',
+          message: 'Polygon cannot intersect with itself. Operation cancelled.'
+        });
+        return;
+      }
+
+      updatePolygon(editedPolygon, editedPolygonIndex);
     } else if (editType === 'removeFeature') {
       setSelectedPoints([]);
       setSelectedCells([]);
-    } else if (editType === 'finishMovePosition') {
+    }
+
+    if (editType === 'finishMovePosition') {
       // Find the edited polygon by comparing with previous state
       const allPolygons = updatedData.features;
       const { editedPolygon, editedPolygonIndex } = findEditedPolygon(allPolygons, previousFeatures);
@@ -461,10 +481,6 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
-      // Update selection incrementally - remove old selection for this polygon and add new
-      let updatedSelectedPoints = [...selectedPoints];
-      let updatedSelectedCells = [...selectedCells];
-
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
@@ -476,25 +492,7 @@ export const usePolygonDrawingLayer = () => {
             geneDistribution: result.geneDistribution
           };
 
-          // Find the previous polygon's points and remove them
-          const previousPolygon = previousFeatures[editedPolygonIndex];
-
-          if (previousPolygon && previousPolygon.properties?.pointCount > 0) {
-            // Remove points that were in the previous version of this polygon
-            const previousResult = await detectPointsInPolygon(previousPolygon, files, layerConfig);
-            updatedSelectedPoints = updatedSelectedPoints.filter(
-              (point) =>
-                !previousResult.pointsInPolygon.some(
-                  (prevPoint) =>
-                    prevPoint.position[0] === point.position[0] && prevPoint.position[1] === point.position[1]
-                )
-            );
-          }
-
-          // Add new points from the updated polygon
-          updatedSelectedPoints = [...updatedSelectedPoints, ...result.pointsInPolygon];
-          setSelectedPoints(updatedSelectedPoints);
-          updatePolygonFeatures(updatedData.features);
+          updateSelectedPoints(result.pointsInPolygon, editedPolygonIndex);
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -516,20 +514,8 @@ export const usePolygonDrawingLayer = () => {
             cellClusterDistribution: result.cellClusterDistribution
           };
 
-          // Find the previous polygon's cells and remove them
-          const previousPolygon = previousFeatures[editedPolygonIndex];
-
-          if (previousPolygon && previousPolygon.properties?.cellPolygonCount > 0) {
-            // Remove cells that were in the previous version of this polygon
-            const previousResult = await detectCellPolygonsInPolygon(previousPolygon, cellMasksData);
-            updatedSelectedCells = updatedSelectedCells.filter(
-              (cell) => !previousResult.cellPolygonsInDrawnPolygon.some((prevCell) => prevCell.cellId === cell.cellId)
-            );
-          }
-
           // Add new cells from the updated polygon
-          updatedSelectedCells = [...updatedSelectedCells, ...result.cellPolygonsInDrawnPolygon];
-          setSelectedCells(updatedSelectedCells);
+          updateSelectedCells(result.cellPolygonsInDrawnPolygon, editedPolygonIndex);
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -548,6 +534,8 @@ export const usePolygonDrawingLayer = () => {
   const onPolygonClickForDeletion = (info: any) => {
     if (isDeleteMode && info.index !== undefined && info.index >= 0) {
       deletePolygon(info.index);
+      deleteSelectedCells(info.index);
+      deleteSelectedPoints(info.index);
       return true; // Prevent further event propagation
     }
     return false;

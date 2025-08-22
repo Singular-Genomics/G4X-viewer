@@ -13,13 +13,13 @@ import {
   exportPolygonsWithTranscriptsCSV,
   exportROIMetadataCSV
 } from './PolygonImportExport.helpers';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { usePolygonsFileImport } from './PolygonImportExport.hooks';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
   exportPolygonsWithTranscripts,
-  importPolygons,
   polygonFeatures,
   isDetecting = false
 }: PolygonImportExportProps) => {
@@ -30,13 +30,14 @@ export const PolygonImportExport = ({
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const importPolygons = usePolygonsFileImport();
 
   // Check if data is available
-  const transcriptFiles = useBinaryFilesStore((store) => store.files);
-  const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
+  const selectedPoints = useTranscriptLayerStore((store) => store.selectedPoints);
+  const selectedCells = useCellSegmentationLayerStore((store) => store.selectedCells);
 
-  const hasTranscriptData = transcriptFiles.length > 0;
-  const hasSegmentationData = cellMasksData && cellMasksData.length > 0;
+  const hasTranscriptData = selectedPoints.length > 0;
+  const hasSegmentationData = selectedCells.length > 0;
 
   const handleImportClick = () => {
     setIsImportModalOpen(true);
@@ -102,7 +103,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [importPolygons, enqueueSnackbar, closeSnackbar]
+    [enqueueSnackbar, closeSnackbar, importPolygons]
   );
 
   const dropzoneProps = useDropzone({
