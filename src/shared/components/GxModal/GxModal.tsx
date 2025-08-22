@@ -40,7 +40,7 @@ export const GxModal = ({
     if (checkboxRef.current?.checked && dontShowFlag) {
       localStorage.setItem(dontShowFlag, 'true');
     }
-    onContinue();
+    onContinue?.();
   }, [onContinue, dontShowFlag]);
 
   return (
@@ -56,16 +56,18 @@ export const GxModal = ({
         <Box sx={sx.modalContentWrapper}>
           {children}
           <Box sx={sx.modalButtonsWrapper}>
-            <Button
-              sx={{
-                ...sx.modalButtonBase,
-                ...sx.continueButton,
-                ...stylesVaraint.button
-              }}
-              onClick={handleContinue}
-            >
-              Confirm
-            </Button>
+            {onContinue && (
+              <Button
+                sx={{
+                  ...sx.modalButtonBase,
+                  ...sx.continueButton,
+                  ...stylesVaraint.button
+                }}
+                onClick={handleContinue}
+              >
+                Confirm
+              </Button>
+            )}
             <Button
               sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
               onClick={onClose}

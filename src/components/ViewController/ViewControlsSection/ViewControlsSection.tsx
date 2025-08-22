@@ -6,8 +6,10 @@ import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
 import { TranscriptLayerToggle } from './TranscriptLayerToggle';
 import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
 import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
+import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
 import { useMemo } from 'react';
+import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
 
 export const ViewControlsSection = () => {
@@ -15,6 +17,7 @@ export const ViewControlsSection = () => {
   const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
   const files = useBinaryFilesStore((store) => store.files);
   const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
+  const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
 
   const areLayersAvailable = useMemo(
     () => files.length || cellsData || brightfieldImageSource,
@@ -40,6 +43,7 @@ export const ViewControlsSection = () => {
           {!!files.length && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
+          {!!polygonFeatures.length && <PolygonLayerToggle />}
         </Box>
       </Box>
     </Box>

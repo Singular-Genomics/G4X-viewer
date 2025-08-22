@@ -6,11 +6,16 @@ import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-mas
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useTranslation } from 'react-i18next';
+import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
+import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const { detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
+  const { setSelectedCells, addSelectedCells } = useCellSegmentationLayerStore();
+  const { setDetecting } = usePolygonDrawingStore();
   const { t } = useTranslation();
 
   const onDrop = async (files: File[]) => {
@@ -19,7 +24,7 @@ export const useCellMasksFileHandler = () => {
     }
     setLoading(true);
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
       const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
       const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
@@ -49,6 +54,32 @@ export const useCellMasksFileHandler = () => {
         areUmapAvailable = !!cellMasks[0].umapValues;
       }
 
+      const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
+
+      if (polygonFeatures.length > 0) {
+        setDetecting(true);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'info',
+          message: 'Detecting new cells in polygon selections'
+        });
+
+        setSelectedCells([]);
+        for (const polygon of polygonFeatures) {
+          const result = await detectCellPolygonsInPolygon(polygon, cellMasks);
+
+          polygon.properties = {
+            ...polygon.properties,
+            cellPolygonCount: result.cellPolygonCount,
+            cellClusterDistribution: result.cellClusterDistribution
+          };
+
+          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: polygon.properties.polygonId });
+        }
+
+        setDetecting(false);
+      }
+
       useCellSegmentationLayerStore.setState({
         cellMasksData: cellMasks || [],
         cellColormapConfig: colormapConfig.map((entry: any) => ({
@@ -60,7 +91,7 @@ export const useCellMasksFileHandler = () => {
       });
       useCytometryGraphStore.getState().resetFilters();
     };
-    reader.onerror = () => console.error('Something went wrong during file laod!');
+    reader.onerror = () => console.error('Something went wrong during file load!');
     reader.readAsArrayBuffer(files[0]);
     reader.addEventListener('progress', (event: ProgressEvent<FileReader>) =>
       setProgress(Math.round((event.loaded / event.total) * 100))
@@ -76,7 +107,11 @@ export const useCellMasksFileHandler = () => {
     onDrop,
     multiple: false,
     accept: {
-      'application/octet-stream': ['.bin']
+      'application/octet-stream': ['.bin'],
+      'application/macbinary': ['.bin'],
+      'application/binary': ['.bin'],
+      '': ['.bin'],
+      '*': ['.bin']
     }
   });
 
