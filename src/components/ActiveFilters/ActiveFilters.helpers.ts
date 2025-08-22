@@ -14,9 +14,7 @@ export const useActiveFilters = () => {
     useShallow((store) => [store.isCellNameFilterOn, store.cellNameFilters, store.showFilteredCells])
   );
 
-  const [cytometryRanges, cytometryProteinNames] = useCytometryGraphStore(
-    useShallow((store) => [store.ranges, store.proteinNames])
-  );
+  const [cytometryRanges] = useCytometryGraphStore(useShallow((store) => [store.ranges]));
   const [umapRanges] = useUmapGraphStore(useShallow((store) => [store.ranges]));
 
   const [channelsVisible] = useChannelsStore(useShallow((store) => [store.channelsVisible]));
@@ -49,16 +47,8 @@ export const useActiveFilters = () => {
     }
 
     // Flow Cytometry Filters
-    const cytometryFilters: string[] = [];
     if (cytometryRanges) {
-      cytometryFilters.push('Flow Cytometry range filter');
-    }
-    if (cytometryProteinNames.xAxis || cytometryProteinNames.yAxis) {
-      const proteinCount = [cytometryProteinNames.xAxis, cytometryProteinNames.yAxis].filter(Boolean).length;
-      cytometryFilters.push(`Flow Cytometry proteins (${proteinCount})`);
-    }
-    if (cytometryFilters.length > 0) {
-      groupedFilters['Flow Cytometry'] = cytometryFilters;
+      groupedFilters['Flow Cytometry'] = ['Flow Cytometry range filter'];
     }
 
     // UMAP Filters
