@@ -18,6 +18,7 @@ export const useFileHandler = () => {
   const { setFiles, setLayerConfig, setFileName, setColormapConfig } = useBinaryFilesStore();
   const { addSelectedPoints, setSelectedPoints } = useTranscriptLayerStore();
   const { detectPointsInPolygon } = usePolygonDetectionWorker();
+  const { setDetecting } = usePolygonDrawingStore();
 
   const handleWorkerProgress = async (e: any) => {
     if (e.data.progress) {
@@ -46,6 +47,7 @@ export const useFileHandler = () => {
       const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
 
       if (polygonFeatures.length > 0) {
+        setDetecting(true);
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'info',
@@ -64,6 +66,8 @@ export const useFileHandler = () => {
 
           addSelectedPoints({ data: result.pointsInPolygon, roiId: polygon.properties.polygonId });
         }
+
+        setDetecting(false);
       }
 
       setFiles(e.data.files);

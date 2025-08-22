@@ -14,6 +14,7 @@ export const useCellMasksFileHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
   const { setSelectedCells, addSelectedCells } = useCellSegmentationLayerStore();
+  const { setDetecting } = usePolygonDrawingStore();
 
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
@@ -54,6 +55,7 @@ export const useCellMasksFileHandler = () => {
       const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
 
       if (polygonFeatures.length > 0) {
+        setDetecting(true);
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'info',
@@ -72,6 +74,8 @@ export const useCellMasksFileHandler = () => {
 
           addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: polygon.properties.polygonId });
         }
+
+        setDetecting(false);
       }
 
       useCellSegmentationLayerStore.setState({
