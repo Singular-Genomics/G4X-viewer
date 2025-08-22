@@ -4,6 +4,7 @@ import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/Cytomet
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
+import { GroupedActiveFilters } from './ActiveFilters.types';
 
 export const useActiveFilters = () => {
   const [isGeneNameFilterActive, geneNameFilters, showFilteredPoints] = useTranscriptLayerStore(
@@ -20,50 +21,62 @@ export const useActiveFilters = () => {
 
   const [channelsVisible] = useChannelsStore(useShallow((store) => [store.channelsVisible]));
 
-  const getActiveFilters = () => {
-    const activeFilters: string[] = [];
+  const getGroupedActiveFilters = (): GroupedActiveFilters => {
+    const groupedFilters: GroupedActiveFilters = {};
 
     // Transcript Layer Filters
+    const transcriptFilters: string[] = [];
     if (isGeneNameFilterActive && geneNameFilters.length > 0) {
-      activeFilters.push(`Gene names (${geneNameFilters.length})`);
+      transcriptFilters.push(`Gene names (${geneNameFilters.length})`);
     }
     if (showFilteredPoints) {
-      activeFilters.push('Show filtered points');
+      transcriptFilters.push('Show filtered points');
+    }
+    if (transcriptFilters.length > 0) {
+      groupedFilters['Transcripts Layer'] = transcriptFilters;
     }
 
-    // Cell Segmentation Filters
+    // Segmentation Layer Filters
+    const segmentationFilters: string[] = [];
     if (isCellNameFilterOn && cellNameFilters.length > 0) {
-      activeFilters.push(`Cell names (${cellNameFilters.length})`);
+      segmentationFilters.push(`Cell names (${cellNameFilters.length})`);
     }
     if (showFilteredCells) {
-      activeFilters.push('Show filtered cells');
+      segmentationFilters.push('Show filtered cells');
+    }
+    if (segmentationFilters.length > 0) {
+      groupedFilters['Segmentation Layer'] = segmentationFilters;
     }
 
-    // Cytometry Graph Filters
+    // Flow Cytometry Filters
+    const cytometryFilters: string[] = [];
     if (cytometryRanges) {
-      activeFilters.push('Flow Cytometry range filter');
+      cytometryFilters.push('Flow Cytometry range filter');
     }
     if (cytometryProteinNames.xAxis || cytometryProteinNames.yAxis) {
       const proteinCount = [cytometryProteinNames.xAxis, cytometryProteinNames.yAxis].filter(Boolean).length;
-      activeFilters.push(`Flow Cytometry proteins (${proteinCount})`);
+      cytometryFilters.push(`Flow Cytometry proteins (${proteinCount})`);
+    }
+    if (cytometryFilters.length > 0) {
+      groupedFilters['Flow Cytometry'] = cytometryFilters;
     }
 
-    // UMAP Graph Filters
+    // UMAP Filters
     if (umapRanges) {
-      activeFilters.push('UMAP range filter');
+      groupedFilters['UMAP'] = ['UMAP range filter'];
     }
 
-    // Channel visibility filters (only show disabled channels)
+    // Channel Filters
     const hiddenChannelsCount = channelsVisible.filter((visible) => !visible).length;
     if (hiddenChannelsCount > 0) {
-      activeFilters.push(`Hidden channels (${hiddenChannelsCount})`);
+      groupedFilters['Channels'] = [`Hidden channels (${hiddenChannelsCount})`];
     }
 
-    return activeFilters;
+    return groupedFilters;
   };
 
-  const activeFilters = getActiveFilters();
-  const hasActiveFilters = activeFilters.length > 0;
+  const groupedActiveFilters = getGroupedActiveFilters();
+  const hasActiveFilters = Object.keys(groupedActiveFilters).length > 0;
 
-  return { activeFilters, hasActiveFilters };
+  return { groupedActiveFilters, hasActiveFilters };
 };
