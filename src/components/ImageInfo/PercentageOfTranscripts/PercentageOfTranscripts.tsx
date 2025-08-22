@@ -52,7 +52,7 @@ export const PercentageOfTranscripts = () => {
 
     return '---';
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentZoom, viewState?.zoom]);
+  }, [currentZoom, viewState?.zoom, layerConfig]);
 
   return (
     <>
