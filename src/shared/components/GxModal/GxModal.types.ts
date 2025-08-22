@@ -3,7 +3,7 @@ import React from 'react';
 export type GxModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onContinue: () => void;
+  onContinue?: () => void;
   title: string;
   children: React.ReactNode;
   colorVariant?: GxModalColorVaraints;

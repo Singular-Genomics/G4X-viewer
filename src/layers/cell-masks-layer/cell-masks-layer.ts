@@ -3,8 +3,6 @@ import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
 import * as protobuf from 'protobufjs';
 import { CellMasksSchema } from './cell-masks-schema';
-import { partition } from 'lodash';
-import { SingleMask } from '../../shared/types';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
@@ -15,38 +13,8 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   }
 
   renderLayers() {
-    let cellsData: SingleMask[] = [];
-    let outlierCellsData: SingleMask[] = [];
-
-    if (this.props.cellNameFilters === 'all') {
-      cellsData = this.props.masksData;
-    } else {
-      [cellsData, outlierCellsData] = partition(this.props.masksData, (data) =>
-        this.props.cellNameFilters.includes(data.clusterId)
-      );
-    }
-
-    const { proteins, range } = this.props.cellCytometryFilter;
-    if (range && !!proteins.xAxis && !!proteins.yAxis) {
-      cellsData = cellsData.filter(
-        (cell) =>
-          cell.proteins[proteins.xAxis as string] <= range.xEnd &&
-          cell.proteins[proteins.xAxis as string] >= range.xStart &&
-          cell.proteins[proteins.yAxis as string] >= range.yEnd &&
-          cell.proteins[proteins.yAxis as string] <= range.yStart
-      );
-    }
-
-    const umapRange = this.props.umapFilter;
-    if (umapRange) {
-      cellsData = cellsData.filter(
-        (cell) =>
-          cell.umapValues.umapX >= umapRange.xStart &&
-          cell.umapValues.umapX <= umapRange.xEnd &&
-          cell.umapValues.umapY <= umapRange.yStart &&
-          cell.umapValues.umapY >= umapRange.yEnd
-      );
-    }
+    const cellsData = this.props.preFilteredUnselectedCells || [];
+    const outlierCellsData = this.props.preFilteredOutlierCells || [];
 
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
@@ -66,7 +34,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       visible: this.props.visible && this.props.showDiscardedPoints
     });
 
-    const polygonLayer = new PolygonLayer({
+    const cellsPolygonLayer = new PolygonLayer({
       id: `sub-cells-layer-${this.props.id}`,
       data: cellsData,
       positionFormat: 'XY',
@@ -83,7 +51,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       visible: this.props.visible
     });
 
-    return [outliersPolygonLayer, polygonLayer];
+    return [outliersPolygonLayer, cellsPolygonLayer];
   }
 }
 

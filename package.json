@@ -27,6 +27,8 @@
     ]
   },
   "dependencies": {
+    "@deck.gl-community/editable-layers": "9.0.3",
+    "@deck.gl-community/layers": "9.0.3",
     "@deck.gl/core": "9.0.41",
     "@deck.gl/extensions": "9.0.41",
     "@deck.gl/geo-layers": "9.0.41",
@@ -35,7 +37,7 @@
     "@deck.gl/react": "9.0.41",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@hms-dbmi/viv": "^0.17.2",
+    "@hms-dbmi/viv": "0.17.3",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/x-data-grid": "^7.5.0",
@@ -72,6 +74,6 @@
     "lint-staged": "^15.4.3",
     "prettier": "^3.5.1",
     "typescript": "^5.2.2",
-    "vite": "^5.1.0"
+    "vite": "^5.4.10"
   }
 }
