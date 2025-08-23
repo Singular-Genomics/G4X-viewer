@@ -13,7 +13,7 @@ i18n
   .use(initReactI18next)
   .init<HttpBackendOptions>({
     backend: {
-      loadPath: '/src/shared/locales/{{lng}}.json'
+      loadPath: '/locales/{{lng}}.json'
     },
     lng: 'en',
     fallbackLng: 'en'
