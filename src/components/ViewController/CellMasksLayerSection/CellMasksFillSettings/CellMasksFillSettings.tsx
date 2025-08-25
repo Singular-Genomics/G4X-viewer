@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { GxSlider } from '../../../../shared/components/GxSlider';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -12,6 +13,7 @@ const FILL_OPACITY_STEP = 1;
 export const CellMasksFillSettings = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] = useCellSegmentationLayerStore(
     useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.toggleCellFill, store.setCellFillOpacity])
@@ -22,7 +24,7 @@ export const CellMasksFillSettings = () => {
   return (
     <Box sx={sx.strokeSettingsContainer}>
       <FormControlLabel
-        label="Show cell fill"
+        label={t('segmentationSettings.cellFillShow')}
         sx={sx.toggleSwitch}
         control={
           <GxSwitch

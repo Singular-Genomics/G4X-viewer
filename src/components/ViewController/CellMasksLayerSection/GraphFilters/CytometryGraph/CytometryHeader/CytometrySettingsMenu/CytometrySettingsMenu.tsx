@@ -16,6 +16,7 @@ import {
 import { GxSelect } from '../../../../../../../shared/components/GxSelect';
 import { GxInput } from '../../../../../../../shared/components/GxInput';
 import { GxCheckbox } from '../../../../../../../shared/components/GxCheckbox';
+import { useTranslation } from 'react-i18next';
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
@@ -25,6 +26,7 @@ const MAX_SUBSAMPLE_VALUE = 20;
 export const CytometrySettingsMenu = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const { updateSettings, settings } = useCytometryGraphStore();
   const menenuAnchor = useRef(null);
   const [openMenu, setOpenMenu] = useState(false);
@@ -164,7 +166,7 @@ export const CytometrySettingsMenu = () => {
             size={1}
             alignContent={'center'}
           >
-            <Typography>Graph Mode:</Typography>
+            <Typography>{t('segmentationSettings.cytometryMenuMode')}:</Typography>
           </Grid>
           <Grid size={1}>
             <GxSelect
@@ -176,10 +178,10 @@ export const CytometrySettingsMenu = () => {
             >
               {AVAILABLE_GRAPH_MODES.map((item) => (
                 <MenuItem
-                  key={item.value}
-                  value={item.value}
+                  key={item}
+                  value={item}
                 >
-                  {item.label}
+                  {t(`segmentationSettings.cytometryMenuGraph-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>
@@ -189,7 +191,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Colorscale:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuColorscale')}:`}</Typography>
           </Grid>
           <Grid size={1}>
             <GxSelect
@@ -214,7 +216,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Reverse colorscale:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuReverseColorscale')}:`}</Typography>
           </Grid>
           <Grid>
             <GxCheckbox
@@ -227,7 +229,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Bin count (X):</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuBinCount')} (X):`}</Typography>
             <Typography sx={sx.helperText}>Min 2</Typography>
           </Grid>
           <Grid size={1}>
@@ -245,7 +247,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Bin count (Y):</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuBinCount')} (Y):`}</Typography>
             <Typography sx={sx.helperText}>Min 2</Typography>
           </Grid>
           <Grid size={1}>
@@ -263,7 +265,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Subsampling Step:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuSubsamplingStep')}:`}</Typography>
             <Typography sx={sx.helperText}>{`Min. ${MIN_SUBSAMPLE_VALUE} | Max. ${MAX_SUBSAMPLE_VALUE}`}</Typography>
           </Grid>
           <Grid size={1}>
@@ -281,7 +283,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Point Size:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuPointSize')}:`}</Typography>
             <Typography sx={sx.helperText}>{`Min. ${MIN_POINT_SIZE} | Max. ${MAX_POINT_SIZE}`}</Typography>
           </Grid>
           <Grid size={1}>
@@ -299,7 +301,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Axis type:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuAxisTypeLabel')}:`}</Typography>
           </Grid>
           <Grid size={1}>
             <GxSelect
@@ -311,10 +313,10 @@ export const CytometrySettingsMenu = () => {
             >
               {AVAILABLE_AXIS_TYPES.map((item) => (
                 <MenuItem
-                  key={item.label}
-                  value={item.value}
+                  key={item}
+                  value={item}
                 >
-                  {item.label}
+                  {t(`segmentationSettings.cytometryMenuAxisType-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>
@@ -324,7 +326,7 @@ export const CytometrySettingsMenu = () => {
             alignContent={'center'}
             size={1}
           >
-            <Typography>Exponent format:</Typography>
+            <Typography>{`${t('segmentationSettings.cytometryMenuFormatLabel')}:`}</Typography>
           </Grid>
           <Grid size={1}>
             <GxSelect
@@ -336,10 +338,10 @@ export const CytometrySettingsMenu = () => {
             >
               {AVAILABLE_EXPONENT_FORMATS.map((item) => (
                 <MenuItem
-                  key={item.label}
-                  value={item.value}
+                  key={item}
+                  value={item}
                 >
-                  {item.label}
+                  {t(`segmentationSettings.cytometryMenuFormat-${item}`)}
                 </MenuItem>
               ))}
             </GxSelect>

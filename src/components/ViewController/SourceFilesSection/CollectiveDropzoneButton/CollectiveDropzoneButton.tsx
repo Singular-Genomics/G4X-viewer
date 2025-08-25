@@ -3,10 +3,12 @@ import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton
 import { useFileHandler } from './helpers/useFileHandler';
 import { CollectiveDropzoneButtonProps } from './CollectiveDropzoneButton.types';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const { dropzoneProps, loading, progress, collectiveFileName } = useFileHandler();
 
@@ -17,8 +19,8 @@ export default function CollectiveDropzoneButton({ setLockSwitch }: CollectiveDr
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="Collective file upload"
-        buttonText="Upload G4X file"
+        labelTitle={t('sourceFiles.collectiveInputLabel')}
+        buttonText={t('sourceFiles.collectiveInputButton')}
         labelText={collectiveFileName}
         {...dropzoneProps}
       />

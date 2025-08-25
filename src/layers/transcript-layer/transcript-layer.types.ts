@@ -1,6 +1,7 @@
 import { PickingInfo } from '@deck.gl/core';
 import { LayerConfig } from '../../stores/BinaryFilesStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
+import { PointData } from '../../shared/types';
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -14,8 +15,8 @@ export type SingleTileLayerProps = CompositeLayerProps & {
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
-  points: any[];
-  outlierPoints: any[];
+  points: PointData[];
+  outlierPoints: PointData[];
   tileData: { width: number; height: number };
   boundingBox: number[];
 };

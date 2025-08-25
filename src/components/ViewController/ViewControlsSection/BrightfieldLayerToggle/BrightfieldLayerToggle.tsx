@@ -2,8 +2,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { Box, FormControlLabel } from '@mui/material';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
+import { useTranslation } from 'react-i18next';
 
 export const BrightfieldLayerToggle = () => {
+  const { t } = useTranslation();
   const [isLayerVisible, toggleImageLayer] = useBrightfieldImagesStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
@@ -11,7 +13,7 @@ export const BrightfieldLayerToggle = () => {
   return (
     <Box>
       <FormControlLabel
-        label="fH&E Image Layer"
+        label={t('viewSettings.brightfieldLayer')}
         control={
           <GxCheckbox
             onChange={toggleImageLayer}

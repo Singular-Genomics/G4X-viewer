@@ -3,8 +3,10 @@ import { PointFilterOptions } from './PointFilterOptions';
 import { PointFiltersTable } from './PointFiltersTable';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { useTranslation } from 'react-i18next';
 
 export const PointFilter = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
   const colormapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
@@ -16,7 +18,7 @@ export const PointFilter = () => {
       {!isColormapConfigValid && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
-          <Typography sx={sx.errorText}>Missing colormap config data - filtering disabled.</Typography>
+          <Typography sx={sx.errorText}>{t('general.filterMissingColormap')}</Typography>
         </Box>
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>

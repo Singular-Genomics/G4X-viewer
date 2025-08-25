@@ -4,7 +4,6 @@ import { UmapRange } from '../../stores/UmapGraphStore/UmapGraphStore.types';
 import { SingleMask } from '../../shared/types';
 
 export type CellMasksLayerProps = CompositeLayerProps & {
-  masksData: SingleMask[];
   showCellFill: boolean;
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
@@ -15,6 +14,8 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   };
   umapFilter?: UmapRange;
   onHover?: (pikingInfo: PickingInfo) => void;
+  preFilteredUnselectedCells?: SingleMask[];
+  preFilteredOutlierCells?: SingleMask[];
 };
 
 type CompositeLayerProps = {

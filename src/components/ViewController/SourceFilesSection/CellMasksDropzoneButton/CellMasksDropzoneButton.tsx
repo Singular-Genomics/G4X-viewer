@@ -5,10 +5,12 @@ import { useCellMasksFileHandler } from './helpers/useCellMasksFileHandler';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksDropzoneButtonProps } from './CellMasksDropzoneButton.types';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const source = useViewerStore((store) => store.source);
   const fileName = useCellSegmentationLayerStore((store) => store.fileName);
@@ -19,9 +21,9 @@ export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButt
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="Segmentation Filename"
+        labelTitle={t('sourceFiles.segmentationFileInputLabel')}
         labelText={fileName}
-        buttonText="Upload Segmentation"
+        buttonText={t('sourceFiles.segmentationFileUploadButton')}
         disabled={!source}
         {...dropzoneProps}
       />

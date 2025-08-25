@@ -2,6 +2,7 @@ import { Box, TextField, useTheme, Theme } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModalProps } from './CloudBasedModal.types';
 import { GxModal } from '../../../shared/components/GxModal';
+import { useTranslation } from 'react-i18next';
 
 export const CloudBasedModal = ({
   isOpen,
@@ -9,18 +10,19 @@ export const CloudBasedModal = ({
   onSubmit,
   url,
   onUrlChange,
-  title = 'Cloud Upload',
-  placeholder = 'Enter URL',
-  label = 'URL'
+  title,
+  placeholder,
+  label
 }: CloudBasedModalProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = () => {
     if (!url.trim()) {
       enqueueSnackbar({
-        message: 'Please enter a valid URL',
+        message: t('general.invalidURL'),
         variant: 'error'
       });
       return;

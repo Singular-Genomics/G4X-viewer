@@ -4,7 +4,7 @@ export type UmapEntry = {
 };
 
 export type SingleMask = {
-  vertices: number;
+  vertices: number[];
   color: number[];
   area: string;
   totalCounts: string;

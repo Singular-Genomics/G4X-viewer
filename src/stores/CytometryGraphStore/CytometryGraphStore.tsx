@@ -18,8 +18,8 @@ const DEFAULT_VALUES: CytometryGraphStoreValues = {
     binCountX: 100,
     binCountY: 100,
     colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
-    axisType: AVAILABLE_AXIS_TYPES[0].value,
-    exponentFormat: AVAILABLE_EXPONENT_FORMATS[0].value
+    axisType: AVAILABLE_AXIS_TYPES[0],
+    exponentFormat: AVAILABLE_EXPONENT_FORMATS[0]
   }
 };
 
