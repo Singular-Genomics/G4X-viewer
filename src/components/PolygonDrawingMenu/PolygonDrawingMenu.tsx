@@ -215,7 +215,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
 
       {!isPolygonDrawingEnabled && (
         <MuiTooltip
-          title={t('viewer.drawingMenu_enable')}
+          title={t('viewer.drawingMenuEnable')}
           placement="left"
         >
           <IconButton
@@ -232,7 +232,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       {isPolygonDrawingEnabled && (
         <Box sx={sx.expandedMenu}>
           <MuiTooltip
-            title={t('viewer.drawingMenu_draw')}
+            title={t('viewer.drawingMenuDraw')}
             placement="left"
           >
             <IconButton
@@ -252,7 +252,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title={t('viewer.drawingMenu_edit')}
+            title={t('viewer.drawingMenuEdit')}
             placement="left"
           >
             <IconButton
@@ -272,7 +272,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title={t('viewer.drawingMenu_view')}
+            title={t('viewer.drawingMenuView')}
             placement="left"
           >
             <IconButton
@@ -291,7 +291,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title={t('viewer.drawingMenu_delete')}
+            title={t('viewer.drawingMenuDelete')}
             placement="left"
           >
             <IconButton
@@ -310,7 +310,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title={t('viewer.drawingMenu_clear')}
+            title={t('viewer.drawingMenuClear')}
             placement="left"
           >
             <IconButton
@@ -324,7 +324,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title={t('viewer.drawingMenu_disable')}
+            title={t('viewer.drawingMenuDisable')}
             placement="left"
           >
             <IconButton
