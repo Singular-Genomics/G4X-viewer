@@ -5,10 +5,12 @@ import { LAYER_ZOOM_OFFSET } from '../../../shared/constants';
 import { Theme, Typography, useTheme } from '@mui/material';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const PercentageOfTranscripts = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const viewState = useViewerStore(useShallow((store) => store.viewState));
   const [transcriptFiles, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
   const [maxVisibleLayers, overrideLayers] = useTranscriptLayerStore(
@@ -57,7 +59,7 @@ export const PercentageOfTranscripts = () => {
   return (
     <>
       {showPercentageOfTranscripts && (
-        <Typography sx={sx.footerText}>{`Transcripts: ${percentageOfTransctipts}`}</Typography>
+        <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTransctipts}`}</Typography>
       )}
     </>
   );

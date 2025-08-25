@@ -7,11 +7,7 @@ export const HoverInfo = () => {
   const sx = styles(theme);
   const hoverCoordinates = useViewerStore(useShallow((store) => store.hoverCoordinates));
 
-  return (
-    <Typography sx={sx.footerText}>
-      {`Mouse Pos: [${hoverCoordinates.x || '--'}, ${hoverCoordinates.y || '--'}]`}
-    </Typography>
-  );
+  return <Typography sx={sx.footerText}>{`[${hoverCoordinates.x || '--'}, ${hoverCoordinates.y || '--'}]`}</Typography>;
 };
 
 const styles = (theme: Theme) => ({
