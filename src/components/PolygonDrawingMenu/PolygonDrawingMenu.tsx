@@ -348,7 +348,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
         iconVariant="danger"
         size="small"
       >
-        {t('viewer.clearSelectionDescription')}
+        {t('viewer.clearSelectionDescription', { polygonCount: polygonFeatures.length })}
       </GxModal>
     </Box>
   );
