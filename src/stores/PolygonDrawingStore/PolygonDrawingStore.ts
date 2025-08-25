@@ -64,9 +64,9 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
 
     return newPolygonId;
   },
-  deletePolygon: (index) => {
+  deletePolygon: (polygonId) => {
     const { polygonFeatures } = get();
-    const updatedFeatures = polygonFeatures.filter((_, i) => i !== index);
+    const updatedFeatures = polygonFeatures.filter((entry) => entry.properties?.polygonId !== polygonId);
     if (updatedFeatures.length === 0) {
       set({
         polygonFeatures: updatedFeatures,

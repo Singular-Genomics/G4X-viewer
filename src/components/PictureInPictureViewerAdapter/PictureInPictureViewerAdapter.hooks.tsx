@@ -542,9 +542,10 @@ export const usePolygonDrawingLayer = () => {
 
   const onPolygonClickForDeletion = (info: any) => {
     if (isDeleteMode && info.index !== undefined && info.index >= 0) {
-      deletePolygon(info.index);
-      deleteSelectedCells(info.index);
-      deleteSelectedPoints(info.index);
+      const deltedPolygonId = info.object.properties.polygonId;
+      deletePolygon(deltedPolygonId);
+      deleteSelectedCells(deltedPolygonId);
+      deleteSelectedPoints(deltedPolygonId);
       return true; // Prevent further event propagation
     }
     return false;
