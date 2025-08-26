@@ -24,7 +24,8 @@
     "highlightedChannel": "Highlighted Channel",
     "lens": "Lens",
     "overview": "Overview",
-    "removeChannel": "Remove Channel"
+    "removeChannel": "Remove Channel",
+    "sectionTitle": "Channel Settings"
   },
   "general": {
     "appTitle": "G4X Viewer",
