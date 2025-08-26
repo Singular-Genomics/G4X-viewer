@@ -46,7 +46,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
           {t('transcriptsSettings.subsamplingSliderLabel')}
         </Typography>
         <Tooltip
-          title={t('transcriptsSettings.subsamplingSliderTootlip')}
+          title={t('transcriptsSettings.subsamplingSliderTooltip')}
           placement="top"
           arrow
           slotProps={{ popper: { sx: sx.infoTooltip } }}
