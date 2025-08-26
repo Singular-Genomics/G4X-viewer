@@ -105,7 +105,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [enqueueSnackbar, closeSnackbar, importPolygons]
+    [enqueueSnackbar, closeSnackbar, importPolygons, t]
   );
 
   const dropzoneProps = useDropzone({
