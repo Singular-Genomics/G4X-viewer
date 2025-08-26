@@ -60,8 +60,8 @@ export const AdvancedViewOptions = () => {
           sx={sx.modalContentText}
         >
           <ul>
-            <li>{t('transcriptsSettings.subsamplingControlWarning_caseOne')}</li>
-            <li>{t('transcriptsSettings.subsamplingControlWarning_caseTwo')}</li>
+            <li>{t('transcriptsSettings.subsamplingControlWarningCaseOne')}</li>
+            <li>{t('transcriptsSettings.subsamplingControlWarningCaseTwo')}</li>
           </ul>
         </Typography>
       </GxModal>

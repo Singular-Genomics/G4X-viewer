@@ -61,7 +61,7 @@ export const useCellMasksFileHandler = () => {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'info',
-          message: 'Detecting new cells in polygon selections'
+          message: t('interactiveLayer.detectingCells')
         });
 
         setSelectedCells([]);
