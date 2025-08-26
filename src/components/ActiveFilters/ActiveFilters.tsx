@@ -1,8 +1,10 @@
 import { Box, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { GxInfoSection } from '../../shared/components/GxInfoSection';
 import { useActiveFilters } from './ActiveFilters.helpers';
 
 export const ActiveFilters = () => {
+  const { t } = useTranslation();
   const { groupedActiveFilters, hasActiveFilters } = useActiveFilters();
 
   if (!hasActiveFilters) {
@@ -16,7 +18,7 @@ export const ActiveFilters = () => {
       position={{ top: '90px', left: '20px' }}
       infoBoxes={[
         {
-          title: 'Active filters',
+          title: t('activeFilters.title'),
           content: (
             <Box>
               {Object.entries(groupedActiveFilters).map(([layer, filters]) => (

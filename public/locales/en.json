@@ -187,5 +187,20 @@
     "segmentationLayer": "Segmentation Layer",
     "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
+  },
+  "activeFilters": {
+    "title": "Active filters",
+    "geneNames": "Gene names ({{count}})",
+    "showFilteredPoints": "Show filtered points",
+    "transcriptsLayer": "Transcripts Layer",
+    "cellNames": "Cell names ({{count}})",
+    "showFilteredCells": "Show filtered cells",
+    "segmentationLayer": "Segmentation Layer",
+    "flowCytometry": "Flow Cytometry",
+    "flowCytometryRangeFilter": "Flow Cytometry range filter",
+    "umap": "UMAP",
+    "umapRangeFilter": "UMAP range filter",
+    "channels": "Channels",
+    "hiddenChannels": "Hidden channels ({{count}})"
   }
 }
