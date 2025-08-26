@@ -438,7 +438,7 @@ export const usePolygonDrawingLayer = () => {
           customContent: (
             <List>
               <ListItem>{t('interactiveLayer.transcriptsDetected', { count: totalFoundPoints })}</ListItem>
-              <ListItem>{t('interactiveLayer.cellsDestected', { count: totalFoundCells })}</ListItem>
+              <ListItem>{t('interactiveLayer.cellsDetected', { count: totalFoundCells })}</ListItem>
             </List>
           )
         });
