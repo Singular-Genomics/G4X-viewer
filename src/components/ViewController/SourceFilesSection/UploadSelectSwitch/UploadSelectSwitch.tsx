@@ -3,10 +3,12 @@ import UploadIcon from '@mui/icons-material/Upload';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { UploadSelectSwitchProps, UPLOAD_MODES } from './UploadSelectSwitch.types';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function UploadSelectSwitch({ uploadMode, onUploadModeChange, disabled }: UploadSelectSwitchProps) {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const handleChange = (_: React.MouseEvent<HTMLElement>, value: any) => {
     if (!!value && value !== uploadMode) {
@@ -28,14 +30,14 @@ export function UploadSelectSwitch({ uploadMode, onUploadModeChange, disabled }:
         value={UPLOAD_MODES.MULTI_FILE}
       >
         <UploadIcon />
-        <Typography sx={sx.toggleButtonLabel}>Multi-file</Typography>
+        <Typography sx={sx.toggleButtonLabel}>{t('sourceFiles.multiFileButtonLabel')}</Typography>
       </ToggleButton>
       <ToggleButton
         sx={sx.toggleButton}
         value={UPLOAD_MODES.SINGLE_FILE}
       >
         <UploadFileIcon />
-        <Typography sx={sx.toggleButtonLabel}>Single-file</Typography>
+        <Typography sx={sx.toggleButtonLabel}>{t('sourceFiles.singleFileButtonLabel')}</Typography>
       </ToggleButton>
     </ToggleButtonGroup>
   );

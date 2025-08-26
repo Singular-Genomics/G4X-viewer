@@ -5,6 +5,7 @@ import { InputErrors } from './UmapGraphHeader.types';
 import { useUmapGraphStore } from '../../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { debounce } from 'lodash';
 import HelpIcon from '@mui/icons-material/Help';
+import { useTranslation } from 'react-i18next';
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
@@ -12,6 +13,7 @@ const MIN_SUBSAMPLE_VALUE = 1;
 const MAX_SUBSAMPLE_VALUE = 20;
 
 export const UmapGraphHeader = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
   const { updateSettings } = useUmapGraphStore();
@@ -49,7 +51,7 @@ export const UmapGraphHeader = () => {
       setErrors((prev) => ({ ...prev, pointSize: '' }));
       return;
     } else if (!/^[0-9]*$/.test(newValue)) {
-      setErrors((prev) => ({ ...prev, pointSize: 'Invalid value' }));
+      setErrors((prev) => ({ ...prev, pointSize: t('general.invalidValue') }));
       return;
     } else if (Number(newValue) < MIN_POINT_SIZE) {
       setErrors((prev) => ({ ...prev, pointSize: `Min. ${MIN_POINT_SIZE}` }));
@@ -68,7 +70,7 @@ export const UmapGraphHeader = () => {
       setErrors((prev) => ({ ...prev, subsamplingValue: '' }));
       return;
     } else if (!/^[0-9]*$/.test(newValue)) {
-      setErrors((prev) => ({ ...prev, subsamplingValue: 'Invalid value' }));
+      setErrors((prev) => ({ ...prev, subsamplingValue: t('general.invalidValue') }));
       return;
     } else if (Number(newValue) < MIN_SUBSAMPLE_VALUE) {
       setErrors((prev) => ({ ...prev, subsamplingValue: `Min. ${MIN_SUBSAMPLE_VALUE}` }));
@@ -85,7 +87,7 @@ export const UmapGraphHeader = () => {
 
   return (
     <Box sx={sx.headerWrapper}>
-      <Typography sx={sx.inputLabel}>Point Size</Typography>
+      <Typography sx={sx.inputLabel}>{t('segmentationSettings.umapMenuPointSize')}</Typography>
       <GxInput
         value={pointSizeInput}
         onChange={(e) => handlePointSizeChange(e.target.value)}
@@ -95,12 +97,12 @@ export const UmapGraphHeader = () => {
         sx={sx.inputField}
       />
       <Box sx={sx.subsamplingWrapper}>
-        <Typography sx={sx.inputLabel}>Subsampling Step</Typography>
+        <Typography sx={sx.inputLabel}>{t('segmentationSettings.umapMenuSubsamplingStep')}</Typography>
         <Tooltip
           placement="top"
           arrow
           enterDelay={250}
-          title={'Determines tthe interval for sampling data set, reducing density and increasing performance'}
+          title={t('segmentationSettings.umapMenuSubsamplingStepTooltip')}
         >
           <HelpIcon sx={sx.helpIcon} />
         </Tooltip>

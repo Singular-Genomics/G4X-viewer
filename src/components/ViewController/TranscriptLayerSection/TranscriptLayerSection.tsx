@@ -5,19 +5,25 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { useTranscriptLayerStore } from '../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { AdvancedViewOptions } from './AdvancedViewOptions';
+import { useTranslation } from 'react-i18next';
 
-const DisabledLayerWarning = () => (
-  <Tooltip
-    title="Transcript layer is disabled"
-    placement="top"
-    arrow
-    slotProps={{ popper: { sx: sx.warningTooltip } }}
-  >
-    <WarningIcon sx={sx.warningIcon} />
-  </Tooltip>
-);
+const DisabledLayerWarning = () => {
+  const { t } = useTranslation();
+
+  return (
+    <Tooltip
+      title={t('transcriptsSettings.disabledLayerWarning')}
+      placement="top"
+      arrow
+      slotProps={{ popper: { sx: sx.warningTooltip } }}
+    >
+      <WarningIcon sx={sx.warningIcon} />
+    </Tooltip>
+  );
+};
 
 export const TranscriptLayerSection = () => {
+  const { t } = useTranslation();
   const [isTranscriptLayerOn, isGeneNameFilterActive] = useTranscriptLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.isGeneNameFilterActive])
   );
@@ -25,16 +31,16 @@ export const TranscriptLayerSection = () => {
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Advanced Options</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.advancedOptions')}</Typography>
         <AdvancedViewOptions />
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Point Size</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointSize')}</Typography>
         <PointSizeSlider />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Point Filters</Typography>
+          <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointFilters')}</Typography>
           {!isTranscriptLayerOn && isGeneNameFilterActive && <DisabledLayerWarning />}
         </Box>
         <PointFilter />

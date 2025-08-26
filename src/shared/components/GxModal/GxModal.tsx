@@ -5,6 +5,7 @@ import { GxCheckbox } from '../GxCheckbox';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import InfoIcon from '@mui/icons-material/Info';
+import { useTranslation } from 'react-i18next';
 
 export const GxModal = ({
   isOpen,
@@ -18,6 +19,7 @@ export const GxModal = ({
   dontShowFlag
 }: GxModalProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const sx = styles(theme, size);
   const stylesVaraint = colorVariants[colorVariant as keyof typeof colorVariants];
 
@@ -38,7 +40,7 @@ export const GxModal = ({
     if (checkboxRef.current?.checked && dontShowFlag) {
       localStorage.setItem(dontShowFlag, 'true');
     }
-    onContinue();
+    onContinue?.();
   }, [onContinue, dontShowFlag]);
 
   return (
@@ -54,16 +56,18 @@ export const GxModal = ({
         <Box sx={sx.modalContentWrapper}>
           {children}
           <Box sx={sx.modalButtonsWrapper}>
-            <Button
-              sx={{
-                ...sx.modalButtonBase,
-                ...sx.continueButton,
-                ...stylesVaraint.button
-              }}
-              onClick={handleContinue}
-            >
-              Confirm
-            </Button>
+            {onContinue && (
+              <Button
+                sx={{
+                  ...sx.modalButtonBase,
+                  ...sx.continueButton,
+                  ...stylesVaraint.button
+                }}
+                onClick={handleContinue}
+              >
+                Confirm
+              </Button>
+            )}
             <Button
               sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
               onClick={onClose}
@@ -77,7 +81,7 @@ export const GxModal = ({
               <hr />
               <FormControlLabel
                 sx={sx.chechboxWrapper}
-                label="Don't ask me again"
+                label={t('general.dontAskAgain')}
                 control={<GxCheckbox inputRef={checkboxRef} />}
               />
             </>

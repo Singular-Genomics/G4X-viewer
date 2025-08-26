@@ -8,6 +8,7 @@ import { UploadSelectSwitch } from './UploadSelectSwitch/UploadSelectSwitch';
 import { UploadMode, UPLOAD_MODES } from './UploadSelectSwitch/UploadSelectSwitch.types';
 import { GxModal } from '../../../shared/components/GxModal';
 import GeneralDetailsDropzoneButton from './GeneralDetailsDropzoneButton/GeneralDetailsDropzoneButton';
+import { useTranslation } from 'react-i18next';
 
 const DONT_SHOW_FLAG = 'disableSingleFileUploadWarning_DSA';
 
@@ -15,6 +16,7 @@ export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSwitchLocked, setIsSwitchLocked] = useState(false);
   const [uploadMode, setUploadMode] = useState<UploadMode>(UPLOAD_MODES.MULTI_FILE);
+  const { t } = useTranslation();
 
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
@@ -72,16 +74,13 @@ export const SourceFilesSection = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onContinue={onContinue}
-        title="Warning"
+        title={t('general.warning')}
         colorVariant="singular"
         iconVariant="info"
         dontShowFlag={DONT_SHOW_FLAG}
       >
-        <Typography sx={sx.modalContentText}>You are about use a collective TAR file upload button.</Typography>
-        <Typography sx={sx.modalContentText}>
-          When working using this mode, remember that this option may require significantly more time to load all the
-          contents, depending on their size.
-        </Typography>
+        <Typography sx={sx.modalContentText}>{t('sourceFiles.collectiveWarningTitle')}</Typography>
+        <Typography sx={sx.modalContentText}>{t('sourceFiles.collectiveWarningDescription')}</Typography>
       </GxModal>
     </>
   );

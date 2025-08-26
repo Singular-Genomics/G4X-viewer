@@ -1,15 +1,17 @@
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { useTranslation } from 'react-i18next';
 
 export const useBrightfieldImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const { addNewFile, availableImages } = useBrightfieldImagesStore();
 
   const onDrop = (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: 'Invalid input file. Only single .ome.tiff files allowed',
+        message: t('brightfieldImages.imageUploadMutlipleError'),
         variant: 'error'
       });
       return;
@@ -19,7 +21,7 @@ export const useBrightfieldImageHandler = () => {
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(imageFile.name)) {
       enqueueSnackbar({
-        message: 'Invalid input file name. Only .ome.tiff allowed',
+        message: t('brightfieldImages.invalidFileError'),
         variant: 'error'
       });
       return;
@@ -34,7 +36,7 @@ export const useBrightfieldImageHandler = () => {
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: 'Image with same name already has already been loaded',
+        message: t('brightfieldImages.duplicateImageError'),
         variant: 'error'
       });
       return;

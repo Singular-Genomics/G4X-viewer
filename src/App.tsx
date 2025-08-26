@@ -3,8 +3,29 @@ import G4XViewer from './components/G4XViewer';
 import { SnackbarProvider } from 'notistack';
 import { gxTheme } from './themes/theme';
 import { GxSnackbar } from './shared/components/GxSnackbar/GxSnackbar';
+import { initReactI18next, useTranslation } from 'react-i18next';
+import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
+import i18n from 'i18next';
+import { useEffect } from 'react';
+
+i18n
+  .use(HttpBackend)
+  .use(initReactI18next)
+  .init<HttpBackendOptions>({
+    backend: {
+      loadPath: '/locales/{{lng}}.json'
+    },
+    lng: 'en',
+    fallbackLng: 'en'
+  });
 
 export const App = () => {
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    document.title = t('general.appTitle');
+  }, [t]);
+
   return (
     <ThemeProvider theme={gxTheme}>
       <SnackbarProvider

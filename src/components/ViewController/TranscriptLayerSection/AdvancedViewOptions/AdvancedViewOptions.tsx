@@ -6,8 +6,10 @@ import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
 import { GxModal } from '../../../../shared/components/GxModal';
+import { useTranslation } from 'react-i18next';
 
 export const AdvancedViewOptions = () => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
@@ -33,7 +35,7 @@ export const AdvancedViewOptions = () => {
     <>
       <Box sx={sx.optionsToggleWrapper}>
         <FormControlLabel
-          label="Enable transcript subsampling control"
+          label={t('transcriptsSettings.subsamplingControlLabel')}
           control={
             <GxSwitch
               checked={overrideLayers}
@@ -47,26 +49,19 @@ export const AdvancedViewOptions = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onContinue={onContinue}
-        title="Warning"
+        title={t('general.warning')}
         colorVariant="danger"
         iconVariant="danger"
         dontShowFlag="disableTiledLayerWarning_DSA"
       >
-        <Typography sx={sx.modalContentText}>
-          You are about to override the number of visible transcript layers.
-          <br />
-          These operations demand significant computational resources and might cause the application to crash. Perform
-          these operations if:
-        </Typography>
+        <Typography sx={sx.modalContentText}>{t('transcriptsSettings.subsamplingControlWarning')}</Typography>
         <Typography
           component={'span'}
           sx={sx.modalContentText}
         >
           <ul>
-            <li>
-              Your PC is equiped with high-end components (mainly GPU and CPU) and allows for hardwere acceleration.
-            </li>
-            <li>Your transcript dataset contains less than 5 million points.</li>
+            <li>{t('transcriptsSettings.subsamplingControlWarning_caseOne')}</li>
+            <li>{t('transcriptsSettings.subsamplingControlWarning_caseTwo')}</li>
           </ul>
         </Typography>
       </GxModal>

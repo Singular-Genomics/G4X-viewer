@@ -2,15 +2,17 @@ import { Box, IconButton, Typography } from '@mui/material';
 import { GxLogo } from '../../../shared/components/GxLogo';
 import CloseIcon from '@mui/icons-material/Close';
 import { ControllerHeaderProps } from './ControllerHeader.types';
+import { useTranslation } from 'react-i18next';
 
 export const ControllerHeader = ({ onCloseController }: ControllerHeaderProps) => {
+  const { t } = useTranslation();
   const app_version = process.env.APP_VERSION;
 
   return (
     <Box sx={sx.viewControllerHeaderContainer}>
       <GxLogo version="dark" />
       <Box sx={sx.viewControllerHeaderTextWrapper}>
-        <Typography sx={sx.viewControllerHeaderTitleText}>G4X Viewer</Typography>
+        <Typography sx={sx.viewControllerHeaderTitleText}>{t('general.appTitle')}</Typography>
         <Typography sx={sx.viewControllerHeaderVersionText}>{app_version}</Typography>
       </Box>
       <IconButton

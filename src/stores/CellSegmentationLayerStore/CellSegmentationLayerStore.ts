@@ -11,6 +11,7 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   cellFillOpacity: 0.2,
   cellColormapConfig: [],
   cellNameFilters: [],
+  selectedCells: [],
   cytometryProteinsNames: [],
   umapDataAvailable: false
 };
@@ -25,5 +26,22 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   setCellColormapConfig: (config) => set({ cellColormapConfig: config }),
   setCellNameFilter: (cellNames) => set({ cellNameFilters: cellNames }),
   clearCellNameFilter: () => set({ cellNameFilters: [] }),
+  setSelectedCells: (selectionData) => set({ selectedCells: selectionData }),
+  addSelectedCells: (newSelectionData) =>
+    set((store) => ({ selectedCells: [...store.selectedCells, newSelectionData] })),
+  updateSelectedCells: (updatedData, selectionId) =>
+    set((store) => ({
+      selectedCells: store.selectedCells.map((selection) => {
+        if (selection.roiId !== selectionId) {
+          return selection;
+        }
+        return {
+          ...selection,
+          data: updatedData
+        };
+      })
+    })),
+  deleteSelectedCells: (selectionId) =>
+    set((store) => ({ selectedCells: store.selectedCells.filter((selection) => selection.roiId !== selectionId) })),
   reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES })
 }));

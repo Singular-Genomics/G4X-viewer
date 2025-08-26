@@ -12,10 +12,12 @@ import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
 import { ActiveFilters } from './ActiveFilters';
+import { useTranslation } from 'react-i18next';
 
 export default function G4XViewer() {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
@@ -43,14 +45,14 @@ export default function G4XViewer() {
                 sx={sx.infoText}
                 variant="h2"
               >
-                Please upload an image file to view.
+                {t('viewer.noImageInfo')}
               </Typography>
             )
           )}
           {isLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
-              <Typography sx={sx.loadingText}>Loading Image...</Typography>
+              <Typography sx={sx.loadingText}>{`${t('viewer.loadingImage')}...`}</Typography>
             </Box>
           )}
           <DetailsPopup />
