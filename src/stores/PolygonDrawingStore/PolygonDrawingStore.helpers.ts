@@ -2,6 +2,7 @@ import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useViewerStore } from '../ViewerStore';
 import { PolygonFeature, Point2D, LineSegment, IntersectionResult, BoundingBox } from './PolygonDrawingStore.types';
 import { CellsExportData, TranscriptsExportData } from '../../components/PolygonImportExport/PolygonImportExport.types';
 
@@ -271,6 +272,13 @@ export const loadTileData = (file: File) => {
   });
 };
 
+const generateExportJsonFilename = (type: string): string => {
+  const viewerSource = useViewerStore.getState().source;
+  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
+  const date = new Date().toISOString().split('T')[0];
+  return `${ometiffName}_${type}_${date}.json`;
+};
+
 export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
   const { selectedCells } = useCellSegmentationLayerStore.getState();
 
@@ -292,7 +300,7 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
   const url = URL.createObjectURL(blob);
   const link = Object.assign(document.createElement('a'), {
     href: url,
-    download: `polygon_data_${new Date().toISOString().split('T')[0]}.json`
+    download: generateExportJsonFilename('segmentation')
   });
   document.body.appendChild(link);
   link.click();
@@ -321,7 +329,7 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
   const url = URL.createObjectURL(blob);
   const link = Object.assign(document.createElement('a'), {
     href: url,
-    download: `polygon_data_${new Date().toISOString().split('T')[0]}.json`
+    download: generateExportJsonFilename('transcripts')
   });
   document.body.appendChild(link);
   link.click();
