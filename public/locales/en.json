@@ -59,7 +59,7 @@
     "cellsDestected_other": "{{count}} cells found",
     "cellsDestected_zero": "No cells found",
     "cellsDetectionFailed": "Failed to detect cells in polygon",
-    "dataDetected": "Data has been detected withing the polygon with id {{polygonId}}",
+    "dataDetected": "Data has been detected within the polygon with id {{polygonId}}",
     "detectingCells": "Detecting new cells in polygon selections",
     "detectingData": "Detecting elements in polygon",
     "detectingTranscripts": "'Detecting new transcripts in polygon selections'",
