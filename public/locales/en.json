@@ -46,7 +46,9 @@
     "invalidFiles": "Invalid File",
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
+    "layers": "Layers",
     "none": "None",
+    "shape": "Shape",
     "segmentation": "Segmentation",
     "transcripts": "Transcripts",
     "warning": "Warning"

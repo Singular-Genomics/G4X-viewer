@@ -93,6 +93,7 @@ export const PictureInPictureViewerAdapter = () => {
       if (!viewState) {
         // Create initial viewState
         const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+
         useViewerStore.setState({
           viewState: {
             ...defualtViewerState,
