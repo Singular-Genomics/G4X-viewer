@@ -16,8 +16,10 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 import { PolygonImportExport } from '../PolygonImportExport';
 import { useEffect, useState, useCallback } from 'react';
 import { GxModal } from '../../shared/components/GxModal';
+import { useTranslation } from 'react-i18next';
 
 export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
+  const { t } = useTranslation();
   const [
     isPolygonDrawingEnabled,
     togglePolygonDrawing,
@@ -174,7 +176,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     return (
       <Box sx={sx.menuContainer}>
         <MuiTooltip
-          title="Screenshot (S)"
+          title={t('viewer.screenshotTooltip')}
           placement="left"
         >
           <IconButton
@@ -192,7 +194,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
   return (
     <Box sx={sx.menuContainer}>
       <MuiTooltip
-        title="Screenshot (S)"
+        title={t('viewer.screenshotTooltip')}
         placement="left"
       >
         <IconButton
@@ -213,7 +215,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
 
       {!isPolygonDrawingEnabled && (
         <MuiTooltip
-          title="Enable Drawing (D)"
+          title={t('viewer.drawingMenuEnable')}
           placement="left"
         >
           <IconButton
@@ -230,7 +232,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       {isPolygonDrawingEnabled && (
         <Box sx={sx.expandedMenu}>
           <MuiTooltip
-            title="Draw Polygon (D)"
+            title={t('viewer.drawingMenuDraw')}
             placement="left"
           >
             <IconButton
@@ -250,7 +252,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Modify Polygon (E)"
+            title={t('viewer.drawingMenuEdit')}
             placement="left"
           >
             <IconButton
@@ -270,7 +272,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="View Mode (V)"
+            title={t('viewer.drawingMenuView')}
             placement="left"
           >
             <IconButton
@@ -289,7 +291,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Delete Polygon (R)"
+            title={t('viewer.drawingMenuDelete')}
             placement="left"
           >
             <IconButton
@@ -308,7 +310,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Clear All Polygons (X)"
+            title={t('viewer.drawingMenuClear')}
             placement="left"
           >
             <IconButton
@@ -322,7 +324,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
           </MuiTooltip>
 
           <MuiTooltip
-            title="Disable Drawing (Esc)"
+            title={t('viewer.drawingMenuDisable')}
             placement="left"
           >
             <IconButton
@@ -341,12 +343,12 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
         isOpen={isConfirmModalOpen}
         onClose={handleCloseModal}
         onContinue={handleConfirmClearPolygons}
-        title="Remove All Polygons"
+        title={t('viewer.clearSelectionTitle')}
         colorVariant="danger"
         iconVariant="danger"
         size="small"
       >
-        Are you sure you want to remove all {polygonFeatures.length} polygons? This action cannot be undone.
+        {t('viewer.clearSelectionDescription', { polygonCount: polygonFeatures.length })}
       </GxModal>
     </Box>
   );
