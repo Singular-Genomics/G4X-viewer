@@ -13,6 +13,7 @@ export type TranscriptLayerStoreValues = {
   overrideLayers: boolean;
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
+  currentVisibleLayer: number;
   selectedPoints: SelectionData<PointData>[];
 };
 

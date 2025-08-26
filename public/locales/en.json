@@ -47,7 +47,10 @@
     "invalidFiles": "Invalid File",
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
+    "layers": "Layers",
     "none": "None",
+    "shape": "Shape",
+    "transcripts": "Transcripts",
     "warning": "Warning"
   },
   "segmentation": {
