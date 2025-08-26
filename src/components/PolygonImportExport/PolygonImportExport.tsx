@@ -216,9 +216,9 @@ export const PolygonImportExport = ({
         <Box sx={sx.modalContent}>
           <Box sx={sx.dropzoneWrapper}>
             <GxDropzoneButton
-              labelTitle={t('viewer.importPolygons_title')}
+              labelTitle={t('viewer.importPolygonsTitle')}
               labelText={selectedFileName || 'No file selected'}
-              buttonText={t('viewer.importPolygons_label')}
+              buttonText={t('viewer.importPolygonsLabel')}
               disabled={isImporting}
               {...dropzoneProps}
             />
