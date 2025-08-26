@@ -79,7 +79,7 @@ export const PolygonImportExport = ({
         setIsImporting(true);
         setIsImportModalOpen(false);
 
-        const loadingSnackbarId = enqueueSnackbar('Processing polygon import...', {
+        const loadingSnackbarId = enqueueSnackbar(t('viewer.processingPolygonImport'), {
           variant: 'info',
           persist: true,
           key: 'polygon-import-loading'
@@ -88,14 +88,14 @@ export const PolygonImportExport = ({
         try {
           await importPolygons(file);
           closeSnackbar(loadingSnackbarId);
-          enqueueSnackbar('Polygons imported successfully!', {
+          enqueueSnackbar(t('viewer.polygonsImportedSuccessfully'), {
             variant: 'success',
             autoHideDuration: 3000
           });
         } catch (error) {
           console.error('Failed to import polygons:', error);
           closeSnackbar(loadingSnackbarId);
-          enqueueSnackbar('Failed to import polygons. Please check the file format.', {
+          enqueueSnackbar(t('viewer.polygonsImportFailed'), {
             variant: 'error',
             autoHideDuration: 5000
           });
@@ -217,7 +217,7 @@ export const PolygonImportExport = ({
           <Box sx={sx.dropzoneWrapper}>
             <GxDropzoneButton
               labelTitle={t('viewer.importPolygonsTitle')}
-              labelText={selectedFileName || 'No file selected'}
+              labelText={selectedFileName || t('general.noFileSelected')}
               buttonText={t('viewer.importPolygonsLabel')}
               disabled={isImporting}
               {...dropzoneProps}

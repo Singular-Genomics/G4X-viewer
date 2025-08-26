@@ -1,9 +1,11 @@
 import { GetApplyQuickFilterFn, GridColDef } from '@mui/x-data-grid';
 import LensIcon from '@mui/icons-material/Lens';
 import { Tooltip, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
+  const { t } = useTranslation();
   const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
     if (!(value as string).startsWith('[')) {
       return null;
@@ -16,7 +18,7 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
   return [
     {
       field: 'gene_name',
-      headerName: 'Gene Name',
+      headerName: t('transcript.geneName'),
       headerAlign: 'center',
       filterable: true,
       flex: 1,
@@ -25,7 +27,7 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
     {
       field: 'color',
       headerAlign: 'center',
-      headerName: 'Color',
+      headerName: t('transcript.color'),
       filterable: false,
       flex: 1,
       getApplyQuickFilterFn: geneColorQuickFilter,
