@@ -22,7 +22,7 @@ export const PolygonOpacitySettings = () => {
 
   return (
     <Box sx={sx.opacitySettingsContainer}>
-      <Typography sx={sx.subsectionTitle}>{t('viewerSettings.polygonLayerOpacity')}</Typography>
+      <Typography sx={sx.subsectionTitle}>{t('viewSettings.polygonLayerOpacity')}</Typography>
       <Grid
         container
         direction="row"

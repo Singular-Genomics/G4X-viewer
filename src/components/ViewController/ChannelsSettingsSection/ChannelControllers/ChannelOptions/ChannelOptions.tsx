@@ -1,10 +1,12 @@
 import { ClickAwayListener, IconButton, MenuList, Paper, Popper, Theme, Tooltip, alpha, useTheme } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { ChannelOptionsProps } from './ChannelOption.types';
 import { useRef, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ColorPalette } from './ColorPalette';
 
 export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsProps) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -14,7 +16,7 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
   return (
     <>
       <Tooltip
-        title="Channel options"
+        title={t('channelSettings.channelOptionsTooltip')}
         arrow
       >
         <IconButton
