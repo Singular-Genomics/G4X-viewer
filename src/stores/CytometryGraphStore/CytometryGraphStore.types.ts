@@ -396,4 +396,4 @@ export const AVAILABLE_GRAPH_MODES: GraphMode[] = ['scattergl', 'heatmap'];
 
 export const AVAILABLE_AXIS_TYPES: AxisTypes[] = ['linear', 'log'];
 
-export const AVAILABLE_EXPONENT_FORMATS: ExponentFormat[] = ['none', 'power', 'E', 'e', 'SI'];
+export const AVAILABLE_EXPONENT_FORMATS: ExponentFormat[] = ['none', 'power', 'e', 'SI'];

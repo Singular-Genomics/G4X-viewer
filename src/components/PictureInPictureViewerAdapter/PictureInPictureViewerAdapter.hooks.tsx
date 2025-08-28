@@ -24,6 +24,8 @@ import {
   checkPolygonSelfIntersections,
   findEditedPolygon
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
+import { useTranslation } from 'react-i18next';
+import { List, ListItem } from '@mui/material';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -253,6 +255,7 @@ export const useBrightfieldImageLayer = () => {
 };
 
 export const usePolygonDrawingLayer = () => {
+  const { t } = useTranslation();
   const [
     isPolygonDrawingEnabled,
     isPolygonLayerVisible,
@@ -351,7 +354,7 @@ export const usePolygonDrawingLayer = () => {
           titleMode: 'error',
           preventDuplicate: true,
           key: 'polygon-intersection-error',
-          message: 'Polygon cannot intersect with itself. Operation cancelled.'
+          message: t('interactiveLayer.intersectingPolygonError')
         });
         return;
       }
@@ -364,7 +367,7 @@ export const usePolygonDrawingLayer = () => {
       const loadingSnackbarId = enqueueSnackbar({
         variant: 'gxSnackbar',
         titleMode: 'info',
-        message: 'Detecting elements in polygon...',
+        message: `${t('interactiveLayer.detectingData')}...`,
         persist: true,
         autoHideDuration: 10000
       });
@@ -390,7 +393,7 @@ export const usePolygonDrawingLayer = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect points in polygon'
+            message: t('interactiveLayer.transcriptsDetectionFailed')
           });
         }
       }
@@ -413,7 +416,7 @@ export const usePolygonDrawingLayer = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect cells in polygon'
+            message: t('interactiveLayer.cellsDetectionFailed')
           });
         }
       }
@@ -425,13 +428,19 @@ export const usePolygonDrawingLayer = () => {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'warning',
-          message: `No data detected in polygon with id ${newPolygonId}`
+          message: t('interactiveLayer.noDataDetected', { polygonId: newPolygonId })
         });
       } else {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'success',
-          message: `Detected ${totalFoundPoints ? `${totalFoundPoints} points` : ''}${totalFoundPoints && totalFoundCells ? ' and ' : ''}${totalFoundCells ? `${totalFoundCells} cells` : ''} in polygon with id ${newPolygonId}`
+          message: t('interactiveLayer.dataDetected', { polygonId: newPolygonId }),
+          customContent: (
+            <List>
+              <ListItem>{t('interactiveLayer.transcriptsDetected', { count: totalFoundPoints })}</ListItem>
+              <ListItem>{t('interactiveLayer.cellsDetected', { count: totalFoundCells })}</ListItem>
+            </List>
+          )
         });
       }
     } else if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
@@ -449,7 +458,7 @@ export const usePolygonDrawingLayer = () => {
           titleMode: 'error',
           preventDuplicate: true,
           key: 'polygon-intersection-error',
-          message: 'Polygon cannot intersect with itself. Operation cancelled.'
+          message: t('interactiveLayer.intersectingPolygonError')
         });
         return;
       }
@@ -476,7 +485,7 @@ export const usePolygonDrawingLayer = () => {
       const loadingSnackbarId = enqueueSnackbar({
         variant: 'gxSnackbar',
         titleMode: 'info',
-        message: 'Updating polygon selection...',
+        message: `${t('interactiveLayer.updatingPolygons')}...`,
         persist: true,
         autoHideDuration: 10000
       });
@@ -498,7 +507,7 @@ export const usePolygonDrawingLayer = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect points in polygon'
+            message: t('interactiveLayer.transcriptsDetectionFailed')
           });
         }
       }
@@ -521,7 +530,7 @@ export const usePolygonDrawingLayer = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: 'Failed to detect cells in polygon'
+            message: t('interactiveLayer.cellsDetectionFailed')
           });
         }
       }
@@ -533,9 +542,10 @@ export const usePolygonDrawingLayer = () => {
 
   const onPolygonClickForDeletion = (info: any) => {
     if (isDeleteMode && info.index !== undefined && info.index >= 0) {
-      deletePolygon(info.index);
-      deleteSelectedCells(info.index);
-      deleteSelectedPoints(info.index);
+      const deltedPolygonId = info.object.properties.polygonId;
+      deletePolygon(deltedPolygonId);
+      deleteSelectedCells(deltedPolygonId);
+      deleteSelectedPoints(deltedPolygonId);
       return true; // Prevent further event propagation
     }
     return false;

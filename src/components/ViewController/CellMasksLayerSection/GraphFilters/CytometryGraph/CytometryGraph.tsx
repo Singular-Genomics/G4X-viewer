@@ -45,7 +45,7 @@ export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMas
 
   return (
     <Box sx={messageSx.customErrorMessage}>
-      <Typography>{`${t('cytometryDownloadFailedLabel')}: `}</Typography>
+      <Typography>{`${t('segmentationSettings.cytometryDownloadFailedLabel')}: `}</Typography>
       <IconButton onClick={handleDownload}>
         <DownloadIcon sx={messageSx.downloadIcon} />
       </IconButton>
@@ -127,14 +127,14 @@ export const CytometryGraph = () => {
         setLoader(undefined);
       } else if (output.completed && !output.success) {
         enqueueSnackbar({
-          message: t(`segmentationSettings.cytometryGraphWorker-${output.status}`),
+          message: t(`segmentationSettings.cytometryGraphWorker_${output.status}`),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
       } else {
         setLoader({
           progress: output.progress,
-          message: t(`segmentationSettings.cytometryGraphWorker-${output.status}`)
+          message: t(`segmentationSettings.cytometryGraphWorker_${output.status}`)
         });
       }
     });

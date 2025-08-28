@@ -11,6 +11,7 @@ const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
   pointSize: 1.5,
   geneNameFilters: [],
   maxVisibleLayers: 0,
+  currentVisibleLayer: 0,
   selectedPoints: []
 };
 

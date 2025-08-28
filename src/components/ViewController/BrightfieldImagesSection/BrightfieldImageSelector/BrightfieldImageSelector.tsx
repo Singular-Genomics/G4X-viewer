@@ -65,7 +65,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(filename)) {
       enqueueSnackbar({
-        message: t('brightfieldImages.invalidFile'),
+        message: t('brightfieldImages.invalidFileError'),
         variant: 'error'
       });
       return;
@@ -91,7 +91,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
     setCloudImageUrl('');
 
     enqueueSnackbar({
-      message: t('brightfieldImages.imageClousUploadSuccess', { file: filename }),
+      message: t('brightfieldImages.imageCloudUploadSuccess', { file: filename }),
       variant: 'success'
     });
   };
@@ -152,7 +152,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         onUrlChange={setCloudImageUrl}
         title={t('general.cloudUpload')}
         placeholder={t('brightfieldImages.imageCloudUploadDescription')}
-        label={'brightfieldImages.imageCloudUploadLabel'}
+        label={t('brightfieldImages.imageCloudUploadLabel')}
       />
     </Box>
   );

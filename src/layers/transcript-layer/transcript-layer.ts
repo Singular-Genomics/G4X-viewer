@@ -6,6 +6,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import * as protobuf from 'protobufjs';
 import { TranscriptSchema } from './transcript-schema';
 import { partition } from 'lodash';
+import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 
 // ======================== DATA TILE LAYER ==================
 
@@ -174,7 +175,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       tileSize: tile_size,
       maxZoom: layers,
       minZoom,
-      zoomOffset: 2,
+      zoomOffset: LAYER_ZOOM_OFFSET,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
       pickable: true,
