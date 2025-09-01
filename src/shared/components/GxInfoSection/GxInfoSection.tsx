@@ -8,10 +8,13 @@ export const GxInfoSection = ({ infoBoxes, position }: GxInfoSectionProps) => {
       sx={
         {
           ...sx.container,
-          top: position.top,
-          right: position.right,
-          bottom: position.bottom,
-          left: position.left
+          ...(position && {
+            position: 'fixed',
+            top: position.top,
+            right: position.right,
+            bottom: position.bottom,
+            left: position.left
+          })
         } as SxProps
       }
     >
@@ -27,7 +30,6 @@ export const GxInfoSection = ({ infoBoxes, position }: GxInfoSectionProps) => {
 
 const sx = {
   container: {
-    position: 'fixed',
     width: 'auto',
     minWidth: 'fit-content',
     maxWidth: 400,

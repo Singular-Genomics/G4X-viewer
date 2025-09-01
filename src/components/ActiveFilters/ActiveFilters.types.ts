@@ -1,3 +1,1 @@
-export type GroupedActiveFilters = {
-  [key: string]: string[];
-};
+export type GroupedActiveFilters = Record<string, string[]>;

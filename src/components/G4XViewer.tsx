@@ -59,7 +59,9 @@ export default function G4XViewer() {
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
-      <ActiveFilters />
+      <Box sx={sx.activeFiltersWrapper}>
+        <ActiveFilters />
+      </Box>
     </Box>
   );
 }
@@ -101,5 +103,10 @@ const styles = (theme: Theme) => ({
   infoText: {
     color: theme.palette.gx.lightGrey[900],
     fontSize: '16px'
+  },
+  activeFiltersWrapper: {
+    position: 'fixed',
+    top: '90px',
+    left: '20px'
   }
 });

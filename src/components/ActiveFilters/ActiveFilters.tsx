@@ -15,7 +15,6 @@ export const ActiveFilters = () => {
 
   return (
     <GxInfoSection
-      position={{ top: '90px', left: '20px' }}
       infoBoxes={[
         {
           title: t('activeFilters.title'),
