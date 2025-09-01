@@ -11,7 +11,7 @@ import { ImageInfo } from './ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
-import { ActiveFilters } from './ActiveFilters';
+import { ActiveFiltersPanel } from './ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 
 export default function G4XViewer() {
@@ -59,9 +59,7 @@ export default function G4XViewer() {
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
-      <Box sx={sx.activeFiltersWrapper}>
-        <ActiveFilters />
-      </Box>
+      <ActiveFiltersPanel />
     </Box>
   );
 }
@@ -103,10 +101,5 @@ const styles = (theme: Theme) => ({
   infoText: {
     color: theme.palette.gx.lightGrey[900],
     fontSize: '16px'
-  },
-  activeFiltersWrapper: {
-    position: 'fixed',
-    top: '90px',
-    left: '20px'
   }
 });

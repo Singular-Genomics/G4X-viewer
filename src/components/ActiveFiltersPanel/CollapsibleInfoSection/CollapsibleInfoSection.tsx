@@ -1,44 +1,38 @@
 import { Box, Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { GxInfoSection } from '../../shared/components/GxInfoSection';
-import { useActiveFilters } from './ActiveFilters.helpers';
+import { GxInfoSection } from '../../../shared/components/GxInfoSection';
+import { CollapsibleInfoSectionProps } from './CollapsibleInfoSection.types';
 
-export const ActiveFilters = () => {
-  const { t } = useTranslation();
-  const { groupedActiveFilters, hasActiveFilters } = useActiveFilters();
-
-  if (!hasActiveFilters) {
+export const CollapsibleInfoSection = ({ title, data, totalCount }: CollapsibleInfoSectionProps) => {
+  if (Object.keys(data).length === 0) {
     return null;
   }
-
-  const totalFilters = Object.values(groupedActiveFilters).flat().length;
 
   return (
     <GxInfoSection
       infoBoxes={[
         {
-          title: t('activeFilters.title'),
+          title,
           content: (
             <Box>
-              {Object.entries(groupedActiveFilters).map(([layer, filters]) => (
+              {Object.entries(data).map(([groupTitle, items]) => (
                 <Box
-                  key={layer}
+                  key={groupTitle}
                   sx={sx.layerGroup}
                 >
-                  <Typography sx={sx.layerTitle}>• {layer}:</Typography>
-                  {filters.map((filter, index) => (
+                  <Typography sx={sx.layerTitle}>• {groupTitle}:</Typography>
+                  {items.map((item, index) => (
                     <Typography
                       key={index}
                       sx={sx.filterItem}
                     >
-                      - {filter}
+                      - {item}
                     </Typography>
                   ))}
                 </Box>
               ))}
             </Box>
           ),
-          tag: totalFilters
+          tag: totalCount
         }
       ]}
     />

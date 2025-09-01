@@ -239,12 +239,18 @@
     "brightfieldLayer": "Brightfield Layer",
     "brightfieldLayerDisabled": "Brightfield Layer disabled",
     "polygonLayerDisabled": "ROI Polygons disabled",
-    "disabledLayers": "Disabled Layers",
     "flowCytometry": "Flow Cytometry",
     "flowCytometryRangeFilter": "Flow Cytometry filter",
     "umap": "UMAP",
     "umapRangeFilter": "UMAP filter",
     "channels": "Channels",
     "hiddenChannels": "Hidden channels ({{count}})"
+  },
+  "hiddenLayers": {
+    "title": "Hidden Layers",
+    "transcriptLayer": "Transcript Layer",
+    "segmentationLayer": "Segmentation Layer", 
+    "brightfieldLayer": "Brightfield Layer",
+    "polygonLayer": "ROI Polygons Layer"
   }
 }
