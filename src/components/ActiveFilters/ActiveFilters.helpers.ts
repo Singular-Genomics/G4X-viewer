@@ -62,18 +62,16 @@ export const useActiveFilters = () => {
     if (showFilteredCells) {
       segmentationFilters.push(t('activeFilters.showFilteredCells'));
     }
-    if (segmentationFilters.length > 0) {
-      groupedFilters[t('activeFilters.segmentationLayer')] = segmentationFilters;
-    }
-
     // Flow Cytometry Filters
     if (cytometryRanges) {
-      groupedFilters[t('activeFilters.flowCytometry')] = [t('activeFilters.flowCytometryRangeFilter')];
+      segmentationFilters.push(t('activeFilters.flowCytometryRangeFilter'));
     }
-
     // UMAP Filters
     if (umapRanges) {
-      groupedFilters[t('activeFilters.umap')] = [t('activeFilters.umapRangeFilter')];
+      segmentationFilters.push(t('activeFilters.umapRangeFilter'));
+    }
+    if (segmentationFilters.length > 0) {
+      groupedFilters[t('activeFilters.segmentationLayer')] = segmentationFilters;
     }
 
     // Channel Filters
