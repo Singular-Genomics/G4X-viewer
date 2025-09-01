@@ -57,6 +57,7 @@ export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxIn
 };
 
 const styles = (theme: Theme) => ({
+  // TODO: Review background contrast during design refactor
   container: {
     width: 'auto',
     minWidth: 'fit-content',
