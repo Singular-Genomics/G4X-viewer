@@ -41,13 +41,9 @@ export const useActiveFilters = () => {
     // Transcript Layer Filters
     const transcriptFilters: string[] = [];
     if (isGeneNameFilterActive) {
-      if (geneNameFilters.length === 1) {
-        transcriptFilters.push(t('activeFilters.geneFilter', { gene: geneNameFilters[0] }));
-      } else if (geneNameFilters.length > 1) {
-        transcriptFilters.push(t('activeFilters.geneFilterMultiple'));
-      } else {
-        transcriptFilters.push(t('activeFilters.geneFilterNone'));
-      }
+      transcriptFilters.push(
+        t('activeFilters.geneFilter', { count: geneNameFilters.length, gene: geneNameFilters[0] })
+      );
     }
     if (showFilteredPoints) {
       transcriptFilters.push(t('activeFilters.showFilteredPoints'));
@@ -59,13 +55,9 @@ export const useActiveFilters = () => {
     // Segmentation Layer Filters
     const segmentationFilters: string[] = [];
     if (isCellNameFilterOn) {
-      if (cellNameFilters.length === 1) {
-        segmentationFilters.push(t('activeFilters.clusterFilter', { clusterId: cellNameFilters[0] }));
-      } else if (cellNameFilters.length > 1) {
-        segmentationFilters.push(t('activeFilters.clusterFilterMultiple'));
-      } else {
-        segmentationFilters.push(t('activeFilters.clusterFilterNone'));
-      }
+      segmentationFilters.push(
+        t('activeFilters.clusterFilter', { count: cellNameFilters.length, clusterId: cellNameFilters[0] })
+      );
     }
     if (showFilteredCells) {
       segmentationFilters.push(t('activeFilters.showFilteredCells'));
