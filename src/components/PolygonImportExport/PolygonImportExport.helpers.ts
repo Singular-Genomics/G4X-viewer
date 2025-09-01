@@ -1,5 +1,6 @@
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useViewerStore } from '../../stores/ViewerStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 const escapeCsvValue = (value: string | number) => {
@@ -18,6 +19,13 @@ const downloadText = (content: string, fileName: string, mime = 'text/csv') => {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+};
+
+const generateExportCsvFilename = (type: string): string => {
+  const viewerSource = useViewerStore.getState().source;
+  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
+  const date = new Date().toISOString().split('T')[0];
+  return `${ometiffName}_${type}_${date}.csv`;
 };
 
 export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) => {
@@ -71,7 +79,7 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
     });
 
     const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-    downloadText(csv, `${roiName}_cells.csv`);
+    downloadText(csv, generateExportCsvFilename(`${roiName}_segmentation`));
   });
 };
 
@@ -101,7 +109,7 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
     });
 
     const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-    downloadText(csv, `${roiName}_transcripts.csv`);
+    downloadText(csv, generateExportCsvFilename(`${roiName}_transcripts`));
   });
 };
 
@@ -150,5 +158,5 @@ export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
   });
 
   const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-  downloadText(csv, 'ROI_metadata.csv');
+  downloadText(csv, generateExportCsvFilename('ROI_metadata'));
 };

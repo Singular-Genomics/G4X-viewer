@@ -33,7 +33,7 @@ export const PercentageOfTranscripts = () => {
 
   const currentZoom = viewState?.zoom || 0;
 
-  const percentageOfTransctipts = useMemo(() => {
+  const percentageOfTranscripts = useMemo(() => {
     if (zoomBrakePoints.length === 0) {
       return '100%';
     }
@@ -59,7 +59,7 @@ export const PercentageOfTranscripts = () => {
   return (
     <>
       {showPercentageOfTranscripts && (
-        <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTransctipts}`}</Typography>
+        <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTranscripts}`}</Typography>
       )}
     </>
   );

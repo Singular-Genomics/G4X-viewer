@@ -139,7 +139,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.clearButton}
       >
-        {t('general.cancel')}
+        {t('general.clear')}
       </Button>
       <Button
         onClick={onConfirm}

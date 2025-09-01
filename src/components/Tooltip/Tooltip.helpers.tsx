@@ -5,7 +5,7 @@ import { t } from 'i18next';
 export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointType }) {
   const tooltipItems: TooltipContentItem[] = [
     {
-      label: t('transcript.postion'),
+      label: t('transcript.position'),
       value: `X: ${data.position[0].toFixed(2)} 
           Y: ${data.position[1].toFixed(2)}`
     },

@@ -68,7 +68,7 @@ export const ChannelSettingsImportExportButtons = () => {
       } catch (jsonError) {
         console.error('Error stringifying channel settings:', jsonError);
         enqueueSnackbar({
-          message: t('channelSettings.channelFormatingError'),
+          message: t('channelSettings.channelFormattingError'),
           variant: 'error'
         });
         return;

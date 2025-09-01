@@ -45,7 +45,7 @@ export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMas
 
   return (
     <Box sx={messageSx.customErrorMessage}>
-      <Typography>{`${t('cytometryDownloadFailedLabel')}: `}</Typography>
+      <Typography>{`${t('segmentationSettings.cytometryDownloadFailedLabel')}: `}</Typography>
       <IconButton onClick={handleDownload}>
         <DownloadIcon sx={messageSx.downloadIcon} />
       </IconButton>
