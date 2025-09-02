@@ -11,7 +11,7 @@ export const useBrightfieldImageHandler = () => {
   const onDrop = (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.imageUploadMutlipleError'),
+        message: t('brightfieldImages.imageUploadMultipleError'),
         variant: 'error'
       });
       return;

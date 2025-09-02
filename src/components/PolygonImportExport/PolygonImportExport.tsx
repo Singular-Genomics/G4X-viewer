@@ -16,6 +16,7 @@ import {
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useTranslation } from 'react-i18next';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
@@ -23,6 +24,7 @@ export const PolygonImportExport = ({
   polygonFeatures,
   isDetecting = false
 }: PolygonImportExportProps) => {
+  const { t } = useTranslation();
   const [isImporting, setIsImporting] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -77,7 +79,7 @@ export const PolygonImportExport = ({
         setIsImporting(true);
         setIsImportModalOpen(false);
 
-        const loadingSnackbarId = enqueueSnackbar('Processing polygon import...', {
+        const loadingSnackbarId = enqueueSnackbar(t('viewer.processingPolygonImport'), {
           variant: 'info',
           persist: true,
           key: 'polygon-import-loading'
@@ -86,14 +88,14 @@ export const PolygonImportExport = ({
         try {
           await importPolygons(file);
           closeSnackbar(loadingSnackbarId);
-          enqueueSnackbar('Polygons imported successfully!', {
+          enqueueSnackbar(t('viewer.polygonsImportedSuccessfully'), {
             variant: 'success',
             autoHideDuration: 3000
           });
         } catch (error) {
           console.error('Failed to import polygons:', error);
           closeSnackbar(loadingSnackbarId);
-          enqueueSnackbar('Failed to import polygons. Please check the file format.', {
+          enqueueSnackbar(t('viewer.polygonsImportFailed'), {
             variant: 'error',
             autoHideDuration: 5000
           });
@@ -103,7 +105,7 @@ export const PolygonImportExport = ({
         }
       }
     },
-    [enqueueSnackbar, closeSnackbar, importPolygons]
+    [enqueueSnackbar, closeSnackbar, importPolygons, t]
   );
 
   const dropzoneProps = useDropzone({
@@ -117,7 +119,7 @@ export const PolygonImportExport = ({
   return (
     <Box sx={sx.container}>
       <MuiTooltip
-        title="Export Polygons"
+        title={t('viewer.exportPolygons')}
         placement="left"
       >
         <IconButton
@@ -131,7 +133,7 @@ export const PolygonImportExport = ({
       </MuiTooltip>
 
       <MuiTooltip
-        title="Import Polygons"
+        title={t('viewer.importPolygons')}
         placement="left"
       >
         <IconButton
@@ -148,7 +150,7 @@ export const PolygonImportExport = ({
       <GxModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
-        title="Export Polygons"
+        title={t('viewer.exportPolygons')}
         colorVariant="singular"
         iconVariant="info"
         size="small"
@@ -164,7 +166,7 @@ export const PolygonImportExport = ({
                 fullWidth
                 disabled={!hasSegmentationData}
               >
-                JSON - Segmentation
+                {`JSON - ${t('general.segmentation')}`}
               </Button>
               <Button
                 variant="contained"
@@ -173,7 +175,7 @@ export const PolygonImportExport = ({
                 disabled={!hasSegmentationData}
                 fullWidth
               >
-                CSV - Segmentation
+                {`CSV - ${t('general.segmentation')}`}
               </Button>
             </Box>
 
@@ -186,7 +188,7 @@ export const PolygonImportExport = ({
                 fullWidth
                 disabled={!hasTranscriptData}
               >
-                JSON - Transcripts
+                {`JSON - ${t('general.transcripts')}`}
               </Button>
               <Button
                 variant="contained"
@@ -195,7 +197,7 @@ export const PolygonImportExport = ({
                 disabled={!hasTranscriptData}
                 fullWidth
               >
-                CSV - Transcripts
+                {`CSV - ${t('general.transcripts')}`}
               </Button>
             </Box>
           </Box>
@@ -206,7 +208,7 @@ export const PolygonImportExport = ({
       <GxModal
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
-        title="Import Polygons"
+        title={t('viewer.importPolygons')}
         colorVariant="singular"
         iconVariant="info"
         size="small"
@@ -214,9 +216,9 @@ export const PolygonImportExport = ({
         <Box sx={sx.modalContent}>
           <Box sx={sx.dropzoneWrapper}>
             <GxDropzoneButton
-              labelTitle="Polygon Data File"
-              labelText={selectedFileName || 'No file selected'}
-              buttonText="Select JSON File"
+              labelTitle={t('viewer.importPolygonsTitle')}
+              labelText={selectedFileName || t('general.noFileSelected')}
+              buttonText={t('viewer.importPolygonsLabel')}
               disabled={isImporting}
               {...dropzoneProps}
             />

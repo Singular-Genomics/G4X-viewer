@@ -3,12 +3,14 @@ import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxSlider } from '../../../../shared/components/GxSlider';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const MIN_POLYGON_OPACITY = 1;
 const MAX_POLYGON_OPACITY = 100;
 const POLYGON_OPACITY_STEP = 1;
 
 export const PolygonOpacitySettings = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -20,7 +22,7 @@ export const PolygonOpacitySettings = () => {
 
   return (
     <Box sx={sx.opacitySettingsContainer}>
-      <Typography sx={sx.subsectionTitle}>ROI Polygons Opacity</Typography>
+      <Typography sx={sx.subsectionTitle}>{t('viewSettings.polygonLayerOpacity')}</Typography>
       <Grid
         container
         direction="row"

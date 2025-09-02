@@ -4,6 +4,8 @@ export const DEFAULT_OVERVIEW = {
   position: 'bottom-left'
 };
 
+export const LAYER_ZOOM_OFFSET = 2;
+
 export const COLORMAP_OPTIONS = [
   'viridis',
   'greys',

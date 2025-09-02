@@ -53,7 +53,7 @@ export const useFileHandler = () => {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'info',
-          message: 'Detecting new points in polygon selections'
+          message: t('interactiveLayer.detectingTranscripts')
         });
 
         setSelectedPoints([]);
