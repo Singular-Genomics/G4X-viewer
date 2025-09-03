@@ -168,6 +168,8 @@ The application frequently processes large scientific datasets (cell segmentatio
 
 **Location**: Place workers in `component/worker/` or `layer/worker/` directories
 
+*Learn more: [Web Workers Guide](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)*
+
 ## User Notifications
 
 Use notistack for user feedback and error handling:
