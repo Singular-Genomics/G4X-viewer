@@ -12,6 +12,7 @@
 - [Demo](#demo)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
+- [Development Documentation](./docs/DEVELOPMENT.md)
 - [License](#license)
 - [Contact](#contact)
 - [Acknowledgments](#acknowledgments)
