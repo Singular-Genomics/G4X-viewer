@@ -228,5 +228,36 @@
     "segmentationLayer": "Segmentation Layer",
     "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
+  },
+  "activeFilters": {
+    "title": "Active filters",
+    "geneFilter_one": "Gene == {{gene}}",
+    "geneFilter_other": "Gene == {{count}} genes",
+    "geneFilter_zero": "Gene == none",
+    "showFilteredPoints": "Show filtered points",
+    "transcriptsLayer": "Transcripts Layer",
+    "transcriptsLayerDisabled": "Transcripts Layer disabled",
+    "clusterFilter_one": "Cluster ID == {{clusterId}}",
+    "clusterFilter_other": "Cluster ID == {{count}} clusters",
+    "clusterFilter_zero": "Cluster ID == none",
+    "showFilteredCells": "Show filtered cells",
+    "segmentationLayer": "Segmentation Layer",
+    "segmentationLayerDisabled": "Segmentation Layer disabled",
+    "brightfieldLayer": "Brightfield Layer",
+    "brightfieldLayerDisabled": "Brightfield Layer disabled",
+    "polygonLayerDisabled": "ROI Polygons disabled",
+    "flowCytometry": "Flow Cytometry",
+    "flowCytometryRangeFilter": "Flow Cytometry filter",
+    "umap": "UMAP",
+    "umapRangeFilter": "UMAP filter",
+    "channels": "Channels",
+    "hiddenChannels": "Hidden channels ({{count}})"
+  },
+  "hiddenLayers": {
+    "title": "Hidden Layers",
+    "transcriptLayer": "Transcript Layer",
+    "segmentationLayer": "Segmentation Layer", 
+    "brightfieldLayer": "Brightfield Layer",
+    "polygonLayer": "ROI Polygons Layer"
   }
 }

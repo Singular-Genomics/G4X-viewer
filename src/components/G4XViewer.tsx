@@ -11,6 +11,7 @@ import { ImageInfo } from './ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
+import { ActiveFiltersPanel } from './ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 
 export default function G4XViewer() {
@@ -58,6 +59,7 @@ export default function G4XViewer() {
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
+      <ActiveFiltersPanel />
     </Box>
   );
 }

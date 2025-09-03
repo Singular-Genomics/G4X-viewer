@@ -1,0 +1,1 @@
+export { CollapsibleInfoSection } from './CollapsibleInfoSection';
