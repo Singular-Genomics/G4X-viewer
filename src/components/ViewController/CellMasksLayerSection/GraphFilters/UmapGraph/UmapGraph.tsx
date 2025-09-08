@@ -99,7 +99,16 @@ export const UmapGraph = () => {
             }
           ]
         : [])
-    ]
+    ],
+    legend: {
+      itemsizing: 'constant',
+      marker: {
+        size: 10
+      },
+      font: {
+        size: 12
+      }
+    }
   };
 
   const colorMap = buildColorLookup(colorMapConfig);
