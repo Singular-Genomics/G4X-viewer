@@ -1,4 +1,5 @@
 import { SingleMask } from '../../../../../shared/types';
+import type { CellSegmentationColormapEntry } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { UmapClusterPoint } from './UmapGraph.types';
 
 export async function getPlotData(
@@ -53,4 +54,8 @@ function sortUmapData(a: UmapClusterPoint, b: UmapClusterPoint) {
 
   // Both non-negative → normal ascending
   return idA - idB;
+}
+
+export function buildColorLookup(colorMap: CellSegmentationColormapEntry[]) {
+  return Object.fromEntries(colorMap.map((entry) => [entry.clusterId, `rgb(${entry.color.join(',')})`]));
 }

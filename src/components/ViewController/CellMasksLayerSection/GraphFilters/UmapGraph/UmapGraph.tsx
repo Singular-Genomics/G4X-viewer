@@ -10,9 +10,10 @@ import { useUmapGraphStore } from '../../../../../stores/UmapGraphStore/UmapGrap
 import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.types';
 import { UmapGraphHeader } from './UmapGraphHeader/UmapGraphHeader';
 import { debounce } from 'lodash';
-import { getPlotData } from './UmapGraph.helpers';
+import { buildColorLookup, getPlotData } from './UmapGraph.helpers';
 import { useTranslation } from 'react-i18next';
 import type { UmapClusterPoint } from './UmapGraph.types';
+import { useShallow } from 'zustand/react/shallow';
 
 export const UmapGraph = () => {
   const theme = useTheme();
@@ -26,6 +27,8 @@ export const UmapGraph = () => {
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [selectionRange, setSelectionRange] = useState<UmapRange | undefined>(undefined);
   const [plotData, setPlotData] = useState<UmapClusterPoint[]>([{ x: [], y: [], clusterId: '' }]);
+
+  const [colorMapConfig] = useCellSegmentationLayerStore(useShallow((store) => [store.cellColormapConfig]));
 
   useEffect(() => {
     const { ranges } = useUmapGraphStore.getState();
@@ -99,16 +102,21 @@ export const UmapGraph = () => {
     ]
   };
 
-  const data: Partial<ScatterData>[] = plotData.map(({ x, y, clusterId }) => ({
-    x: x,
-    y: y,
-    name: clusterId,
-    mode: 'markers',
-    type: 'scattergl',
-    marker: {
-      size: settings.pointSize
-    }
-  }));
+  const colorMap = buildColorLookup(colorMapConfig);
+
+  const data: Partial<ScatterData>[] = plotData.map(({ x, y, clusterId }) => {
+    return {
+      x,
+      y,
+      name: clusterId,
+      mode: 'markers',
+      type: 'scattergl',
+      marker: {
+        size: settings.pointSize,
+        color: colorMap[clusterId]
+      }
+    };
+  });
 
   return (
     <Box sx={sx.container}>
