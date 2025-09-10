@@ -1,16 +1,19 @@
-import { Box, darken, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
+import type { ScatterData } from 'plotly.js';
 import { GraphRangeInputs } from '../GraphRangeInputs';
-import { Datum, Layout } from 'plotly.js';
+import { Layout } from 'plotly.js';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useSnackbar } from 'notistack';
 import { useUmapGraphStore } from '../../../../../stores/UmapGraphStore/UmapGraphStore';
 import { UmapRange } from '../../../../../stores/UmapGraphStore/UmapGraphStore.types';
 import { UmapGraphHeader } from './UmapGraphHeader/UmapGraphHeader';
 import { debounce } from 'lodash';
-import { getPlotData } from './UmapGraph.helpers';
+import { buildColorLookup, getPlotData } from './UmapGraph.helpers';
 import { useTranslation } from 'react-i18next';
+import type { UmapClusterPoint } from './UmapGraph.types';
+import { useShallow } from 'zustand/react/shallow';
 
 export const UmapGraph = () => {
   const theme = useTheme();
@@ -23,7 +26,9 @@ export const UmapGraph = () => {
   const { settings } = useUmapGraphStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [selectionRange, setSelectionRange] = useState<UmapRange | undefined>(undefined);
-  const [plotData, setPlotData] = useState<{ x: Datum[]; y: Datum[] }>({ x: [], y: [] });
+  const [plotData, setPlotData] = useState<UmapClusterPoint[]>([{ x: [], y: [], clusterId: '' }]);
+
+  const [colorMapConfig] = useCellSegmentationLayerStore(useShallow((store) => [store.cellColormapConfig]));
 
   useEffect(() => {
     const { ranges } = useUmapGraphStore.getState();
@@ -94,8 +99,33 @@ export const UmapGraph = () => {
             }
           ]
         : [])
-    ]
+    ],
+    legend: {
+      itemsizing: 'constant',
+      marker: {
+        size: 10
+      },
+      font: {
+        size: 12
+      }
+    }
   };
+
+  const colorMap = buildColorLookup(colorMapConfig);
+
+  const data: Partial<ScatterData>[] = plotData.map(({ x, y, clusterId }) => {
+    return {
+      x,
+      y,
+      name: clusterId,
+      mode: 'markers',
+      type: 'scattergl',
+      marker: {
+        size: settings.pointSize,
+        color: colorMap[clusterId]
+      }
+    };
+  });
 
   return (
     <Box sx={sx.container}>
@@ -105,18 +135,7 @@ export const UmapGraph = () => {
         sx={sx.graphWrapper}
       >
         <Plot
-          data={[
-            {
-              x: plotData.x,
-              y: plotData.y,
-              mode: 'markers',
-              type: 'scattergl',
-              marker: {
-                color: darken(theme.palette.gx.accent.greenBlue, 0.25),
-                size: settings.pointSize
-              }
-            }
-          ]}
+          data={data}
           style={{
             width: '100%'
           }}
