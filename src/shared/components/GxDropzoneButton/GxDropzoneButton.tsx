@@ -47,21 +47,22 @@ export const GxDropzoneButton = ({
         label={labelTitle}
         size="small"
         fullWidth
-        inputProps={{ readOnly: true }}
         value={labelText || ' '}
         sx={sx.textField}
         disabled={disabled}
-        InputProps={{
-          endAdornment: onCloudUploadClick && (
-            <IconButton
-              onClick={onCloudUploadClick}
-              size="small"
-              sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
-              disabled={disabled}
-            >
-              <CloudUploadIcon />
-            </IconButton>
-          )
+        slotProps={{
+          input: {
+            endAdornment: onCloudUploadClick && (
+              <IconButton
+                onClick={onCloudUploadClick}
+                size="small"
+                sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                disabled={disabled}
+              >
+                <CloudUploadIcon />
+              </IconButton>
+            )
+          }
         }}
       />
       <Button
