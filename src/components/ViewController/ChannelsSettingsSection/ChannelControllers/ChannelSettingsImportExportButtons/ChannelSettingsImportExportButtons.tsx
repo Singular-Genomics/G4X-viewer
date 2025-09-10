@@ -171,6 +171,7 @@ export const ChannelSettingsImportExportButtons = () => {
 
             if (importData.channels.length > ids.length) {
               const channelsToAdd = importData.channels.slice(ids.length);
+              const channelIndicesToLoad: number[] = [];
 
               channelsToAdd.forEach((channelData: any) => {
                 if (channelData.name) {
@@ -190,6 +191,7 @@ export const ChannelSettingsImportExportButtons = () => {
                         };
 
                     const numSelectionsBeforeAdd = useChannelsStore.getState().selections.length;
+                    channelIndicesToLoad.push(numSelectionsBeforeAdd);
 
                     addIsChannelLoading(true);
                     useChannelsStore.getState().addChannel({
@@ -204,16 +206,24 @@ export const ChannelSettingsImportExportButtons = () => {
                         contrastLimits: channelData.contrastLimits
                       });
                     }
-
-                    useViewerStore.setState({
-                      onViewportLoad: () => {
-                        useViewerStore.setState({ onViewportLoad: () => {} });
-                        setIsChannelLoading(numSelectionsBeforeAdd, false);
-                      }
-                    });
                   }
                 }
               });
+
+              if (channelIndicesToLoad.length > 0) {
+                let loadedCount = 0;
+                useViewerStore.setState({
+                  onViewportLoad: () => {
+                    if (loadedCount < channelIndicesToLoad.length) {
+                      setIsChannelLoading(channelIndicesToLoad[loadedCount], false);
+                      loadedCount++;
+                      if (loadedCount === channelIndicesToLoad.length) {
+                        useViewerStore.setState({ onViewportLoad: () => {} });
+                      }
+                    }
+                  }
+                });
+              }
             }
           }
 
