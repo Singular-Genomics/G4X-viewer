@@ -31,3 +31,6 @@ export const COLOR_PALLETE = [
 ];
 
 export const FILL_PIXEL_VALUE = '----';
+
+export const SEGMENTATION_FILE_SIZE_LIMIT = 367001600; // 350 MB
+export const TRANSCRIPT_FILEZ_SIZE_LIMIT = 1073741824; // 1 GB

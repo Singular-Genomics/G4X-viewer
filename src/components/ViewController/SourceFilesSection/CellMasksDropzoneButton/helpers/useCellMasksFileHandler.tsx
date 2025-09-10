@@ -8,6 +8,8 @@ import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStor
 import { useTranslation } from 'react-i18next';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
+import { SEGMENTATION_FILE_SIZE_LIMIT } from '../../../../../shared/constants';
+import { humanFileSize } from '../../../../../utils/utils';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
@@ -22,6 +24,16 @@ export const useCellMasksFileHandler = () => {
     if (files.length !== 1) {
       return;
     }
+
+    if (files[0].size > SEGMENTATION_FILE_SIZE_LIMIT) {
+      enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'error',
+        message: t('sourceFiles.uploadedFileSizeError', { size: humanFileSize(SEGMENTATION_FILE_SIZE_LIMIT) })
+      });
+    }
+
+    console.log(files[0].size);
     setLoading(true);
     const reader = new FileReader();
     reader.onload = async () => {
