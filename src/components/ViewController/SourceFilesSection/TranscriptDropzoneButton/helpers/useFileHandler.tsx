@@ -111,6 +111,7 @@ export const useFileHandler = () => {
         titleMode: 'error',
         message: t('sourceFiles.uploadedFileSizeError', { size: humanFileSize(TRANSCRIPT_FILEZ_SIZE_LIMIT) })
       });
+      return;
     }
 
     switch (file.type) {

@@ -31,6 +31,7 @@ export const useCellMasksFileHandler = () => {
         titleMode: 'error',
         message: t('sourceFiles.uploadedFileSizeError', { size: humanFileSize(SEGMENTATION_FILE_SIZE_LIMIT) })
       });
+      return;
     }
 
     console.log(files[0].size);
