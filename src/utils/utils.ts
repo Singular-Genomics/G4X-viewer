@@ -62,7 +62,7 @@ export const generatePolygonColor = (index: number): [number, number, number] =>
   return POLYGON_COLORS[index % POLYGON_COLORS.length];
 };
 
-export const humanFileSize = (bytes: number, si = false, dp = 1) => {
+export const humanFileSize = (bytes: number, dp = 1, si = false) => {
   const thresh = si ? 1000 : 1024;
 
   if (Math.abs(bytes) < thresh) {

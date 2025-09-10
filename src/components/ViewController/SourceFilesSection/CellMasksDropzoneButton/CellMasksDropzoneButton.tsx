@@ -6,6 +6,8 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { CellMasksDropzoneButtonProps } from './CellMasksDropzoneButton.types';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { humanFileSize } from '../../../../utils/utils';
+import { SEGMENTATION_FILE_SIZE_LIMIT } from '../../../../shared/constants';
 
 export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButtonProps) => {
   const theme = useTheme();
@@ -25,6 +27,7 @@ export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButt
         labelText={fileName}
         buttonText={t('sourceFiles.segmentationFileUploadButton')}
         disabled={!source}
+        helperText={t('sourceFiles.uploadedFileSizeHelper', { size: humanFileSize(SEGMENTATION_FILE_SIZE_LIMIT, 0) })}
         {...dropzoneProps}
       />
       {loading && (

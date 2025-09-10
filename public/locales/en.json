@@ -173,6 +173,7 @@
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
     "transcriptsUnsupportedError": "File type not supported",
+    "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
   "transcript": {
