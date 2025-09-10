@@ -1,5 +1,5 @@
 import * as protobuf from 'protobufjs';
-import { TranscriptSchema } from '../../../layers/transcript-layer/transcript-schema';
+import { TranscriptFileSchema } from '../../../schemas/transcriptaFile.schema';
 import { SingleMask } from '../../../shared/types';
 import type {
   PolygonPointData,
@@ -21,7 +21,7 @@ const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
     const response = await fetch(URL.createObjectURL(file));
     const arrayBuffer = await response.arrayBuffer();
 
-    const protoRoot = protobuf.Root.fromJSON(TranscriptSchema);
+    const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     const data = protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer)) as unknown as PolygonTileData;
 
     return data;

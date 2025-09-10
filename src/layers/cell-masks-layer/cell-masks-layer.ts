@@ -2,14 +2,14 @@ import { CompositeLayer } from '@deck.gl/core';
 import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
 import * as protobuf from 'protobufjs';
-import { CellMasksSchema } from './cell-masks-schema';
+import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
 
   constructor(props: CellMasksLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+    this.protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
   }
 
   renderLayers() {

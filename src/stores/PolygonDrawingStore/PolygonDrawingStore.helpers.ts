@@ -1,5 +1,5 @@
 import * as protobuf from 'protobufjs';
-import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
+import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useViewerStore } from '../ViewerStore';
@@ -259,7 +259,7 @@ export const loadTileData = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const data = protobuf.Root.fromJSON(TranscriptSchema)
+        const data = protobuf.Root.fromJSON(TranscriptFileSchema)
           .lookupType('TileData')
           .decode(new Uint8Array(reader.result as ArrayBuffer));
         resolve(data);

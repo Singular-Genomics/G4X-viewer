@@ -1,4 +1,4 @@
-export const CellMasksSchema = {
+export const SegmentationFileSchema = {
   nested: {
     UmapEntry: {
       fields: {

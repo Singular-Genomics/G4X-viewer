@@ -2,7 +2,7 @@ import { useDropzone } from 'react-dropzone';
 import * as protobuf from 'protobufjs';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +26,7 @@ export const useCellMasksFileHandler = () => {
     const reader = new FileReader();
     reader.onload = async () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-      const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+      const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
       const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
       const colormapConfig = decodedData.colormap;

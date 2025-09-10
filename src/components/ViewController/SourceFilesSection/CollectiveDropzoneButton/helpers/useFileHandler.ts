@@ -9,7 +9,7 @@ import * as protobuf from 'protobufjs';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
-import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
 import { getMissingFilesContent } from './helpers';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useTranslation } from 'react-i18next';
@@ -88,7 +88,7 @@ export const useFileHandler = () => {
       const reader = new FileReader();
       reader.onload = () => {
         const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+        const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
         const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
         const colormapConfig = decodedData.colormap;
