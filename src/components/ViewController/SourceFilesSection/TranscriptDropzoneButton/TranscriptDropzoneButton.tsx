@@ -6,6 +6,8 @@ import { useViewerStore } from '../../../../stores/ViewerStore';
 import { TranscriptDropzoneButtonProps } from './TranscriptDropzoneButton.types';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { humanFileSize } from '../../../../utils/utils';
+import { TRANSCRIPT_FILEZ_SIZE_LIMIT } from '../../../../shared/constants';
 
 export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDropzoneButtonProps) {
   const theme = useTheme();
@@ -27,6 +29,7 @@ export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDr
         labelText={fileName}
         buttonText={t('sourceFiles.transcriptsFileUploadButton')}
         disabled={!source}
+        helperText={t('sourceFiles.uploadedFileSizeHelper', { size: humanFileSize(TRANSCRIPT_FILEZ_SIZE_LIMIT, 0) })}
         {...dropzoneProps}
       />
       {loading && (
