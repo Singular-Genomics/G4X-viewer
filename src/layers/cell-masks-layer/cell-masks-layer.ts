@@ -3,6 +3,8 @@ import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
 import * as protobuf from 'protobufjs';
 import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
+import { SingleMask } from '../../shared/types';
+import { partition } from 'lodash';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
@@ -13,8 +15,38 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   }
 
   renderLayers() {
-    const cellsData = this.props.preFilteredUnselectedCells || [];
-    const outlierCellsData = this.props.preFilteredOutlierCells || [];
+    let cellsData: SingleMask[] = [];
+    let outlierCellsData: SingleMask[] = [];
+
+    if (this.props.cellNameFilters === 'all') {
+      cellsData = this.props.masksData;
+    } else {
+      [cellsData, outlierCellsData] = partition(this.props.masksData, (data) =>
+        this.props.cellNameFilters.includes(data.clusterId)
+      );
+    }
+
+    const { proteins, range } = this.props.cellCytometryFilter;
+    if (range && proteins.xAxisIndex !== -1 && proteins.yAxisIndex !== -1) {
+      cellsData = cellsData.filter(
+        (cell) =>
+          cell.proteinValues[proteins.xAxisIndex] <= range.xEnd &&
+          cell.proteinValues[proteins.xAxisIndex] >= range.xStart &&
+          cell.proteinValues[proteins.yAxisIndex] >= range.yEnd &&
+          cell.proteinValues[proteins.yAxisIndex] <= range.yStart
+      );
+    }
+
+    const umapRange = this.props.umapFilter;
+    if (umapRange) {
+      cellsData = cellsData.filter(
+        (cell) =>
+          cell.umapValues.umapX >= umapRange.xStart &&
+          cell.umapValues.umapX <= umapRange.xEnd &&
+          cell.umapValues.umapY <= umapRange.yStart &&
+          cell.umapValues.umapY >= umapRange.yEnd
+      );
+    }
 
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
