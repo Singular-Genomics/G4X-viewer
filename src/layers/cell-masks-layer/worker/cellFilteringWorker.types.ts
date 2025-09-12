@@ -1,5 +1,5 @@
 import { SingleMask } from '../../../shared/types';
-import { HeatmapRanges, ProteinNames } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges, ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { UmapRange } from '../../../stores/UmapGraphStore/UmapGraphStore.types';
 
 export type CellFilteringWorkerMessage = {
@@ -8,7 +8,7 @@ export type CellFilteringWorkerMessage = {
     cellsData: SingleMask[];
     cellNameFilters?: string[] | 'all';
     cytometryFilter?: {
-      proteins: ProteinNames;
+      proteins: ProteinIndices;
       range?: HeatmapRanges;
     };
     umapFilter?: UmapRange;

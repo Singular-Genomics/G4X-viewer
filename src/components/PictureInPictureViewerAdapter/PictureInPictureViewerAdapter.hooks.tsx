@@ -134,7 +134,7 @@ export const useCellSegmentationLayer = () => {
     ])
   );
 
-  const { proteinNames, ranges } = useCytometryGraphStore();
+  const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
   const { filterCells } = useCellFilteringWorker();
   const { enqueueSnackbar } = useSnackbar();
@@ -156,9 +156,9 @@ export const useCellSegmentationLayer = () => {
     filterCells(
       cellMasksData,
       isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinNames.xAxis && proteinNames.yAxis
+      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
         ? {
-            proteins: proteinNames,
+            proteins: proteinIndices,
             range: ranges
           }
         : undefined,
@@ -184,7 +184,7 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellNameFilters,
     ranges,
-    proteinNames,
+    proteinIndices,
     umapRange,
     filterCells,
     enqueueSnackbar
@@ -201,7 +201,7 @@ export const useCellSegmentationLayer = () => {
     showDiscardedPoints: showFilteredCells,
     cellNameFilters: isCellNameFilterOn ? cellNameFilters : 'all',
     cellCytometryFilter: {
-      proteins: proteinNames,
+      proteins: proteinIndices,
       range: ranges
     },
     umapFilter: umapRange,

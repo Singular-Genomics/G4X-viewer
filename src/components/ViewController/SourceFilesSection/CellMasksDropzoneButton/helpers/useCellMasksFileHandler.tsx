@@ -8,6 +8,7 @@ import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStor
 import { useTranslation } from 'react-i18next';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
+import { CellMasks } from '../../../../../shared/types';
 
 export const useCellMasksFileHandler = () => {
   const [progress, setProgress] = useState(0);
@@ -27,7 +28,7 @@ export const useCellMasksFileHandler = () => {
     reader.onload = async () => {
       const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
       const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
-      const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+      const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
       const colormapConfig = decodedData.colormap;
       const cellMasks = decodedData.cellMasks;
@@ -46,11 +47,9 @@ export const useCellMasksFileHandler = () => {
         });
       }
 
-      let listOfProteinNames: string[] = [];
       let areUmapAvailable = false;
 
       if (cellMasks.length) {
-        listOfProteinNames = Object.keys(cellMasks[0].proteins);
         areUmapAvailable = !!cellMasks[0].umapValues;
       }
 
@@ -86,8 +85,8 @@ export const useCellMasksFileHandler = () => {
           clusterId: entry.clusterId,
           color: entry.color
         })),
-        cytometryProteinsNames: listOfProteinNames,
-        umapDataAvailable: areUmapAvailable
+        umapDataAvailable: areUmapAvailable,
+        segmentationMetadata: decodedData.metadata
       });
       useCytometryGraphStore.getState().resetFilters();
     };
@@ -109,9 +108,7 @@ export const useCellMasksFileHandler = () => {
     accept: {
       'application/octet-stream': ['.bin'],
       'application/macbinary': ['.bin'],
-      'application/binary': ['.bin'],
-      '': ['.bin'],
-      '*': ['.bin']
+      'application/binary': ['.bin']
     }
   });
 

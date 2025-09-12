@@ -12,8 +12,8 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   cellColormapConfig: [],
   cellNameFilters: [],
   selectedCells: [],
-  cytometryProteinsNames: [],
-  umapDataAvailable: false
+  umapDataAvailable: false,
+  segmentationMetadata: undefined
 };
 
 export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>((set) => ({

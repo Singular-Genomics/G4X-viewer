@@ -1,14 +1,14 @@
 export type CytometryGraphStore = CytometryGraphStoreValues & CytometryGraphStoreMethods;
 
 export type CytometryGraphStoreValues = {
-  proteinNames: ProteinNames;
+  proteinIndices: ProteinIndices;
   ranges?: HeatmapRanges;
   settings: HeatmapSettings;
 };
 
 export type CytometryGraphStoreMethods = {
   updateSettings: (newSettings: Partial<HeatmapSettings>) => void;
-  updateProteinNames: (newNames: Partial<ProteinNames>) => void;
+  updateProteinNames: (newNames: Partial<ProteinIndices>) => void;
   updateRanges: (newRange: HeatmapRanges) => void;
   resetFilters: () => void;
 };
@@ -30,9 +30,9 @@ type HeatmapSettings = {
   exponentFormat: ExponentFormat;
 };
 
-export type ProteinNames = {
-  xAxis?: string;
-  yAxis?: string;
+export type ProteinIndices = {
+  xAxisIndex: number;
+  yAxisIndex: number;
 };
 
 export type HeatmapRanges = {

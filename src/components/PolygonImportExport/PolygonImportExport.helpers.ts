@@ -29,7 +29,7 @@ const generateExportCsvFilename = (type: string): string => {
 };
 
 export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) => {
-  const { selectedCells } = useCellSegmentationLayerStore.getState();
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
   polygonFeatures.forEach((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
@@ -37,11 +37,7 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
 
     const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
 
-    const proteinSet = new Set<string>();
-    cellsInPolygon.forEach((cell) => {
-      Object.keys(cell.proteins || {}).forEach((p) => proteinSet.add(p));
-    });
-    const proteinColumns = Array.from(proteinSet);
+    const proteinColumns = segmentationMetadata?.proteinNames || [];
 
     const header = [
       'cell_id',
@@ -59,23 +55,19 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
     const rows: (string | number)[][] = [header];
 
     cellsInPolygon.forEach((cell) => {
-      const base = [
+      rows.push([
         cell.cellId,
         polygonId,
-        parseInt(cell.totalCounts, 10) || 0,
-        parseInt(cell.totalGenes, 10) || 0,
-        parseFloat(cell.area) || 0,
+        cell.totalCounts || 0,
+        cell.totalGenes || 0,
+        cell.area || 0,
         cell.clusterId || '',
         cell.umapValues?.umapX || 0,
         cell.umapValues?.umapY || 0,
         JSON.stringify(cell.vertices || []),
-        JSON.stringify(cell.color || [])
-      ] as (string | number)[];
-      const proteinValues = proteinColumns.map((name) => {
-        const value = cell.proteins?.[name];
-        return typeof value === 'number' ? value : 0;
-      });
-      rows.push([...base, ...proteinValues]);
+        JSON.stringify(cell.color || []),
+        JSON.stringify(cell.proteinValues)
+      ] as (string | number)[]);
     });
 
     const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
