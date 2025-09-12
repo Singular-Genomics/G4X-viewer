@@ -279,8 +279,8 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
-export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
-  const { selectedCells } = useCellSegmentationLayerStore.getState();
+export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
   const exportData: CellsExportData = {};
 
@@ -291,7 +291,28 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
 
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells: selectedCells.find((selection) => selection.roiId === polygonId)?.data || [],
+      cells:
+        selectedCells
+          .find((selection) => selection.roiId === polygonId)
+          ?.data.map((entry) => {
+            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
+            return {
+              ...exportObj,
+              ...(segmentationMetadata?.proteinNames
+                ? Object.fromEntries(
+                    segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
+                  )
+                : {}),
+              ...(segmentationMetadata?.geneNames && includeGenes
+                ? Object.fromEntries(
+                    segmentationMetadata.geneNames.map((name, index) => [
+                      name,
+                      index in entry.nonzeroGeneIndices ? entry.nonzeroGeneValues[index] : 0
+                    ])
+                  )
+                : {})
+            };
+          }) || [],
       polygonId: polygonId
     };
   });

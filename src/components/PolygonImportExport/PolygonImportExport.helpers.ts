@@ -28,7 +28,7 @@ const generateExportCsvFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.csv`;
 };
 
-export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) => {
+export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], exportGenes: boolean) => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
   polygonFeatures.forEach((feature) => {
@@ -38,6 +38,7 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
     const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
 
     const proteinColumns = segmentationMetadata?.proteinNames || [];
+    const genesColumns = segmentationMetadata?.geneNames && exportGenes ? segmentationMetadata?.geneNames : [];
 
     const header = [
       'cell_id',
@@ -50,12 +51,13 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
       'umapY',
       'vertices',
       'color',
+      ...genesColumns,
       ...proteinColumns
     ];
     const rows: (string | number)[][] = [header];
 
     cellsInPolygon.forEach((cell) => {
-      rows.push([
+      let rowData = [
         cell.cellId,
         polygonId,
         cell.totalCounts || 0,
@@ -65,9 +67,22 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
         cell.umapValues?.umapX || 0,
         cell.umapValues?.umapY || 0,
         JSON.stringify(cell.vertices || []),
-        JSON.stringify(cell.color || []),
-        ...cell.proteinValues
-      ] as (string | number)[]);
+        JSON.stringify(cell.color || [])
+      ] as (string | number)[];
+
+      if (genesColumns.length > 0) {
+        const genesArray = new Array<number>(genesColumns.length).fill(0);
+        cell.nonzeroGeneIndices.forEach((index, idx) => {
+          genesArray[index] = cell.nonzeroGeneValues[idx];
+        });
+        rowData = rowData.concat(genesArray);
+      }
+
+      if (proteinColumns.length > 0) {
+        rowData = rowData.concat(cell.proteinValues);
+      }
+
+      rows.push(rowData);
     });
 
     const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
