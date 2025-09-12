@@ -66,7 +66,7 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[]) =>
         cell.umapValues?.umapY || 0,
         JSON.stringify(cell.vertices || []),
         JSON.stringify(cell.color || []),
-        JSON.stringify(cell.proteinValues)
+        ...cell.proteinValues
       ] as (string | number)[]);
     });
 
