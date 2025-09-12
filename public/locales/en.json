@@ -172,7 +172,9 @@
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
-    "transcriptsUnsupportedError": "File type not supported"
+    "transcriptsUnsupportedError": "File type not supported",
+    "uploadedFileSizeHelper": "Max: {{size}}",
+    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
   "transcript": {
     "cellId": "Cell ID",

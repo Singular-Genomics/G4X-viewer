@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Theme, alpha, useTheme, IconButton } from '@mui/material';
+import { Box, Button, TextField, Theme, alpha, useTheme, IconButton, Typography, SxProps } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ export const GxDropzoneButton = ({
   getInputProps,
   labelTitle,
   labelText,
+  helperText,
   buttonText,
   disabled = false,
   onCloudUploadClick,
@@ -46,21 +47,22 @@ export const GxDropzoneButton = ({
         label={labelTitle}
         size="small"
         fullWidth
-        inputProps={{ readOnly: true }}
         value={labelText || ' '}
         sx={sx.textField}
         disabled={disabled}
-        InputProps={{
-          endAdornment: onCloudUploadClick && (
-            <IconButton
-              onClick={onCloudUploadClick}
-              size="small"
-              sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
-              disabled={disabled}
-            >
-              <CloudUploadIcon />
-            </IconButton>
-          )
+        slotProps={{
+          input: {
+            endAdornment: onCloudUploadClick && (
+              <IconButton
+                onClick={onCloudUploadClick}
+                size="small"
+                sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                disabled={disabled}
+              >
+                <CloudUploadIcon />
+              </IconButton>
+            )
+          }
         }}
       />
       <Button
@@ -74,11 +76,12 @@ export const GxDropzoneButton = ({
         <input {...getInputProps()} />
         {dynamicButtonText}
       </Button>
+      {helperText && <Typography sx={sx.dropzoneHelperMessage}>{helperText}</Typography>}
     </Box>
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   textField: {
     marginBottom: '8px',
     '& .MuiFormLabel-root.Mui-focused': {
@@ -104,6 +107,10 @@ const styles = (theme: Theme) => ({
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     },
     transition: 'all 0.15s ease'
+  },
+  dropzoneHelperMessage: {
+    fontSize: '12px',
+    color: theme.palette.gx.mediumGrey[100]
   },
   cloudUploadIcon: {
     color: theme.palette.grey[500],

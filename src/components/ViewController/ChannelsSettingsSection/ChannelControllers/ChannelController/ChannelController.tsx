@@ -46,6 +46,7 @@ export const ChannelController = ({
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
           sx={sx.channelSelect}
+          disabled={isLoading}
         >
           {channelOptions.map((opt) => (
             <MenuItem

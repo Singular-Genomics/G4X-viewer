@@ -4,11 +4,12 @@ import { ConfigFileData, useBinaryFilesStore } from '../../../../../stores/Binar
 import { useSnackbar } from 'notistack';
 import ZipWorker from './zipWorker.js?worker';
 import TarWorker from './tarWorker.js?worker';
-import { parseJsonFromFile } from '../../../../../utils/utils';
+import { humanFileSize, parseJsonFromFile } from '../../../../../utils/utils';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
+import { TRANSCRIPT_FILEZ_SIZE_LIMIT } from '../../../../../shared/constants';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
@@ -103,6 +104,15 @@ export const useFileHandler = () => {
 
     setProgress(0);
     const file = acceptedFiles[0];
+
+    if (file.size > TRANSCRIPT_FILEZ_SIZE_LIMIT) {
+      enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'error',
+        message: t('sourceFiles.uploadedFileSizeError', { size: humanFileSize(TRANSCRIPT_FILEZ_SIZE_LIMIT) })
+      });
+      return;
+    }
 
     switch (file.type) {
       case 'application/zip':
