@@ -299,17 +299,21 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], inclu
             return {
               ...exportObj,
               ...(segmentationMetadata?.proteinNames
-                ? Object.fromEntries(
-                    segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
-                  )
+                ? {
+                    protein: Object.fromEntries(
+                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
+                    )
+                  }
                 : {}),
               ...(segmentationMetadata?.geneNames && includeGenes
-                ? Object.fromEntries(
-                    segmentationMetadata.geneNames.map((name, index) => [
-                      name,
-                      index in entry.nonzeroGeneIndices ? entry.nonzeroGeneValues[index] : 0
-                    ])
-                  )
+                ? {
+                    transcript: Object.fromEntries(
+                      segmentationMetadata.geneNames.map((name, index) => [
+                        name,
+                        index in entry.nonzeroGeneIndices ? entry.nonzeroGeneValues[index] : 0
+                      ])
+                    )
+                  }
                 : {})
             };
           }) || [],
