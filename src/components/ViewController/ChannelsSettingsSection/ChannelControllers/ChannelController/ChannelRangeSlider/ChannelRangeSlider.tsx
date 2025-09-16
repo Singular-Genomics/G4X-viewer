@@ -8,7 +8,7 @@ import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
 
 const CHANNEL_MIN = 0;
-const CHANNEL_MAX = 65535;
+const CHANNEL_MAX = 5000;
 const CHANNEL_STEP = 1;
 const DEBOUNCE_TIME_MS = 300;
 
