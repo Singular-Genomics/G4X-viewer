@@ -26,6 +26,7 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
+import { useViewerStore } from '../../stores/ViewerStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -137,6 +138,7 @@ export const useCellSegmentationLayer = () => {
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
   const { filterCells } = useCellFilteringWorker();
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
   const [filteredCells, setFilteredCells] = useState<{
@@ -152,6 +154,13 @@ export const useCellSegmentationLayer = () => {
       });
       return;
     }
+
+    useViewerStore.setState({
+      viewerLoading: {
+        type: 'segmentationFiltration',
+        message: t('viewer.loadingSegmentationProcessing')
+      }
+    });
 
     filterCells(
       cellMasksData,
@@ -172,12 +181,15 @@ export const useCellSegmentationLayer = () => {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'error',
-          message: 'Failed to filter cells. Please try again or contact support.'
+          message: t('segmentationSettings.filteringFailed')
         });
         setFilteredCells({
           unselectedCellsData: cellMasksData,
           outlierCellsData: []
         });
+      })
+      .finally(() => {
+        useViewerStore.setState({ viewerLoading: undefined });
       });
   }, [
     cellMasksData,
@@ -187,7 +199,8 @@ export const useCellSegmentationLayer = () => {
     proteinIndices,
     umapRange,
     filterCells,
-    enqueueSnackbar
+    enqueueSnackbar,
+    t
   ]);
 
   if (!cellMasksData) {

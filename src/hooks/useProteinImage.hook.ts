@@ -10,10 +10,12 @@ import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { COLOR_PALLETE } from '../shared/constants';
 import { ChannelsSettings } from '../stores/ChannelsStore';
+import { useTranslation } from 'react-i18next';
 
 const NUCLEAR_CHANNEL = 'nuclear';
 
 export const useProteinImage = (source: ViewerSourceType | null) => {
+  const { t } = useTranslation();
   const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
 
@@ -23,7 +25,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
 
       // Should we use sth different than setState
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ isViewerLoading: true });
+      useViewerStore.setState({
+        viewerLoading: {
+          type: 'mainImage',
+          message: t('viewer.loadingImage')
+        }
+      });
 
       const { urlOrFile } = source;
 
@@ -67,7 +74,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       if (!source) return null;
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ isViewerLoading: true });
+      useViewerStore.setState({ viewerLoading: { type: 'mainImage', message: t('viewer.imageLoading') } });
       let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
 
@@ -157,7 +164,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
-        isViewerLoading: false,
+        viewerLoading: undefined,
         pixelValues: new Array(newSelections.length).fill('0'),
         globalSelection: newSelections[0],
         channelOptions

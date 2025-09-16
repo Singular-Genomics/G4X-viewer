@@ -3,7 +3,7 @@ import { ViewerStore, ViewerStoreValues, GeneralDetailsType } from './ViewerStor
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
-  isViewerLoading: false,
+  viewerLoading: undefined,
   isOverviewOn: true,
   isLensOn: false,
   useColorMap: false,
