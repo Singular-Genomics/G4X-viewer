@@ -44,7 +44,7 @@ const sx = {
     flexDirection: 'column',
     paddingLeft: '8px',
     marginBottom: '8px',
-    '& label:not(:first-child)': {
+    '& label:not(:first-of-type)': {
       marginTop: '-8px'
     }
   }
