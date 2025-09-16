@@ -5,8 +5,8 @@ import { SingleMask } from '../../../../../../shared/types';
 
 export type CytometryWorkerInput = {
   maskData: SingleMask[];
-  xProteinName: string;
-  yProteinName: string;
+  xProteinIndex: number;
+  yProteinIndex: number;
   binXCount: number;
   binYCount: number;
   axisType: AxisTypes;

@@ -4,7 +4,7 @@ import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 
 import * as protobuf from 'protobufjs';
-import { TranscriptSchema } from './transcript-schema';
+import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 
@@ -85,7 +85,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
 
   constructor(props: TranscriptLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(TranscriptSchema);
+    this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {

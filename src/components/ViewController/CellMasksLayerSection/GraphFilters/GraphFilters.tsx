@@ -13,7 +13,7 @@ export const GraphFilters = () => {
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const { cytometryProteinsNames, umapDataAvailable } = useCellSegmentationLayerStore();
+  const { umapDataAvailable, segmentationMetadata } = useCellSegmentationLayerStore();
   const [selectedGraph, setSelectedGraph] = useState<GraphMode>(undefined);
   const [isWindowVisible, setIsWindowVisible] = useState(false);
 
@@ -41,7 +41,7 @@ export const GraphFilters = () => {
         <ToggleButton
           sx={sx.toggleButton}
           value="flow_cytometry"
-          disabled={!cytometryProteinsNames.length}
+          disabled={!segmentationMetadata?.proteinNames}
         >
           {t('segmentationSettings.graphFilterCytometryLabel')}
         </ToggleButton>

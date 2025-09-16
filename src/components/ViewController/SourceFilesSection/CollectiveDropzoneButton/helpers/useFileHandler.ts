@@ -9,10 +9,11 @@ import * as protobuf from 'protobufjs';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
-import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
 import { getMissingFilesContent } from './helpers';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useTranslation } from 'react-i18next';
+import { CellMasks } from '../../../../../shared/types';
 
 type DataSetConfig = {
   protein_image_src: string;
@@ -88,8 +89,8 @@ export const useFileHandler = () => {
       const reader = new FileReader();
       reader.onload = () => {
         const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-        const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+        const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
+        const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
         const colormapConfig = decodedData.colormap;
         const cellMasks = decodedData.cellMasks;
@@ -109,11 +110,9 @@ export const useFileHandler = () => {
           });
         }
 
-        let listOfProteinNames: string[] = [];
         let areUmapAvailable = false;
 
         if (cellMasks.length) {
-          listOfProteinNames = Object.keys(cellMasks[0].proteins);
           areUmapAvailable = !!cellMasks[0].umapValues;
         }
 
@@ -123,7 +122,7 @@ export const useFileHandler = () => {
             clusterId: entry.clusterId,
             color: entry.color
           })),
-          cytometryProteinsNames: listOfProteinNames,
+          segmentationMetadata: decodedData.metadata,
           umapDataAvailable: areUmapAvailable
         });
         useCytometryGraphStore.getState().resetFilters();

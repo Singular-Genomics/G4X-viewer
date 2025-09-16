@@ -2,7 +2,7 @@ import { PointData, SingleMask } from '../../shared/types';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export interface PolygonImportExportProps {
-  exportPolygonsWithCells: () => void;
+  exportPolygonsWithCells: (includeGenes: boolean) => void;
   exportPolygonsWithTranscripts: () => void;
   polygonFeatures: PolygonFeature[];
   isDetecting?: boolean;
@@ -12,7 +12,7 @@ export type CellsExportData = Record<
   string,
   {
     coordinates: [number, number][];
-    cells: SingleMask[];
+    cells: Omit<SingleMask, 'nonzeroGeneIndices' | 'nonzeroGeneValues' | 'proteinValues'>[];
     polygonId: number;
   }
 >;

@@ -1,4 +1,4 @@
-export const TranscriptSchema = {
+export const TranscriptFileSchema = {
   nested: {
     PointData: {
       fields: {

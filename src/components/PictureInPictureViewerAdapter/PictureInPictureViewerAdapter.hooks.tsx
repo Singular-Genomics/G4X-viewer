@@ -26,6 +26,7 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
+import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -134,9 +135,10 @@ export const useCellSegmentationLayer = () => {
     ])
   );
 
-  const { proteinNames, ranges } = useCytometryGraphStore();
+  const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
   const { filterCells } = useCellFilteringWorker();
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
   const [filteredCells, setFilteredCells] = useState<{
@@ -153,12 +155,19 @@ export const useCellSegmentationLayer = () => {
       return;
     }
 
+    useViewerStore.setState({
+      isViewerLoading: {
+        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
+        message: t('viewer.loadingSegmentationProcessing')
+      }
+    });
+
     filterCells(
       cellMasksData,
       isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinNames.xAxis && proteinNames.yAxis
+      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
         ? {
-            proteins: proteinNames,
+            proteins: proteinIndices,
             range: ranges
           }
         : undefined,
@@ -172,22 +181,26 @@ export const useCellSegmentationLayer = () => {
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'error',
-          message: 'Failed to filter cells. Please try again or contact support.'
+          message: t('segmentationSettings.filteringFailed')
         });
         setFilteredCells({
           unselectedCellsData: cellMasksData,
           outlierCellsData: []
         });
+      })
+      .finally(() => {
+        useViewerStore.setState({ isViewerLoading: undefined });
       });
   }, [
     cellMasksData,
     isCellNameFilterOn,
     cellNameFilters,
     ranges,
-    proteinNames,
+    proteinIndices,
     umapRange,
     filterCells,
-    enqueueSnackbar
+    enqueueSnackbar,
+    t
   ]);
 
   if (!cellMasksData) {
@@ -199,15 +212,9 @@ export const useCellSegmentationLayer = () => {
     visible: !!cellMasksData && isCellLayerOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
-    cellNameFilters: isCellNameFilterOn ? cellNameFilters : 'all',
-    cellCytometryFilter: {
-      proteins: proteinNames,
-      range: ranges
-    },
-    umapFilter: umapRange,
     cellFillOpacity,
-    preFilteredUnselectedCells: filteredCells.unselectedCellsData,
-    preFilteredOutlierCells: filteredCells.outlierCellsData,
+    cellsData: filteredCells.unselectedCellsData,
+    outlierCellsData: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },

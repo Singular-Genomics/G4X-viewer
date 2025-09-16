@@ -21,12 +21,11 @@ import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
-    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
-  );
+  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
   const { t } = useTranslation();
   const { containerRef, containerSize } = useResizableContainer();
@@ -53,14 +52,15 @@ export const PictureInPictureViewerAdapter = () => {
     useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
   );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState] = useViewerStore(
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
       store.colormap,
       store.isLensOn,
       store.isOverviewOn,
       store.lensSelection,
       store.onViewportLoad,
-      store.viewState
+      store.viewState,
+      store.isViewerLoading
     ])
   );
 
@@ -166,16 +166,16 @@ export const PictureInPictureViewerAdapter = () => {
     }
   };
 
-  if (brightfieldImageSource && !isImageLoading) {
+  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE)) {
     deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
   }
 
   if (polygonDrawingLayer) {
-    deckProps.layers = [...deckProps.layers, polygonDrawingLayer] as any;
+    deckProps.layers.push(polygonDrawingLayer as any);
   }
 
   if (polygonTextLayer) {
-    deckProps.layers = [...deckProps.layers, polygonTextLayer] as any;
+    deckProps.layers.push(polygonTextLayer as any);
   }
 
   return (

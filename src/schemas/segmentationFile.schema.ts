@@ -1,4 +1,4 @@
-export const CellMasksSchema = {
+export const SegmentationFileSchema = {
   nested: {
     UmapEntry: {
       fields: {
@@ -16,8 +16,11 @@ export const CellMasksSchema = {
       fields: {
         vertices: {
           rule: 'repeated',
-          type: 'double',
-          id: 1
+          type: 'uint32',
+          id: 1,
+          options: {
+            packed: 'true'
+          }
         },
         color: {
           rule: 'repeated',
@@ -28,15 +31,15 @@ export const CellMasksSchema = {
           }
         },
         area: {
-          type: 'string',
+          type: 'uint32',
           id: 3
         },
         totalCounts: {
-          type: 'string',
+          type: 'uint32',
           id: 4
         },
         totalGenes: {
-          type: 'string',
+          type: 'uint32',
           id: 5
         },
         cellId: {
@@ -47,15 +50,24 @@ export const CellMasksSchema = {
           type: 'string',
           id: 7
         },
-        proteins: {
-          rule: 'map',
-          keyType: 'string',
-          type: 'double',
+        proteinValues: {
+          rule: 'repeated',
+          type: 'uint32',
           id: 8
+        },
+        nonzeroGeneIndices: {
+          rule: 'repeated',
+          type: 'uint32',
+          id: 9
+        },
+        nonzeroGeneValues: {
+          rule: 'repeated',
+          type: 'uint32',
+          id: 10
         },
         umapValues: {
           type: 'UmapEntry',
-          id: 9
+          id: 11
         }
       }
     },
@@ -75,6 +87,20 @@ export const CellMasksSchema = {
         }
       }
     },
+    Metadata: {
+      fields: {
+        proteinNames: {
+          rule: 'repeated',
+          type: 'string',
+          id: 1
+        },
+        geneNames: {
+          rule: 'repeated',
+          type: 'string',
+          id: 2
+        }
+      }
+    },
     CellMasks: {
       fields: {
         cellMasks: {
@@ -87,9 +113,13 @@ export const CellMasksSchema = {
           type: 'ColormapEntry',
           id: 2
         },
+        metadata: {
+          type: 'Metadata',
+          id: 3
+        },
         numberOfCells: {
           type: 'uint32',
-          id: 3
+          id: 4
         }
       }
     }

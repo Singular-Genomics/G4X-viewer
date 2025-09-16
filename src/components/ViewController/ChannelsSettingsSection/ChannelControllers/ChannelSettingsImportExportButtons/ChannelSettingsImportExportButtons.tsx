@@ -1,4 +1,4 @@
-import { Box, Button, Theme, alpha, useTheme } from '@mui/material';
+import { Box, Button, SxProps, Theme, alpha, useTheme } from '@mui/material';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
@@ -275,7 +275,6 @@ export const ChannelSettingsImportExportButtons = () => {
   return (
     <Box sx={sx.buttonsContainer}>
       <Button
-        variant="contained"
         startIcon={<DownloadIcon />}
         onClick={exportChannelSettings}
         sx={sx.exportButton}
@@ -284,7 +283,6 @@ export const ChannelSettingsImportExportButtons = () => {
         {t('general.export')}
       </Button>
       <Button
-        variant="outlined"
         startIcon={<UploadIcon />}
         sx={importButtonStyle}
         fullWidth
@@ -297,7 +295,7 @@ export const ChannelSettingsImportExportButtons = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   buttonsContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -307,23 +305,18 @@ const styles = (theme: Theme) => ({
     padding: '0'
   },
   exportButton: {
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    background: theme.palette.gx.gradients.brand(),
+    color: theme.palette.gx.primary.white,
     padding: '7px 16px',
-    flex: 1,
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.9)
-    }
+    flex: 1
   },
   importButton: {
     borderStyle: 'dashed',
-    borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
+    border: '2px solid',
+    borderColor: theme.palette.gx.accent.greenBlue,
     padding: '7px 16px',
-    flex: 1,
-    '&:hover': {
-      borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
-    }
+    flex: 1
   },
   importButtonActive: {
     borderStyle: 'solid',

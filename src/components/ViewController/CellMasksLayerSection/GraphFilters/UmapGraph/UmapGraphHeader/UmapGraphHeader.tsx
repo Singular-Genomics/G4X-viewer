@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 const MIN_POINT_SIZE = 1;
 const MAX_POINT_SIZE = 10;
-const MIN_SUBSAMPLE_VALUE = 1;
+const MIN_SUBSAMPLE_VALUE = 2;
 const MAX_SUBSAMPLE_VALUE = 20;
 
 export const UmapGraphHeader = () => {

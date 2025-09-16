@@ -1,5 +1,5 @@
 import * as protobuf from 'protobufjs';
-import { TranscriptSchema } from '../../layers/transcript-layer/transcript-schema';
+import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useViewerStore } from '../ViewerStore';
@@ -259,7 +259,7 @@ export const loadTileData = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const data = protobuf.Root.fromJSON(TranscriptSchema)
+        const data = protobuf.Root.fromJSON(TranscriptFileSchema)
           .lookupType('TileData')
           .decode(new Uint8Array(reader.result as ArrayBuffer));
         resolve(data);
@@ -279,8 +279,8 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
-export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
-  const { selectedCells } = useCellSegmentationLayerStore.getState();
+export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
   const exportData: CellsExportData = {};
 
@@ -291,7 +291,32 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[]) => {
 
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells: selectedCells.find((selection) => selection.roiId === polygonId)?.data || [],
+      cells:
+        selectedCells
+          .find((selection) => selection.roiId === polygonId)
+          ?.data.map((entry) => {
+            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
+            return {
+              ...exportObj,
+              ...(segmentationMetadata?.proteinNames
+                ? {
+                    protein: Object.fromEntries(
+                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
+                    )
+                  }
+                : {}),
+              ...(segmentationMetadata?.geneNames && includeGenes
+                ? {
+                    transcript: Object.fromEntries(
+                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
+                        segmentationMetadata.geneNames[geneIndex],
+                        entry.nonzeroGeneValues[index]
+                      ])
+                    )
+                  }
+                : {})
+            };
+          }) || [],
       polygonId: polygonId
     };
   });

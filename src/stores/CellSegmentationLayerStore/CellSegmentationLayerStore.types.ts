@@ -1,10 +1,11 @@
-import { SingleMask } from '../../shared/types';
+import { SegmentationMetadata, SingleMask } from '../../shared/types';
 import { SelectionData } from '../PolygonDrawingStore';
 
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: SingleMask[] | null;
+  segmentationMetadata?: SegmentationMetadata;
   fileName: string;
   isCellLayerOn: boolean;
   isCellFillOn: boolean;
@@ -14,7 +15,6 @@ export type CellSegmentationLayerStoreValues = {
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
   selectedCells: SelectionData<SingleMask>[];
-  cytometryProteinsNames: string[];
   umapDataAvailable: boolean;
 };
 
