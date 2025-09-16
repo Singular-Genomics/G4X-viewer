@@ -221,7 +221,6 @@ function processLogarithmicBinning(
     const index = findBin2D(x, y, xAxis, yAxis);
 
     if (!index) {
-      console.log(x, y, xAxis, yAxis);
       failed.push(cellIdsSampled[i]);
       continue;
     }

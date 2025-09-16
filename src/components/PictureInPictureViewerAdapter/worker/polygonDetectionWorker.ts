@@ -62,8 +62,6 @@ const detectPointsInPolygon = async (
   files: File[],
   layerConfig: LayerConfig
 ) => {
-  const startTime = performance.now();
-
   // Use the highest zoom level from layerConfig where all points are visible without clustering
   const maxZoomLevel = layerConfig.layers;
   // Calculate the tile size for the max zoom level
@@ -99,8 +97,6 @@ const detectPointsInPolygon = async (
     }
   }
 
-  console.log(`📁: ${filesToProcess.length} files selected for processing`);
-
   // Process files in batches to avoid overwhelming the system
   const BATCH_SIZE = 20;
   const batches = [];
@@ -128,12 +124,6 @@ const detectPointsInPolygon = async (
     countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
-  const totalTime = performance.now() - startTime;
-
-  console.log(
-    `✅ [ROI Detection] Found ${pointsInPolygon.length} points across ${Object.keys(countByGeneName).length} genes in ${totalTime.toFixed(0)}ms`
-  );
-
   return {
     pointsInPolygon: pointsInPolygon,
     pointCount: pointsInPolygon.length,
@@ -147,8 +137,6 @@ const detectCellPolygonsInPolygon = async (
   cellMasksData: SingleMask[]
 ) => {
   try {
-    const startTime = performance.now();
-
     const cellPolygonsInDrawnPolygon: SingleMask[] = [];
     for (const cellMask of cellMasksData) {
       if (cellMask.vertices) {
@@ -167,12 +155,6 @@ const detectCellPolygonsInPolygon = async (
       const clusterId = cellPolygon.clusterId || 'unknown';
       countByClusterId[clusterId] = (countByClusterId[clusterId] || 0) + 1;
     }
-
-    const totalTime = performance.now() - startTime;
-
-    console.log(
-      `✅ [Cell Detection] Found ${cellPolygonsInDrawnPolygon.length} cells across ${Object.keys(countByClusterId).length} clusters in ${totalTime.toFixed(0)}ms`
-    );
 
     return {
       cellPolygonsInDrawnPolygon,

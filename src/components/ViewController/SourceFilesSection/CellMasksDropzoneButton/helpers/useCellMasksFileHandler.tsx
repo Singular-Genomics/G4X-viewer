@@ -35,7 +35,6 @@ export const useCellMasksFileHandler = () => {
       return;
     }
 
-    console.log(files[0].size);
     setLoading(true);
     const reader = new FileReader();
     reader.onload = async () => {
