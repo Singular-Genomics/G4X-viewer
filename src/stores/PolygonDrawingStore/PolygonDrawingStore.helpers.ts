@@ -308,9 +308,9 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], inclu
               ...(segmentationMetadata?.geneNames && includeGenes
                 ? {
                     transcript: Object.fromEntries(
-                      segmentationMetadata.geneNames.map((name, index) => [
-                        name,
-                        index in entry.nonzeroGeneIndices ? entry.nonzeroGeneValues[index] : 0
+                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
+                        segmentationMetadata.geneNames[geneIndex],
+                        entry.nonzeroGeneValues[index]
                       ])
                     )
                   }
