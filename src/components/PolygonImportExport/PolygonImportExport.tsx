@@ -8,11 +8,7 @@ import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
 import { PolygonImportExportProps } from './PolygonImportExport.types';
-import {
-  exportPolygonsWithCellsCSV,
-  exportPolygonsWithTranscriptsCSV,
-  exportROIMetadataCSV
-} from './PolygonImportExport.helpers';
+import { exportPolygonsWithCellsCSVAsTar, exportPolygonsWithTranscriptsCSVAsTar } from './PolygonImportExport.helpers';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
@@ -60,14 +56,12 @@ export const PolygonImportExport = ({
   };
 
   const handleCsvExportCells = () => {
-    exportPolygonsWithCellsCSV(polygonFeatures);
-    exportROIMetadataCSV(polygonFeatures);
+    exportPolygonsWithCellsCSVAsTar(polygonFeatures);
     setIsExportModalOpen(false);
   };
 
   const handleCsvExportTranscripts = () => {
-    exportPolygonsWithTranscriptsCSV(polygonFeatures);
-    exportROIMetadataCSV(polygonFeatures);
+    exportPolygonsWithTranscriptsCSVAsTar(polygonFeatures);
     setIsExportModalOpen(false);
   };
 

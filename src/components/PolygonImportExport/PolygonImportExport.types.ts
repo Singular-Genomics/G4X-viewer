@@ -25,3 +25,8 @@ export type TranscriptsExportData = Record<
     polygonId: number;
   }
 >;
+
+export type TarFileEntry = {
+  name: string;
+  content: string;
+};
