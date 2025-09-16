@@ -17,7 +17,7 @@ const DEFAULT_VALUES: CytometryGraphStoreValues = {
   settings: {
     graphMode: 'scattergl',
     pointSize: 2,
-    subsamplingValue: 1,
+    subsamplingValue: 2,
     binCountX: 100,
     binCountY: 100,
     colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
