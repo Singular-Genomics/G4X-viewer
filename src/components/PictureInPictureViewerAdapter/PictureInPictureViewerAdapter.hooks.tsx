@@ -156,7 +156,7 @@ export const useCellSegmentationLayer = () => {
     }
 
     useViewerStore.setState({
-      viewerLoading: {
+      isViewerLoading: {
         type: 'segmentationFiltration',
         message: t('viewer.loadingSegmentationProcessing')
       }
@@ -189,7 +189,7 @@ export const useCellSegmentationLayer = () => {
         });
       })
       .finally(() => {
-        useViewerStore.setState({ viewerLoading: undefined });
+        useViewerStore.setState({ isViewerLoading: undefined });
       });
   }, [
     cellMasksData,

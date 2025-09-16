@@ -19,7 +19,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
       if (!source) return null;
 
       useViewerStore.setState({
-        viewerLoading: {
+        isViewerLoading: {
           type: 'brightfieldImage',
           message: t('viewer.loadingBrightfieldImage')
         }
@@ -61,7 +61,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
         loader: [{ labels: [], shape: [] }]
       });
       useViewerStore.setState({
-        viewerLoading: undefined
+        isViewerLoading: undefined
       });
     }
   }, [source, t]);
@@ -70,7 +70,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
     if (!source || !isLoaderCreated) return;
 
     useViewerStore.setState({
-      viewerLoading: {
+      isViewerLoading: {
         type: 'brightfieldImage',
         message: t('viewer.loadingBrightfieldImage')
       }
@@ -93,7 +93,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
       contrastLimits: newContrastLimits
     });
     useViewerStore.setState({
-      viewerLoading: undefined
+      isViewerLoading: undefined
     });
   }, [loader, source, isLoaderCreated, t]);
 };

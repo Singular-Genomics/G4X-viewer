@@ -19,7 +19,7 @@ export default function G4XViewer() {
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const [source, viewerLoading] = useViewerStore(useShallow((store) => [store.source, store.viewerLoading]));
+  const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
 
   useProteinImage(source);
@@ -30,13 +30,13 @@ export default function G4XViewer() {
       <LogoBanner />
       <Box sx={sx.viewerWrapper}>
         <>
-          {source && !(viewerLoading && viewerLoading.type === 'mainImage') ? (
+          {source && !(isViewerLoading && isViewerLoading.type === 'mainImage') ? (
             <>
               <PictureInPictureViewerAdapter />
               <ImageInfo />
             </>
           ) : (
-            !viewerLoading && (
+            !isViewerLoading && (
               <Typography
                 sx={sx.infoText}
                 variant="h2"
@@ -45,10 +45,12 @@ export default function G4XViewer() {
               </Typography>
             )
           )}
-          {viewerLoading && (
+          {isViewerLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
-              {viewerLoading.message && <Typography sx={sx.loadingText}>{`${viewerLoading.message}...`}</Typography>}
+              {isViewerLoading.message && (
+                <Typography sx={sx.loadingText}>{`${isViewerLoading.message}...`}</Typography>
+              )}
             </Box>
           )}
           <DetailsPopup />

@@ -15,10 +15,10 @@ export const AddChannel = () => {
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const [globalSelection, viewerLoading, setIsChannelLoading, addIsChannelLoading] = useViewerStore(
+  const [globalSelection, isViewerLoading, setIsChannelLoading, addIsChannelLoading] = useViewerStore(
     useShallow((store) => [
       store.globalSelection,
-      store.viewerLoading,
+      store.isViewerLoading,
       store.setIsChannelLoading,
       store.addIsChannelLoading
     ])
@@ -78,7 +78,7 @@ export const AddChannel = () => {
 
   return (
     <Button
-      disabled={selections.length === MAX_CHANNELS || (viewerLoading && viewerLoading.type === 'mainImage')}
+      disabled={selections.length === MAX_CHANNELS || (isViewerLoading && isViewerLoading.type === 'mainImage')}
       onClick={handleChannelAdd}
       fullWidth
       startIcon={<AddIcon />}

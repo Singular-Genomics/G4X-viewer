@@ -5,7 +5,7 @@ export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 
 export type ViewerStoreValues = {
   isChannelLoading: boolean[];
-  viewerLoading?: ViewerLoadingStatus;
+  isViewerLoading?: ViewerLoadingStatus;
   isOverviewOn: boolean;
   isLensOn: boolean;
   useColorMap: boolean;

@@ -51,7 +51,7 @@ export const PictureInPictureViewerAdapter = () => {
     useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
   );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, viewerLoading] = useViewerStore(
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
       store.colormap,
       store.isLensOn,
@@ -59,7 +59,7 @@ export const PictureInPictureViewerAdapter = () => {
       store.lensSelection,
       store.onViewportLoad,
       store.viewState,
-      store.viewerLoading
+      store.isViewerLoading
     ])
   );
 
@@ -165,7 +165,7 @@ export const PictureInPictureViewerAdapter = () => {
     }
   };
 
-  if (brightfieldImageSource && !(viewerLoading && viewerLoading.type === 'brightfieldImage')) {
+  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === 'brightfieldImage')) {
     deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
   }
 

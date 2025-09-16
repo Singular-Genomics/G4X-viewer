@@ -26,7 +26,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       // Should we use sth different than setState
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({
-        viewerLoading: {
+        isViewerLoading: {
           type: 'mainImage',
           message: t('viewer.loadingImage')
         }
@@ -74,7 +74,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       if (!source) return null;
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ viewerLoading: { type: 'mainImage', message: t('viewer.imageLoading') } });
+      useViewerStore.setState({ isViewerLoading: { type: 'mainImage', message: t('viewer.imageLoading') } });
       let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
 
@@ -164,7 +164,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
-        viewerLoading: undefined,
+        isViewerLoading: undefined,
         pixelValues: new Array(newSelections.length).fill('0'),
         globalSelection: newSelections[0],
         channelOptions
