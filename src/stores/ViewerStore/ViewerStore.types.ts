@@ -35,8 +35,16 @@ export type ViewerStoreMethods = {
   setGeneralDetails: (details: GeneralDetailsType) => void;
 };
 
+export const VIEWER_LOADING_TYPES = {
+  MAIN_IMAGE: 'mainImage',
+  BRIGHTFIELD_IMAGE: 'brightfieldImage',
+  SEGMENTATION_PROCESSING: 'segmentationProcessing'
+} as const;
+
+export type ViewerLoadingType = (typeof VIEWER_LOADING_TYPES)[keyof typeof VIEWER_LOADING_TYPES];
+
 export type ViewerLoadingStatus = {
-  type: 'mainImage' | 'brightfieldImage' | 'segmentationFiltration';
+  type: ViewerLoadingType;
   message?: string;
 };
 

@@ -26,7 +26,7 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
-import { useViewerStore } from '../../stores/ViewerStore';
+import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -157,7 +157,7 @@ export const useCellSegmentationLayer = () => {
 
     useViewerStore.setState({
       isViewerLoading: {
-        type: 'segmentationFiltration',
+        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
         message: t('viewer.loadingSegmentationProcessing')
       }
     });

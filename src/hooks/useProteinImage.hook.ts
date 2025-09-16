@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useChannelsStore } from '../stores/ChannelsStore/ChannelsStore';
-import { ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
+import { VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
 import { useMetadata } from './useMetadata.hook';
 import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
 
@@ -27,7 +27,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({
         isViewerLoading: {
-          type: 'mainImage',
+          type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
           message: t('viewer.loadingImage')
         }
       });
@@ -74,7 +74,9 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       if (!source) return null;
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ isViewerLoading: { type: 'mainImage', message: t('viewer.imageLoading') } });
+      useViewerStore.setState({
+        isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.imageLoading') }
+      });
       let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
 

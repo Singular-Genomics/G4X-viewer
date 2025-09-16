@@ -13,6 +13,7 @@ import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
 import { ActiveFiltersPanel } from './ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -30,7 +31,7 @@ export default function G4XViewer() {
       <LogoBanner />
       <Box sx={sx.viewerWrapper}>
         <>
-          {source && !(isViewerLoading && isViewerLoading.type === 'mainImage') ? (
+          {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
             <>
               <PictureInPictureViewerAdapter />
               <ImageInfo />

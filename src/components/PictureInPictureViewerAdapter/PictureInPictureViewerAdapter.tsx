@@ -21,6 +21,7 @@ import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -165,7 +166,7 @@ export const PictureInPictureViewerAdapter = () => {
     }
   };
 
-  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === 'brightfieldImage')) {
+  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE)) {
     deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
   }
 

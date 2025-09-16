@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useViewerStore, ViewerSourceType } from '../stores/ViewerStore';
+import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore';
 import { buildDefaultSelection, createLoader } from '../legacy/utils';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
@@ -20,7 +20,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
 
       useViewerStore.setState({
         isViewerLoading: {
-          type: 'brightfieldImage',
+          type: VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE,
           message: t('viewer.loadingBrightfieldImage')
         }
       });
@@ -71,7 +71,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
 
     useViewerStore.setState({
       isViewerLoading: {
-        type: 'brightfieldImage',
+        type: VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE,
         message: t('viewer.loadingBrightfieldImage')
       }
     });
