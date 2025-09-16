@@ -42,8 +42,10 @@ const sx = {
   optionsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
     paddingLeft: '8px',
-    marginBottom: '8px'
+    marginBottom: '8px',
+    '& label:not(:first-child)': {
+      marginTop: '-8px'
+    }
   }
 };

@@ -29,6 +29,7 @@
     "sectionTitle": "Channel Settings"
   },
   "general": {
+    "apply": "Apply",
     "appTitle": "G4X Viewer",
     "cancel": "Cancel",
     "clear": "Clear",
