@@ -180,7 +180,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
     '&.Mui-disabled': {
-      borderColor: theme.palette.gx.mediumGrey[100]
+      borderColor: theme.palette.gx.mediumGrey[300],
+      color: theme.palette.gx.mediumGrey[300]
     }
   },
   applyButton: {
@@ -189,7 +190,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     color: theme.palette.gx.primary.white,
     fontWeight: 500,
     '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[100]
+      background: theme.palette.gx.mediumGrey[300]
     }
   }
 });
