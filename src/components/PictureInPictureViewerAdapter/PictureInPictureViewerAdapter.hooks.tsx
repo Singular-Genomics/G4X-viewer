@@ -16,6 +16,8 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
+import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
+import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
@@ -134,6 +136,59 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
+  const { filterCells } = useCellFilteringWorker();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [filteredCells, setFilteredCells] = useState<{
+    unselectedCellsData: SingleMask[];
+    outlierCellsData: SingleMask[];
+  }>({ unselectedCellsData: [], outlierCellsData: [] });
+
+  useEffect(() => {
+    if (!cellMasksData) {
+      setFilteredCells({
+        unselectedCellsData: [],
+        outlierCellsData: []
+      });
+      return;
+    }
+
+    filterCells(
+      cellMasksData,
+      isCellNameFilterOn ? cellNameFilters : 'all',
+      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
+        ? {
+            proteins: proteinIndices,
+            range: ranges
+          }
+        : undefined,
+      umapRange
+    )
+      .then((result) => {
+        setFilteredCells(result);
+      })
+      .catch((error) => {
+        console.error('Cell filtering error:', error);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          message: 'Failed to filter cells. Please try again or contact support.'
+        });
+        setFilteredCells({
+          unselectedCellsData: cellMasksData,
+          outlierCellsData: []
+        });
+      });
+  }, [
+    cellMasksData,
+    isCellNameFilterOn,
+    cellNameFilters,
+    ranges,
+    proteinIndices,
+    umapRange,
+    filterCells,
+    enqueueSnackbar
+  ]);
 
   if (!cellMasksData) {
     return undefined;
@@ -141,17 +196,12 @@ export const useCellSegmentationLayer = () => {
 
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
-    masksData: cellMasksData || new Uint8Array(),
     visible: !!cellMasksData && isCellLayerOn,
     showCellFill: isCellFillOn,
     showDiscardedPoints: showFilteredCells,
-    cellNameFilters: isCellNameFilterOn ? cellNameFilters : 'all',
-    cellCytometryFilter: {
-      proteins: proteinIndices,
-      range: ranges
-    },
-    umapFilter: umapRange,
     cellFillOpacity,
+    cellsData: filteredCells.unselectedCellsData,
+    outlierCellsData: filteredCells.outlierCellsData,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
