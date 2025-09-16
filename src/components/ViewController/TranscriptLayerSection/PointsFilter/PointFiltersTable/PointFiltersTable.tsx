@@ -5,7 +5,7 @@ import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 export const PointFiltersTable = () => {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -43,7 +43,7 @@ export const PointFiltersTable = () => {
   };
 
   const haveFiltersChanges =
-    activeFilters.length !== geneNameFilters.length || !_.isEqual(activeFilters.sort(), geneNameFilters.sort());
+    activeFilters.length !== geneNameFilters.length || !isEqual(activeFilters.sort(), geneNameFilters.sort());
 
   return (
     <GxFilterTable<PointFiltersTableRowEntry>

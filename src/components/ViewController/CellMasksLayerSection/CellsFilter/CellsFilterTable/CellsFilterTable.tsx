@@ -4,7 +4,7 @@ import { useCellsFilterTableColumns } from './useCellsFilterTableColumns';
 import { CellsFilterTableRowEntry } from './CellsFilterTable.types';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 export const CellsFilterTable = () => {
   const columns = useCellsFilterTableColumns();
@@ -41,7 +41,7 @@ export const CellsFilterTable = () => {
   };
 
   const haveFiltersChanges =
-    activeFilters.length !== cellNameFilters.length || !_.isEqual(activeFilters.sort(), cellNameFilters.sort());
+    activeFilters.length !== cellNameFilters.length || !isEqual(activeFilters.sort(), cellNameFilters.sort());
 
   return (
     <GxFilterTable<CellsFilterTableRowEntry>
