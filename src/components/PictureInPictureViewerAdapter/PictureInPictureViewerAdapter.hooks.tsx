@@ -61,7 +61,9 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
+    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  );
 
   const [
     isTranscriptLayerOn,
@@ -95,6 +97,7 @@ export const useTranscriptLayer = () => {
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
     files,
     config: layerConfig,
+    colorMapConfig,
     visible: !!files.length && isTranscriptLayerOn,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,

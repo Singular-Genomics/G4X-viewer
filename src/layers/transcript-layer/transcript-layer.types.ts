@@ -1,5 +1,5 @@
 import { PickingInfo } from '@deck.gl/core';
-import { LayerConfig } from '../../stores/BinaryFilesStore';
+import { LayerConfig, type ColorMapEntry } from '../../stores/BinaryFilesStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import { PointData } from '../../shared/types';
 
@@ -25,6 +25,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
   config: LayerConfig;
+  colorMapConfig: ColorMapEntry[];
   geneFilters: GeneNameFilterType | 'all';
   pointSize: number;
   showTilesBoundries: boolean;

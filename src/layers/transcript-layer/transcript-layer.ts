@@ -7,6 +7,7 @@ import * as protobuf from 'protobufjs';
 import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
+import type { PointData } from '../../shared/types';
 
 // ======================== DATA TILE LAYER ==================
 
@@ -122,7 +123,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       if (index || bbox) {
         const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;
 
-        let pointsData = [];
+        let pointsData: PointData[] = [];
         let outlierPointsData = [];
 
         if (this.props.geneFilters === 'all') {
@@ -132,7 +133,15 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
             this.props.geneFilters.includes(data.geneName)
           );
         }
-
+        // Assign color from colorMapConfig
+        const colorMapConfig = this.props.colorMapConfig;
+        pointsData = pointsData.map((point) => {
+          const entry = colorMapConfig.find((e) => e.gene_name === point.geneName);
+          return {
+            ...point,
+            color: entry ? entry.color : [0, 0, 0]
+          };
+        });
         return [
           {
             index,
@@ -186,7 +195,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
-          this.props.pointSize
+          this.props.pointSize,
+          this.props.colorMapConfig
         ]
       },
       renderSubLayers: ({ id, data }) =>
