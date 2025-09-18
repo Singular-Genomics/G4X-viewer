@@ -1,7 +1,7 @@
 import { useCallback, useRef } from 'react';
 import type { CellFilteringWorkerMessage, CellFilteringWorkerResponse } from './cellFilteringWorker.types';
 import { SingleMask } from '../../../shared/types';
-import { HeatmapRanges, ProteinNames } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges, ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { UmapRange } from '../../../stores/UmapGraphStore/UmapGraphStore.types';
 
 export type CellFilteringWorkerHook = {
@@ -9,7 +9,7 @@ export type CellFilteringWorkerHook = {
     cellsData: SingleMask[],
     cellNameFilters?: string[] | 'all',
     cytometryFilter?: {
-      proteins: ProteinNames;
+      proteins: ProteinIndices;
       range?: HeatmapRanges;
     },
     umapFilter?: UmapRange
@@ -36,7 +36,7 @@ export const useCellFilteringWorker = (): CellFilteringWorkerHook => {
       cellsData: SingleMask[],
       cellNameFilters?: string[] | 'all',
       cytometryFilter?: {
-        proteins: ProteinNames;
+        proteins: ProteinIndices;
         range?: HeatmapRanges;
       },
       umapFilter?: UmapRange

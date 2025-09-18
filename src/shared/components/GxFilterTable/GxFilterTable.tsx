@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, Theme, alpha, useTheme } from '@mui/material';
+import { Box, Button, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
 import { GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { DataGrid } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
@@ -28,7 +28,10 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   rows,
   activeFilters,
   onClearFilteres,
-  onSetFilter
+  onSetFilter,
+  onApplyClick,
+  clearDisabled,
+  applyDisabled
 }: GxFilterTableProps<T>) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -73,24 +76,40 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
           hideFooterSelectedRowCount={true}
           sx={sx.filtersTable}
         />
+        <FormControlLabel
+          label={t('general.filterShowActiveOnly')}
+          labelPlacement="end"
+          sx={sx.activeFiltersSwitchWrapper}
+          control={
+            <GxCheckbox
+              onChange={() => setActiveOnly((prev) => !prev)}
+              checked={activeOnly}
+              disableTouchRipple
+            />
+          }
+        />
+        <Box sx={sx.buttonsWrapper}>
+          <Button
+            disabled={clearDisabled}
+            sx={sx.clearButton}
+            onClick={onClearFilteres}
+          >
+            {t('general.clear')}
+          </Button>
+          <Button
+            disabled={applyDisabled}
+            sx={sx.applyButton}
+            onClick={onApplyClick}
+          >
+            {t('general.apply')}
+          </Button>
+        </Box>
       </Box>
-      <FormControlLabel
-        label={t('general.filterShowActiveOnly')}
-        labelPlacement="end"
-        sx={sx.activeFiltersSwitchWrapper}
-        control={
-          <GxCheckbox
-            onChange={() => setActiveOnly((prev) => !prev)}
-            checked={activeOnly}
-            disableTouchRipple
-          />
-        }
-      />
     </>
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   searchToolbar: {
     marginBottom: '8px',
     '& .MuiInputBase-root': {
@@ -105,8 +124,16 @@ const styles = (theme: Theme) => ({
     }
   },
   tableContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'end',
+    alignItems: 'end',
+
     '& .MuiDataGrid-root': {
-      borderWidth: '0px'
+      borderWidth: '0px',
+      width: '100%',
+      maxHeight: '480px',
+      minHeight: '480px'
     },
     '& .MuiDataGrid-virtualScroller': {
       borderRadius: '0px !important'
@@ -139,6 +166,31 @@ const styles = (theme: Theme) => ({
     }
   },
   activeFiltersSwitchWrapper: {
-    float: 'right'
+    marginRight: 0
+  },
+  buttonsWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '8px',
+    width: '100%'
+  },
+  clearButton: {
+    width: '100%',
+    color: theme.palette.gx.accent.greenBlue,
+    border: '2px solid',
+    borderColor: theme.palette.gx.accent.greenBlue,
+    '&.Mui-disabled': {
+      borderColor: theme.palette.gx.mediumGrey[300],
+      color: theme.palette.gx.mediumGrey[300]
+    }
+  },
+  applyButton: {
+    width: '100%',
+    background: theme.palette.gx.gradients.brand(),
+    color: theme.palette.gx.primary.white,
+    fontWeight: 500,
+    '&.Mui-disabled': {
+      background: theme.palette.gx.mediumGrey[300]
+    }
   }
 });

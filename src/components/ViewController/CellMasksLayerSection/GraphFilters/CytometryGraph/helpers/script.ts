@@ -177,13 +177,10 @@ function processLogarithmicBinning(
   graphMode: string,
   postMessage: (data: any) => void
 ) {
-  const adjustedXMin = xMin;
-  const adjustedYMin = yMin;
-
-  const logMinX = Math.log10(adjustedXMin);
-  const logMaxX = Math.log10(xMax);
-  const logMinY = Math.log10(adjustedYMin);
-  const logMaxY = Math.log10(yMax);
+  const logMinX = Math.floor(Math.log10(xMin));
+  const logMaxX = Math.ceil(Math.log10(xMax));
+  const logMinY = Math.floor(Math.log10(yMin));
+  const logMaxY = Math.ceil(Math.log10(yMax));
 
   const logStepX = (logMaxX - logMinX + 1) / binXCount;
   const logStepY = (logMaxY - logMinY + 1) / binYCount;
@@ -207,6 +204,7 @@ function processLogarithmicBinning(
 
   const failed = [];
   const totalPoints = xValuesSampled.length;
+
   for (let i = 0; i < totalPoints; i++) {
     if (i % 1000 === 0) {
       const progressPercentage = 20 + Math.floor((i / totalPoints) * 40);
@@ -303,7 +301,7 @@ function processLogarithmicBinning(
 }
 
 onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
-  const { maskData, xProteinName, yProteinName, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
+  const { maskData, xProteinIndex, yProteinIndex, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
 
   if (!maskData.length) {
     this.postMessage({
@@ -311,7 +309,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
       success: false,
       status: CytometryWorkerStatus.NO_MASK
     });
-  } else if (!xProteinName || !yProteinName) {
+  } else if (xProteinIndex < 0 || yProteinIndex < 0) {
     this.postMessage({
       completed: true,
       success: false,
@@ -326,14 +324,14 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
   }
 
   const sampledLength = Math.ceil(maskData.length / subsamplingStep);
-  const xValuesSampled = new Array(sampledLength);
-  const yValuesSampled = new Array(sampledLength);
+  const xValuesSampled = new Array<number>(sampledLength);
+  const yValuesSampled = new Array<number>(sampledLength);
   const idsSampled = new Array(sampledLength);
 
   let sampleIndex = 0;
   for (let i = 0; i < maskData.length; i += subsamplingStep) {
-    xValuesSampled[sampleIndex] = maskData[i].proteins[xProteinName] + 1;
-    yValuesSampled[sampleIndex] = maskData[i].proteins[yProteinName] + 1;
+    xValuesSampled[sampleIndex] = maskData[i].proteinValues[xProteinIndex] + 1;
+    yValuesSampled[sampleIndex] = maskData[i].proteinValues[yProteinIndex] + 1;
     idsSampled[sampleIndex] = maskData[i].cellId;
     sampleIndex++;
   }

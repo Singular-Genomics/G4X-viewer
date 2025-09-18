@@ -147,7 +147,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.confirmButton}
       >
-        {t('general.confirm')}
+        {t('general.apply')}
       </Button>
     </Box>
   );
@@ -167,10 +167,9 @@ const styles = (theme: Theme) => ({
     paddingInline: '8px'
   },
   clearButton: {
-    fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.accent.greenBlue,
-    border: '1px solid',
+    border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
     background: theme.palette.gx.primary.white,
     '&.Mui-disabled': {
@@ -179,13 +178,11 @@ const styles = (theme: Theme) => ({
     }
   },
   confirmButton: {
-    fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.primary.white,
     background: theme.palette.gx.gradients.brand(),
     '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[300],
-      color: theme.palette.gx.primary.black
+      background: theme.palette.gx.mediumGrey[300]
     }
   }
 });

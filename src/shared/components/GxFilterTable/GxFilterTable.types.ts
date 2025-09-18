@@ -10,4 +10,7 @@ export type GxFilterTableProps<T extends GxFilterTableRowPropBase> = {
   activeFilters: string[];
   onClearFilteres: () => void;
   onSetFilter: (newValue: string[]) => void;
+  onApplyClick: () => void;
+  clearDisabled?: boolean;
+  applyDisabled?: boolean;
 };

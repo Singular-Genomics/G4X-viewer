@@ -110,9 +110,9 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     useCellSegmentationLayerStore.getState().setSelectedCells([]);
     set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false });
   },
-  exportPolygonsWithCells: () => {
+  exportPolygonsWithCells: (includeGenes) => {
     const { polygonFeatures } = get();
-    exportPolygonsWithCells(polygonFeatures);
+    exportPolygonsWithCells(polygonFeatures, includeGenes);
   },
   exportPolygonsWithTranscripts: () => {
     const { polygonFeatures } = get();

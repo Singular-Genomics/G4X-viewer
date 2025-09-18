@@ -1,4 +1,4 @@
-import { Box, IconButton, Theme, alpha, useTheme, Button } from '@mui/material';
+import { Box, IconButton, Theme, alpha, useTheme, Button, FormControlLabel, SxProps } from '@mui/material';
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -13,6 +13,7 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useTranslation } from 'react-i18next';
+import { GxCheckbox } from '../../shared/components/GxCheckbox';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
@@ -24,6 +25,7 @@ export const PolygonImportExport = ({
   const [isImporting, setIsImporting] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [includeGenes, setIncludeGenes] = useState(true);
   const [selectedFileName, setSelectedFileName] = useState<string>('');
   const theme = useTheme();
   const sx = styles(theme);
@@ -46,7 +48,7 @@ export const PolygonImportExport = ({
   };
 
   const handleJsonExportCells = () => {
-    exportPolygonsWithCells();
+    exportPolygonsWithCells(includeGenes);
     setIsExportModalOpen(false);
   };
 
@@ -56,7 +58,7 @@ export const PolygonImportExport = ({
   };
 
   const handleCsvExportCells = () => {
-    exportPolygonsWithCellsCSVAsTar(polygonFeatures);
+    exportPolygonsWithCellsCSVAsTar(polygonFeatures, includeGenes);
     setIsExportModalOpen(false);
   };
 
@@ -152,25 +154,37 @@ export const PolygonImportExport = ({
         <Box sx={sx.modalContent}>
           <Box sx={sx.exportGrid}>
             {/* Segmentation Row */}
-            <Box sx={sx.exportRow}>
-              <Button
-                variant="contained"
-                onClick={handleJsonExportCells}
-                sx={sx.formatButton}
-                fullWidth
-                disabled={!hasSegmentationData}
-              >
-                {`JSON - ${t('general.segmentation')}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleCsvExportCells}
-                sx={sx.formatButton}
-                disabled={!hasSegmentationData}
-                fullWidth
-              >
-                {`CSV - ${t('general.segmentation')}`}
-              </Button>
+            <Box>
+              <Box sx={sx.exportRow}>
+                <Button
+                  variant="contained"
+                  onClick={handleJsonExportCells}
+                  sx={sx.formatButton}
+                  fullWidth
+                  disabled={!hasSegmentationData}
+                >
+                  {`JSON - ${t('general.segmentation')}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleCsvExportCells}
+                  sx={sx.formatButton}
+                  disabled={!hasSegmentationData}
+                  fullWidth
+                >
+                  {`CSV - ${t('general.segmentation')}`}
+                </Button>
+              </Box>
+              <FormControlLabel
+                label={'Include gene expressions'}
+                control={
+                  <GxCheckbox
+                    onChange={() => setIncludeGenes((state) => !state)}
+                    checked={includeGenes}
+                    disableTouchRipple
+                  />
+                }
+              />
             </Box>
 
             {/* Transcripts Row */}
@@ -223,7 +237,7 @@ export const PolygonImportExport = ({
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -253,7 +267,7 @@ const styles = (theme: Theme) => ({
     }
   },
   modalContent: {
-    width: '500px'
+    width: '700px'
   },
   exportGrid: {
     display: 'flex',
@@ -272,6 +286,7 @@ const styles = (theme: Theme) => ({
     marginBottom: '16px'
   },
   formatButton: {
+    height: 'fit-content',
     backgroundColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.primary.white,
     '&:hover': {

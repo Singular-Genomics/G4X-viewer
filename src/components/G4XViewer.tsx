@@ -13,6 +13,7 @@ import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
 import { ActiveFiltersPanel } from './ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -20,27 +21,23 @@ export default function G4XViewer() {
   const { t } = useTranslation();
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
-  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
-    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
-  );
+  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
-
-  const isLoading = isViewerLoading || isImageLoading;
 
   return (
     <Box sx={sx.mainContainer}>
       <LogoBanner />
       <Box sx={sx.viewerWrapper}>
         <>
-          {source && !isViewerLoading ? (
+          {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
             <>
               <PictureInPictureViewerAdapter />
               <ImageInfo />
             </>
           ) : (
-            !isLoading && (
+            !isViewerLoading && (
               <Typography
                 sx={sx.infoText}
                 variant="h2"
@@ -49,10 +46,12 @@ export default function G4XViewer() {
               </Typography>
             )
           )}
-          {isLoading && (
+          {isViewerLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
-              <Typography sx={sx.loadingText}>{`${t('viewer.loadingImage')}...`}</Typography>
+              {isViewerLoading.message && (
+                <Typography sx={sx.loadingText}>{`${isViewerLoading.message}...`}</Typography>
+              )}
             </Box>
           )}
           <DetailsPopup />

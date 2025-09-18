@@ -1,12 +1,13 @@
 import type { CellFilteringWorkerMessage, CellFilteringWorkerResponse } from './cellFilteringWorker.types';
 import { SingleMask } from '../../../shared/types';
 import { partition } from 'lodash';
+import { ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 
 const filterCells = (
   cellsData: SingleMask[],
   cellNameFilters?: string[] | 'all',
   cytometryFilter?: {
-    proteins: { xAxis?: string; yAxis?: string };
+    proteins: ProteinIndices;
     range?: { xStart: number; xEnd: number; yStart: number; yEnd: number };
   },
   umapFilter?: { xStart: number; xEnd: number; yStart: number; yEnd: number }
@@ -25,13 +26,13 @@ const filterCells = (
     }
 
     // Apply cytometry filter
-    if (cytometryFilter?.range && cytometryFilter.proteins.xAxis && cytometryFilter.proteins.yAxis) {
+    if (cytometryFilter?.range && cytometryFilter.proteins.xAxisIndex > 0 && cytometryFilter.proteins.yAxisIndex > 0) {
       filteredCellsData = filteredCellsData.filter(
         (cell) =>
-          cell.proteins[cytometryFilter.proteins.xAxis as string] <= cytometryFilter.range!.xEnd &&
-          cell.proteins[cytometryFilter.proteins.xAxis as string] >= cytometryFilter.range!.xStart &&
-          cell.proteins[cytometryFilter.proteins.yAxis as string] >= cytometryFilter.range!.yEnd &&
-          cell.proteins[cytometryFilter.proteins.yAxis as string] <= cytometryFilter.range!.yStart
+          cell.proteinValues[cytometryFilter.proteins.xAxisIndex] <= cytometryFilter.range!.xEnd &&
+          cell.proteinValues[cytometryFilter.proteins.xAxisIndex] >= cytometryFilter.range!.xStart &&
+          cell.proteinValues[cytometryFilter.proteins.yAxisIndex] >= cytometryFilter.range!.yEnd &&
+          cell.proteinValues[cytometryFilter.proteins.yAxisIndex] <= cytometryFilter.range!.yStart
       );
     }
 

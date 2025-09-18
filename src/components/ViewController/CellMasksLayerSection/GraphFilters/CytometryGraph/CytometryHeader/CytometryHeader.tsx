@@ -19,28 +19,40 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
       return;
     }
 
-    const { proteinNames } = useCytometryGraphStore.getState();
+    const { proteinIndices } = useCytometryGraphStore.getState();
 
-    if (!proteinNames.xAxis || !proteinNames.yAxis) {
+    if (
+      !proteinIndices.xAxisIndex ||
+      !proteinIndices.yAxisIndex ||
+      proteinIndices.xAxisIndex < 0 ||
+      proteinIndices.xAxisIndex > availableProteinNames.length ||
+      proteinIndices.yAxisIndex < 0 ||
+      proteinIndices.yAxisIndex > availableProteinNames.length
+    ) {
       setXAxisProtein(availableProteinNames[0]);
       setYAxisProtein(availableProteinNames[1]);
       useCytometryGraphStore.setState({
-        proteinNames: {
-          xAxis: availableProteinNames[0],
-          yAxis: availableProteinNames[1]
+        proteinIndices: {
+          xAxisIndex: 0,
+          yAxisIndex: 1
         }
       });
     } else {
-      setXAxisProtein(proteinNames.xAxis);
-      setYAxisProtein(proteinNames.yAxis);
+      setXAxisProtein(availableProteinNames[proteinIndices.xAxisIndex]);
+      setYAxisProtein(availableProteinNames[proteinIndices.yAxisIndex]);
     }
   }, [availableProteinNames]);
 
   const handleProteinChange = (proteinName: string, axis: 'y' | 'x') =>
     setTimeout(() => {
-      useCytometryGraphStore
-        .getState()
-        .updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
+      const selectedProteinIndex = availableProteinNames.findIndex((entry) => entry === proteinName);
+      if (selectedProteinIndex !== -1) {
+        useCytometryGraphStore
+          .getState()
+          .updateProteinNames(
+            axis === 'x' ? { xAxisIndex: selectedProteinIndex } : { yAxisIndex: selectedProteinIndex }
+          );
+      }
     }, 10);
 
   return (

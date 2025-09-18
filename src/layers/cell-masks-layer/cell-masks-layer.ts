@@ -2,56 +2,64 @@ import { CompositeLayer } from '@deck.gl/core';
 import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
 import * as protobuf from 'protobufjs';
-import { CellMasksSchema } from './cell-masks-schema';
+import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
 
   constructor(props: CellMasksLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
+    this.protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
   }
 
   renderLayers() {
-    const cellsData = this.props.preFilteredUnselectedCells || [];
-    const outlierCellsData = this.props.preFilteredOutlierCells || [];
-
+    const { outlierCellsData, cellsData } = this.props;
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
-    const outliersPolygonLayer = new PolygonLayer({
-      id: `sub-discarded-cells-layer-${this.props.id}`,
-      data: outlierCellsData,
-      positionFormat: 'XY',
-      stroked: false,
-      filled: this.props.showCellFill,
-      getPolygon: (d) => d.vertices,
-      getLineColor: [238, 238, 238],
-      getFillColor: [238, 238, 238, opacityValue],
-      updateTriggers: {
-        getFillColor: this.props.cellFillOpacity
-      },
-      getLineWidth: 0,
-      visible: this.props.visible && this.props.showDiscardedPoints
-    });
+    const layers = [];
 
-    const cellsPolygonLayer = new PolygonLayer({
-      id: `sub-cells-layer-${this.props.id}`,
-      data: cellsData,
-      positionFormat: 'XY',
-      stroked: false,
-      filled: this.props.showCellFill,
-      getPolygon: (d) => d.vertices,
-      getLineColor: (d) => d.color,
-      getFillColor: (d) => [...d.color, opacityValue] as any,
-      updateTriggers: {
-        getFillColor: this.props.cellFillOpacity
-      },
-      getLineWidth: 0,
-      pickable: true,
-      visible: this.props.visible
-    });
+    if (outlierCellsData && outlierCellsData.length) {
+      layers.push(
+        // Discarded cell segmentatio layer
+        new PolygonLayer({
+          id: `sub-discarded-cells-layer-${this.props.id}`,
+          data: this.props.outlierCellsData,
+          positionFormat: 'XY',
+          stroked: false,
+          filled: this.props.showCellFill,
+          getPolygon: (d) => d.vertices,
+          getLineColor: [238, 238, 238],
+          getFillColor: [238, 238, 238, opacityValue],
+          updateTriggers: {
+            getFillColor: this.props.cellFillOpacity
+          },
+          getLineWidth: 0,
+          visible: this.props.visible && this.props.showDiscardedPoints
+        })
+      );
+    }
 
-    return [outliersPolygonLayer, cellsPolygonLayer];
+    layers.push(
+      // Main cell segmentation layer
+      new PolygonLayer({
+        id: `sub-cells-layer-${this.props.id}`,
+        data: cellsData,
+        positionFormat: 'XY',
+        stroked: false,
+        filled: this.props.showCellFill,
+        getPolygon: (d) => d.vertices,
+        getLineColor: (d) => d.color,
+        getFillColor: (d) => [...d.color, opacityValue] as any,
+        updateTriggers: {
+          getFillColor: this.props.cellFillOpacity
+        },
+        getLineWidth: 0,
+        pickable: true,
+        visible: this.props.visible
+      })
+    );
+
+    return layers;
   }
 }
 

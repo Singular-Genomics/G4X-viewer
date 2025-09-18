@@ -9,12 +9,15 @@ import {
 import { persist } from 'zustand/middleware';
 
 const DEFAULT_VALUES: CytometryGraphStoreValues = {
-  proteinNames: {},
+  proteinIndices: {
+    xAxisIndex: -1,
+    yAxisIndex: -1
+  },
   ranges: undefined,
   settings: {
     graphMode: 'scattergl',
     pointSize: 2,
-    subsamplingValue: 1,
+    subsamplingValue: 2,
     binCountX: 100,
     binCountY: 100,
     colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
@@ -29,9 +32,17 @@ export const useCytometryGraphStore = create<CytometryGraphStore>()(
       ...DEFAULT_VALUES,
       updateSettings: (newSettings) => set((state) => ({ ...state, settings: { ...state.settings, ...newSettings } })),
       updateProteinNames: (newNames) =>
-        set((state) => ({ ...state, proteinNames: { ...state.proteinNames, ...newNames } })),
+        set((state) => ({ ...state, proteinIndices: { ...state.proteinIndices, ...newNames } })),
       updateRanges: (newRanges) => set((state) => ({ ...state, ranges: newRanges })),
-      resetFilters: () => set((state) => ({ ...state, proteinNames: {}, ranges: undefined }))
+      resetFilters: () =>
+        set((state) => ({
+          ...state,
+          proteinIndices: {
+            xAxisIndex: -1,
+            yAxisIndex: -1
+          },
+          ranges: undefined
+        }))
     }),
     {
       name: 'heatmapSettings',

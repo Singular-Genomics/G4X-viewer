@@ -7,7 +7,7 @@ import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { HeatmapRanges, ProteinNames } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges, ProteinIndices } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
@@ -17,17 +17,20 @@ import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 import { SingleMask } from '../../../../../shared/types';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
-export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinNames: ProteinNames) {
-  const { t } = useTranslation();
+export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinIndices: ProteinIndices) {
   const handleDownload = () => {
+    if (proteinIndices.xAxisIndex < 0 || proteinIndices.yAxisIndex < 0) {
+      console.error('Failed to find protein values');
+      return;
+    }
+
     const filteredCells = cellMasksData
       .filter((mask) => failedIds.includes(mask.cellId))
       .map((mask) => ({
         cellId: mask.cellId,
-        proteins: Object.fromEntries(
-          Object.entries(mask.proteins).filter(([key]) => Object.values(proteinNames).includes(key))
-        )
+        proteinValues: [mask.proteinValues[proteinIndices.xAxisIndex], mask.proteinValues[proteinIndices.yAxisIndex]]
       }));
 
     const blob = new Blob([JSON.stringify(filteredCells)], { type: 'application/json' });
@@ -45,7 +48,7 @@ export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMas
 
   return (
     <Box sx={messageSx.customErrorMessage}>
-      <Typography>{`${t('segmentationSettings.cytometryDownloadFailedLabel')}: `}</Typography>
+      <Typography>{`${i18n.t('segmentationSettings.cytometryDownloadFailedLabel')}: `}</Typography>
       <IconButton onClick={handleDownload}>
         <DownloadIcon sx={messageSx.downloadIcon} />
       </IconButton>
@@ -60,8 +63,8 @@ export const CytometryGraph = () => {
   const { t } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
-  const { cellMasksData } = useCellSegmentationLayerStore();
-  const { proteinNames, settings } = useCytometryGraphStore();
+  const { cellMasksData, segmentationMetadata } = useCellSegmentationLayerStore();
+  const { proteinIndices, settings } = useCytometryGraphStore();
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const [heatmapData, setHeatmapData] = useState<GraphData>({ axisType: 'linear', graphMode: 'scattergl' });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -79,8 +82,7 @@ export const CytometryGraph = () => {
         return;
       }
 
-      const listOfProteinNames = Object.keys(cellMasksData[0].proteins);
-      if (listOfProteinNames.length < 2) {
+      if (!segmentationMetadata || segmentationMetadata.proteinNames.length < 2) {
         enqueueSnackbar({
           message: t('segmentationSettings.cytometryGraphMissingChannelsError'),
           variant: 'gxSnackbar',
@@ -91,16 +93,22 @@ export const CytometryGraph = () => {
 
       const { ranges } = useCytometryGraphStore.getState();
 
-      setAvailableProteinNames(listOfProteinNames);
+      setAvailableProteinNames(segmentationMetadata.proteinNames);
 
       if (ranges) {
         setSelectionRange(ranges);
       }
     }
-  }, [cellMasksData, enqueueSnackbar, t]);
+  }, [cellMasksData, enqueueSnackbar, t, segmentationMetadata]);
 
   useEffect(() => {
-    if (!cellMasksData || !proteinNames.xAxis || !proteinNames.yAxis || !settings.binCountX || !settings.binCountY) {
+    if (
+      !cellMasksData ||
+      proteinIndices.xAxisIndex < 0 ||
+      proteinIndices.yAxisIndex < 0 ||
+      !settings.binCountX ||
+      !settings.binCountY
+    ) {
       return;
     }
 
@@ -119,7 +127,7 @@ export const CytometryGraph = () => {
             variant: 'gxSnackbar',
             titleMode: 'error',
             message: t('segmentationSettings.cytometryGraphBinningError', { count: output.metadata.failed.length }),
-            customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinNames),
+            customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinIndices),
             persist: true
           });
         }
@@ -141,8 +149,8 @@ export const CytometryGraph = () => {
     worker.onError((error: any) => console.error(error));
     worker.postMessage({
       maskData: cellMasksData,
-      xProteinName: proteinNames.xAxis,
-      yProteinName: proteinNames.yAxis,
+      xProteinIndex: proteinIndices.xAxisIndex,
+      yProteinIndex: proteinIndices.yAxisIndex,
       binXCount: settings.binCountX,
       binYCount: settings.binCountY,
       axisType: settings.axisType,
@@ -151,15 +159,16 @@ export const CytometryGraph = () => {
     });
   }, [
     cellMasksData,
-    proteinNames,
-    proteinNames.xAxis,
-    proteinNames.yAxis,
+    proteinIndices,
+    proteinIndices.xAxisIndex,
+    proteinIndices.yAxisIndex,
     settings.binCountX,
     settings.binCountY,
     settings.axisType,
     settings.subsamplingValue,
     settings.graphMode,
     enqueueSnackbar,
+    availableProteinNames,
     t
   ]);
 
@@ -198,6 +207,15 @@ export const CytometryGraph = () => {
     }
   };
 
+  const xProteinName =
+    proteinIndices.xAxisIndex >= 0 && proteinIndices.xAxisIndex < availableProteinNames.length
+      ? availableProteinNames[proteinIndices.xAxisIndex]
+      : '';
+  const yProteinName =
+    proteinIndices.yAxisIndex >= 0 && proteinIndices.yAxisIndex < availableProteinNames.length
+      ? availableProteinNames[proteinIndices.yAxisIndex]
+      : '';
+
   const plotData: Data[] = [
     {
       x: heatmapData.data?.x,
@@ -218,7 +236,7 @@ export const CytometryGraph = () => {
               size: settings.pointSize
             },
             text: heatmapData.data?.z ? heatmapData.data.z.map((e) => (e as number).toFixed(3)) : [],
-            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{text}<extra></extra>`
+            hovertemplate: `${xProteinName}: %{x:.2f}<br>${yProteinName}: %{y:.2f}<br>Density: %{text}<extra></extra>`
           }
         : {
             type: 'heatmap',
@@ -229,7 +247,7 @@ export const CytometryGraph = () => {
               settings.colorscale.lowerThreshold
             ),
             reversescale: settings.colorscale.reversed,
-            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{z:.2f}<extra></extra>`,
+            hovertemplate: `${xProteinName}: %{x:.2f}<br>${yProteinName}: %{y:.2f}<br>Density: %{z:.2f}<extra></extra>`,
             showscale: false
           })
     }
@@ -244,7 +262,7 @@ export const CytometryGraph = () => {
     plot_bgcolor: theme.palette.gx.lightGrey[900],
     xaxis: {
       title: {
-        text: proteinNames.xAxis,
+        text: xProteinName,
         font: { size: 14 }
       },
       type: heatmapData.axisType,
@@ -257,7 +275,7 @@ export const CytometryGraph = () => {
     },
     yaxis: {
       title: {
-        text: proteinNames.yAxis,
+        text: yProteinName,
         font: { size: 14 },
         standoff: 10
       },

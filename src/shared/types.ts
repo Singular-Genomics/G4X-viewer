@@ -6,14 +6,14 @@ export type UmapEntry = {
 export type SingleMask = {
   vertices: number[];
   color: number[];
-  area: string;
-  totalCounts: string;
-  totalGenes: string;
+  area: number;
+  totalCounts: number;
+  totalGenes: number;
   cellId: string;
   clusterId: string;
-  proteins: {
-    [key: string]: number;
-  };
+  proteinValues: number[];
+  nonzeroGeneIndices: number[];
+  nonzeroGeneValues: number[];
   umapValues: UmapEntry;
 };
 
@@ -22,10 +22,16 @@ export type ColormapEntry = {
   color: number[];
 };
 
+export type SegmentationMetadata = {
+  proteinNames: string[];
+  geneNames: string[];
+};
+
 export type CellMasks = {
   cellMasks: SingleMask[];
   colormap: ColormapEntry[];
   numberOfCells: number[];
+  metadata: SegmentationMetadata;
 };
 
 export type PointData = {
@@ -48,6 +54,6 @@ export type LevelData = {
   levelColumns: ColumnData[];
 };
 
-export type Metadata = {
+export type TranscriptsMetadata = {
   level: LevelData[];
 };
