@@ -1,0 +1,14 @@
+# this file is used to build the documentation site
+
+[project]
+name = "g4x_viewer"
+version = "0.0.0" # please see package.json for the actual version
+
+[dependency-groups]
+docs = [
+    "mkdocs ~= 1.6",
+    "mkdocs-material ~= 9.6",
+]
+
+[tool.uv]
+default-groups = ["docs"]
