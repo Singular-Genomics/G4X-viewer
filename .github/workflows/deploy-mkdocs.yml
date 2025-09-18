@@ -1,0 +1,45 @@
+# .github/workflows/deploy-mkdocs.yml
+name: Deploy mkdocs on release
+
+on:
+  release:
+    types: [published]        # or [published, prereleased] if you want prereleases too
+  workflow_dispatch:          # keep manual runs if you like
+
+permissions:
+  contents: write
+
+concurrency: docs
+
+jobs:
+  deploy:
+    if: github.repository == 'singular-genomics/G4X-viewer'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Check out the tag associated with the release
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        # with:
+        #   python-version-file: ".python-version"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version-file: "pyproject.toml"
+          enable-cache: false
+
+      - name: Sync dependencies from uv.lock
+        run: uv sync --frozen --group docs
+
+      - name: Deploy to GitHub Pages
+        env:
+          # On release events, ref_name isn't set—use the release payload
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          uv run mkdocs gh-deploy --force --clean --message "docs: $TAG"
