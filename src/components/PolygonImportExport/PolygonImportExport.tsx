@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import MuiTooltip from '@mui/material/Tooltip';
 import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
@@ -28,6 +29,7 @@ export const PolygonImportExport = ({
   const { t } = useTranslation();
   const [isImporting, setIsImporting] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [IsPlotModalOpen, setIsPlotModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [includeGenes, setIncludeGenes] = useState(true);
   const [selectedFileName, setSelectedFileName] = useState<string>('');
@@ -49,6 +51,10 @@ export const PolygonImportExport = ({
 
   const handleExportClick = () => {
     setIsExportModalOpen(true);
+  };
+
+  const handlePlots = () => {
+    setIsPlotModalOpen(true);
   };
 
   const handleJsonExportCells = () => {
@@ -120,6 +126,20 @@ export const PolygonImportExport = ({
 
   return (
     <Box sx={sx.container}>
+      <MuiTooltip
+        title={t('Plots')}
+        placement="left"
+      >
+        <IconButton
+          sx={sx.controlButton}
+          onClick={handlePlots}
+          color="primary"
+          disabled={polygonFeatures.length === 0 || isDetecting}
+        >
+          <PieChartRoundedIcon />
+        </IconButton>
+      </MuiTooltip>
+
       <MuiTooltip
         title={t('viewer.exportPolygons')}
         placement="left"
@@ -236,6 +256,22 @@ export const PolygonImportExport = ({
               disabled={isImporting}
               {...dropzoneProps}
             />
+          </Box>
+        </Box>
+      </GxModal>
+
+      {/* open plots modal */}
+      <GxModal
+        isOpen={IsPlotModalOpen}
+        onClose={() => setIsPlotModalOpen(false)}
+        title={t('Choose the protein')}
+        colorVariant="singular"
+        iconVariant="info"
+        size="small"
+      >
+        <Box sx={sx.modalContent}>
+          <Box sx={sx.dropzoneWrapper}>
+            <Box>table</Box>
           </Box>
         </Box>
       </GxModal>
