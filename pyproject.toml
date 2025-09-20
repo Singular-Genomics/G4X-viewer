@@ -11,4 +11,5 @@ docs = [
 ]
 
 [tool.uv]
+required-version = ">=0.8.8"
 default-groups = ["docs"]
