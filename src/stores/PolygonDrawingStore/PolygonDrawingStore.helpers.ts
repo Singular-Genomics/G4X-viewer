@@ -279,6 +279,51 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
+export const generatePolygonCellsData = (polygonFeatures: PolygonFeature[], includeGenes: boolean): CellsExportData => {
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
+
+  const exportData: CellsExportData = {};
+
+  polygonFeatures.forEach((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const roiName = `ROI_${polygonId}`;
+    const coordinates = feature.geometry.coordinates[0];
+
+    exportData[roiName] = {
+      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
+      cells:
+        selectedCells
+          .find((selection) => selection.roiId === polygonId)
+          ?.data.map((entry) => {
+            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
+            return {
+              ...exportObj,
+              ...(segmentationMetadata?.proteinNames
+                ? {
+                    protein: Object.fromEntries(
+                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
+                    )
+                  }
+                : {}),
+              ...(segmentationMetadata?.geneNames && includeGenes
+                ? {
+                    transcript: Object.fromEntries(
+                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
+                        segmentationMetadata.geneNames[geneIndex],
+                        entry.nonzeroGeneValues[index]
+                      ])
+                    )
+                  }
+                : {})
+            };
+          }) || [],
+      polygonId: polygonId
+    };
+  });
+
+  return exportData;
+};
+
 export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 

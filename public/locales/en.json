@@ -265,5 +265,15 @@
     "segmentationLayer": "Segmentation Layer", 
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
+  },
+  "plots": {
+    "title": "Plot Analysis",
+    "createPlot": "Create Plot",
+    "boxplot": "Boxplot",
+    "noData": "No data available for plotting",
+    "noDataAvailable": "No data available",
+    "noDataForSelectedGene": "No data available for selected gene",
+    "noDataForSelectedGenes": "No data available for selected genes",
+    "popupBlocked": "Popup blocked. Please allow popups to open plots in new tabs."
   }
 }

@@ -1,5 +1,5 @@
-import { Box, IconButton, Theme, alpha, useTheme, Button, FormControlLabel, SxProps } from '@mui/material';
-import { useState, useCallback } from 'react';
+import { Box, IconButton, Theme, alpha, useTheme, Button, FormControlLabel, Typography, SxProps } from '@mui/material';
+import { useState, useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -8,17 +8,20 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
-import { PolygonImportExportProps } from './PolygonImportExport.types';
+import { PolygonImportExportProps, CellsExportData } from './PolygonImportExport.types';
 import {
   exportPolygonsWithCellsCSV,
   exportPolygonsWithTranscriptsCSV,
   exportROIMetadataCSV
 } from './PolygonImportExport.helpers';
+import { generatePolygonCellsData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
+import { PlotSelectionTable } from '../PlotSelectionTable';
+import { createPlotlyBoxplotDataForMultipleGenes } from '../ROIplot/ROIplot.helpers';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
@@ -33,6 +36,11 @@ export const PolygonImportExport = ({
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [includeGenes, setIncludeGenes] = useState(true);
   const [selectedFileName, setSelectedFileName] = useState<string>('');
+
+  // Plots state
+  const [plotsData, setPlotsData] = useState<CellsExportData | null>(null);
+  const [selectedGenes, setSelectedGenes] = useState<string[]>([]);
+
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -41,9 +49,13 @@ export const PolygonImportExport = ({
   // Check if data is available
   const selectedPoints = useTranscriptLayerStore((store) => store.selectedPoints);
   const selectedCells = useCellSegmentationLayerStore((store) => store.selectedCells);
+  const segmentationMetadata = useCellSegmentationLayerStore((store) => store.segmentationMetadata);
 
   const hasTranscriptData = selectedPoints.length > 0;
   const hasSegmentationData = selectedCells.length > 0;
+
+  // Get available genes
+  const availableGenes = useMemo(() => segmentationMetadata?.geneNames || [], [segmentationMetadata]);
 
   const handleImportClick = () => {
     setIsImportModalOpen(true);
@@ -53,8 +65,47 @@ export const PolygonImportExport = ({
     setIsExportModalOpen(true);
   };
 
-  const handlePlots = () => {
+  // button to pop up modal to select genes for create plot
+  const handlePlotClick = () => {
+    // Generate plots data when opening the modal
+    if (polygonFeatures.length > 0) {
+      const data = generatePolygonCellsData(polygonFeatures, true);
+      setPlotsData(data);
+    }
     setIsPlotModalOpen(true);
+  };
+  // button to create plot in new tab
+  const handleCreatePlot = () => {
+    if (selectedGenes.length > 0 && plotsData) {
+      try {
+        // Generate plot data for multiple genes with subplots
+        // Create blob URL and open in new tab
+        const htmlContent = createPlotlyBoxplotDataForMultipleGenes(selectedGenes, plotsData);
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        console.log('Opening new window with URL:', url);
+
+        const newWindow = window.open(url, '_blank');
+        console.log('New window object:', newWindow);
+
+        // Clean up blob URL after a delay
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        if (!newWindow) {
+          console.error('Failed to open new window - popup blocked');
+          enqueueSnackbar(t('plots.popupBlocked'), { variant: 'error' });
+        } else {
+          console.log('New window opened successfully');
+          enqueueSnackbar('Plot opened in new tab', { variant: 'success' });
+        }
+      } catch (error) {
+        console.error('Error creating plot:', error);
+        enqueueSnackbar('Error creating plot', { variant: 'error' });
+      }
+    } else {
+      console.log('Missing requirements:', { selectedGenes, plotsData: !!plotsData });
+      enqueueSnackbar('Please select at least one gene', { variant: 'warning' });
+    }
   };
 
   const handleJsonExportCells = () => {
@@ -132,7 +183,7 @@ export const PolygonImportExport = ({
       >
         <IconButton
           sx={sx.controlButton}
-          onClick={handlePlots}
+          onClick={handlePlotClick}
           color="primary"
           disabled={polygonFeatures.length === 0 || isDetecting}
         >
@@ -260,19 +311,39 @@ export const PolygonImportExport = ({
         </Box>
       </GxModal>
 
-      {/* open plots modal */}
+      {/* Plot gene selection Modal */}
       <GxModal
         isOpen={IsPlotModalOpen}
-        onClose={() => setIsPlotModalOpen(false)}
-        title={t('Choose the protein')}
+        onClose={() => {
+          setIsPlotModalOpen(false);
+          // Reset selections when closing
+          setSelectedGenes([]);
+          setPlotsData(null);
+        }}
+        title={t('plots.title')}
         colorVariant="singular"
         iconVariant="info"
-        size="small"
+        size="default"
       >
-        <Box sx={sx.modalContent}>
-          <Box sx={sx.dropzoneWrapper}>
-            <Box>table</Box>
-          </Box>
+        <Box sx={sx.plotsModalContent}>
+          {plotsData ? (
+            <PlotSelectionTable
+              genes={availableGenes}
+              selectedGenes={selectedGenes}
+              onGeneSelect={setSelectedGenes}
+              onPlotClick={handleCreatePlot}
+              plotDisabled={selectedGenes.length === 0}
+            />
+          ) : (
+            <Box sx={sx.emptyPlotsState}>
+              <Typography
+                variant="h6"
+                color="textSecondary"
+              >
+                {t('plots.noData')}
+              </Typography>
+            </Box>
+          )}
         </Box>
       </GxModal>
     </Box>
@@ -310,6 +381,16 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   modalContent: {
     width: '700px'
+  },
+  plotsModalContent: {
+    width: '600px',
+    height: '500px'
+  },
+  emptyPlotsState: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '400px'
   },
   exportGrid: {
     display: 'flex',
