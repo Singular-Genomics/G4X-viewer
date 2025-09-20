@@ -267,7 +267,7 @@
     "polygonLayer": "ROI Polygons Layer"
   },
   "plots": {
-    "title": "Plot Analysis",
+    "title": "ROI Analysis",
     "createPlot": "Create Plot",
     "boxplot": "Boxplot",
     "noData": "No data available for plotting",

@@ -42,7 +42,9 @@ export const PlotSelectionTable = ({
     () =>
       genes.map((gene, index) => ({
         id: `gene_${index}`,
-        name: gene.label,
+        name: gene.name,
+        type: gene.type,
+        label: gene.label,
         visible: true
       })),
     [genes]
@@ -100,7 +102,14 @@ export const PlotSelectionTable = ({
           // Enable multiple selection
           rowSelectionModel={geneSelectionModel}
           onRowSelectionModelChange={handleGeneSelectionChange}
-          hideFooter
+          // Enable pagination
+          pagination
+          pageSizeOptions={[25, 50, 100]}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 25, page: 0 }
+            }
+          }}
           sx={sx.dataGrid}
           density="compact"
           slots={{

@@ -2,21 +2,17 @@ import type { Layout } from 'plotly.js';
 import type { ROIplotDataPoint } from './ROIplot.types';
 import { ROIData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
-function processROIPlotData(cellsData: ROIData, selectedGene: string): ROIplotDataPoint[] {
-  const geneData: ROIplotDataPoint[] = [];
-  console.table(cellsData);
+function filterROIBySelectedGene(ROIData: ROIData, selectedGene: string): ROIplotDataPoint[] {
+  const plotData: ROIplotDataPoint[] = [];
 
-  Object.entries(cellsData).forEach(([roiName, roiData]) => {
-    const { cells } = roiData;
-
-    // Process gene data
+  ROIData.forEach(({ roiName, cells }) => {
     if (selectedGene && cells.length > 0) {
       const geneValues: number[] = cells
-        .map((cell) => cell.metrics.find((metric) => metric.name === selectedGene)?.value)
+        .map((cell) => cell.metrics.find((metric) => metric.label === selectedGene)?.value)
         .filter((value): value is number => typeof value === 'number' && !isNaN(value));
 
       if (geneValues.length > 0) {
-        geneData.push({
+        plotData.push({
           roiName,
           values: geneValues,
           geneName: selectedGene
@@ -25,18 +21,15 @@ function processROIPlotData(cellsData: ROIData, selectedGene: string): ROIplotDa
     }
   });
 
-  console.log('geneData', geneData);
-  console.table(geneData);
-
-  return geneData;
+  return plotData;
 }
 
-function createPlotlyBoxplotData(dataPoints: ROIplotDataPoint[]) {
+function createBoxplotDataByROI(ROIplotDataPoints: ROIplotDataPoint[]) {
   // Flatten the data for Plotly boxplot format
   const y: number[] = [];
   const x: string[] = [];
 
-  dataPoints.forEach((point) => {
+  ROIplotDataPoints.forEach((point) => {
     point.values.forEach((value) => {
       y.push(value);
       x.push(point.roiName);
@@ -44,82 +37,15 @@ function createPlotlyBoxplotData(dataPoints: ROIplotDataPoint[]) {
   });
 
   return {
-    type: 'box' as const,
+    type: 'box',
     y,
     x,
     xaxis: 'x',
     yaxis: 'y',
-    name: dataPoints[0].geneName,
-    boxpoints: 'outliers' as const
+    name: ROIplotDataPoints[0].geneName,
+    boxpoints: 'outliers'
   };
 }
-
-export const createPlotlyBoxplotDataForMultipleGenes = (selectedGenes: string[], plotsData: ROIData): string => {
-  const allPlotData: ReturnType<typeof createPlotlyBoxplotData>[] = [];
-
-  // Calculate optimal grid layout
-  const numGenes = selectedGenes.length;
-
-  selectedGenes.forEach((gene, index) => {
-    const geneData = processROIPlotData(plotsData, gene);
-    if (geneData && geneData.length > 0) {
-      // boxplotData plotly JS format
-      const boxplotData = createPlotlyBoxplotData(geneData);
-
-      // Assign to specific subplot axes
-      const subplotIndex = index + 1;
-      boxplotData.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
-
-      allPlotData.push(boxplotData);
-    }
-  });
-
-  if (allPlotData.length === 0) {
-    return '';
-  }
-
-  const gridLayout = { rows: numGenes, cols: 1 };
-  console.log('Plot data created for subplots:', { allPlotData, gridLayout });
-  // Create subplot layout
-
-  const layout = createSubplotLayout(gridLayout.rows, gridLayout.cols, selectedGenes);
-
-  // Create standalone HTML page with embedded plot
-  const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Boxplot Analysis: ${selectedGenes.join(', ')}</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-        #plot { width: 100%; height: calc(100vh - 60px); }
-        h1 { margin: 0 0 20px 0; color: #333; }
-    </style>
-</head>
-<body>
-    <h1>Boxplot Analysis: ${selectedGenes.join(', ')}</h1>
-
-    <div id="plot"></div>
-    <script>
-        const plotData = ${JSON.stringify(allPlotData)};
-        const layout = ${JSON.stringify(layout)};
-
-        const config = {
-            displayModeBar: true,
-            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
-            displaylogo: false,
-            responsive: true
-        };
-
-        Plotly.newPlot('plot', plotData, layout, config);
-        window.addEventListener('resize', () => Plotly.Plots.resize('plot'));
-    </script>
-</body>
-</html>`;
-
-  return htmlContent;
-};
 function createSubplotLayout(rows: number, cols: number, genes: string[]): Partial<Layout> {
   const layout: Partial<Layout> = {
     margin: {
@@ -187,3 +113,66 @@ function createSubplotLayout(rows: number, cols: number, genes: string[]): Parti
 
   return layout;
 }
+export const createPlotlyBoxplotDataForMultipleGenes = (selectedGenes: string[], plotsData: ROIData): string => {
+  const allPlotData: ReturnType<typeof createBoxplotDataByROI>[] = [];
+
+  const numGenes = selectedGenes.length;
+
+  selectedGenes.forEach((gene, index) => {
+    const geneData = filterROIBySelectedGene(plotsData, gene);
+    if (geneData && geneData.length > 0) {
+      const boxplotData = createBoxplotDataByROI(geneData);
+
+      // Assign to specific subplot axes
+      const subplotIndex = index + 1;
+      boxplotData.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
+
+      allPlotData.push(boxplotData);
+    }
+  });
+
+  if (allPlotData.length === 0) {
+    return '';
+  }
+
+  const gridLayout = { rows: numGenes, cols: 1 };
+
+  const layout = createSubplotLayout(gridLayout.rows, gridLayout.cols, selectedGenes);
+
+  // Create standalone HTML page with embedded plot
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Boxplot Analysis: ${selectedGenes.join(', ')}</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #plot { width: 100%; height: calc(100vh - 60px); }
+        h1 { margin: 0 0 20px 0; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Boxplot Analysis: ${selectedGenes.join(', ')}</h1>
+
+    <div id="plot"></div>
+    <script>
+        const plotData = ${JSON.stringify(allPlotData)};
+        const layout = ${JSON.stringify(layout)};
+
+        const config = {
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+            displaylogo: false,
+            responsive: true
+        };
+
+        Plotly.newPlot('plot', plotData, layout, config);
+        window.addEventListener('resize', () => Plotly.Plots.resize('plot'));
+        console.log('plotData', plotData);
+    </script>
+</body>
+</html>`;
+
+  return htmlContent;
+};
