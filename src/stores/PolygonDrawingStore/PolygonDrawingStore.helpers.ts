@@ -3,7 +3,15 @@ import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useViewerStore } from '../ViewerStore';
-import { PolygonFeature, Point2D, LineSegment, IntersectionResult, BoundingBox } from './PolygonDrawingStore.types';
+import {
+  PolygonFeature,
+  Point2D,
+  LineSegment,
+  IntersectionResult,
+  BoundingBox,
+  ROIData,
+  cellMetrics
+} from './PolygonDrawingStore.types';
 import { CellsExportData, TranscriptsExportData } from '../../components/PolygonImportExport/PolygonImportExport.types';
 
 // Epsilon for floating point comparisons
@@ -279,49 +287,60 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
-export const generatePolygonCellsData = (polygonFeatures: PolygonFeature[], includeGenes: boolean): CellsExportData => {
+export const generatePolygonCellsData = (
+  polygonFeatures: PolygonFeature[]
+): { ROIData: ROIData; selection_list: { name: string; type: string; label: string }[] } => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
-  const exportData: CellsExportData = {};
+  const ROIData: ROIData = [];
+  const roi_gene_list = new Set<string>();
+  const roi_protein_list = new Set<string>();
 
   polygonFeatures.forEach((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
     const roiName = `ROI_${polygonId}`;
-    const coordinates = feature.geometry.coordinates[0];
+    const cells: { clusterId: string; metrics: cellMetrics[] }[] = [];
 
-    exportData[roiName] = {
-      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells:
-        selectedCells
-          .find((selection) => selection.roiId === polygonId)
-          ?.data.map((entry) => {
-            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
-            return {
-              ...exportObj,
-              ...(segmentationMetadata?.proteinNames
-                ? {
-                    protein: Object.fromEntries(
-                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
-                    )
-                  }
-                : {}),
-              ...(segmentationMetadata?.geneNames && includeGenes
-                ? {
-                    transcript: Object.fromEntries(
-                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
-                        segmentationMetadata.geneNames[geneIndex],
-                        entry.nonzeroGeneValues[index]
-                      ])
-                    )
-                  }
-                : {})
-            };
-          }) || [],
-      polygonId: polygonId
-    };
+    const cells_in_roi = selectedCells.find((selection) => selection.roiId === polygonId);
+
+    if (cells_in_roi && cells_in_roi.data.length > 0) {
+      for (const cell of cells_in_roi.data) {
+        const { clusterId } = cell;
+        const metrics: cellMetrics[] = [];
+        if (segmentationMetadata?.proteinNames) {
+          for (const proteinName of segmentationMetadata.proteinNames) {
+            const index = segmentationMetadata.proteinNames.indexOf(proteinName);
+            metrics.push({ type: 'Protein', value: cell.proteinValues[index], name: proteinName });
+            roi_protein_list.add(proteinName);
+          }
+        }
+        if (segmentationMetadata?.geneNames) {
+          for (const [index, geneIndex] of cell.nonzeroGeneIndices.entries()) {
+            metrics.push({
+              type: 'RNA',
+              value: cell.nonzeroGeneValues[index],
+              name: segmentationMetadata.geneNames[geneIndex]
+            });
+            roi_gene_list.add(segmentationMetadata.geneNames[geneIndex]);
+          }
+        }
+        cells.push({ clusterId, metrics });
+      }
+    }
+    ROIData.push({
+      roiName,
+      cells
+    });
+  });
+  const selection_list: { name: string; type: string; label: string }[] = [];
+  roi_gene_list.forEach((gene) => {
+    selection_list.push({ name: gene, type: 'RNA', label: gene + '-RNA' });
+  });
+  roi_protein_list.forEach((protein) => {
+    selection_list.push({ name: protein, type: 'Protein', label: protein + '-Protein' });
   });
 
-  return exportData;
+  return { ROIData, selection_list };
 };
 
 export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {

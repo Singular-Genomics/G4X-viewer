@@ -6,6 +6,16 @@ export type PolygonFeature = FeatureOf<Polygon>;
 
 export type Point2D = [number, number];
 
+export type cellMetrics = {
+  type: string; // 'protein' | 'RNA'
+  value: number; // value of the metric
+  name: string; // name of protein or RNA
+};
+export type ROIData = {
+  roiName: string;
+  cells: { clusterId: string; metrics: cellMetrics[] }[];
+}[];
+
 export type LineSegment = {
   start: Point2D;
   end: Point2D;

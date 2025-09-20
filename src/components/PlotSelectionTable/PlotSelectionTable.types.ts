@@ -5,7 +5,7 @@ export interface PlotSelectionTableRowEntry {
 }
 
 export interface PlotSelectionTableProps {
-  genes: string[];
+  genes: { name: string; type: string; label: string }[];
   selectedGenes: string[];
   onGeneSelect: (genes: string[]) => void;
   onPlotClick: () => void;

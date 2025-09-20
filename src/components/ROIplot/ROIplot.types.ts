@@ -1,9 +1,5 @@
-export interface ROIplotDataPoint {
+export type ROIplotDataPoint = {
   roiName: string;
+  geneName: string;
   values: number[];
-  polygonId: number;
-}
-
-export interface ProcessedROIplotData {
-  geneData: ROIplotDataPoint[];
-}
+};

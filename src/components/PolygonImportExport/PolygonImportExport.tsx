@@ -1,5 +1,5 @@
 import { Box, IconButton, Theme, alpha, useTheme, Button, FormControlLabel, Typography, SxProps } from '@mui/material';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
@@ -8,7 +8,7 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
-import { PolygonImportExportProps, CellsExportData } from './PolygonImportExport.types';
+import { PolygonImportExportProps } from './PolygonImportExport.types';
 import {
   exportPolygonsWithCellsCSV,
   exportPolygonsWithTranscriptsCSV,
@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { PlotSelectionTable } from '../PlotSelectionTable';
 import { createPlotlyBoxplotDataForMultipleGenes } from '../ROIplot/ROIplot.helpers';
+import { ROIData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export const PolygonImportExport = ({
   exportPolygonsWithCells,
@@ -38,8 +39,9 @@ export const PolygonImportExport = ({
   const [selectedFileName, setSelectedFileName] = useState<string>('');
 
   // Plots state
-  const [plotsData, setPlotsData] = useState<CellsExportData | null>(null);
+  const [plotsData, setPlotsData] = useState<ROIData | null>(null);
   const [selectedGenes, setSelectedGenes] = useState<string[]>([]);
+  const availableGenes = useRef<{ name: string; type: string; label: string }[]>([]);
 
   const theme = useTheme();
   const sx = styles(theme);
@@ -49,13 +51,11 @@ export const PolygonImportExport = ({
   // Check if data is available
   const selectedPoints = useTranscriptLayerStore((store) => store.selectedPoints);
   const selectedCells = useCellSegmentationLayerStore((store) => store.selectedCells);
-  const segmentationMetadata = useCellSegmentationLayerStore((store) => store.segmentationMetadata);
 
   const hasTranscriptData = selectedPoints.length > 0;
   const hasSegmentationData = selectedCells.length > 0;
 
   // Get available genes
-  const availableGenes = useMemo(() => segmentationMetadata?.geneNames || [], [segmentationMetadata]);
 
   const handleImportClick = () => {
     setIsImportModalOpen(true);
@@ -69,8 +69,9 @@ export const PolygonImportExport = ({
   const handlePlotClick = () => {
     // Generate plots data when opening the modal
     if (polygonFeatures.length > 0) {
-      const data = generatePolygonCellsData(polygonFeatures, true);
-      setPlotsData(data);
+      const { ROIData, selection_list } = generatePolygonCellsData(polygonFeatures);
+      setPlotsData(ROIData);
+      availableGenes.current = selection_list;
     }
     setIsPlotModalOpen(true);
   };
@@ -328,7 +329,7 @@ export const PolygonImportExport = ({
         <Box sx={sx.plotsModalContent}>
           {plotsData ? (
             <PlotSelectionTable
-              genes={availableGenes}
+              genes={availableGenes.current}
               selectedGenes={selectedGenes}
               onGeneSelect={setSelectedGenes}
               onPlotClick={handleCreatePlot}

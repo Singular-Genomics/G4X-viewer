@@ -24,7 +24,7 @@ export const PlotSelectionTable = ({
     () =>
       genes.map((gene, index) => ({
         id: `gene_${index}`,
-        name: gene,
+        name: gene.label,
         visible: true
       })),
     [genes]
@@ -34,7 +34,7 @@ export const PlotSelectionTable = ({
   useEffect(() => {
     const selectionModel = selectedGenes
       .map((gene) => {
-        const geneIndex = genes.indexOf(gene);
+        const geneIndex = genes.map((g) => g.name).indexOf(gene);
         return geneIndex >= 0 ? `gene_${geneIndex}` : null;
       })
       .filter(Boolean) as string[];
@@ -48,7 +48,7 @@ export const PlotSelectionTable = ({
     const selectedGeneNames = newSelectionModel
       .map((selectedId) => {
         const geneIndex = parseInt((selectedId as string).replace('gene_', ''));
-        return genes[geneIndex];
+        return genes[geneIndex].label;
       })
       .filter(Boolean);
 
