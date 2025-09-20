@@ -310,7 +310,12 @@ export const generatePolygonCellsData = (
         if (segmentationMetadata?.proteinNames) {
           for (const proteinName of segmentationMetadata.proteinNames) {
             const index = segmentationMetadata.proteinNames.indexOf(proteinName);
-            metrics.push({ type: 'Protein', value: cell.proteinValues[index], name: proteinName });
+            metrics.push({
+              type: 'Protein',
+              value: cell.proteinValues[index],
+              name: proteinName,
+              label: proteinName + '-Protein'
+            });
             roi_protein_list.add(proteinName);
           }
         }
@@ -319,7 +324,8 @@ export const generatePolygonCellsData = (
             metrics.push({
               type: 'RNA',
               value: cell.nonzeroGeneValues[index],
-              name: segmentationMetadata.geneNames[geneIndex]
+              name: segmentationMetadata.geneNames[geneIndex],
+              label: segmentationMetadata.geneNames[geneIndex] + '-RNA'
             });
             roi_gene_list.add(segmentationMetadata.geneNames[geneIndex]);
           }

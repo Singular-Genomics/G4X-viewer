@@ -10,6 +10,7 @@ export type cellMetrics = {
   type: string; // 'protein' | 'RNA'
   value: number; // value of the metric
   name: string; // name of protein or RNA
+  label: string;
 };
 export type ROIData = {
   roiName: string;

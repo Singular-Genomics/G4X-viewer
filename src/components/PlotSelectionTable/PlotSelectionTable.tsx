@@ -1,9 +1,27 @@
 import { Box, Typography, Theme, useTheme, Button } from '@mui/material';
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel, GridToolbarQuickFilter } from '@mui/x-data-grid';
 import { PlotSelectionTableProps, PlotSelectionTableRowEntry } from './PlotSelectionTable.types';
 import { usePlotSelectionTableColumns } from './usePlotSelectionTableColumns';
+import { GxCheckbox } from '../../shared/components/GxCheckbox/GxCheckbox';
+
+const GxFiltersSearch = () => {
+  const theme = useTheme();
+  const sx = styles(theme);
+
+  return (
+    <GridToolbarQuickFilter
+      quickFilterParser={(searchInput: string) =>
+        searchInput
+          .split(',')
+          .map((value) => value.trim())
+          .filter((value) => value !== '')
+      }
+      sx={sx.searchToolbar}
+    />
+  );
+};
 
 export const PlotSelectionTable = ({
   genes,
@@ -34,7 +52,7 @@ export const PlotSelectionTable = ({
   useEffect(() => {
     const selectionModel = selectedGenes
       .map((gene) => {
-        const geneIndex = genes.map((g) => g.name).indexOf(gene);
+        const geneIndex = genes.map((g) => g.label).indexOf(gene);
         return geneIndex >= 0 ? `gene_${geneIndex}` : null;
       })
       .filter(Boolean) as string[];
@@ -62,7 +80,7 @@ export const PlotSelectionTable = ({
           variant="h6"
           sx={sx.sectionTitle}
         >
-          {t('general.genes')} ({genes.length}) - Selected: {selectedGenes.length}
+          {'Available '} ({genes.length}) - Selected: {selectedGenes.length}
         </Typography>
         <Button
           variant="contained"
@@ -85,6 +103,15 @@ export const PlotSelectionTable = ({
           hideFooter
           sx={sx.dataGrid}
           density="compact"
+          slots={{
+            baseCheckbox: GxCheckbox,
+            toolbar: GxFiltersSearch
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
+            }
+          }}
         />
       </Box>
     </Box>
@@ -92,6 +119,19 @@ export const PlotSelectionTable = ({
 };
 
 const styles = (theme: Theme) => ({
+  searchToolbar: {
+    marginBottom: '8px',
+    '& .MuiInputBase-root': {
+      backgroundColor: theme.palette.gx.primary.white,
+      padding: '8px',
+      '&:hover:not(.Mui-disabled, .Mui-error):before': {
+        borderColor: theme.palette.gx.mediumGrey[300]
+      },
+      '&:after': {
+        borderColor: theme.palette.gx.accent.greenBlue
+      }
+    }
+  },
   container: {
     display: 'flex',
     flexDirection: 'column',
