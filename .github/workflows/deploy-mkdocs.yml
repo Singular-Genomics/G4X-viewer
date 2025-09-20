@@ -16,7 +16,7 @@ permissions:
 concurrency: docs        # auto-cancel superseded runs
 
 jobs:
-  deploy:
+  Initialize-Docs-Deployment:
     runs-on: ubuntu-latest
 
     steps:
