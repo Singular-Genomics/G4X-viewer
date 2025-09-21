@@ -27,6 +27,55 @@ function groupDataByROI(ROIData: ROIData, selectedGene: string) {
 
   return boxplotData;
 }
+function createPieChartDataForROIs(ROIData: ROIData) {
+  const pieData: any[] = [];
+  const clusterColors = [
+    '#1f77b4',
+    '#ff7f0e',
+    '#2ca02c',
+    '#d62728',
+    '#9467bd',
+    '#8c564b',
+    '#e377c2',
+    '#7f7f7f',
+    '#bcbd22',
+    '#17becf'
+  ];
+
+  ROIData.forEach((roi, roiIndex) => {
+    // Count cells per cluster in this ROI
+    const clusterCounts = new Map<string, number>();
+
+    roi.cells.forEach((cell) => {
+      const clusterId = cell.clusterId;
+      clusterCounts.set(clusterId, (clusterCounts.get(clusterId) || 0) + 1);
+    });
+
+    // Create pie chart data for this ROI
+    const labels = Array.from(clusterCounts.keys()).map((id) => `Cluster ${id}`);
+    const values = Array.from(clusterCounts.values());
+    const colors = Array.from(clusterCounts.keys()).map((_, index) => clusterColors[index % clusterColors.length]);
+
+    if (values.length > 0) {
+      pieData.push({
+        type: 'pie',
+        labels: labels,
+        values: values,
+        name: roi.roiName,
+        marker: { colors: colors },
+        domain: {
+          x: [roiIndex / ROIData.length, (roiIndex + 1) / ROIData.length],
+          y: [0, 1]
+        },
+        showlegend: roiIndex === 0, // Only show legend for first pie
+        legendgroup: 'clusters'
+      });
+    }
+  });
+
+  return pieData;
+}
+
 function groupDataByCluster(ROIData: ROIData, selectedGene: string) {
   // Get all unique cluster IDs and ROI names first
   const allClusterIds = new Set<string>();
@@ -185,8 +234,10 @@ function createSubplotLayout(
 
 // }
 export function creatPlots(selectedGenes: string[], plotsData: ROIData): string {
-  // Generate individual gene plot data with subplot assignments
+  // Generate pie chart data for cluster distribution across ROIs
+  const pieChartData = createPieChartDataForROIs(plotsData);
 
+  // Generate individual gene plot data with subplot assignments
   const boxPlotData: ReturnType<typeof groupDataByROI>[] = [];
   selectedGenes.forEach((gene, index) => {
     const boxplotData = groupDataByROI(plotsData, gene);
@@ -247,6 +298,14 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
             ROI Boxplot Analysis: ${selectedGenes.join(', ')}
         </h1>
 
+        <!-- Pie Chart Section -->
+        <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">
+                Cluster Distribution Across ROI Regions
+            </h2>
+            <div id="pie-chart" class="w-full" style="height: 400px;"></div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Left Column: Individual Gene Plots -->
             <div class="bg-white rounded-lg shadow-lg p-4">
@@ -261,6 +320,7 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
     </div>
 
     <script>
+        const pieChartData = ${JSON.stringify(pieChartData)};
         const individualPlotData = ${JSON.stringify(boxPlotData)};
         const clusterPlotData = ${JSON.stringify(clusterPlotData)};
         const individualLayout = ${JSON.stringify(individualLayout)};
@@ -272,6 +332,41 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
             displaylogo: false,
             responsive: true
         };
+
+        // Pie chart layout
+        const pieLayout = {
+            title: '',
+            showlegend: true,
+            legend: {
+                orientation: 'v',
+                x: 1.02,
+                xanchor: 'left',
+                y: 0.5,
+                yanchor: 'middle'
+            },
+            margin: { t: 80, b: 50, l: 50, r: 150 },
+            annotations: []
+        };
+
+        // Add ROI titles as annotations (one per pie chart)
+        pieChartData.forEach((pie, index) => {
+            pieLayout.annotations.push({
+                text: '<b>' + pie.name + '</b>',
+                x: (index + 0.5) / pieChartData.length,
+                y: 1.05,
+                xref: 'paper',
+                yref: 'paper',
+                xanchor: 'center',
+                yanchor: 'bottom',
+                showarrow: false,
+                font: { size: 16, color: '#333' }
+            });
+        });
+
+        // Create pie chart
+        if (pieChartData.length > 0) {
+            Plotly.newPlot('pie-chart', pieChartData, pieLayout, config);
+        }
 
         // Create individual gene plot
         if (individualPlotData.length > 0) {
@@ -285,6 +380,9 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
 
         // Handle window resize
         window.addEventListener('resize', () => {
+            if (pieChartData.length > 0) {
+                Plotly.Plots.resize('pie-chart');
+            }
             if (individualPlotData.length > 0) {
                 Plotly.Plots.resize('individual-plot');
             }
@@ -293,6 +391,7 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
             }
         });
 
+        console.log('Pie chart data:', pieChartData);
         console.log('Individual plot data:', individualPlotData);
         console.log('Cluster plot data:', clusterPlotData);
     </script>
