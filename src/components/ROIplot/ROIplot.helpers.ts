@@ -1,53 +1,110 @@
 import type { Layout } from 'plotly.js';
-import type { ROIplotDataPoint } from './ROIplot.types';
 import { ROIData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
-function filterROIBySelectedGene(ROIData: ROIData, selectedGene: string): ROIplotDataPoint[] {
-  const plotData: ROIplotDataPoint[] = [];
+function groupDataByROI(ROIData: ROIData, selectedGene: string) {
+  // Flatten the data for Plotly boxplot format
+  //single gene across all RIO
+  // x is ROI name
+  const boxplotData = {
+    name: selectedGene,
+    type: 'box',
+    y: [] as number[],
+    x: [] as string[],
+    xaxis: 'x',
+    yaxis: 'y',
+    boxpoints: 'outliers'
+  };
 
-  ROIData.forEach(({ roiName, cells }) => {
-    if (selectedGene && cells.length > 0) {
-      const geneValues: number[] = cells
-        .map((cell) => cell.metrics.find((metric) => metric.label === selectedGene)?.value)
-        .filter((value): value is number => typeof value === 'number' && !isNaN(value));
-
-      if (geneValues.length > 0) {
-        plotData.push({
-          roiName,
-          values: geneValues,
-          geneName: selectedGene
-        });
+  for (const ROI of ROIData) {
+    for (const cell of ROI.cells) {
+      const geneMetric = cell.metrics.find((metric) => metric.label === selectedGene);
+      if (geneMetric && typeof geneMetric.value === 'number' && !isNaN(geneMetric.value)) {
+        boxplotData.y.push(geneMetric.value);
+        boxplotData.x.push(ROI.roiName);
       }
     }
-  });
+  }
 
-  return plotData;
+  return boxplotData;
 }
+function groupDataByCluster(ROIData: ROIData, selectedGene: string) {
+  // Get all unique cluster IDs and ROI names first
+  const allClusterIds = new Set<string>();
+  const allROINames = new Set<string>();
 
-function createBoxplotDataByROI(ROIplotDataPoints: ROIplotDataPoint[]) {
-  // Flatten the data for Plotly boxplot format
-  const y: number[] = [];
-  const x: string[] = [];
-
-  ROIplotDataPoints.forEach((point) => {
-    point.values.forEach((value) => {
-      y.push(value);
-      x.push(point.roiName);
+  ROIData.forEach(({ roiName, cells }) => {
+    allROINames.add(roiName);
+    cells.forEach((cell) => {
+      if (cell.metrics.some((metric) => metric.label === selectedGene)) {
+        allClusterIds.add(cell.clusterId);
+      }
     });
   });
 
-  return {
-    type: 'box',
-    y,
-    x,
-    xaxis: 'x',
-    yaxis: 'y',
-    name: ROIplotDataPoints[0].geneName,
-    boxpoints: 'outliers'
-  };
+  const clusterColors = [
+    '#1f77b4',
+    '#ff7f0e',
+    '#2ca02c',
+    '#d62728',
+    '#9467bd',
+    '#8c564b',
+    '#e377c2',
+    '#7f7f7f',
+    '#bcbd22',
+    '#17becf'
+  ];
+  const clusterTraces: any[] = [];
+
+  // Create a trace for each cluster
+  Array.from(allClusterIds).forEach((clusterId, clusterIndex) => {
+    const trace = {
+      name: `Cluster ${clusterId}`,
+      type: 'box',
+      y: [] as number[],
+      x: [] as string[],
+      xaxis: 'x',
+      yaxis: 'y',
+      boxpoints: 'outliers',
+      marker: { color: clusterColors[clusterIndex % clusterColors.length] },
+      legendgroup: `cluster-${clusterId}`,
+      showlegend: true
+    };
+
+    // Collect data for this cluster across all ROIs
+    ROIData.forEach(({ roiName, cells }) => {
+      cells.forEach((cell) => {
+        if (cell.clusterId === clusterId) {
+          const geneMetric = cell.metrics.find((metric) => metric.label === selectedGene);
+          if (geneMetric && typeof geneMetric.value === 'number' && !isNaN(geneMetric.value)) {
+            trace.y.push(geneMetric.value);
+            trace.x.push(roiName);
+          }
+        }
+      });
+    });
+
+    // Only add trace if it has data
+    if (trace.y.length > 0) {
+      clusterTraces.push(trace);
+    }
+  });
+
+  return clusterTraces;
 }
-function createSubplotLayout(rows: number, cols: number, genes: string[]): Partial<Layout> {
+
+function createSubplotLayout(
+  rows: number,
+  cols: number,
+  genes: string[],
+  title: string,
+  boxmode: 'group' | 'overlay' = 'overlay'
+): Partial<Layout> {
   const layout: Partial<Layout> = {
+    grid: {
+      rows: rows,
+      columns: cols,
+      pattern: 'independent'
+    },
     margin: {
       l: Math.max(60, cols > 2 ? 40 : 60),
       r: 50,
@@ -57,10 +114,16 @@ function createSubplotLayout(rows: number, cols: number, genes: string[]): Parti
     plot_bgcolor: 'white',
     paper_bgcolor: 'white',
     autosize: true,
-    showlegend: false
+    showlegend: true,
+    title: {
+      text: title,
+      font: { size: 16, color: '#333' }
+    },
+    boxmode: boxmode,
+    annotations: []
   };
 
-  // Calculate subplot positioning with better spacing
+  // Calculate subplot positioning
   const totalHorizontalSpacing = cols > 1 ? 0.15 : 0;
   const totalVerticalSpacing = rows > 1 ? 0.15 : 0;
   const horizontalSpacing = cols > 1 ? totalHorizontalSpacing / (cols - 1) : 0;
@@ -72,6 +135,7 @@ function createSubplotLayout(rows: number, cols: number, genes: string[]): Parti
     const row = Math.floor(index / cols);
     const col = index % cols;
     const subplotIndex = index + 1;
+    const isBottomRow = row === rows - 1;
 
     // Calculate domain positions
     const xStart = col * (subplotWidth + horizontalSpacing);
@@ -79,27 +143,30 @@ function createSubplotLayout(rows: number, cols: number, genes: string[]): Parti
     const yStart = 1 - (row + 1) * (subplotHeight + verticalSpacing);
     const yEnd = yStart + subplotHeight;
 
-    // Define axes
-    const xaxisKey = 'xaxis' + (subplotIndex === 1 ? '' : subplotIndex);
-    const yaxisKey = 'yaxis' + (subplotIndex === 1 ? '' : subplotIndex);
+    // Generate axis keys
+    const xaxisKey = subplotIndex === 1 ? 'xaxis' : `xaxis${subplotIndex}`;
+    const yaxisKey = subplotIndex === 1 ? 'yaxis' : `yaxis${subplotIndex}`;
+    const xanchor = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
+    const yanchor = subplotIndex === 1 ? 'x' : `x${subplotIndex}`;
 
+    // X-axis configuration - only show title on bottom row
     (layout as any)[xaxisKey] = {
       domain: [xStart, xEnd],
-      anchor: 'y' + (subplotIndex === 1 ? '' : subplotIndex),
-      title: 'ROI',
-      tickangle: -45
+      anchor: xanchor,
+      tickangle: -45,
+      ...(isBottomRow && { title: 'ROI' })
     };
 
+    // Y-axis configuration
     (layout as any)[yaxisKey] = {
       domain: [yStart, yEnd],
-      anchor: 'x' + (subplotIndex === 1 ? '' : subplotIndex),
+      anchor: yanchor,
       title: 'Expression'
     };
 
-    // Add subplot title as annotation
-    layout.annotations = layout.annotations || [];
-    layout.annotations.push({
-      text: '<b>' + gene + '</b>',
+    // Add subplot title annotation
+    layout.annotations!.push({
+      text: `<b>${gene}</b>`,
       x: (xStart + xEnd) / 2,
       y: yEnd + 0.02,
       xref: 'paper',
@@ -113,52 +180,92 @@ function createSubplotLayout(rows: number, cols: number, genes: string[]): Parti
 
   return layout;
 }
-export const createPlotlyBoxplotDataForMultipleGenes = (selectedGenes: string[], plotsData: ROIData): string => {
-  const allPlotData: ReturnType<typeof createBoxplotDataByROI>[] = [];
 
-  const numGenes = selectedGenes.length;
+// function filterROIBygenes(Data: ROIData, selectedGenes: string[]) {
+//   for (const ROI of Data) {
+//     for ( const cell of ROI.cells) {
+//       let metrics = cell.metrics;
+//       cell.metrics = metrics.filter((metric) => selectedGenes.includes(metric.label));
+//   }
 
+// }
+export function creatPlots(selectedGenes: string[], plotsData: ROIData): string {
+  // Generate individual gene plot data with subplot assignments
+
+  const boxPlotData: ReturnType<typeof groupDataByROI>[] = [];
   selectedGenes.forEach((gene, index) => {
-    const geneData = filterROIBySelectedGene(plotsData, gene);
-    if (geneData && geneData.length > 0) {
-      const boxplotData = createBoxplotDataByROI(geneData);
+    const boxplotData = groupDataByROI(plotsData, gene);
 
-      // Assign to specific subplot axes
-      const subplotIndex = index + 1;
-      boxplotData.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
+    // Assign to specific subplot axes
+    const subplotIndex = index + 1;
+    boxplotData.xaxis = subplotIndex === 1 ? 'x' : `x${subplotIndex}`;
+    boxplotData.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
 
-      allPlotData.push(boxplotData);
-    }
+    boxPlotData.push(boxplotData);
   });
 
-  if (allPlotData.length === 0) {
-    return '';
+  // Generate grouped cluster plot data with subplot assignments
+  const clusterPlotData: any[] = [];
+
+  selectedGenes.forEach((gene, index) => {
+    // Get unique cluster IDs for this gene
+    const currData = groupDataByCluster(plotsData, gene);
+    const subplotIndex = index + 1;
+    currData.forEach((clusterTrace) => {
+      clusterTrace.xaxis = subplotIndex === 1 ? 'x' : `x${subplotIndex}`;
+      clusterTrace.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
+
+      // Only show legend for the first gene subplot to avoid duplicates
+      clusterTrace.showlegend = index === 0;
+
+      clusterPlotData.push(clusterTrace); // Push individual traces, not the array
+    });
+  });
+
+  if (boxPlotData.length === 0 && clusterPlotData.length === 0) {
+    return 'No data to plot';
   }
 
-  const gridLayout = { rows: numGenes, cols: 1 };
+  const numGenes = selectedGenes.length;
+  const individualLayout = createSubplotLayout(numGenes, 1, selectedGenes, 'Individual Gene Expression by ROI');
+  const clusterLayout = createSubplotLayout(numGenes, 1, selectedGenes, 'Expression Grouped by Cluster ID', 'group');
 
-  const layout = createSubplotLayout(gridLayout.rows, gridLayout.cols, selectedGenes);
-
-  // Create standalone HTML page with embedded plot
+  // Create standalone HTML page with two-column layout
   const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Boxplot Analysis: ${selectedGenes.join(', ')}</title>
+    <title>ROI Boxplot Analysis: ${selectedGenes.join(', ')}</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-        #plot { width: 100%; height: calc(100vh - 60px); }
-        h1 { margin: 0 0 20px 0; color: #333; }
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8fafc; }
     </style>
 </head>
-<body>
-    <h1>Boxplot Analysis: ${selectedGenes.join(', ')}</h1>
+<body class="min-h-screen">
+    <div class="container mx-auto p-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+            ROI Boxplot Analysis: ${selectedGenes.join(', ')}
+        </h1>
 
-    <div id="plot"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-150px)]">
+            <!-- Left Column: Individual Gene Plots -->
+            <div class="bg-white rounded-lg shadow-lg p-4">
+                <div id="individual-plot" class="w-full h-full"></div>
+            </div>
+
+            <!-- Right Column: Grouped Cluster Plot -->
+            <div class="bg-white rounded-lg shadow-lg p-4">
+                <div id="cluster-plot" class="w-full h-full"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const plotData = ${JSON.stringify(allPlotData)};
-        const layout = ${JSON.stringify(layout)};
+        const individualPlotData = ${JSON.stringify(boxPlotData)};
+        const clusterPlotData = ${JSON.stringify(clusterPlotData)};
+        const individualLayout = ${JSON.stringify(individualLayout)};
+        const clusterLayout = ${JSON.stringify(clusterLayout)};
 
         const config = {
             displayModeBar: true,
@@ -167,12 +274,31 @@ export const createPlotlyBoxplotDataForMultipleGenes = (selectedGenes: string[],
             responsive: true
         };
 
-        Plotly.newPlot('plot', plotData, layout, config);
-        window.addEventListener('resize', () => Plotly.Plots.resize('plot'));
-        console.log('plotData', plotData);
+        // Create individual gene plot
+        if (individualPlotData.length > 0) {
+            Plotly.newPlot('individual-plot', individualPlotData, individualLayout, config);
+        }
+
+        // Create cluster grouped plot
+        if (clusterPlotData.length > 0) {
+            Plotly.newPlot('cluster-plot', clusterPlotData, clusterLayout, config);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (individualPlotData.length > 0) {
+                Plotly.Plots.resize('individual-plot');
+            }
+            if (clusterPlotData.length > 0) {
+                Plotly.Plots.resize('cluster-plot');
+            }
+        });
+
+        console.log('Individual plot data:', individualPlotData);
+        console.log('Cluster plot data:', clusterPlotData);
     </script>
 </body>
 </html>`;
 
   return htmlContent;
-};
+}

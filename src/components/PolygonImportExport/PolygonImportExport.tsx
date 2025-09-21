@@ -21,7 +21,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { PlotSelectionTable } from '../PlotSelectionTable';
-import { createPlotlyBoxplotDataForMultipleGenes } from '../ROIplot/ROIplot.helpers';
+import { creatPlots } from '../ROIplot/ROIplot.helpers';
 import { ROIData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export const PolygonImportExport = ({
@@ -81,7 +81,7 @@ export const PolygonImportExport = ({
       try {
         // Generate plot data for multiple genes with subplots
         // Create blob URL and open in new tab
-        const htmlContent = createPlotlyBoxplotDataForMultipleGenes(selectedGenes, plotsData);
+        const htmlContent = creatPlots(selectedGenes, plotsData);
         const blob = new Blob([htmlContent], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
         console.log('Opening new window with URL:', url);
