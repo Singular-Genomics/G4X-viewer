@@ -100,11 +100,6 @@ function createSubplotLayout(
   boxmode: 'group' | 'overlay' = 'overlay'
 ): Partial<Layout> {
   const layout: Partial<Layout> = {
-    grid: {
-      rows: rows,
-      columns: cols,
-      pattern: 'independent'
-    },
     margin: {
       l: Math.max(60, cols > 2 ? 40 : 60),
       r: 50,
@@ -123,9 +118,9 @@ function createSubplotLayout(
     annotations: []
   };
 
-  // Calculate subplot positioning
+  // Calculate subplot positioning with increased spacing
   const totalHorizontalSpacing = cols > 1 ? 0.15 : 0;
-  const totalVerticalSpacing = rows > 1 ? 0.15 : 0;
+  const totalVerticalSpacing = rows > 1 ? Math.min(0.3, 0.1 * rows) : 0; // Increased vertical spacing
   const horizontalSpacing = cols > 1 ? totalHorizontalSpacing / (cols - 1) : 0;
   const verticalSpacing = rows > 1 ? totalVerticalSpacing / (rows - 1) : 0;
   const subplotWidth = (1 - totalHorizontalSpacing) / cols;
@@ -215,6 +210,10 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
       clusterTrace.xaxis = subplotIndex === 1 ? 'x' : `x${subplotIndex}`;
       clusterTrace.yaxis = subplotIndex === 1 ? 'y' : `y${subplotIndex}`;
 
+      // Use offsetgroup to align same clusters at same x position across subplots
+      const originalClusterId = clusterTrace.name.replace('Cluster ', '');
+      clusterTrace.offsetgroup = `cluster-${originalClusterId}`;
+
       // Only show legend for the first gene subplot to avoid duplicates
       clusterTrace.showlegend = index === 0;
 
@@ -248,15 +247,15 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
             ROI Boxplot Analysis: ${selectedGenes.join(', ')}
         </h1>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-150px)]">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Left Column: Individual Gene Plots -->
             <div class="bg-white rounded-lg shadow-lg p-4">
-                <div id="individual-plot" class="w-full h-full"></div>
+                <div id="individual-plot" class="w-full" style="height: ${Math.max(400, selectedGenes.length * 350)}px;"></div>
             </div>
 
             <!-- Right Column: Grouped Cluster Plot -->
             <div class="bg-white rounded-lg shadow-lg p-4">
-                <div id="cluster-plot" class="w-full h-full"></div>
+                <div id="cluster-plot" class="w-full" style="height: ${Math.max(400, selectedGenes.length * 350)}px;"></div>
             </div>
         </div>
     </div>
