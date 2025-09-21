@@ -1,6 +1,6 @@
 import { GridColDef } from '@mui/x-data-grid';
 import { Typography } from '@mui/material';
-import { PlotSelectionTableRowEntry } from './PlotSelectionTable.types';
+import { PlotSelectionTableRowEntry } from './ROIGenesSelectionTable.types';
 
 export const usePlotSelectionTableColumns = (): GridColDef<PlotSelectionTableRowEntry>[] => {
   return [

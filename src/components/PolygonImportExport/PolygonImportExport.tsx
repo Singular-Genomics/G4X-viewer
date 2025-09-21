@@ -20,7 +20,7 @@ import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
-import { PlotSelectionTable } from '../PlotSelectionTable';
+import { PlotSelectionTable } from '../ROIGenesSelectionTable';
 import { creatPlots } from '../ROIplot/ROIplot.helpers';
 import { ROIData } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 

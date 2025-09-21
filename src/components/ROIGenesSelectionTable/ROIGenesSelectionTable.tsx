@@ -2,8 +2,8 @@ import { Box, Typography, Theme, useTheme, Button } from '@mui/material';
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DataGrid, GridRowSelectionModel, GridToolbarQuickFilter } from '@mui/x-data-grid';
-import { PlotSelectionTableProps, PlotSelectionTableRowEntry } from './PlotSelectionTable.types';
-import { usePlotSelectionTableColumns } from './usePlotSelectionTableColumns';
+import { PlotSelectionTableProps, PlotSelectionTableRowEntry } from './ROIGenesSelectionTable.types';
+import { usePlotSelectionTableColumns } from './ROIGenesSelectionTableColumns';
 import { GxCheckbox } from '../../shared/components/GxCheckbox/GxCheckbox';
 
 const GxFiltersSearch = () => {
@@ -59,8 +59,12 @@ export const PlotSelectionTable = ({
       })
       .filter(Boolean) as string[];
 
-    setGeneSelectionModel(selectionModel);
-  }, [selectedGenes, genes]);
+    // Only update if the selection model has actually changed
+    const currentSelection = Array.isArray(geneSelectionModel) ? geneSelectionModel : Array.from(geneSelectionModel);
+    if (JSON.stringify(selectionModel.sort()) !== JSON.stringify(currentSelection.sort())) {
+      setGeneSelectionModel(selectionModel);
+    }
+  }, [selectedGenes, genes, geneSelectionModel]);
 
   const handleGeneSelectionChange = (newSelectionModel: GridRowSelectionModel) => {
     setGeneSelectionModel(newSelectionModel);
@@ -68,7 +72,7 @@ export const PlotSelectionTable = ({
     const selectedGeneNames = newSelectionModel
       .map((selectedId) => {
         const geneIndex = parseInt((selectedId as string).replace('gene_', ''));
-        return genes[geneIndex].label;
+        return genes[geneIndex]?.label;
       })
       .filter(Boolean);
 
@@ -102,7 +106,6 @@ export const PlotSelectionTable = ({
           // Enable multiple selection
           rowSelectionModel={geneSelectionModel}
           onRowSelectionModelChange={handleGeneSelectionChange}
-          // Enable pagination
           pagination
           pageSizeOptions={[25, 50, 100]}
           initialState={{
@@ -112,6 +115,7 @@ export const PlotSelectionTable = ({
           }}
           sx={sx.dataGrid}
           density="compact"
+          keepNonExistentRowsSelected
           slots={{
             baseCheckbox: GxCheckbox,
             toolbar: GxFiltersSearch
