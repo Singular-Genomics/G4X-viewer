@@ -277,15 +277,15 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
   }
 
   const numGenes = selectedGenes.length;
-  const individualLayout = createSubplotLayout(numGenes, 1, selectedGenes, 'Individual Gene Expression by ROI');
-  const clusterLayout = createSubplotLayout(numGenes, 1, selectedGenes, 'Expression Grouped by Cluster ID', 'group');
+  const individualLayout = createSubplotLayout(numGenes, 1, selectedGenes, ' Expression by ROI');
+  const clusterLayout = createSubplotLayout(numGenes, 1, selectedGenes, 'Expression by ROI by cluster', 'group');
 
   // Create standalone HTML page with two-column layout
   const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ROI Boxplot Analysis: ${selectedGenes.join(', ')}</title>
+    <title>ROI Analysis</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -295,13 +295,13 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
 <body class="min-h-screen">
     <div class="container mx-auto p-6">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
-            ROI Boxplot Analysis: ${selectedGenes.join(', ')}
+            ROI Analysis
         </h1>
 
         <!-- Pie Chart Section -->
         <div class="bg-white rounded-lg shadow-lg p-4 mb-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">
-                Cluster Distribution Across ROI Regions
+                Cluster Proportion by ROI 
             </h2>
             <div id="pie-chart" class="w-full" style="height: 400px;"></div>
         </div>
@@ -328,7 +328,11 @@ export function creatPlots(selectedGenes: string[], plotsData: ROIData): string 
 
         const config = {
             displayModeBar: true,
-            modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+            modeBarButtonsToRemove: [
+                'zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d',
+                'autoScale2d', 'resetScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian',
+                'toggleSpikelines', 'resetViewMapbox'
+            ],
             displaylogo: false,
             responsive: true
         };
