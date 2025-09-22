@@ -27,8 +27,10 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             value={currentView}
             onChange={handleTabChange}
             sx={sx.tabs}
-            TabIndicatorProps={{
-              sx: sx.tabIndicator
+            slotProps={{
+              indicator: {
+                sx: sx.tabIndicator
+              }
             }}
           >
             <Tab
