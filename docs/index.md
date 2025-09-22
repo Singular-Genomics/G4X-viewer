@@ -1,13 +1,9 @@
 
-<br>
-# G4X-viewer
-<span style="margin-top:-3rem; display:block;"><a href="https://www.singulargenomics.com/">singulargenomics.com</a></span>
-<br>
-
-
 <!-- #### Welcome to G4X-viewer.  -->
 
 # :material-magnify: G4X Viewer
+<span style="margin-top:-3rem; display:block;"><a href="https://g4x-viewer.singulargenomics.com">g4x-viewer.singulargenomics.com</a></span>
+<br>
 ### An interactive data exploration tool designed for G4X Data.  
 
 G4X Viewer is an advanced, open source project designed to visualize imaging data using modern web technologies. The project is continuously evolving to provide an intuitive and flexible interface for the analysis and presentation of complex datasets. Inspired by the [Viv](https://github.com/hms-dbmi/viv) library, our goal is to push the boundaries of interactive data visualization in web applications.
