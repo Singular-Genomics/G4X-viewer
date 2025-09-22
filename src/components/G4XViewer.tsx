@@ -1,64 +1,38 @@
-import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
-import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
-import { PictureInPictureViewerAdapter } from './PictureInPictureViewerAdapter/PictureInPictureViewerAdapter';
-
-import { ViewController } from './ViewController';
-import { LogoBanner } from './LogoBanner/LogoBanner';
-import { useShallow } from 'zustand/react/shallow';
-import { GxLoader } from '../shared/components/GxLoader';
-import { useProteinImage } from '../hooks/useProteinImage.hook';
-import { ImageInfo } from './ImageInfo/ImageInfo';
-import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
-import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
-import { DetailsPopup } from './DetailsPopup';
-import { ActiveFiltersPanel } from './ActiveFiltersPanel';
-import { useTranslation } from 'react-i18next';
-import { VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
+import { Box, Theme, useTheme } from '@mui/material';
+import { useState } from 'react';
+import { Navigation, NavigationView } from './Navigation';
+import { ViewerView } from '../views/ViewerView';
+import { DashboardView } from '../views/DashboardView';
 
 export default function G4XViewer() {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
 
-  const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
-  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+  const [currentView, setCurrentView] = useState<NavigationView>('viewer');
 
-  useProteinImage(source);
-  useBrightfieldImage(brightfieldImageSource);
+  const handleViewChange = (view: NavigationView) => {
+    setCurrentView(view);
+  };
+
+  const getViewStyle = (viewName: NavigationView) => ({
+    ...sx.viewContainer,
+    display: currentView === viewName ? 'flex' : 'none'
+  });
 
   return (
     <Box sx={sx.mainContainer}>
-      <LogoBanner />
-      <Box sx={sx.viewerWrapper}>
-        <>
-          {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
-            <>
-              <PictureInPictureViewerAdapter />
-              <ImageInfo />
-            </>
-          ) : (
-            !isViewerLoading && (
-              <Typography
-                sx={sx.infoText}
-                variant="h2"
-              >
-                {t('viewer.noImageInfo')}
-              </Typography>
-            )
-          )}
-          {isViewerLoading && (
-            <Box sx={sx.loaderContainer}>
-              <GxLoader version="light" />
-              {isViewerLoading.message && (
-                <Typography sx={sx.loadingText}>{`${isViewerLoading.message}...`}</Typography>
-              )}
-            </Box>
-          )}
-          <DetailsPopup />
-        </>
+      <Navigation
+        currentView={currentView}
+        onViewChange={handleViewChange}
+      />
+      <Box sx={sx.contentContainer}>
+        <Box sx={getViewStyle('dashboard')}>
+          <DashboardView />
+        </Box>
+        <Box sx={getViewStyle('viewer')}>
+          <ViewerView />
+        </Box>
       </Box>
-      <ViewController imageLoaded={!!source} />
-      <ActiveFiltersPanel />
     </Box>
   );
 }
@@ -66,39 +40,23 @@ export default function G4XViewer() {
 const styles = (theme: Theme) => ({
   mainContainer: {
     background: `linear-gradient(0deg, ${theme.palette.gx.darkGrey[500]}, ${theme.palette.gx.darkGrey[100]})`,
-    minHeight: '100vh',
+    height: '100vh',
+    width: '100vw',
     display: 'flex',
-    overflow: 'hidden'
-  },
-  viewerWrapper: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: 'hidden',
     position: 'relative'
   },
-  loaderContainer: {
-    position: 'absolute',
-    background: alpha(theme.palette.gx.darkGrey[700], 0.8),
+  contentContainer: {
+    flex: 1,
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    gap: '16px',
-    padding: '32px',
-    borderRadius: '32px'
+    overflow: 'hidden'
   },
-  loadingText: {
-    fontSize: '30px',
-    color: '#FFF',
-    textTransform: 'uppercase'
-  },
-  buttonGroup: {
-    width: '300px',
-    display: 'flex',
-    justifyContent: 'space-between'
-  },
-  infoText: {
-    color: theme.palette.gx.lightGrey[900],
-    fontSize: '16px'
+  viewContainer: {
+    flex: 1,
+    height: '100%',
+    flexDirection: 'column',
+    overflow: 'hidden'
   }
 });

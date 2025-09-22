@@ -265,5 +265,9 @@
     "segmentationLayer": "Segmentation Layer", 
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
+  },
+  "navigation": {
+    "viewer": "Viewer",
+    "dashboard": "Dashboard"
   }
 }

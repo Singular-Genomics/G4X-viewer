@@ -101,16 +101,16 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
 
 const styles = (theme: Theme) => ({
   viewControllerContainer: {
-    backgroundColor: theme.palette.gx.mediumGrey[300],
-    padding: '8px 0 0 8px',
     width: '550px',
-    height: '100vh'
+    height: '100vh',
+    position: 'relative',
+    zIndex: 100
   },
 
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
     borderTopLeftRadius: '32px',
-    padding: '16px 8px 8px 16px',
+    padding: '16px 4px 8px 20px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -133,8 +133,9 @@ const styles = (theme: Theme) => ({
   },
   viewControllerToggleButton: {
     position: 'absolute',
-    top: 0,
-    right: 10
+    top: 4,
+    right: 10,
+    zIndex: 100
   },
   socialIconsWrapper: {
     marginTop: 'auto',
