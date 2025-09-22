@@ -1,11 +1,4 @@
-
 <br>
-# G4X-viewer
-<span style="margin-top:-3rem; display:block;"><a href="https://www.singulargenomics.com/">singulargenomics.com</a></span>
-<br>
-
-
-<!-- #### Welcome to G4X-viewer.  -->
 
 # :material-magnify: G4X Viewer
 ### An interactive data exploration tool designed for G4X Data.  
@@ -21,4 +14,3 @@ We provide a web-based version of the G4X Viewer that can be accessed through ou
 + [Resources](./resources.md) to help you leverage the suite of data exploration tools available in the G4X Viewer
 
 --8<-- "_partials/end_cap.md"
-

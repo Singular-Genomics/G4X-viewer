@@ -9,6 +9,12 @@ site_description: Singular Genomics G4X-viewer documentation site
 repo_name: G4X-viewer
 repo_url: https://github.com/Singular-Genomics/G4X-viewer
 
+exclude_docs: 
+  _partials/section_break.md
+  _partials/**
+
 # region Nav
 nav:
-  - Home: index.md
+  - G4X Viewer:
+    - index.md
+    - resources: resources.md
