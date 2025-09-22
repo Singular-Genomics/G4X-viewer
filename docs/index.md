@@ -16,5 +16,6 @@ We provide a web-based version of the G4X Viewer that can be accessed through ou
 
 + [Resources](./resources.md) to help you leverage the suite of data exploration tools available in the G4X Viewer
 
+
 --8<-- "_partials/end_cap.md"
 
