@@ -69,8 +69,7 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
           </Typography>
         </Box>
       ),
-      backgroundColor: '#805ad5',
-      removable: true
+      backgroundColor: '#805ad5'
     }
   ]);
 
