@@ -40,23 +40,21 @@ export default function G4XViewer() {
 const styles = (theme: Theme) => ({
   mainContainer: {
     background: `linear-gradient(0deg, ${theme.palette.gx.darkGrey[500]}, ${theme.palette.gx.darkGrey[100]})`,
-    height: '100vh',
+    minHeight: '100vh',
     width: '100vw',
     display: 'flex',
-    overflow: 'hidden',
-    position: 'relative'
+    position: 'relative',
+    overflowX: 'hidden'
   },
   contentContainer: {
     flex: 1,
     height: '100%',
     display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden'
+    flexDirection: 'column'
   },
   viewContainer: {
     flex: 1,
     height: '100%',
-    flexDirection: 'column',
-    overflow: 'hidden'
+    flexDirection: 'column'
   }
 });

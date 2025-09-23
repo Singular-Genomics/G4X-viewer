@@ -52,7 +52,7 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
 
 const styles = (theme: Theme) => ({
   navigationContainer: {
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
