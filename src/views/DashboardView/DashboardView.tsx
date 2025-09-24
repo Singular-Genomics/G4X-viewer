@@ -4,6 +4,7 @@ import { Layout } from 'react-grid-layout';
 import { DashboardViewProps } from './DashboardView.types';
 import { NAVIGATION_HEIGHT } from '../../components/Navigation/Navigation';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
+import { PieChart } from '../../components/DashboardGrid/PieChart';
 
 export const DashboardView = ({ className }: DashboardViewProps) => {
   // Example items
@@ -12,13 +13,17 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
       id: 'item-1',
       title: 'Widget 1',
       content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            Box 1
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <PieChart />
         </Box>
       ),
       backgroundColor: '#2d3748',
