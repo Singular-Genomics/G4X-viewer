@@ -16,7 +16,10 @@ export default function G4XViewer() {
 
   const getViewStyle = (viewName: NavigationView) => ({
     ...sx.viewContainer,
-    display: currentView === viewName ? 'flex' : 'none'
+    opacity: currentView === viewName ? 1 : 0,
+    visibility: currentView === viewName ? 'visible' : 'hidden',
+    pointerEvents: currentView === viewName ? 'auto' : 'none',
+    transition: 'opacity 0.25s ease-in-out'
   });
 
   return (
@@ -50,11 +53,19 @@ const styles = (theme: Theme) => ({
     flex: 1,
     height: '100%',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    position: 'relative'
   },
   viewContainer: {
-    flex: 1,
-    height: '100%',
-    flexDirection: 'column'
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    willChange: 'opacity'
   }
 });

@@ -58,7 +58,6 @@ const styles = (theme: Theme) => ({
     right: 0,
     zIndex: 50,
     height: NAVIGATION_HEIGHT,
-    background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
     display: 'flex',
     alignItems: 'center',
     paddingInline: '24px'
