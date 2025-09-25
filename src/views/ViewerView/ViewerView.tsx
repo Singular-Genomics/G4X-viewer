@@ -67,7 +67,7 @@ export const ViewerView = ({ className }: ViewerViewProps) => {
 const styles = (theme: Theme) => ({
   viewerContainer: {
     width: '100%',
-    height: '100%',
+    height: '100vh',
     display: 'flex',
     overflow: 'hidden'
   },
@@ -76,7 +76,8 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative'
+    position: 'relative',
+    marginTop: '70px'
   },
   loaderContainer: {
     position: 'absolute',
