@@ -15,6 +15,6 @@ exclude_docs:
 
 # region Nav
 nav:
-  - G4X Viewer:
+  - G4X-viewer:
     - index.md
     - resources: resources.md
