@@ -1,5 +1,5 @@
 import { Box, Theme, useTheme } from '@mui/material';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Navigation, NavigationView } from './Navigation';
 import { ViewerView } from '../views/ViewerView';
 import { DashboardView } from '../views/DashboardView';
@@ -9,17 +9,32 @@ export default function G4XViewer() {
   const sx = styles(theme);
 
   const [currentView, setCurrentView] = useState<NavigationView>('viewer');
+  const [dashboardScrollPosition, setDashboardScrollPosition] = useState(0);
+  const dashboardRef = useRef<HTMLDivElement>(null);
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   const handleViewChange = (view: NavigationView) => {
+    if (currentView === 'dashboard' && dashboardRef.current) {
+      setDashboardScrollPosition(dashboardRef.current.scrollTop);
+    }
     setCurrentView(view);
   };
+
+  useEffect(() => {
+    if (currentView === 'dashboard' && dashboardRef.current) {
+      dashboardRef.current.scrollTop = dashboardScrollPosition;
+    } else if (currentView === 'viewer' && viewerRef.current) {
+      viewerRef.current.scrollTop = 0;
+    }
+  }, [currentView, dashboardScrollPosition]);
 
   const getViewStyle = (viewName: NavigationView) => ({
     ...sx.viewContainer,
     opacity: currentView === viewName ? 1 : 0,
     visibility: currentView === viewName ? 'visible' : 'hidden',
     pointerEvents: currentView === viewName ? 'auto' : 'none',
-    transition: 'opacity 0.25s ease-in-out'
+    transition: 'opacity 0.25s ease-in-out',
+    overflow: viewName === 'dashboard' ? 'auto' : 'hidden'
   });
 
   return (
@@ -29,10 +44,16 @@ export default function G4XViewer() {
         onViewChange={handleViewChange}
       />
       <Box sx={sx.contentContainer}>
-        <Box sx={getViewStyle('dashboard')}>
+        <Box
+          ref={dashboardRef}
+          sx={getViewStyle('dashboard')}
+        >
           <DashboardView />
         </Box>
-        <Box sx={getViewStyle('viewer')}>
+        <Box
+          ref={viewerRef}
+          sx={getViewStyle('viewer')}
+        >
           <ViewerView />
         </Box>
       </Box>
