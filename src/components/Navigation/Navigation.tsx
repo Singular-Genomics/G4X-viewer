@@ -60,7 +60,8 @@ const styles = (theme: Theme) => ({
     height: NAVIGATION_HEIGHT,
     display: 'flex',
     alignItems: 'center',
-    paddingInline: '24px'
+    paddingInline: '24px',
+    pointerEvents: 'none'
   },
   leftSection: {
     display: 'flex',
@@ -79,7 +80,8 @@ const styles = (theme: Theme) => ({
   },
   tabsSection: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    pointerEvents: 'auto'
   },
   tabs: {
     minHeight: '48px',
