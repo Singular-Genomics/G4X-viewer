@@ -4,14 +4,16 @@ import { GxWindow } from '../../../../shared/components/GxWindow';
 import { CytometryGraph } from './CytometryGraph/CytometryGraph';
 import { UmapGraph } from './UmapGraph/UmapGraph';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useTranslation } from 'react-i18next';
 
 type GraphMode = undefined | 'flow_cytometry' | 'umap';
 
 export const GraphFilters = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
-  const { cytometryProteinsNames, umapDataAvailable } = useCellSegmentationLayerStore();
+  const { umapDataAvailable, segmentationMetadata } = useCellSegmentationLayerStore();
   const [selectedGraph, setSelectedGraph] = useState<GraphMode>(undefined);
   const [isWindowVisible, setIsWindowVisible] = useState(false);
 
@@ -34,14 +36,14 @@ export const GraphFilters = () => {
           value="umap"
           disabled={!umapDataAvailable}
         >
-          UMAP
+          {t('segmentationSettings.graphFilterUmapLabel')}
         </ToggleButton>
         <ToggleButton
           sx={sx.toggleButton}
           value="flow_cytometry"
-          disabled={!cytometryProteinsNames.length}
+          disabled={!segmentationMetadata?.proteinNames}
         >
-          Flow Cytometry
+          {t('segmentationSettings.graphFilterCytometryLabel')}
         </ToggleButton>
       </ToggleButtonGroup>
       {isWindowVisible && (

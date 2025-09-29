@@ -38,3 +38,48 @@ export function getImageLayer(id: string, props: any) {
     loader: layerLoader
   });
 }
+
+export const POLYGON_COLORS: [number, number, number][] = [
+  [99, 255, 132], // Green
+  [54, 162, 235], // Blue
+  [255, 99, 132], // Red
+  [153, 102, 255], // Purple
+  [255, 206, 86], // Yellow
+  [0, 255, 255], // Cyan
+  [255, 159, 64], // Orange
+  [255, 99, 255], // Magenta
+  [124, 252, 0], // Lawn Green
+  [75, 192, 192], // Teal
+  [255, 20, 147], // Deep Pink
+  [132, 99, 255], // Violet
+  [255, 165, 0], // Orange Alt
+  [255, 192, 203], // Pink
+  [255, 69, 0] // Red Orange
+];
+
+export const generatePolygonColor = (index: number): [number, number, number] => {
+  // Use modulo to cycle through colors if we have more polygons than predefined colors
+  return POLYGON_COLORS[index % POLYGON_COLORS.length];
+};
+
+export const humanFileSize = (bytes: number, dp = 1, si = false) => {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + ' B';
+  }
+
+  const units = si
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+  let u = -1;
+  const r = 10 ** dp;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
+
+  return bytes.toFixed(dp) + ' ' + units[u];
+};

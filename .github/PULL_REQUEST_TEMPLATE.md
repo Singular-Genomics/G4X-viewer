@@ -2,7 +2,7 @@
 
 ## Issue
 
-Ticket: #
+Ticket: Resolves #[number]
 
 ## Description
 

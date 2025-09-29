@@ -1,14 +1,18 @@
 import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
-import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 import { ScaleBar } from '../ScaleBar';
+import { PercentageOfTranscripts } from './PercentageOfTranscripts';
+import { HoverInfo } from './HoverInfo/HoverInfo';
+import { useShallow } from 'zustand/react/shallow';
+import { useTranslation } from 'react-i18next';
+
 export const ImageInfo = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [pyramidResolution, hoverCoordinates] = useViewerStore(
-    useShallow((store) => [store.pyramidResolution, store.hoverCoordinates])
-  );
+  const { t } = useTranslation();
+  const pyramidResolution = useViewerStore(useShallow((store) => store.pyramidResolution));
+
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
   const level = loader[pyramidResolution];
@@ -18,11 +22,12 @@ export const ImageInfo = () => {
       {level && (
         <>
           <Box sx={sx.footerWrapper}>
-            <Typography sx={sx.footerText}>
-              {`Mouse Pos: [${hoverCoordinates.x || '--'}, ${hoverCoordinates.y || '--'}]`}
-            </Typography>
-            <Typography sx={sx.footerText}>{`Layer: ${pyramidResolution + 1}/${loader.length}`}</Typography>
-            <Typography sx={sx.footerText}>{`Shape: ${level.shape.join(', ')}`}</Typography>
+            <HoverInfo />
+            <Typography
+              sx={sx.footerText}
+            >{`${t('general.layers')}: ${pyramidResolution + 1}/${loader.length}`}</Typography>
+            <Typography sx={sx.footerText}>{`${t('general.shape')}: ${level.shape.join(', ')}`}</Typography>
+            <PercentageOfTranscripts />
           </Box>
           <ScaleBar />
         </>

@@ -1,0 +1,1 @@
+export { PolygonOpacitySettings } from './PolygonOpacitySettings';

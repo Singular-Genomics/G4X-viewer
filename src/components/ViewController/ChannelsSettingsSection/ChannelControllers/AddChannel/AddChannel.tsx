@@ -3,15 +3,17 @@ import { useCallback } from 'react';
 import { Button, Theme, alpha, useTheme } from '@mui/material';
 import { MAX_CHANNELS } from '@hms-dbmi/viv';
 import AddIcon from '@mui/icons-material/Add';
-import { useViewerStore } from '../../../../../stores/ViewerStore';
+import { useViewerStore, VIEWER_LOADING_TYPES } from '../../../../../stores/ViewerStore';
 import { useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useMetadata } from '../../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../../legacy/utils';
 import { COLOR_PALLETE } from '../../../../../shared/constants';
+import { useTranslation } from 'react-i18next';
 
 export const AddChannel = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [globalSelection, isViewerLoading, setIsChannelLoading, addIsChannelLoading] = useViewerStore(
     useShallow((store) => [
@@ -76,13 +78,16 @@ export const AddChannel = () => {
 
   return (
     <Button
-      disabled={selections.length === MAX_CHANNELS || isViewerLoading}
+      disabled={
+        selections.length === MAX_CHANNELS ||
+        (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
+      }
       onClick={handleChannelAdd}
       fullWidth
       startIcon={<AddIcon />}
       sx={sx.addChannelButton}
     >
-      Add channel
+      {t('channelSettings.addChannel')}
     </Button>
   );
 };

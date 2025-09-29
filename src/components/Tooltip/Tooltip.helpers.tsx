@@ -1,19 +1,20 @@
 import { CellMaskDatapointType, TranscriptDatapointType } from './Tooltip.types';
 import { TooltipContent, TooltipContentItem } from './TooltipContent';
+import { t } from 'i18next';
 
 export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointType }) {
   const tooltipItems: TooltipContentItem[] = [
     {
-      label: 'cell id',
+      label: t('transcript.position'),
       value: `X: ${data.position[0].toFixed(2)} 
           Y: ${data.position[1].toFixed(2)}`
     },
     {
-      label: 'color',
+      label: t('transcript.color'),
       value: `R ${data.color[0]} G ${data.color[1]} B ${data.color[2]}`
     },
-    { label: 'gene name', value: data.geneName },
-    { label: 'cell id', value: data.cellId }
+    { label: t('transcript.geneName'), value: data.geneName },
+    { label: t('transcript.cellId'), value: data.cellId }
   ];
 
   return <TooltipContent data={tooltipItems} />;
@@ -21,15 +22,15 @@ export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointTyp
 
 export function TooltipCellMaskContent({ data }: { data: CellMaskDatapointType }) {
   const tooltipItems: TooltipContentItem[] = [
-    { label: 'cell id', value: data.cellId },
-    { label: 'cluster id', value: data.clusterId },
+    { label: t('segmentation.cellId'), value: data.cellId },
+    { label: t('segmentation.clusterId'), value: data.clusterId },
     {
-      label: 'color',
+      label: t('segmentation.color'),
       value: `R ${data.color[0]} G ${data.color[1]} B ${data.color[2]}`
     },
-    { label: 'area', value: data.area },
-    { label: 'total counts', value: data.totalCounts },
-    { label: 'total genes', value: data.totalGenes }
+    { label: t('segmentation.area'), value: data.area },
+    { label: t('segmentation.totalCounts'), value: data.totalCounts },
+    { label: t('segmentation.totalGenes'), value: data.totalGenes }
   ];
 
   return <TooltipContent data={tooltipItems} />;

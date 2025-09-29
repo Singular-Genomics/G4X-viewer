@@ -3,38 +3,41 @@ import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { alpha, Box, IconButton, Tooltip as MuiTooltip, Theme, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
   useResizableContainer,
-  useBrightfieldImageLayer
+  useBrightfieldImageLayer,
+  usePolygonDrawingLayer,
+  usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
 import { useEffect, useRef } from 'react';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { useSnackbar } from 'notistack';
+import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import PictureInPictureViewer from '../PictureInPictureViewer';
+import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 
 export const PictureInPictureViewerAdapter = () => {
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
-    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
-  );
+  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
+  const { t } = useTranslation();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
+  const polygonDrawingLayer = usePolygonDrawingLayer();
+  const polygonTextLayer = usePolygonTextLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
 
   const debouncedUpdateRef = useRef<any>(null);
-
-  const theme = useTheme();
-  const sx = styles(theme);
 
   useEffect(
     () =>
@@ -49,16 +52,19 @@ export const PictureInPictureViewerAdapter = () => {
     useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
   );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState] = useViewerStore(
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
       store.colormap,
       store.isLensOn,
       store.isOverviewOn,
       store.lensSelection,
       store.onViewportLoad,
-      store.viewState
+      store.viewState,
+      store.isViewerLoading
     ])
   );
+
+  const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
 
   useEffect(() => {
     debouncedUpdateRef.current = debounce(
@@ -87,6 +93,7 @@ export const PictureInPictureViewerAdapter = () => {
       if (!viewState) {
         // Create initial viewState
         const defualtViewerState = getDefaultInitialViewState(loader, { width, height }, 0.5);
+
         useViewerStore.setState({
           viewState: {
             ...defualtViewerState,
@@ -141,7 +148,7 @@ export const PictureInPictureViewerAdapter = () => {
       document.body.removeChild(link);
     } catch (error) {
       enqueueSnackbar({
-        message: 'Screenshot capture failed: ' + (error as Error).message,
+        message: t('viewer.screenshotError', { message: (error as Error).message }),
         variant: 'gxSnackbar',
         titleMode: 'error'
       });
@@ -153,11 +160,22 @@ export const PictureInPictureViewerAdapter = () => {
     ref: deckGLRef,
     glOptions: {
       preserveDrawingBuffer: true
+    },
+    controller: {
+      doubleClickZoom: false
     }
   };
 
-  if (brightfieldImageSource && !isImageLoading) {
+  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE)) {
     deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
+  }
+
+  if (polygonDrawingLayer) {
+    deckProps.layers.push(polygonDrawingLayer as any);
+  }
+
+  if (polygonTextLayer) {
+    deckProps.layers.push(polygonTextLayer as any);
   }
 
   return (
@@ -174,7 +192,7 @@ export const PictureInPictureViewerAdapter = () => {
             loader={loader}
             selections={selections}
             overview={DEFAULT_OVERVIEW}
-            overviewOn={isOverviewOn}
+            overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
             extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
@@ -214,37 +232,18 @@ export const PictureInPictureViewerAdapter = () => {
               } as any
             }
           />
-          <MuiTooltip title="Screenshot">
-            <IconButton
-              sx={sx.screenshotButton}
-              onClick={takeScreenshot}
-              color="primary"
-            >
-              <PhotoCameraIcon />
-            </IconButton>
-          </MuiTooltip>
+          <PolygonDrawingMenu takeScreenshot={takeScreenshot} />
+          <Tooltip />
         </>
       )}
-      <Tooltip />
     </Box>
   );
 };
 
-const styles = (theme: Theme) => ({
+const sx = {
   viewerContainer: {
     position: 'relative',
     width: '100%',
     height: '100%'
-  },
-  screenshotButton: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    zIndex: 100,
-    color: theme.palette.gx.lightGrey[300],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
-    }
   }
-});
+};

@@ -2,8 +2,10 @@ import { Box, MenuItem, Typography } from '@mui/material';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { COLORMAP_OPTIONS } from '../../../../shared/constants';
 import { GxSelect } from '../../../../shared/components/GxSelect/GxSelect';
+import { useTranslation } from 'react-i18next';
 
 export const ColormapSelector = () => {
+  const { t } = useTranslation();
   const colormap = useViewerStore((store) => store.colormap);
   const handleChange = (newValue: string) => {
     useViewerStore.setState({ colormap: newValue });
@@ -22,7 +24,7 @@ export const ColormapSelector = () => {
           value=""
           disableTouchRipple
         >
-          <Typography sx={sx.colormapSelectText}>None</Typography>
+          <Typography sx={sx.colormapSelectText}>{t('general.none')}</Typography>
         </MenuItem>
         {COLORMAP_OPTIONS.map((option) => (
           <MenuItem

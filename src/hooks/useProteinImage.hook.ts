@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useChannelsStore } from '../stores/ChannelsStore/ChannelsStore';
-import { ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
+import { VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
 import { useMetadata } from './useMetadata.hook';
 import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
 
@@ -10,8 +10,12 @@ import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { COLOR_PALLETE } from '../shared/constants';
 import { ChannelsSettings } from '../stores/ChannelsStore';
+import { useTranslation } from 'react-i18next';
+
+const NUCLEAR_CHANNEL = 'nuclear';
 
 export const useProteinImage = (source: ViewerSourceType | null) => {
+  const { t } = useTranslation();
   const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
 
@@ -21,7 +25,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
 
       // Should we use sth different than setState
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ isViewerLoading: true });
+      useViewerStore.setState({
+        isViewerLoading: {
+          type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
+          message: t('viewer.loadingImage')
+        }
+      });
 
       const { urlOrFile } = source;
 
@@ -65,10 +74,30 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       if (!source) return null;
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({ isViewerLoading: true });
-      const newSelections = buildDefaultSelection(loader[0]);
+      useViewerStore.setState({
+        isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.imageLoading') }
+      });
+      let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
+
       const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
+      const nuclearIndex = channelOptions.findIndex((name: string) => name.toLowerCase().includes(NUCLEAR_CHANNEL));
+
+      // If nuclear channel found, prioritize it in default selections
+      if (nuclearIndex > -1) {
+        const reorderedSelections = [];
+
+        const nuclearSelection = newSelections.find((sel: any) => sel.c === nuclearIndex) || {
+          ...newSelections[0],
+          c: nuclearIndex
+        };
+        reorderedSelections.push(nuclearSelection);
+
+        const remainingSelections = newSelections.filter((sel: any) => sel.c !== nuclearIndex);
+        reorderedSelections.push(...remainingSelections);
+
+        newSelections = reorderedSelections.slice(0, newSelections.length);
+      }
       // Default RGB.
       let newContrastLimits = [];
       let newDomains = [];
@@ -137,7 +166,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       });
       useViewerStore.setState({
         isChannelLoading: newSelections.map((i) => !i),
-        isViewerLoading: false,
+        isViewerLoading: undefined,
         pixelValues: new Array(newSelections.length).fill('0'),
         globalSelection: newSelections[0],
         channelOptions

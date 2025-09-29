@@ -5,19 +5,24 @@ import { useShallow } from 'zustand/react/shallow';
 import { CellMasksFillSettings } from './CellMasksFillSettings';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
+import { useTranslation } from 'react-i18next';
 
-const DisabledLayerWarning = () => (
-  <Tooltip
-    title="Cell Masks layer is disabled"
-    placement="top"
-    arrow
-    slotProps={{ popper: { sx: sx.warningTooltip } }}
-  >
-    <WarningIcon sx={sx.warningIcon} />
-  </Tooltip>
-);
+const DisabledLayerWarning = () => {
+  const { t } = useTranslation();
+  return (
+    <Tooltip
+      title={t('segmentationSettings.disabledLayerWarning')}
+      placement="top"
+      arrow
+      slotProps={{ popper: { sx: sx.warningTooltip } }}
+    >
+      <WarningIcon sx={sx.warningIcon} />
+    </Tooltip>
+  );
+};
 
 export const CellMasksLayerSection = () => {
+  const { t } = useTranslation();
   const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
     useShallow((store) => [store.isCellLayerOn, store.isCellFillOn, store.isCellNameFilterOn])
   );
@@ -26,21 +31,21 @@ export const CellMasksLayerSection = () => {
     <Box sx={sx.sectionContainer}>
       <Box>
         <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Cell Fill</Typography>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFillLabel')}</Typography>
           {!isCellLayerOn && isCellFillOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Cell Filters</Typography>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFiltersLabel')}</Typography>
           {!isCellLayerOn && isCellNameFilterOn && <DisabledLayerWarning />}
         </Box>
         <CellsFilter />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>Graph Filters</Typography>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.graphFiltersLabel')}</Typography>
           {!isCellLayerOn && isCellNameFilterOn && <DisabledLayerWarning />}
         </Box>
         <GraphFilters />

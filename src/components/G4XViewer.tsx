@@ -11,51 +11,54 @@ import { ImageInfo } from './ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { DetailsPopup } from './DetailsPopup';
+import { ActiveFiltersPanel } from './ActiveFiltersPanel';
+import { useTranslation } from 'react-i18next';
+import { VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
 
 export default function G4XViewer() {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
-  const [brightfieldImageSource, isImageLoading] = useBrightfieldImagesStore(
-    useShallow((store) => [store.brightfieldImageSource, store.isImageLoading])
-  );
+  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
-
-  const isLoading = isViewerLoading || isImageLoading;
 
   return (
     <Box sx={sx.mainContainer}>
       <LogoBanner />
       <Box sx={sx.viewerWrapper}>
         <>
-          {source && !isViewerLoading ? (
+          {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
             <>
               <PictureInPictureViewerAdapter />
               <ImageInfo />
             </>
           ) : (
-            !isLoading && (
+            !isViewerLoading && (
               <Typography
                 sx={sx.infoText}
                 variant="h2"
               >
-                Please upload an image file to view.
+                {t('viewer.noImageInfo')}
               </Typography>
             )
           )}
-          {isLoading && (
+          {isViewerLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
-              <Typography sx={sx.loadingText}>Loading Image...</Typography>
+              {isViewerLoading.message && (
+                <Typography sx={sx.loadingText}>{`${isViewerLoading.message}...`}</Typography>
+              )}
             </Box>
           )}
           <DetailsPopup />
         </>
       </Box>
       <ViewController imageLoaded={!!source} />
+      <ActiveFiltersPanel />
     </Box>
   );
 }

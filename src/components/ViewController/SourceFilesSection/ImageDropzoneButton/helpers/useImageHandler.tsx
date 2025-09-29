@@ -5,9 +5,11 @@ import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
+import { useTranslation } from 'react-i18next';
 
 export const useImageHandler = (onDropzoneUpload?: () => void) => {
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const onDrop = (files: File[]) => {
     let newSource;
@@ -25,7 +27,7 @@ export const useImageHandler = (onDropzoneUpload?: () => void) => {
 
     if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(newSource.description)) {
       enqueueSnackbar({
-        message: 'Invalid input file name. Only .ome.tiff and .zarr extensions allowed',
+        message: t('sourceFiles.imageInvalidFile'),
         variant: 'error'
       });
       return;

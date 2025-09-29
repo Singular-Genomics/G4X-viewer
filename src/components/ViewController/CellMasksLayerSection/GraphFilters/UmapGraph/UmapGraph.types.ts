@@ -1,4 +1,7 @@
-export type UmapDataPoint = {
-  value_X: number;
-  value_Y: number;
+import type { Datum } from 'plotly.js';
+
+export type UmapClusterPoint = {
+  x: Datum[];
+  y: Datum[];
+  clusterId: string;
 };

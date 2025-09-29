@@ -1,14 +1,14 @@
 export type CytometryGraphStore = CytometryGraphStoreValues & CytometryGraphStoreMethods;
 
 export type CytometryGraphStoreValues = {
-  proteinNames: ProteinNames;
+  proteinIndices: ProteinIndices;
   ranges?: HeatmapRanges;
   settings: HeatmapSettings;
 };
 
 export type CytometryGraphStoreMethods = {
   updateSettings: (newSettings: Partial<HeatmapSettings>) => void;
-  updateProteinNames: (newNames: Partial<ProteinNames>) => void;
+  updateProteinNames: (newNames: Partial<ProteinIndices>) => void;
   updateRanges: (newRange: HeatmapRanges) => void;
   resetFilters: () => void;
 };
@@ -30,9 +30,9 @@ type HeatmapSettings = {
   exponentFormat: ExponentFormat;
 };
 
-export type ProteinNames = {
-  xAxis?: string;
-  yAxis?: string;
+export type ProteinIndices = {
+  xAxisIndex: number;
+  yAxisIndex: number;
 };
 
 export type HeatmapRanges = {
@@ -47,17 +47,6 @@ export type GraphMode = 'heatmap' | 'scattergl';
 export type AxisTypes = 'log' | 'linear';
 
 export type ExponentFormat = 'none' | 'power' | 'E' | 'e' | 'SI';
-
-export const AVAILABLE_GRAPH_MODES: { label: string; value: GraphMode }[] = [
-  {
-    label: 'Scatter Plot',
-    value: 'scattergl'
-  },
-  {
-    label: 'Heatmap',
-    value: 'heatmap'
-  }
-];
 
 export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }[] = [
   {
@@ -403,15 +392,8 @@ export const AVAILABLE_COLORSCALES: { label: string; value: [number, string][] }
   }
 ];
 
-export const AVAILABLE_AXIS_TYPES: { label: string; value: AxisTypes }[] = [
-  { label: 'Linear', value: 'linear' },
-  { label: 'Logarithmic', value: 'log' }
-];
+export const AVAILABLE_GRAPH_MODES: GraphMode[] = ['scattergl', 'heatmap'];
 
-export const AVAILABLE_EXPONENT_FORMATS: { label: string; value: ExponentFormat }[] = [
-  { label: 'None', value: 'none' },
-  { label: 'Power', value: 'power' },
-  { label: 'Exponent (E)', value: 'E' },
-  { label: 'Exponent (e)', value: 'e' },
-  { label: 'International System', value: 'SI' }
-];
+export const AVAILABLE_AXIS_TYPES: AxisTypes[] = ['linear', 'log'];
+
+export const AVAILABLE_EXPONENT_FORMATS: ExponentFormat[] = ['none', 'power', 'e', 'SI'];

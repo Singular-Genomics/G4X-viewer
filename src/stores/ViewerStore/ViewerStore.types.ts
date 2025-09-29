@@ -5,7 +5,7 @@ export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 
 export type ViewerStoreValues = {
   isChannelLoading: boolean[];
-  isViewerLoading: boolean;
+  isViewerLoading?: ViewerLoadingStatus;
   isOverviewOn: boolean;
   isLensOn: boolean;
   useColorMap: boolean;
@@ -33,6 +33,19 @@ export type ViewerStoreMethods = {
   addIsChannelLoading: (val: boolean) => void;
   removeIsChannelLoading: (index: number) => void;
   setGeneralDetails: (details: GeneralDetailsType) => void;
+};
+
+export const VIEWER_LOADING_TYPES = {
+  MAIN_IMAGE: 'mainImage',
+  BRIGHTFIELD_IMAGE: 'brightfieldImage',
+  SEGMENTATION_PROCESSING: 'segmentationProcessing'
+} as const;
+
+export type ViewerLoadingType = (typeof VIEWER_LOADING_TYPES)[keyof typeof VIEWER_LOADING_TYPES];
+
+export type ViewerLoadingStatus = {
+  type: ViewerLoadingType;
+  message?: string;
 };
 
 export type ViewerSourceType = {

@@ -1,14 +1,16 @@
 import { useDropzone } from 'react-dropzone';
 import { GeneralDetailsType, useViewerStore } from '../../../../stores/ViewerStore';
 import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 
 export const useGeneralDetailsHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const onDrop = async (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: 'Please upload a single details file',
+        message: t('sourceFiles.metadataMultipleFileError'),
         variant: 'error'
       });
       return;
@@ -17,7 +19,7 @@ export const useGeneralDetailsHandler = () => {
     const file = files[0];
     if (!file.name.endsWith('.json')) {
       enqueueSnackbar({
-        message: 'Invalid file format. Only .json files are allowed',
+        message: t('sourceFiles.metadataInvalidFile'),
         variant: 'error'
       });
       return;
@@ -35,12 +37,12 @@ export const useGeneralDetailsHandler = () => {
       useViewerStore.getState().setGeneralDetails(generalDetails);
 
       enqueueSnackbar({
-        message: 'General details file loaded successfully',
+        message: t('sourceFiles.metadataUploadSuccess'),
         variant: 'success'
       });
     } catch (error) {
       enqueueSnackbar({
-        message: 'Error parsing JSON file: ' + (error as Error).message,
+        message: t('sourceFiles.metadataParsingError', { message: (error as Error).message }),
         variant: 'error'
       });
     }

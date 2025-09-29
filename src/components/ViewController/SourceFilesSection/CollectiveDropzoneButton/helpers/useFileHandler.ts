@@ -9,9 +9,11 @@ import * as protobuf from 'protobufjs';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
-import { CellMasksSchema } from '../../../../../layers/cell-masks-layer/cell-masks-schema';
+import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
 import { getMissingFilesContent } from './helpers';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useTranslation } from 'react-i18next';
+import { CellMasks } from '../../../../../shared/types';
 
 type DataSetConfig = {
   protein_image_src: string;
@@ -33,6 +35,7 @@ export const useFileHandler = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const collectiveFileName = useBinaryFilesStore((state) => state.collectiveFileName);
   const setCollectiveFileName = useBinaryFilesStore((state) => state.setCollectiveFileName);
@@ -41,19 +44,19 @@ export const useFileHandler = () => {
     (configFile: DataSetConfig): boolean => {
       const missingFileErrors = [];
       if (!configFile.protein_image_src) {
-        missingFileErrors.push('Protein image file');
+        missingFileErrors.push(t('sourceFiles.collectiveProtein'));
       }
       if (!configFile.protein_image_data_src) {
-        missingFileErrors.push('Protein image data config');
+        missingFileErrors.push(t('sourceFiles.collectiveImageData'));
       }
       if (!configFile.he_images_src) {
-        missingFileErrors.push('H&E images directory');
+        missingFileErrors.push(t('sourceFiles.collectiveH&E'));
       }
       if (!configFile.transcript_src) {
-        missingFileErrors.push('Transcripts TAR file');
+        missingFileErrors.push(t('sourceFiles.collectiveTranscripts'));
       }
       if (!configFile.cell_segmentation_src) {
-        missingFileErrors.push('Cell segmentation BIN file');
+        missingFileErrors.push(t('sourceFiles.collectiveSegmentation'));
       }
 
       if (missingFileErrors.length > 0) {
@@ -61,14 +64,14 @@ export const useFileHandler = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: `Data set config is missing ${missingFileErrors[0]} source definition`,
+            message: t('sourceFiles.collectiveMissingOneError', { error: missingFileErrors[0] }),
             persist: true
           });
         } else {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: `Data set config is missing ${missingFileErrors.length} source definitions.`,
+            message: t('sourceFiles.collectiveMissingManyError', { count: missingFileErrors.length }),
             customContent: getMissingFilesContent(missingFileErrors),
             persist: true
           });
@@ -78,7 +81,7 @@ export const useFileHandler = () => {
 
       return true;
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar, t]
   );
 
   const parseSegmentationFile = useCallback(
@@ -86,15 +89,15 @@ export const useFileHandler = () => {
       const reader = new FileReader();
       reader.onload = () => {
         const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-        const protoRoot = protobuf.Root.fromJSON(CellMasksSchema);
-        const decodedData = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+        const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
+        const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
         const colormapConfig = decodedData.colormap;
         const cellMasks = decodedData.cellMasks;
 
         if (!colormapConfig || !colormapConfig.length) {
           enqueueSnackbar({
-            message: 'Missing colormap config, transcript metadata filtering will be unavailable',
+            message: t('sourceFiles.segmentationMissingColormap'),
             variant: 'gxSnackbar',
             titleMode: 'warning'
           });
@@ -102,16 +105,14 @@ export const useFileHandler = () => {
 
         if (!cellMasks || !cellMasks.length) {
           enqueueSnackbar({
-            message: 'Given file is missing cell segmentation masks data',
+            message: t('sourceFiles.segmentationMissingData'),
             variant: 'error'
           });
         }
 
-        let listOfProteinNames: string[] = [];
         let areUmapAvailable = false;
 
         if (cellMasks.length) {
-          listOfProteinNames = Object.keys(cellMasks[0].proteins);
           areUmapAvailable = !!cellMasks[0].umapValues;
         }
 
@@ -121,7 +122,7 @@ export const useFileHandler = () => {
             clusterId: entry.clusterId,
             color: entry.color
           })),
-          cytometryProteinsNames: listOfProteinNames,
+          segmentationMetadata: decodedData.metadata,
           umapDataAvailable: areUmapAvailable
         });
         useCytometryGraphStore.getState().resetFilters();
@@ -137,7 +138,7 @@ export const useFileHandler = () => {
         fileName: file.name.split('/').pop() || 'unknown'
       });
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar, t]
   );
 
   const processTranscriptTarFile = useCallback(
@@ -159,7 +160,7 @@ export const useFileHandler = () => {
             const { color_map, ...layerConfig } = parsedConfig;
             if (!color_map) {
               enqueueSnackbar({
-                message: 'Missing colormap config, cell segmentation filtering will be unavailable',
+                message: t('sourceFiles.transcriptsMissingColormap'),
                 variant: 'gxSnackbar',
                 titleMode: 'warning'
               });
@@ -178,7 +179,7 @@ export const useFileHandler = () => {
             setFileName(tarFileName);
           } else {
             enqueueSnackbar({
-              message: 'Missing transcript config file in TAR archive',
+              message: t('sourceFiles.collectiveMissingTranscriptsConfig'),
               variant: 'gxSnackbar',
               titleMode: 'error'
             });
@@ -192,7 +193,7 @@ export const useFileHandler = () => {
       worker.onerror = (error: ErrorEvent) => {
         console.error(error);
         enqueueSnackbar({
-          message: `Error unpacking transcript TAR file`,
+          message: t('sourceFiles.collectiveErrorTranscriptUnpacking'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -202,7 +203,7 @@ export const useFileHandler = () => {
 
       worker.postMessage(tarFile);
     },
-    [enqueueSnackbar]
+    [enqueueSnackbar, t]
   );
 
   const parseCollectiveFileData = useCallback(
@@ -229,7 +230,7 @@ export const useFileHandler = () => {
 
       if (!outputFiles.proteinImageFile) {
         enqueueSnackbar({
-          message: 'Missing protein image file',
+          message: t('sourceFiles.collectiveMissingProtein'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -246,7 +247,7 @@ export const useFileHandler = () => {
       const parsingWarnings = [];
 
       if (!outputFiles.proteinImageData) {
-        parsingWarnings.push('Missing protein image data JSON');
+        parsingWarnings.push(t('sourceFiles.collectiveMissingImageData'));
       } else {
         try {
           const generalDetails: GeneralDetailsType = {
@@ -257,7 +258,7 @@ export const useFileHandler = () => {
           useViewerStore.getState().setGeneralDetails(generalDetails);
         } catch (error) {
           enqueueSnackbar({
-            message: 'Error parsing protein image data JSON file: ' + (error as Error).message,
+            message: t('sourceFiles.metadataParsingError', { message: (error as Error).message }),
             variant: 'gxSnackbar',
             titleMode: 'error'
           });
@@ -265,27 +266,27 @@ export const useFileHandler = () => {
       }
 
       if (!outputFiles.transcriptFile) {
-        parsingWarnings.push('Missing transcript file');
+        parsingWarnings.push(t('sourceFiles.collectiveMissingTranscripts'));
       } else {
         // Process the transcript tar file
         await processTranscriptTarFile(outputFiles.transcriptFile);
       }
 
       if (!outputFiles.cellSegmentationFile) {
-        parsingWarnings.push('Missing cell segmentation file');
+        parsingWarnings.push(t('sourceFiles.collectiveMissingSegmentation'));
       } else {
         parseSegmentationFile(outputFiles.cellSegmentationFile);
       }
 
       const { setAvailableImages } = useBrightfieldImagesStore.getState();
       if (!outputFiles.brightfieldImagesFiles?.length) {
-        parsingWarnings.push('Missing H&E images source');
+        parsingWarnings.push(t('sourceFiles.collectiveMissingH&E'));
       } else {
         setAvailableImages(outputFiles.brightfieldImagesFiles);
       }
 
       if (parsingWarnings.length > 0) {
-        enqueueSnackbar(`${parsingWarnings.length} missing files were skipped during parsing`, {
+        enqueueSnackbar(t('sourceFiles.collectiveSkippedFiles', { count: parsingWarnings.length }), {
           persist: true,
           customContent: getMissingFilesContent(parsingWarnings),
           variant: 'gxSnackbar',
@@ -293,7 +294,7 @@ export const useFileHandler = () => {
         });
       }
     },
-    [enqueueSnackbar, processTranscriptTarFile, parseSegmentationFile]
+    [enqueueSnackbar, processTranscriptTarFile, parseSegmentationFile, t]
   );
 
   const handleWorkerProgress = async (e: any) => {
@@ -306,7 +307,7 @@ export const useFileHandler = () => {
 
       if (!datasetConfig) {
         enqueueSnackbar({
-          message: 'Missing data set config file.',
+          message: t('sourceFiles.collectiveMissingDatasetConfig'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -350,7 +351,7 @@ export const useFileHandler = () => {
     worker.onerror = (error: ErrorEvent) => {
       console.error(error);
       enqueueSnackbar({
-        message: `Error unpacking ${file.type}`,
+        message: t('sourceFiles.transcriptsUnpackError', { file: file.type }),
         variant: 'gxSnackbar',
         titleMode: 'error'
       });
@@ -369,7 +370,7 @@ export const useFileHandler = () => {
     const file = acceptedFiles[0];
     if (file.type !== 'application/x-tar') {
       enqueueSnackbar({
-        message: 'File type not supported',
+        message: t('sourceFiles.collectiveUnsupportedFile'),
         variant: 'gxSnackbar',
         titleMode: 'warning'
       });

@@ -1,4 +1,9 @@
-import { CytometryWorkerHeatmapData, CytometryWorkerInput, CytometryWorkerScatterData } from './cytometryWorker';
+import {
+  CytometryWorkerHeatmapData,
+  CytometryWorkerInput,
+  CytometryWorkerScatterData,
+  CytometryWorkerStatus
+} from './cytometryWorker';
 
 const findMinMaxValue = (array: number[], includeZero = true): [number, number] => {
   if (includeZero) {
@@ -71,7 +76,7 @@ function processLinearBinning(
   postMessage({
     progress: 10,
     completed: false,
-    message: 'Bining data points...'
+    status: CytometryWorkerStatus.BINING
   });
   const totalPoints = xValuesSampled.length;
   for (let i = 0; i < totalPoints; i++) {
@@ -80,7 +85,7 @@ function processLinearBinning(
       postMessage({
         progress: progressPercentage,
         completed: false,
-        message: `Processing data points: ${i}/${totalPoints}`
+        status: CytometryWorkerStatus.PROCESSING
       });
     }
 
@@ -116,7 +121,7 @@ function processLinearBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -133,7 +138,7 @@ function processLinearBinning(
         postMessage({
           progress: progressPercentage,
           completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
+          status: CytometryWorkerStatus.NORMALIZING
         });
       }
 
@@ -152,7 +157,7 @@ function processLinearBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -172,13 +177,10 @@ function processLogarithmicBinning(
   graphMode: string,
   postMessage: (data: any) => void
 ) {
-  const adjustedXMin = xMin;
-  const adjustedYMin = yMin;
-
-  const logMinX = Math.log10(adjustedXMin);
-  const logMaxX = Math.log10(xMax);
-  const logMinY = Math.log10(adjustedYMin);
-  const logMaxY = Math.log10(yMax);
+  const logMinX = Math.floor(Math.log10(xMin));
+  const logMaxX = Math.ceil(Math.log10(xMax));
+  const logMinY = Math.floor(Math.log10(yMin));
+  const logMaxY = Math.ceil(Math.log10(yMax));
 
   const logStepX = (logMaxX - logMinX + 1) / binXCount;
   const logStepY = (logMaxY - logMinY + 1) / binYCount;
@@ -197,18 +199,19 @@ function processLogarithmicBinning(
   postMessage({
     progress: 10,
     completed: false,
-    message: 'Bining data points...'
+    status: CytometryWorkerStatus.BINING
   });
 
   const failed = [];
   const totalPoints = xValuesSampled.length;
+
   for (let i = 0; i < totalPoints; i++) {
     if (i % 1000 === 0) {
       const progressPercentage = 20 + Math.floor((i / totalPoints) * 40);
       postMessage({
         progress: progressPercentage,
         completed: false,
-        message: `Processing data points: ${i}/${totalPoints}`
+        status: CytometryWorkerStatus.PROCESSING
       });
     }
 
@@ -254,7 +257,7 @@ function processLogarithmicBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -271,7 +274,7 @@ function processLogarithmicBinning(
         postMessage({
           progress: progressPercentage,
           completed: false,
-          message: `Normalizing data: ${i}/${totalPoints}`
+          status: CytometryWorkerStatus.NORMALIZING
         });
       }
 
@@ -290,7 +293,7 @@ function processLogarithmicBinning(
       progress: 100,
       completed: true,
       success: true,
-      message: 'Aggregation complete',
+      status: CytometryWorkerStatus.COMPLETE,
       data: heatmapData,
       metadata: heatmapMetadata
     });
@@ -298,37 +301,37 @@ function processLogarithmicBinning(
 }
 
 onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
-  const { maskData, xProteinName, yProteinName, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
+  const { maskData, xProteinIndex, yProteinIndex, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
 
   if (!maskData.length) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Missing segmentation masks data'
+      status: CytometryWorkerStatus.NO_MASK
     });
-  } else if (!xProteinName || !yProteinName) {
+  } else if (xProteinIndex < 0 || yProteinIndex < 0) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Missing protein names'
+      status: CytometryWorkerStatus.NO_PROTEIN
     });
   } else if (subsamplingStep <= 0) {
     this.postMessage({
       completed: true,
       success: false,
-      message: 'Invalid subsampling step'
+      status: CytometryWorkerStatus.INVALID
     });
   }
 
   const sampledLength = Math.ceil(maskData.length / subsamplingStep);
-  const xValuesSampled = new Array(sampledLength);
-  const yValuesSampled = new Array(sampledLength);
+  const xValuesSampled = new Array<number>(sampledLength);
+  const yValuesSampled = new Array<number>(sampledLength);
   const idsSampled = new Array(sampledLength);
 
   let sampleIndex = 0;
   for (let i = 0; i < maskData.length; i += subsamplingStep) {
-    xValuesSampled[sampleIndex] = maskData[i].proteins[xProteinName] + 1;
-    yValuesSampled[sampleIndex] = maskData[i].proteins[yProteinName] + 1;
+    xValuesSampled[sampleIndex] = maskData[i].proteinValues[xProteinIndex] + 1;
+    yValuesSampled[sampleIndex] = maskData[i].proteinValues[yProteinIndex] + 1;
     idsSampled[sampleIndex] = maskData[i].cellId;
     sampleIndex++;
   }
@@ -340,7 +343,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     this.postMessage({
       progress: 0,
       completed: false,
-      message: 'Processing bins for a linear axis'
+      status: CytometryWorkerStatus.MODE_LINEAR
     });
 
     processLinearBinning(
@@ -359,7 +362,7 @@ onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
     this.postMessage({
       progress: 0,
       completed: false,
-      message: 'Processing bins for a logarithmic axis'
+      status: CytometryWorkerStatus.MODE_LOG
     });
 
     processLogarithmicBinning(
