@@ -8,18 +8,32 @@
 
 <!-- #### Welcome to G4X-tutorials.   -->
 
-### An interactive data exploration tool designed for G4X Data.  
+## Explore and visualize G4X-data  
+---
 
-G4X Viewer is an advanced, open source project designed to visualize imaging data using modern web technologies. The project is continuously evolving to provide an intuitive and flexible interface for the analysis and presentation of complex datasets. Inspired by the [Viv](https://github.com/hms-dbmi/viv) library, our goal is to push the boundaries of interactive data visualization in web applications.
+G4X-viewer is an advanced, open source project designed to visualize imaging data using modern web technologies. The project is continuously evolving to provide an intuitive and flexible interface for the analysis and presentation of complex datasets. Inspired by the [Viv](https://github.com/hms-dbmi/viv) library, our goal is to push the boundaries of interactive data visualization in web applications.
 
-The G4X Viewer enables you to visualize and interact with your [G4X data](https://docs.singulargenomics.com/g4x_data/g4x_output/) in a user-friendly interface. With it, you can begin to understand spatial patterning of your tissues, take screenshots of specific features of interest, subsample your data, and gain insights into your specific biological system.
+The G4X-viewer enables you to visualize and interact with your [G4X data](https://docs.singulargenomics.com/g4x_data/g4x_output/) in a user-friendly interface. With it, you can begin to understand spatial patterning of your tissues, take screenshots of specific features of interest, subsample your data, and gain insights into your specific biological system.
 
-We provide a web-based version of the G4X Viewer that can be accessed through our [website](https://g4x-viewer.singulargenomics.com). For users who want to use it locally, we also provide installation instructions on our [Github](https://github.com/Singular-Genomics/G4X-viewer).
-
-#### In this section you will find:
-
-+ [Resources](./resources.md) to help you leverage the suite of data exploration tools available in the G4X Viewer
+We provide a web-based version of the G4X-viewer that can be accessed through our [website](https://g4x-viewer.singulargenomics.com). For users who want to use it locally, we also provide installation instructions on our [Github](https://github.com/Singular-Genomics/G4X-viewer).
 
 
---8<-- "_partials/end_cap.md"
+### Resources
+
+Please navigate to the G4X-viewer [resources](./resources.md) to help you leverage the suite of tools available in the G4X-viewer
+
+
+## support
+---
+
+Got feedback or ideas for additional tutorials?  
+:material-arrow-right-thin: drop us a note at [care@singulargenomics.com](mailto:care@singulargenomics.com).  
+
+Found a bug or want to report another problem regarding G4X-viewer?  
+:material-arrow-right-thin: please file a new issue on the G4X-viewer [issue tracker](https://github.com/Singular-Genomics/G4X-viewer/issues)  
+
+Want to get involved and add new features?  
+:material-arrow-right-thin: check out how to [contribute](https://github.com/Singular-Genomics/G4X-viewer?tab=contributing-ov-file#readme) 
+
+--8<-- "_core/_partials/end_cap.md"
 
