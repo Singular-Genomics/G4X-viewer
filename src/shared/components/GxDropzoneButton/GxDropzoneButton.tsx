@@ -51,6 +51,7 @@ export const GxDropzoneButton = ({
         sx={sx.textField}
         disabled={disabled}
         slotProps={{
+          htmlInput: { readOnly: true },
           input: {
             endAdornment: onCloudUploadClick && (
               <IconButton
