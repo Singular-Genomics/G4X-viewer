@@ -30,3 +30,11 @@ export type TarFileEntry = {
   name: string;
   content: string;
 };
+
+export const EXPORT_FORMATS = {
+  INDIVIDUAL: 'individual',
+  TAR: 'tar',
+  ZIP: 'zip'
+} as const;
+
+export type ExportFormat = (typeof EXPORT_FORMATS)[keyof typeof EXPORT_FORMATS];

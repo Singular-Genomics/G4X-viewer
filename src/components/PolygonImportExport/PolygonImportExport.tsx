@@ -1,4 +1,18 @@
-import { Box, IconButton, Theme, alpha, useTheme, Button, FormControlLabel, SxProps } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Theme,
+  alpha,
+  useTheme,
+  Button,
+  FormControlLabel,
+  SxProps,
+  RadioGroup,
+  Radio,
+  Typography,
+  FormControl,
+  FormLabel
+} from '@mui/material';
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -7,8 +21,16 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { useSnackbar } from 'notistack';
 import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
-import { PolygonImportExportProps } from './PolygonImportExport.types';
-import { exportPolygonsWithCellsCSVAsTar, exportPolygonsWithTranscriptsCSVAsTar } from './PolygonImportExport.helpers';
+import { PolygonImportExportProps, ExportFormat, EXPORT_FORMATS } from './PolygonImportExport.types';
+import {
+  exportPolygonsWithCellsCSV,
+  exportPolygonsWithTranscriptsCSV,
+  exportROIMetadataCSV,
+  exportPolygonsWithCellsCSVAsTar,
+  exportPolygonsWithTranscriptsCSVAsTar,
+  exportPolygonsWithCellsCSVAsZip,
+  exportPolygonsWithTranscriptsCSVAsZip
+} from './PolygonImportExport.helpers';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { usePolygonsFileImport } from './PolygonImportExport.hooks';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
@@ -26,7 +48,8 @@ export const PolygonImportExport = ({
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [includeGenes, setIncludeGenes] = useState(true);
-  const [selectedFileName, setSelectedFileName] = useState<string>('');
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [exportFormat, setExportFormat] = useState<ExportFormat>(EXPORT_FORMATS.INDIVIDUAL);
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -57,13 +80,27 @@ export const PolygonImportExport = ({
     setIsExportModalOpen(false);
   };
 
-  const handleCsvExportCells = () => {
-    exportPolygonsWithCellsCSVAsTar(polygonFeatures, includeGenes);
+  const handleCsvExportCells = async () => {
+    if (exportFormat === EXPORT_FORMATS.INDIVIDUAL) {
+      exportPolygonsWithCellsCSV(polygonFeatures, includeGenes);
+      exportROIMetadataCSV(polygonFeatures);
+    } else if (exportFormat === EXPORT_FORMATS.TAR) {
+      exportPolygonsWithCellsCSVAsTar(polygonFeatures, includeGenes);
+    } else if (exportFormat === EXPORT_FORMATS.ZIP) {
+      await exportPolygonsWithCellsCSVAsZip(polygonFeatures, includeGenes);
+    }
     setIsExportModalOpen(false);
   };
 
-  const handleCsvExportTranscripts = () => {
-    exportPolygonsWithTranscriptsCSVAsTar(polygonFeatures);
+  const handleCsvExportTranscripts = async () => {
+    if (exportFormat === EXPORT_FORMATS.INDIVIDUAL) {
+      exportPolygonsWithTranscriptsCSV(polygonFeatures);
+      exportROIMetadataCSV(polygonFeatures);
+    } else if (exportFormat === EXPORT_FORMATS.TAR) {
+      exportPolygonsWithTranscriptsCSVAsTar(polygonFeatures);
+    } else if (exportFormat === EXPORT_FORMATS.ZIP) {
+      await exportPolygonsWithTranscriptsCSVAsZip(polygonFeatures);
+    }
     setIsExportModalOpen(false);
   };
 
@@ -152,6 +189,40 @@ export const PolygonImportExport = ({
         size="small"
       >
         <Box sx={sx.modalContent}>
+          {/* Export Format Selection */}
+          <FormControl
+            component="fieldset"
+            sx={sx.formatControl}
+          >
+            <FormLabel component="legend">
+              <Typography variant="subtitle2">{t('general.exportFormat')}</Typography>
+            </FormLabel>
+            <RadioGroup
+              value={exportFormat}
+              onChange={(e) => setExportFormat(e.target.value as ExportFormat)}
+              sx={sx.radioGroup}
+            >
+              <FormControlLabel
+                value={EXPORT_FORMATS.INDIVIDUAL}
+                control={<Radio size="small" />}
+                label={t('general.exportFormatIndividual')}
+                sx={sx.radioOption}
+              />
+              <FormControlLabel
+                value={EXPORT_FORMATS.TAR}
+                control={<Radio size="small" />}
+                label={t('general.exportFormatTar')}
+                sx={sx.radioOption}
+              />
+              <FormControlLabel
+                value={EXPORT_FORMATS.ZIP}
+                control={<Radio size="small" />}
+                label={t('general.exportFormatZip')}
+                sx={sx.radioOption}
+              />
+            </RadioGroup>
+          </FormControl>
+
           <Box sx={sx.exportGrid}>
             {/* Segmentation Row */}
             <Box>
@@ -176,7 +247,7 @@ export const PolygonImportExport = ({
                 </Button>
               </Box>
               <FormControlLabel
-                label={'Include gene expressions'}
+                label={t('general.includeGeneExpressions')}
                 control={
                   <GxCheckbox
                     onChange={() => setIncludeGenes((state) => !state)}
@@ -303,5 +374,28 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   dropzoneWrapper: {
     marginBottom: '16px'
+  },
+  formatControl: {
+    marginBottom: '24px',
+    '& .MuiFormLabel-root': {
+      color: theme.palette.gx.primary.black,
+      marginBottom: '8px'
+    }
+  },
+  radioGroup: {
+    flexDirection: 'row',
+    gap: '16px'
+  },
+  radioOption: {
+    '& .MuiFormControlLabel-label': {
+      fontSize: '14px',
+      color: theme.palette.gx.primary.black
+    },
+    '& .MuiRadio-root': {
+      color: theme.palette.gx.mediumGrey[900],
+      '&.Mui-checked': {
+        color: theme.palette.gx.accent.greenBlue
+      }
+    }
   }
 });

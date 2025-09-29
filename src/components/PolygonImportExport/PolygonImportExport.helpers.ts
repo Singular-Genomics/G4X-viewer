@@ -1,3 +1,4 @@
+import JSZip from 'jszip';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useViewerStore } from '../../stores/ViewerStore';
@@ -116,6 +117,29 @@ const generateExportTarFilename = (roiCount: number): string => {
   const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
   const date = new Date().toISOString().split('T')[0];
   return `${date}_${ometiffName}_${roiCount}ROIs.tar`;
+};
+
+const generateExportZipFilename = (roiCount: number): string => {
+  const viewerSource = useViewerStore.getState().source;
+  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
+  const date = new Date().toISOString().split('T')[0];
+  return `${date}_${ometiffName}_${roiCount}ROIs.zip`;
+};
+
+const downloadZipFile = async (files: TarFileEntry[], fileName: string) => {
+  const zip = new JSZip();
+
+  files.forEach((file) => {
+    zip.file(file.name, file.content);
+  });
+
+  const zipBlob = await zip.generateAsync({ type: 'blob' });
+  const url = URL.createObjectURL(zipBlob);
+  const link = Object.assign(document.createElement('a'), { href: url, download: fileName });
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 };
 
 export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], exportGenes: boolean) => {
@@ -386,7 +410,6 @@ const createCSVTarFile = (
 ) => {
   const files: TarFileEntry[] = [];
 
-  // Generate CSV for each ROI
   polygonFeatures.forEach((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
     const roiName = `ROI_${polygonId}`;
@@ -409,10 +432,50 @@ const createCSVTarFile = (
   downloadTarFile(files, tarFileName);
 };
 
+const createCSVZipFile = async (
+  polygonFeatures: PolygonFeature[],
+  type: 'cells' | 'transcripts',
+  exportGenes: boolean = true
+) => {
+  const files: TarFileEntry[] = [];
+
+  polygonFeatures.forEach((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const roiName = `ROI_${polygonId}`;
+    const csvContent = generateCsvContentForSinglePolygon(feature, type, exportGenes);
+    const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
+
+    files.push({
+      name: generateExportCsvFilename(`${roiName}_${fileType}`),
+      content: csvContent
+    });
+  });
+
+  // Add metadata CSV
+  files.push({
+    name: generateExportCsvFilename('ROI_metadata'),
+    content: generateMetadataCSVContent(polygonFeatures)
+  });
+
+  const zipFileName = generateExportZipFilename(polygonFeatures.length);
+  await downloadZipFile(files, zipFileName);
+};
+
 export const exportPolygonsWithCellsCSVAsTar = (polygonFeatures: PolygonFeature[], exportGenes: boolean = true) => {
   createCSVTarFile(polygonFeatures, 'cells', exportGenes);
 };
 
 export const exportPolygonsWithTranscriptsCSVAsTar = (polygonFeatures: PolygonFeature[]) => {
   createCSVTarFile(polygonFeatures, 'transcripts');
+};
+
+export const exportPolygonsWithCellsCSVAsZip = async (
+  polygonFeatures: PolygonFeature[],
+  exportGenes: boolean = true
+) => {
+  await createCSVZipFile(polygonFeatures, 'cells', exportGenes);
+};
+
+export const exportPolygonsWithTranscriptsCSVAsZip = async (polygonFeatures: PolygonFeature[]) => {
+  await createCSVZipFile(polygonFeatures, 'transcripts');
 };
