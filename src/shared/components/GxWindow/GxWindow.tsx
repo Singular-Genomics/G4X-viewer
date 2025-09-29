@@ -18,7 +18,10 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
     [boundries]
   );
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({
+    x: config?.startX || 0,
+    y: config?.startY || 0
+  });
   const [isDragging, setIsDragging] = useState(false);
 
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });

@@ -103,7 +103,6 @@ const styles = (theme: Theme) => ({
   viewControllerContainer: {
     width: '550px',
     height: '100vh',
-    position: 'relative',
     zIndex: 100
   },
 
