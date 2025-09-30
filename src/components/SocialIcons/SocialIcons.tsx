@@ -66,13 +66,16 @@ const styles = (theme: Theme) => ({
   },
   iconButton: {
     padding: '6px',
-    backgroundColor: theme.palette.gx.lightGrey[700],
     '&:hover': {
-      backgroundColor: theme.palette.gx.lightGrey[500]
+      backgroundColor: 'rgba(255, 255, 255, 0.1)'
     }
   },
   icon: {
-    color: 'black',
-    fontSize: '20px'
+    color: theme.palette.gx.lightGrey[500],
+    fontSize: '20px',
+    transition: 'color 0.3s ease',
+    '.MuiIconButton-root:hover &': {
+      color: theme.palette.gx.lightGrey[300]
+    }
   }
 });

@@ -2,13 +2,13 @@ import { Box, Tab, Tabs, Theme, Typography, useTheme } from '@mui/material';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
-
-export const NAVIGATION_HEIGHT = '70px';
+import { SocialIcons } from '../SocialIcons/SocialIcons';
 
 export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
+  const app_version = process.env.APP_VERSION;
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: NavigationView) => {
     onViewChange(newValue);
@@ -19,7 +19,10 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
       <Box sx={sx.leftSection}>
         <Box sx={sx.logoSection}>
           <GxLogo version="light" />
-          <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
+          <Box sx={sx.logoTextWrapper}>
+            <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
+            <Typography sx={sx.versionText}>{app_version}</Typography>
+          </Box>
         </Box>
 
         <Box sx={sx.tabsSection}>
@@ -46,20 +49,25 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
           </Tabs>
         </Box>
       </Box>
+      <Box sx={sx.rightSection}>
+        <SocialIcons />
+      </Box>
     </Box>
   );
 };
 
 const styles = (theme: Theme) => ({
   navigationContainer: {
-    position: 'fixed',
+    position: 'sticky',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 50,
-    height: NAVIGATION_HEIGHT,
+    height: '70px',
+    background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingInline: '24px',
     pointerEvents: 'none'
   },
@@ -68,15 +76,33 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     gap: '50px'
   },
+  rightSection: {
+    display: 'flex',
+    alignItems: 'center',
+    pointerEvents: 'auto'
+  },
   logoSection: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px'
   },
+  logoTextWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+    position: 'relative'
+  },
   logoText: {
     color: theme.palette.gx.primary.white,
     fontWeight: 700,
-    fontSize: '20px'
+    fontSize: '20px',
+    lineHeight: '20px'
+  },
+  versionText: {
+    fontSize: '12px',
+    lineHeight: '12px',
+    color: theme.palette.gx.lightGrey[500],
+    alignSelf: 'flex-end'
   },
   tabsSection: {
     display: 'flex',

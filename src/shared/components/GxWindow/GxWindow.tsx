@@ -127,7 +127,7 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
 const styles = (theme: Theme) => ({
   windowContainer: (posX: number, posY: number, isDragging: boolean) => ({
     borderRadius: '8px 8px 0px 0px',
-    position: 'absolute',
+    position: 'fixed',
     backgroundColor: theme.palette.gx.mediumGrey[500],
     zIndex: 100,
     transition: 'box-shadow 0.25s',

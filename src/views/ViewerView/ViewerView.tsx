@@ -13,7 +13,6 @@ import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
-import { NAVIGATION_HEIGHT } from '../../components/Navigation/Navigation';
 
 export const ViewerView = ({ className }: ViewerViewProps) => {
   const theme = useTheme();
@@ -68,7 +67,7 @@ export const ViewerView = ({ className }: ViewerViewProps) => {
 const styles = (theme: Theme) => ({
   viewerContainer: {
     width: '100%',
-    height: '100vh',
+    height: '100%',
     display: 'flex',
     overflow: 'hidden'
   },
@@ -77,8 +76,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
-    marginTop: NAVIGATION_HEIGHT
+    position: 'relative'
   },
   loaderContainer: {
     position: 'absolute',

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardViewProps } from './DashboardView.types';
-import { NAVIGATION_HEIGHT } from '../../components/Navigation/Navigation';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 
 export const DashboardView = ({ className }: DashboardViewProps) => {
@@ -97,7 +96,6 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
 
 const sx = {
   dashboardContainer: {
-    marginTop: NAVIGATION_HEIGHT,
     height: '100%',
     width: '100%',
     display: 'flex',

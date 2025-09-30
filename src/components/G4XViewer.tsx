@@ -67,6 +67,7 @@ const styles = (theme: Theme) => ({
     minHeight: '100vh',
     width: '100vw',
     display: 'flex',
+    flexDirection: 'column',
     position: 'relative',
     overflowX: 'hidden'
   },
@@ -84,7 +85,7 @@ const styles = (theme: Theme) => ({
     right: 0,
     bottom: 0,
     width: '100%',
-    height: '100vh',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
     willChange: 'opacity'
