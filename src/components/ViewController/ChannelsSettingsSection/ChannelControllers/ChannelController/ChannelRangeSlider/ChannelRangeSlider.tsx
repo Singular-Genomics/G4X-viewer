@@ -19,6 +19,8 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
   const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   const [currentMinValue, currentMaxValue] = slider;
+  const [rangeMin, setRangeMin] = useState(0);
+  const [rangeMax, setRangeMax] = useState(4096);
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
@@ -80,45 +82,99 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
     <Box
       sx={{
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: '24px',
         paddingRight: '16px'
       }}
     >
-      <Input
-        id="channel_min"
-        type="number"
-        sx={sx.textField}
-        value={minInputValue}
-        onChange={handleMinInputChange}
-        inputProps={{
-          max: CHANNEL_MAX,
-          step: CHANNEL_STEP
+      {/* New input for controlling slider min */}
+      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+          <label
+            htmlFor="slider_range_min"
+            style={{ fontSize: 12, marginBottom: 2 }}
+          >
+            Min Range
+          </label>
+          <Input
+            id="slider_range_min"
+            type="number"
+            sx={sx.textField}
+            value={rangeMin}
+            onChange={(e) => setRangeMin(Number(e.target.value))}
+            inputProps={{
+              min: 0,
+              max: rangeMax - 1,
+              step: CHANNEL_STEP
+            }}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+          <label
+            htmlFor="slider_range_max"
+            style={{ fontSize: 12, marginBottom: 2 }}
+          >
+            Max Range
+          </label>
+          <Input
+            id="slider_range_max"
+            type="number"
+            sx={sx.textField}
+            value={rangeMax}
+            onChange={(e) => setRangeMax(Number(e.target.value))}
+            inputProps={{
+              min: rangeMin + 1,
+              max: CHANNEL_MAX,
+              step: CHANNEL_STEP
+            }}
+          />
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '24px',
+          paddingRight: '16px'
         }}
-      />
-      <GxSlider
-        disabled={isLoading}
-        value={slider}
-        onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
-        valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-        min={CHANNEL_MIN}
-        max={CHANNEL_MAX}
-        step={CHANNEL_STEP}
-        orientation="horizontal"
-        style={{ color: rgbColor }}
-      />
-      <Input
-        id="channel_max"
-        type="number"
-        sx={sx.textField}
-        value={maxInputValue}
-        onChange={handleMaxInputChange}
-        inputProps={{
-          max: CHANNEL_MAX,
-          step: CHANNEL_STEP
-        }}
-      />
+      >
+        <Input
+          id="channel_min"
+          type="number"
+          sx={sx.textField}
+          value={minInputValue}
+          onChange={handleMinInputChange}
+          inputProps={{
+            max: CHANNEL_MAX,
+            step: CHANNEL_STEP
+          }}
+        />
+        <GxSlider
+          disabled={isLoading}
+          value={slider}
+          onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
+          valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
+          min={rangeMin}
+          max={rangeMax}
+          step={CHANNEL_STEP}
+          orientation="horizontal"
+          style={{ color: rgbColor }}
+        />
+        <Input
+          id="channel_max"
+          type="number"
+          sx={sx.textField}
+          value={maxInputValue}
+          onChange={handleMaxInputChange}
+          inputProps={{
+            max: CHANNEL_MAX,
+            step: CHANNEL_STEP
+          }}
+        />
+      </Box>
     </Box>
   );
 };
