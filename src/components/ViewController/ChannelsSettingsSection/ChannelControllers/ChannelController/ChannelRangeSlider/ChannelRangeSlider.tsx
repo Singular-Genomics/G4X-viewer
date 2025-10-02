@@ -6,6 +6,7 @@ import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
+import { useTranslation } from 'react-i18next';
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -15,17 +16,23 @@ const DEBOUNCE_TIME_MS = 300;
 export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoading }: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const [minInputValue, setMinInputValue] = useState<string>('');
   const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   const [currentMinValue, currentMaxValue] = slider;
-  const [rangeMin, setRangeMin] = useState(0);
-  const [rangeMax, setRangeMax] = useState(4096);
+  const [rangeMin, setRangeMin] = useState(currentMinValue);
+  const [rangeMax, setRangeMax] = useState(currentMaxValue);
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
     setMaxInputValue(currentMaxValue.toString());
   }, [currentMaxValue, currentMinValue]);
+
+  useEffect(() => {
+    setMinInputValue(rangeMin.toString());
+    setMaxInputValue(rangeMax.toString());
+  }, [rangeMin, rangeMax]);
 
   const colormap = useViewerStore((store) => store.colormap);
   const rgbColor = colormapToRgb(!!colormap, color);
@@ -89,14 +96,13 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
         paddingRight: '16px'
       }}
     >
-      {/* New input for controlling slider min */}
       <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
           <label
             htmlFor="slider_range_min"
             style={{ fontSize: 12, marginBottom: 2 }}
           >
-            Min Range
+            {t('channelSettings.sliderRangeMinLabel')}
           </label>
           <Input
             id="slider_range_min"
@@ -116,7 +122,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
             htmlFor="slider_range_max"
             style={{ fontSize: 12, marginBottom: 2 }}
           >
-            Max Range
+            {t('channelSettings.sliderRangeMaxLabel')}
           </label>
           <Input
             id="slider_range_max"
