@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { alpha, Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardViewProps } from './DashboardView.types';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
@@ -8,6 +8,8 @@ import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 
 export const DashboardView = ({ className }: DashboardViewProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
@@ -140,7 +142,7 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme): Record<string, SxProps> => ({
   dashboardContainer: {
     height: '100%',
     width: '100%',
@@ -158,11 +160,11 @@ const sx = {
   },
   header: {
     padding: '24px 24px 16px',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+    borderBottom: `1px solid ${alpha(theme.palette.gx.primary.white, 0.1)}`,
     flexShrink: 0
   },
   title: {
     fontWeight: 600,
     marginBottom: '4px'
   }
-};
+});

@@ -1,4 +1,4 @@
-import { Box, IconButton, Theme, useTheme } from '@mui/material';
+import { alpha, Box, IconButton, Theme, useTheme } from '@mui/material';
 import { Language, LinkedIn, GitHub, X, Email } from '@mui/icons-material';
 import { socialLinks } from '../../config/socialLinks';
 
@@ -67,7 +67,7 @@ const styles = (theme: Theme) => ({
   iconButton: {
     padding: '6px',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)'
+      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
     }
   },
   icon: {
