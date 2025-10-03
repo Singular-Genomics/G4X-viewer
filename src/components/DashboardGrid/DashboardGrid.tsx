@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Box, Theme, useTheme } from '@mui/material';
 import GridLayout, { WidthProvider, Layout } from 'react-grid-layout';
 import { GxGridItem } from '../../shared/components/GxGridItem';
@@ -23,6 +23,27 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }
   }, [items]);
 
   const [layout, setLayout] = useState<Layout[]>(defaultLayout);
+
+  // Update layout when items change
+  useEffect(() => {
+    const existingLayoutMap = new Map(layout.map((l) => [l.i, l]));
+    const newLayout = items.map((item, index) => {
+      const existing = existingLayoutMap.get(item.id);
+      if (existing) {
+        return existing;
+      }
+      return {
+        i: item.id,
+        x: (index % 2) * 24,
+        y: Math.floor(index / 2) * 10,
+        w: 24,
+        h: 10,
+        minW: 6,
+        minH: 4
+      };
+    });
+    setLayout(newLayout);
+  }, [items]);
 
   const handleLayoutChange = (newLayout: Layout[]) => {
     setLayout(newLayout);

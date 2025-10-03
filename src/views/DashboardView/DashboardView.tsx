@@ -3,8 +3,20 @@ import { Box, Typography } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardViewProps } from './DashboardView.types';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
+import { AddGraphButton } from '../../components/AddGraphButton';
+import { useSnackbar } from 'notistack';
+import { useTranslation } from 'react-i18next';
 
 export const DashboardView = ({ className }: DashboardViewProps) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
+
+  const graphOptions = [
+    { id: 'graph1', label: 'Graph 1' },
+    { id: 'graph2', label: 'Graph 2' },
+    { id: 'graph3', label: 'Graph 3' }
+  ];
+
   // Example items
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
     {
@@ -80,16 +92,50 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
     setGridItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
+  const handleAddGraph = (graphId: string) => {
+    const graphOption = graphOptions.find((opt) => opt.id === graphId);
+    const newItemId = `item-${Date.now()}`;
+
+    const newItem: DashboardGridItem = {
+      id: newItemId,
+      title: graphOption?.label || 'New Graph',
+      content: (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+          <Typography
+            variant="h4"
+            color="text.primary"
+          >
+            {graphOption?.label}
+          </Typography>
+        </Box>
+      ),
+      backgroundColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
+      removable: true
+    };
+
+    setGridItems((prev) => [newItem, ...prev]);
+    enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+  };
+
   return (
     <Box
       className={className}
       sx={sx.dashboardContainer}
     >
-      <DashboardGrid
-        items={gridItems}
-        onLayoutChange={handleLayoutChange}
-        onRemoveItem={handleRemoveItem}
-      />
+      <Box sx={sx.addButtonContainer}>
+        <AddGraphButton
+          options={graphOptions}
+          onSelectGraph={handleAddGraph}
+          buttonText={t('dashboard.addGraphButton')}
+        />
+      </Box>
+      <Box sx={sx.gridContainer}>
+        <DashboardGrid
+          items={gridItems}
+          onLayoutChange={handleLayoutChange}
+          onRemoveItem={handleRemoveItem}
+        />
+      </Box>
     </Box>
   );
 };
@@ -100,6 +146,15 @@ const sx = {
     width: '100%',
     display: 'flex',
     flexDirection: 'column'
+  },
+  addButtonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    padding: '16px 16px 0 16px',
+    flexShrink: 0
+  },
+  gridContainer: {
+    flex: 1
   },
   header: {
     padding: '24px 24px 16px',

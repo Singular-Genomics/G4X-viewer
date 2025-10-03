@@ -269,5 +269,9 @@
   "navigation": {
     "viewer": "Viewer",
     "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "addGraphButton": "Add Graph",
+    "graphAdded": "{{graphName}} added successfully"
   }
 }
