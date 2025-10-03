@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem, SxProps, Theme, useTheme } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { AddGraphButtonProps } from './AddGraphButton.types';
 
 export const AddGraphButton = ({ options, onSelectGraph, buttonText = 'Add graph' }: AddGraphButtonProps) => {
+  const theme = useTheme();
+  const sx = styles(theme);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -56,11 +58,12 @@ export const AddGraphButton = ({ options, onSelectGraph, buttonText = 'Add graph
   );
 };
 
-const sx = {
+const styles = (theme: Theme): Record<string, SxProps> => ({
   addButton: {
-    backgroundColor: 'primary.main',
+    background: theme.palette.gx.gradients.brand(),
+    fontWeight: 600,
     '&:hover': {
-      backgroundColor: 'primary.dark'
+      boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}`
     }
   }
-};
+});
