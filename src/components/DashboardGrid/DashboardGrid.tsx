@@ -43,6 +43,7 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }
       };
     });
     setLayout(newLayout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
   const handleLayoutChange = (newLayout: Layout[]) => {
