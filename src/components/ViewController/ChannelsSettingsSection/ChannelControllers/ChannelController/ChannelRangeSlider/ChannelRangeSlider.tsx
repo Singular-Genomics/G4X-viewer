@@ -29,11 +29,6 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
     setMaxInputValue(currentMaxValue.toString());
   }, [currentMaxValue, currentMinValue]);
 
-  useEffect(() => {
-    setMinInputValue(rangeMin.toString());
-    setMaxInputValue(rangeMax.toString());
-  }, [rangeMin, rangeMax]);
-
   const colormap = useViewerStore((store) => store.colormap);
   const rgbColor = colormapToRgb(!!colormap, color);
 
@@ -109,7 +104,11 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
             type="number"
             sx={sx.textField}
             value={rangeMin}
-            onChange={(e) => setRangeMin(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setRangeMin(value);
+              setMinInputValue(value.toString());
+            }}
             inputProps={{
               min: 0,
               max: rangeMax - 1,
@@ -129,7 +128,11 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
             type="number"
             sx={sx.textField}
             value={rangeMax}
-            onChange={(e) => setRangeMax(Number(e.target.value))}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setRangeMax(value);
+              setMaxInputValue(value.toString());
+            }}
             inputProps={{
               min: rangeMin + 1,
               max: CHANNEL_MAX,
