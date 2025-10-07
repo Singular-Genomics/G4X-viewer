@@ -270,5 +270,13 @@
     "segmentationLayer": "Segmentation Layer", 
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
+  },
+  "navigation": {
+    "viewer": "Viewer",
+    "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "addGraphButton": "Add Graph",
+    "graphAdded": "{{graphName}} added successfully"
   }
 }

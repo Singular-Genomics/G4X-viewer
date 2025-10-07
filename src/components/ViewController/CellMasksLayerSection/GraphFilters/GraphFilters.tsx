@@ -55,7 +55,8 @@ export const GraphFilters = () => {
             minWidth: 400,
             minHeight: 400,
             maxWidth: 1400,
-            maxHeight: 800
+            maxHeight: 800,
+            startY: 100
           }}
           onClose={() => {
             setIsWindowVisible(false);

@@ -2,7 +2,8 @@ import { Box, IconButton, Theme, useTheme } from '@mui/material';
 import { useMetadata } from '../../hooks/useMetadata.hook';
 import { guessRgb } from '../../legacy/utils';
 import { useEffect, useState } from 'react';
-import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ViewControllerProps } from './ViewController.types';
 import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSection/GxCollapsibleSection';
 import { SourceFilesSection } from './SourceFilesSection/SourceFilesSection';
@@ -11,10 +12,8 @@ import { TranscriptLayerSection } from './TranscriptLayerSection/TranscriptLayer
 import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksLayerSection } from './CellMasksLayerSection';
-import { ControllerHeader } from './ControllerHeader';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
-import { SocialIcons } from '../SocialIcons/SocialIcons';
 import { useTranslation } from 'react-i18next';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
@@ -36,8 +35,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
     <>
       {isControllerOn ? (
         <Box sx={sx.viewControllerContainer}>
+          <Box sx={sx.collapseButton}>
+            <IconButton
+              onClick={() => setIsControllerOn(false)}
+              sx={sx.collapseIconButton}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
           <Box sx={sx.viewControllerContentWrapper}>
-            <ControllerHeader onCloseController={() => setIsControllerOn(false)} />
             <Box sx={sx.viewControllerSectionsWrapper}>
               <GxCollapsibleSection
                 sectionTitle={t('sourceFiles.sectionTitle')}
@@ -78,20 +84,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <CellMasksLayerSection />
               </GxCollapsibleSection>
             </Box>
-            <Box sx={sx.socialIconsWrapper}>
-              <SocialIcons />
-            </Box>
           </Box>
         </Box>
       ) : (
-        <Box sx={sx.viewControllerToggleButton}>
+        <Box sx={sx.expandButton}>
           <IconButton
-            size="large"
-            disableTouchRipple
             onClick={() => setIsControllerOn(true)}
-            style={{ color: theme.palette.gx.primary.white }}
+            sx={sx.expandIconButton}
           >
-            <MenuIcon fontSize="large" />
+            <ChevronLeftIcon />
           </IconButton>
         </Box>
       )}
@@ -101,16 +102,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
 
 const styles = (theme: Theme) => ({
   viewControllerContainer: {
-    backgroundColor: theme.palette.gx.mediumGrey[300],
-    padding: '8px 0 0 8px',
     width: '550px',
-    height: '100vh'
+    height: '100%',
+    position: 'relative'
   },
 
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.gx.lightGrey[100],
-    borderTopLeftRadius: '32px',
-    padding: '16px 8px 8px 16px',
+
+    padding: '16px 4px 8px 20px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -131,16 +131,38 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     height: '100%'
   },
-  viewControllerToggleButton: {
+  collapseButton: {
     position: 'absolute',
-    top: 0,
-    right: 10
+    left: '-30px',
+    top: '100px',
+    zIndex: 101
   },
-  socialIconsWrapper: {
-    marginTop: 'auto',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    paddingTop: '8px',
-    paddingRight: '16px'
+  collapseIconButton: {
+    backgroundColor: theme.palette.gx.lightGrey[100],
+    borderTopLeftRadius: '8px',
+    borderBottomLeftRadius: '8px',
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    padding: '12px 4px',
+    '&:hover': {
+      backgroundColor: theme.palette.gx.lightGrey[300]
+    }
+  },
+  expandButton: {
+    position: 'fixed',
+    right: 0,
+    top: '170px',
+    zIndex: 100
+  },
+  expandIconButton: {
+    backgroundColor: theme.palette.gx.lightGrey[100],
+    borderTopLeftRadius: '8px',
+    borderBottomLeftRadius: '8px',
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    padding: '12px 4px',
+    '&:hover': {
+      backgroundColor: theme.palette.gx.lightGrey[300]
+    }
   }
 });

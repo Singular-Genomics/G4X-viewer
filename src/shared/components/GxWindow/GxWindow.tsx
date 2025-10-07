@@ -18,7 +18,10 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
     [boundries]
   );
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({
+    x: config?.startX || 0,
+    y: config?.startY || 0
+  });
   const [isDragging, setIsDragging] = useState(false);
 
   const dragOffset = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -124,7 +127,7 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
 const styles = (theme: Theme) => ({
   windowContainer: (posX: number, posY: number, isDragging: boolean) => ({
     borderRadius: '8px 8px 0px 0px',
-    position: 'absolute',
+    position: 'fixed',
     backgroundColor: theme.palette.gx.mediumGrey[500],
     zIndex: 100,
     transition: 'box-shadow 0.25s',

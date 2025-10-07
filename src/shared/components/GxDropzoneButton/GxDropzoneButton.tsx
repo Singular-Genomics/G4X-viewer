@@ -51,6 +51,7 @@ export const GxDropzoneButton = ({
         sx={sx.textField}
         disabled={disabled}
         slotProps={{
+          htmlInput: { readOnly: true },
           input: {
             endAdornment: onCloudUploadClick && (
               <IconButton
@@ -106,7 +107,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       borderColor: theme.palette.gx.accent.greenBlue,
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     },
-    transition: 'all 0.15s ease'
+    transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease'
   },
   dropzoneHelperMessage: {
     fontSize: '12px',
