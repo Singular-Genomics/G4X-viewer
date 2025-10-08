@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { GxModalProps } from './GxModal.types';
-import { Box, Button, FormControlLabel, Modal, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Button, FormControlLabel, IconButton, Modal, Theme, Typography, useTheme } from '@mui/material';
 import { GxCheckbox } from '../GxCheckbox';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import ReportRoundedIcon from '@mui/icons-material/ReportRounded';
 import InfoIcon from '@mui/icons-material/Info';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
 
 export const GxModal = ({
@@ -16,7 +18,8 @@ export const GxModal = ({
   children,
   colorVariant = 'singular',
   iconVariant = 'info',
-  dontShowFlag
+  dontShowFlag,
+  hideButtons = false
 }: GxModalProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -31,6 +34,8 @@ export const GxModal = ({
         return <ReportRoundedIcon sx={sx.modalIcon} />;
       case 'info':
         return <InfoIcon sx={sx.modalIcon} />;
+      case 'settings':
+        return <SettingsIcon sx={sx.modalIcon} />;
     }
   }, [iconVariant, sx]);
 
@@ -52,29 +57,38 @@ export const GxModal = ({
         <Box sx={sx.headerWrapper}>
           {modalIcon}
           <Typography sx={sx.modalTitle}>{title}</Typography>
+          <IconButton
+            onClick={onClose}
+            size="small"
+            sx={sx.closeButton}
+          >
+            <CloseIcon />
+          </IconButton>
         </Box>
         <Box sx={sx.modalContentWrapper}>
           {children}
-          <Box sx={sx.modalButtonsWrapper}>
-            {onContinue && (
+          {!hideButtons && (
+            <Box sx={sx.modalButtonsWrapper}>
+              {onContinue && (
+                <Button
+                  sx={{
+                    ...sx.modalButtonBase,
+                    ...sx.continueButton,
+                    ...stylesVaraint.button
+                  }}
+                  onClick={handleContinue}
+                >
+                  Confirm
+                </Button>
+              )}
               <Button
-                sx={{
-                  ...sx.modalButtonBase,
-                  ...sx.continueButton,
-                  ...stylesVaraint.button
-                }}
-                onClick={handleContinue}
+                sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
+                onClick={onClose}
               >
-                Confirm
+                Cancel
               </Button>
-            )}
-            <Button
-              sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-          </Box>
+            </Box>
+          )}
 
           {dontShowFlag && (
             <>
@@ -109,7 +123,16 @@ const styles = (theme: Theme, size: string) => {
       display: 'flex',
       alignItems: 'center',
       gap: '16px',
-      padding: '8px'
+      padding: '8px',
+      position: 'relative'
+    },
+    closeButton: {
+      position: 'absolute',
+      right: '8px',
+      color: theme.palette.gx.primary.white,
+      '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+      }
     },
     modalContentWrapper: {
       padding: '16px',

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Box, IconButton, Modal, Theme, useTheme, alpha } from '@mui/material';
+import { Box, IconButton, Theme, useTheme, alpha } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
 import { GxDashboardGraphWindowProps } from './GxDashboardGraphWindow.types';
+import { GxModal } from '../../shared/components/GxModal';
 
 export const GxDashboardGraphWindow = ({
   controlsContent,
@@ -35,25 +35,17 @@ export const GxDashboardGraphWindow = ({
           >
             <SettingsIcon />
           </IconButton>
-          <Modal
-            open={isSettingsOpen}
+          <GxModal
+            isOpen={isSettingsOpen}
             onClose={handleSettingsClose}
-            sx={sx.modal}
+            title={t('dashboard.graphSettings')}
+            colorVariant="singular"
+            iconVariant="settings"
+            size="small"
+            hideButtons={true}
           >
-            <Box sx={sx.settingsContainer}>
-              <Box sx={sx.settingsHeader}>
-                <Box sx={sx.title}>{t('dashboard.graphSettings')}</Box>
-                <IconButton
-                  onClick={handleSettingsClose}
-                  size="small"
-                  sx={sx.closeButton}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-              {settingsContent}
-            </Box>
-          </Modal>
+            <Box sx={sx.settingsContent}>{settingsContent}</Box>
+          </GxModal>
         </>
       )}
 
@@ -89,43 +81,9 @@ const styles = (theme: Theme) => ({
       backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1)
     }
   },
-  closeButton: {
-    color: theme.palette.gx.darkGrey[300],
-    padding: '4px',
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[300], 0.1)
-    }
-  },
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  settingsContainer: {
-    backgroundColor: theme.palette.gx.lightGrey[100],
-    borderRadius: '10px',
-    padding: '14px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '14px',
+  settingsContent: {
     minWidth: '400px',
-    maxWidth: '600px',
-    maxHeight: '80vh',
-    overflow: 'auto',
-    position: 'relative',
-    '&:focus-visible': {
-      outline: 'none'
-    }
-  },
-  settingsHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '8px'
-  },
-  title: {
-    fontSize: '1.25rem',
-    fontWeight: 600
+    maxWidth: '600px'
   },
   graphContent: {
     flex: 1,
