@@ -10,11 +10,10 @@ export type GxModalProps = {
   iconVariant?: GxModalIconVariant;
   dontShowFlag?: string;
   size?: GxModalSize;
-  hideButtons?: boolean;
 };
 
 type GxModalColorVaraints = 'danger' | 'warning' | 'info' | 'singular';
 
-type GxModalIconVariant = 'danger' | 'warning' | 'info' | 'settings';
+type GxModalIconVariant = 'danger' | 'warning' | 'info';
 
 type GxModalSize = 'default' | 'small';
