@@ -3,13 +3,12 @@ import { GxDashboardGraphWindowExampleControls } from './sections/GxDashboardGra
 import { GxDashboardGraphWindowExampleSettings } from './sections/GxDashboardGraphWindowExampleSettings';
 import { GxDashboardGraphWindowExamplePlot } from './sections/GxDashboardGraphWindowExamplePlot';
 import { GxDashboardGraphWindowExampleProps } from './GxDashboardGraphWindowExample.types';
-
-export const EXAMPLE_CHART_ID = 'exampleChart';
+import { EXAMPLE_CHART_CONFIG } from './GxDashboardGraphWindowExample.config';
 
 export const GxDashboardGraphWindowExample = ({
   id,
-  title = 'Example Chart',
-  backgroundColor = '#2d3748',
+  title = EXAMPLE_CHART_CONFIG.label,
+  backgroundColor = EXAMPLE_CHART_CONFIG.defaultBackgroundColor,
   removable = true
 }: GxDashboardGraphWindowExampleProps) => {
   return (

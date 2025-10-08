@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
-import { GxDashboardGraphWindowExample, EXAMPLE_CHART_ID } from '../../components/GxDashboardGraphWindowExample';
+import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
@@ -13,15 +13,15 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions = [{ id: EXAMPLE_CHART_ID, label: 'Example Chart' }];
+  const graphOptions = [{ id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label }];
 
   // Example items
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
     <GxDashboardGraphWindowExample
       key="item-1"
       id="item-1"
-      title="Example Chart"
-      backgroundColor="#2d3748"
+      title={EXAMPLE_CHART_CONFIG.label}
+      backgroundColor={EXAMPLE_CHART_CONFIG.defaultBackgroundColor}
       removable={true}
     />
   ]);
@@ -38,7 +38,7 @@ export const DashboardView = () => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     const newItemId = `item-${Date.now()}`;
 
-    if (graphId === EXAMPLE_CHART_ID) {
+    if (graphId === EXAMPLE_CHART_CONFIG.id) {
       const newItem: DashboardGridItem = (
         <GxDashboardGraphWindowExample
           key={newItemId}
