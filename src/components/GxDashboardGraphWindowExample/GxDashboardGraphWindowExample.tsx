@@ -4,6 +4,8 @@ import { GxDashboardGraphWindowExampleSettings } from './sections/GxDashboardGra
 import { GxDashboardGraphWindowExamplePlot } from './sections/GxDashboardGraphWindowExamplePlot';
 import { GxDashboardGraphWindowExampleProps } from './GxDashboardGraphWindowExample.types';
 
+export const EXAMPLE_CHART_ID = 'exampleChart';
+
 export const GxDashboardGraphWindowExample = ({
   id,
   title = 'Example Chart',

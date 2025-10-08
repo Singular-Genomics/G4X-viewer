@@ -1,1 +1,1 @@
-export { GxDashboardGraphWindowExample } from './GxDashboardGraphWindowExample';
+export * from './GxDashboardGraphWindowExample';
