@@ -6,13 +6,13 @@ import { DashboardGridProps } from './DashboardGrid.types';
 
 const ReactGridLayout = WidthProvider(GridLayout);
 
-export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }: DashboardGridProps) => {
+export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem }: DashboardGridProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   const defaultLayout = useMemo(() => {
     return items.map((item, index) => ({
-      i: item.id,
+      i: item.props.id,
       x: (index % 2) * 24,
       y: Math.floor(index / 2) * 10,
       w: 24,
@@ -28,12 +28,12 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }
   useEffect(() => {
     const existingLayoutMap = new Map(layout.map((l) => [l.i, l]));
     const newLayout = items.map((item, index) => {
-      const existing = existingLayoutMap.get(item.id);
+      const existing = existingLayoutMap.get(item.props.id);
       if (existing) {
         return existing;
       }
       return {
-        i: item.id,
+        i: item.props.id,
         x: (index % 2) * 24,
         y: Math.floor(index / 2) * 10,
         w: 24,
@@ -56,10 +56,7 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }
   };
 
   return (
-    <Box
-      className={className}
-      sx={sx.container}
-    >
+    <Box sx={sx.container}>
       <ReactGridLayout
         className="layout"
         layout={layout}
@@ -74,13 +71,13 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem, className }
         draggableHandle=".drag-handle"
       >
         {items.map((item) => (
-          <div key={item.id}>
+          <div key={item.props.id}>
             <GxGridItem
-              title={item.title}
-              backgroundColor={item.backgroundColor}
-              onRemove={item.removable ? () => handleRemoveItem(item.id) : undefined}
+              title={item.props.title}
+              backgroundColor={item.props.backgroundColor}
+              onRemove={item.props.removable ? () => handleRemoveItem(item.props.id) : undefined}
             >
-              {item.content}
+              {item}
             </GxGridItem>
           </div>
         ))}

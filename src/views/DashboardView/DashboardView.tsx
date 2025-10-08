@@ -1,89 +1,29 @@
 import { useState } from 'react';
-import { alpha, Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
-import { DashboardViewProps } from './DashboardView.types';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
+import { GxDashboardGraphWindowExample } from '../../components/GxDashboardGraphWindowExample';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 
-export const DashboardView = ({ className }: DashboardViewProps) => {
+export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions = [
-    { id: 'graph1', label: 'Graph 1' },
-    { id: 'graph2', label: 'Graph 2' },
-    { id: 'graph3', label: 'Graph 3' }
-  ];
+  const graphOptions = [{ id: 'exampleChart', label: 'Example Chart' }];
 
   // Example items
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
-    {
-      id: 'item-1',
-      title: 'Widget 1',
-      content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            Box 1
-          </Typography>
-        </Box>
-      ),
-      backgroundColor: '#2d3748',
-      removable: true
-    },
-    {
-      id: 'item-2',
-      title: 'Widget 2',
-      content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            Box 2
-          </Typography>
-        </Box>
-      ),
-      backgroundColor: '#4a5568',
-      removable: true
-    },
-    {
-      id: 'item-3',
-      title: 'Widget 3',
-      content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            Box 3
-          </Typography>
-        </Box>
-      ),
-      backgroundColor: '#2b6cb0',
-      removable: true
-    },
-    {
-      id: 'item-4',
-      title: 'Widget 4',
-      content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            Box 4
-          </Typography>
-        </Box>
-      ),
-      backgroundColor: '#805ad5'
-    }
+    <GxDashboardGraphWindowExample
+      key="item-1"
+      id="item-1"
+      title="Example Chart"
+      backgroundColor="#2d3748"
+      removable={true}
+    />
   ]);
 
   const handleLayoutChange = (layout: Layout[]) => {
@@ -91,39 +31,31 @@ export const DashboardView = ({ className }: DashboardViewProps) => {
   };
 
   const handleRemoveItem = (itemId: string) => {
-    setGridItems((prev) => prev.filter((item) => item.id !== itemId));
+    setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
   };
 
   const handleAddGraph = (graphId: string) => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     const newItemId = `item-${Date.now()}`;
 
-    const newItem: DashboardGridItem = {
-      id: newItemId,
-      title: graphOption?.label || 'New Graph',
-      content: (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-          <Typography
-            variant="h4"
-            color="text.primary"
-          >
-            {graphOption?.label}
-          </Typography>
-        </Box>
-      ),
-      backgroundColor: '#' + Math.floor(Math.random() * 16777215).toString(16),
-      removable: true
-    };
+    if (graphId === 'exampleChart') {
+      const newItem: DashboardGridItem = (
+        <GxDashboardGraphWindowExample
+          key={newItemId}
+          id={newItemId}
+          title={graphOption?.label || 'Example Chart'}
+          backgroundColor={'#' + Math.floor(Math.random() * 16777215).toString(16)}
+          removable={true}
+        />
+      );
 
-    setGridItems((prev) => [newItem, ...prev]);
-    enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+      setGridItems((prev) => [newItem, ...prev]);
+      enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+    }
   };
 
   return (
-    <Box
-      className={className}
-      sx={sx.dashboardContainer}
-    >
+    <Box sx={sx.dashboardContainer}>
       <Box sx={sx.addButtonContainer}>
         <AddGraphButton
           options={graphOptions}

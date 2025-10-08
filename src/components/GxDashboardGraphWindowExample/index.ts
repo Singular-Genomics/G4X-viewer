@@ -1,0 +1,1 @@
+export { GxDashboardGraphWindowExample } from './GxDashboardGraphWindowExample';
