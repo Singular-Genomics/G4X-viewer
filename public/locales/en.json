@@ -278,6 +278,6 @@
   "dashboard": {
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
-    "graphSettings": "Graph Settings"
+    "settings": "Settings"
   }
 }

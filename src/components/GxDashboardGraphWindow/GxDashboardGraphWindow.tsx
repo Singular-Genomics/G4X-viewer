@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { GxDashboardGraphWindowProps } from './GxDashboardGraphWindow.types';
 
 export const GxDashboardGraphWindow = ({
+  title,
   controlsContent,
   settingsContent,
   graphContent
@@ -42,7 +43,7 @@ export const GxDashboardGraphWindow = ({
           >
             <Box sx={sx.settingsContainer}>
               <Box sx={sx.settingsHeader}>
-                <Box sx={sx.title}>{t('dashboard.graphSettings')}</Box>
+                <Box sx={sx.title}>{`${title} ${t('dashboard.settings')}`}</Box>
                 <IconButton
                   onClick={handleSettingsClose}
                   size="small"
