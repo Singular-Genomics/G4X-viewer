@@ -1,9 +1,10 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
+import { ExampleMultiSelect } from './controls';
 
 export const GxDashboardGraphWindowExampleControls = () => {
   return (
     <Box sx={sx.container}>
-      <Typography variant="body2">Controls</Typography>
+      <ExampleMultiSelect />
     </Box>
   );
 };
