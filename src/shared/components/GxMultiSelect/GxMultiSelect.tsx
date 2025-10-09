@@ -11,10 +11,11 @@ import {
   Typography
 } from '@mui/material';
 import { GxMultiSelectProps } from './GxMultiSelect.types';
+import { useTranslation } from 'react-i18next';
 
 export const GxMultiSelect = ({
   options,
-  placeholder = 'Select options...',
+  placeholder,
   colorVariant = 'light',
   sx: customStyles,
   renderValue,
@@ -22,11 +23,11 @@ export const GxMultiSelect = ({
 }: GxMultiSelectProps) => {
   const theme = useTheme();
   const sx = styles(theme, colorVariant);
-
+  const { t } = useTranslation();
   const defaultRenderValue = (selected: unknown) => {
     const selectedArray = selected as string[];
     if (selectedArray.length === 0) {
-      return <Typography sx={sx.placeholder}>{placeholder}</Typography>;
+      return <Typography sx={sx.placeholder}>{placeholder || t('general.multiSelectPlaceholder') || ''}</Typography>;
     }
     return (
       <Box sx={sx.chipsContainer}>
