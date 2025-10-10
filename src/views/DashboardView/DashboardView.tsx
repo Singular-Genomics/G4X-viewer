@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
-import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
@@ -13,18 +12,8 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions = [{ id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label }];
-
-  // Example items
-  const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
-    <GxDashboardGraphWindowExample
-      key="item-1"
-      id="item-1"
-      title={EXAMPLE_CHART_CONFIG.label}
-      backgroundColor={EXAMPLE_CHART_CONFIG.defaultBackgroundColor}
-      removable={true}
-    />
-  ]);
+  const graphOptions: { id: string; label: string }[] = [];
+  const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
   const handleLayoutChange = (layout: Layout[]) => {
     console.log('Layout changed:', layout);
@@ -34,24 +23,13 @@ export const DashboardView = () => {
     setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
   };
 
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddGraph = (graphId: string) => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
-    const newItemId = `item-${Date.now()}`;
+    // const newItemId = `item-${Date.now()}`;
 
-    if (graphId === EXAMPLE_CHART_CONFIG.id) {
-      const newItem: DashboardGridItem = (
-        <GxDashboardGraphWindowExample
-          key={newItemId}
-          id={newItemId}
-          title={graphOption?.label || 'Example Chart'}
-          backgroundColor={'#' + Math.floor(Math.random() * 16777215).toString(16)}
-          removable={true}
-        />
-      );
-
-      setGridItems((prev) => [newItem, ...prev]);
-      enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
-    }
+    // setGridItems((prev) => [newItem, ...prev]);
+    enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
   };
 
   return (
