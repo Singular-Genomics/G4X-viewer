@@ -5,12 +5,11 @@ import {
   menuItemClasses,
   outlinedInputClasses,
   useTheme,
-  Chip,
-  Box,
   MenuItem,
-  Typography
+  ListItemText
 } from '@mui/material';
 import { GxMultiSelectProps } from './GxMultiSelect.types';
+import { GxCheckbox } from '../GxCheckbox';
 
 export const GxMultiSelect = ({
   options,
@@ -18,38 +17,18 @@ export const GxMultiSelect = ({
   colorVariant = 'light',
   sx: customStyles,
   renderValue,
+  value,
   ...rest
 }: GxMultiSelectProps) => {
   const theme = useTheme();
   const sx = styles(theme, colorVariant);
-
-  const defaultRenderValue = (selected: unknown) => {
-    const selectedArray = selected as string[];
-    if (selectedArray.length === 0) {
-      return <Typography sx={sx.placeholder}>{placeholder}</Typography>;
-    }
-    return (
-      <Box sx={sx.chipsContainer}>
-        {selectedArray.map((value) => {
-          const option = options.find((opt) => opt.value === value);
-          return (
-            <Chip
-              key={value}
-              label={option?.label || value}
-              size="small"
-              sx={sx.chip}
-            />
-          );
-        })}
-      </Box>
-    );
-  };
 
   return (
     <Select
       multiple
       displayEmpty
       sx={{ ...sx.rounded, ...customStyles }}
+      value={value}
       MenuProps={{
         sx: sx.roundedMenu,
         anchorOrigin: {
@@ -61,7 +40,7 @@ export const GxMultiSelect = ({
           horizontal: 'left'
         }
       }}
-      renderValue={renderValue || defaultRenderValue}
+      renderValue={renderValue}
       {...rest}
     >
       {options.map((option) => (
@@ -70,7 +49,8 @@ export const GxMultiSelect = ({
           value={option.value}
           disableTouchRipple
         >
-          <Typography>{option.label}</Typography>
+          {Array.isArray(value) && <GxCheckbox checked={value.includes(option.value)} />}
+          <ListItemText>{option.label}</ListItemText>
         </MenuItem>
       ))}
     </Select>
@@ -87,7 +67,6 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       minHeight: '40px',
       height: 'auto',
       color: isDark ? theme.palette.gx.lightGrey[700] : theme.palette.gx.darkGrey[100],
-      fontSize: '14px',
       width: '100%',
       transition: 'background 0.15s ease, color 0.15s ease',
       '& .MuiPaper-root': {
@@ -100,7 +79,6 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       '& .MuiSelect-select': {
         padding: '8px 32px 8px 12px !important',
         minHeight: '24px',
-        display: 'flex',
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '4px',
@@ -167,29 +145,6 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
             }
           }
         }
-      }
-    },
-    placeholder: {
-      color: isDark ? alpha(theme.palette.gx.lightGrey[500], 0.6) : alpha(theme.palette.gx.mediumGrey[100], 0.6),
-      fontSize: '14px'
-    },
-    chipsContainer: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: 0.5
-    },
-    chip: {
-      height: '24px',
-      fontSize: '12px',
-      fontWeight: 500,
-      backgroundColor: isDark
-        ? alpha(theme.palette.gx.accent.greenBlue, 0.2)
-        : alpha(theme.palette.gx.accent.greenBlue, 0.15),
-      color: isDark ? theme.palette.gx.accent.greenBlue : alpha(theme.palette.gx.accent.greenBlue, 0.9),
-      border: `1px solid ${alpha(theme.palette.gx.accent.greenBlue, 0.4)}`,
-      transition: 'background 0.15s ease, color 0.15s ease, border-color 0.15s ease',
-      '& .MuiChip-label': {
-        px: 1
       }
     }
   };
