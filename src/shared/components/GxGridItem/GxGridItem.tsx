@@ -97,7 +97,6 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
   },
   content: {
     flex: 1,
-    padding: '12px',
     overflow: 'auto',
     display: 'flex',
     flexDirection: 'column'

@@ -6,7 +6,6 @@ export type GxDashboardGraphWindowProps = {
   controlsContent?: ReactNode;
   settingsContent?: ReactNode;
   graphContent: ReactNode;
-  backgroundColor?: string;
   removable?: boolean;
   onRemove?: (id: string) => void;
 };
