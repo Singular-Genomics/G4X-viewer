@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardPlots.helpers';
+import { GraphOption } from './DashboardView.types';
+import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -12,7 +15,16 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions: { id: string; label: string }[] = [];
+  const graphOptions: GraphOption[] = useMemo(
+    () => [
+      {
+        id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
+        label: t('dashboard.graphOptions_boxGraph')
+      }
+    ],
+    [t]
+  );
+
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
   const handleLayoutChange = (layout: Layout[]) => {
@@ -23,12 +35,29 @@ export const DashboardView = () => {
     setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
   };
 
-  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleAddGraph = (graphId: string) => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
-    // const newItemId = `item-${Date.now()}`;
+    if (!graphOption) return;
 
-    // setGridItems((prev) => [newItem, ...prev]);
+    let newItem: DashboardGridItem;
+    const newItemId = `item-${Date.now()}`;
+
+    switch (graphOption.id) {
+      case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
+        newItem = (
+          <BoxGraph
+            key={newItemId}
+            id={newItemId}
+            title={graphOption?.label || 'Example Chart'}
+            removable={true}
+          />
+        );
+        break;
+      default:
+        return;
+    }
+
+    setGridItems((prev) => [newItem, ...prev]);
     enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
   };
 
