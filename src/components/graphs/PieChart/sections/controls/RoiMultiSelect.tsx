@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GxMultiSelect, GxMultiSelectOption } from '../../../../../shared/components/GxMultiSelect';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
@@ -27,15 +27,6 @@ export const RoiMultiSelect = ({ selectedRois, onChange }: RoiMultiSelectProps) 
       .filter((option): option is GxMultiSelectOption => option !== null)
       .sort((a, b) => Number(a.value) - Number(b.value));
   }, [polygonFeatures, t]);
-
-  useEffect(() => {
-    const sortedValidRois = selectedRois
-      .filter((roiId) => roiOptions.some((opt) => Number(opt.value) === roiId))
-      .sort((a, b) => a - b);
-    if (sortedValidRois.some((roi, index) => roi !== selectedRois[index])) {
-      onChange(sortedValidRois);
-    }
-  }, [roiOptions, selectedRois, onChange]);
 
   const handleChange = (newValues: string[]) => {
     const sortedRois = newValues.map(Number).sort((a, b) => a - b);
