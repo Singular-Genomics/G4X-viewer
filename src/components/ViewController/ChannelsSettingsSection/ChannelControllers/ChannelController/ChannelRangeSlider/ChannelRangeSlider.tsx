@@ -6,7 +6,6 @@ import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
-import { useTranslation } from 'react-i18next';
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -16,13 +15,10 @@ const DEBOUNCE_TIME_MS = 300;
 export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoading }: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
   const [minInputValue, setMinInputValue] = useState<string>('');
   const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   const [currentMinValue, currentMaxValue] = slider;
-  const [rangeMin, setRangeMin] = useState(currentMinValue);
-  const [rangeMax, setRangeMax] = useState(currentMaxValue);
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
@@ -84,14 +80,13 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
         gap: '24px',
         paddingRight: '16px'
       }}
     >
-      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+      {/* <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
           <label
             htmlFor="slider_range_min"
@@ -140,7 +135,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
             }}
           />
         </Box>
-      </Box>
+      </Box> */}
       <Box
         sx={{
           display: 'flex',
@@ -166,8 +161,8 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
           value={slider}
           onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
           valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-          min={rangeMin}
-          max={rangeMax}
+          min={CHANNEL_MIN}
+          max={CHANNEL_MAX}
           step={CHANNEL_STEP}
           orientation="horizontal"
           style={{ color: rgbColor }}

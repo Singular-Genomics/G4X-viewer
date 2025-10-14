@@ -4,6 +4,7 @@ import { ChannelOptionsProps } from './ChannelOption.types';
 import { useRef, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ColorPalette } from './ColorPalette';
+import { SliderThreshold } from './SliderThreshold';
 
 export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsProps) => {
   const { t } = useTranslation();
@@ -38,6 +39,10 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
           <ClickAwayListener onClickAway={() => setIsOpen((prev) => !prev)}>
             <MenuList>
               <ColorPalette handleColorSelect={handleColorSelect} />
+              <SliderThreshold
+                initialMin={10}
+                initialMax={300}
+              />
             </MenuList>
           </ClickAwayListener>
         </Paper>
