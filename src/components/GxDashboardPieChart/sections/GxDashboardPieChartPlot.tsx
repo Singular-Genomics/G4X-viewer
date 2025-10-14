@@ -8,17 +8,17 @@ import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore/Poly
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { CellSegmentationColormapEntry } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useShallow } from 'zustand/react/shallow';
-import type { GxDashboardPieChartPlotProps, ClusterData, SinglePieChartProps } from '../GxDashboardPieChart.types';
+import type { GxDashboardPieChartPlotProps } from '../GxDashboardPieChart.types';
 
 const buildColorMap = (colorMapConfig: CellSegmentationColormapEntry[]) => {
   return Object.fromEntries(colorMapConfig.map((entry) => [entry.clusterId, `rgb(${entry.color.join(',')})`]));
 };
 
-const SinglePieChart = ({ polygonId }: SinglePieChartProps) => {
+export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlotProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
   const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
   const { cellMasksData } = useCellSegmentationLayerStore();
@@ -45,138 +45,138 @@ const SinglePieChart = ({ polygonId }: SinglePieChartProps) => {
     };
   }, []);
 
-  const selectedPolygon = polygonFeatures.find((feature) => feature.properties?.polygonId === polygonId);
-
-  const clusterData: ClusterData[] = useMemo(() => {
-    if (!cellMasksData || !selectedPolygon) return [];
-
-    const clusterCounts = new Map<string, number>();
-    cellMasksData.forEach((mask) => {
-      clusterCounts.set(mask.clusterId, (clusterCounts.get(mask.clusterId) || 0) + 1);
-    });
+  const pieChartData = useMemo(() => {
+    if (!cellMasksData || !polygonFeatures) return [];
 
     const colorMap = buildColorMap(colorMapConfig);
+    const pieData: Partial<Data>[] = [];
+    const numRois = selectedRois.length;
 
-    return Array.from(clusterCounts.entries())
-      .map(([clusterId, count]) => ({
-        clusterId,
-        count,
-        color: colorMap[clusterId] || theme.palette.gx.mediumGrey[500]
-      }))
-      .sort((a, b) => Number(a.clusterId) - Number(b.clusterId));
-  }, [cellMasksData, selectedPolygon, colorMapConfig, theme.palette.gx.mediumGrey]);
+    const minPieSize = 300;
+    const cols = Math.max(1, Math.floor(dimensions.width / minPieSize));
+    const rows = Math.ceil(numRois / cols);
 
-  if (!selectedPolygon) {
-    return (
-      <Box sx={sx.container}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          {t('pieChart.polygonNotFound', { polygonId })}
-        </Typography>
-      </Box>
-    );
-  }
+    const horizontalSpacing = 0.08;
+    const verticalSpacing = 0.08;
 
-  if (!cellMasksData?.length || clusterData.length === 0) {
-    return (
-      <Box sx={sx.container}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          {t('pieChart.noDataForPolygon')}
-        </Typography>
-      </Box>
-    );
-  }
+    const actualCols = numRois < cols ? numRois : cols;
+    const offset = (cols - actualCols) / (2 * cols);
 
-  const pieData: Partial<Data>[] = [
-    {
-      type: 'pie',
-      labels: clusterData.map((d) => d.clusterId),
-      values: clusterData.map((d) => d.count),
-      marker: {
-        colors: clusterData.map((d) => d.color)
+    selectedRois.forEach((roiId, roiIndex) => {
+      const selectedPolygon = polygonFeatures.find((feature) => feature.properties?.polygonId === roiId);
+      if (!selectedPolygon) return;
+
+      const clusterCounts = new Map<string, number>();
+      cellMasksData.forEach((mask) => {
+        clusterCounts.set(mask.clusterId, (clusterCounts.get(mask.clusterId) || 0) + 1);
+      });
+
+      if (clusterCounts.size === 0) return;
+
+      const sortedClusters = Array.from(clusterCounts.entries()).sort((a, b) => Number(a[0]) - Number(b[0]));
+
+      const labels = sortedClusters.map(([clusterId]) => clusterId);
+      const values = sortedClusters.map(([, count]) => count);
+      const colors = sortedClusters.map(([clusterId]) => colorMap[clusterId] || theme.palette.gx.mediumGrey[500]);
+
+      const col = roiIndex % cols;
+      const row = Math.floor(roiIndex / cols);
+
+      const cellWidth = 1 / cols;
+      const cellHeight = 1 / rows;
+
+      const xStart = offset + col * cellWidth + horizontalSpacing / 2;
+      const xEnd = offset + (col + 1) * cellWidth - horizontalSpacing / 2;
+      const yStart = 1 - (row + 1) * cellHeight + verticalSpacing / 2;
+      const yEnd = 1 - row * cellHeight - verticalSpacing / 2;
+
+      pieData.push({
+        type: 'pie',
+        labels: labels,
+        values: values,
+        name: `ROI ${roiId}`,
+        marker: { colors: colors },
+        domain: {
+          x: [xStart, xEnd],
+          y: [yStart, yEnd]
+        },
+        textinfo: 'label+percent',
+        hoverinfo: 'label+value+percent',
+        showlegend: roiIndex === 0,
+        legendgroup: 'clusters'
+      });
+    });
+
+    return pieData;
+  }, [cellMasksData, polygonFeatures, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width]);
+
+  const layout: Partial<Layout> = useMemo(() => {
+    const annotations: any[] = [];
+    const numRois = selectedRois.length;
+    const minPieSize = 300;
+    const cols = Math.max(1, Math.floor(dimensions.width / minPieSize));
+    const rows = Math.ceil(numRois / cols);
+
+    const verticalSpacing = 0.08;
+
+    const actualCols = numRois < cols ? numRois : cols;
+    const offset = (cols - actualCols) / (2 * cols);
+
+    selectedRois.forEach((roiId, roiIndex) => {
+      const col = roiIndex % cols;
+      const row = Math.floor(roiIndex / cols);
+
+      const cellWidth = 1 / cols;
+      const cellHeight = 1 / rows;
+
+      annotations.push({
+        text: `<b>${t('pieChart.roiTitle', { polygonId: roiId })}</b>`,
+        x: offset + (col + 0.5) * cellWidth,
+        y: 1 - row * cellHeight - verticalSpacing / 3,
+        xref: 'paper',
+        yref: 'paper',
+        xanchor: 'center',
+        yanchor: 'bottom',
+        showarrow: false,
+        font: { size: 14, color: theme.palette.gx.primary.white }
+      });
+    });
+
+    return {
+      width: dimensions.width,
+      height: dimensions.height,
+      autosize: true,
+      uirevision: 'true',
+      margin: { l: 30, r: 150, b: 30, t: 30 },
+      paper_bgcolor: 'transparent',
+      plot_bgcolor: 'transparent',
+      font: {
+        color: theme.palette.gx.primary.white
       },
-      textinfo: 'label+percent',
-      hoverinfo: 'label+value+percent'
-    }
-  ];
-
-  const layout: Partial<Layout> = {
-    width: dimensions.width,
-    height: dimensions.height,
-    autosize: true,
-    uirevision: 'true',
-    margin: { l: 50, r: 50, b: 50, t: 50 },
-    paper_bgcolor: 'transparent',
-    plot_bgcolor: 'transparent',
-    font: {
-      color: theme.palette.gx.primary.white
-    },
-    showlegend: true,
-    legend: {
-      itemsizing: 'constant',
-      orientation: 'v',
-      x: 1,
-      y: 0.5,
-      title: {
-        text: `${t('pieChart.clusterId')}<br>`,
+      showlegend: true,
+      legend: {
+        itemsizing: 'constant',
+        orientation: 'v',
+        x: 1.01,
+        xanchor: 'left',
+        y: 0.5,
+        yanchor: 'middle',
+        title: {
+          text: `${t('pieChart.clusterId')}<br>`,
+          font: {
+            size: 13,
+            color: theme.palette.gx.primary.white,
+            weight: 500
+          }
+        },
         font: {
-          size: 13,
+          size: 12,
           color: theme.palette.gx.primary.white
         }
       },
-      font: {
-        size: 12,
-        color: theme.palette.gx.primary.white
-      }
-    }
-  };
-
-  return (
-    <Box sx={sx.singleChartContainer}>
-      <Typography
-        variant="subtitle1"
-        sx={sx.chartTitle}
-      >
-        {t('pieChart.roiTitle', { polygonId })}
-      </Typography>
-      <Box
-        ref={containerRef}
-        sx={sx.graphWrapper}
-      >
-        <Plot
-          data={pieData}
-          layout={layout}
-          style={{ width: '100%', height: '100%' }}
-          useResizeHandler={true}
-          config={{
-            scrollZoom: false,
-            displayModeBar: true,
-            displaylogo: false,
-            modeBarButtonsToRemove: [
-              'lasso2d',
-              'select2d',
-              'zoom2d',
-              'pan2d',
-              'zoomIn2d',
-              'zoomOut2d',
-              'autoScale2d',
-              'toImage'
-            ]
-          }}
-        />
-      </Box>
-    </Box>
-  );
-};
-
-export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlotProps) => {
-  const { t } = useTranslation();
-  const { cellMasksData } = useCellSegmentationLayerStore();
+      annotations: annotations
+    };
+  }, [dimensions, selectedRois, t, theme.palette.gx.primary.white]);
 
   if (!cellMasksData || cellMasksData.length === 0) {
     return (
@@ -204,14 +204,45 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
     );
   }
 
+  if (pieChartData.length === 0) {
+    return (
+      <Box sx={sx.container}>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+        >
+          {t('pieChart.noDataForPolygon')}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={sx.chartsGrid}>
-      {selectedRois.map((roiId) => (
-        <SinglePieChart
-          key={roiId}
-          polygonId={roiId}
-        />
-      ))}
+    <Box
+      ref={containerRef}
+      sx={sx.plotContainer}
+    >
+      <Plot
+        data={pieChartData}
+        layout={layout}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler={true}
+        config={{
+          scrollZoom: false,
+          displayModeBar: true,
+          displaylogo: false,
+          modeBarButtonsToRemove: [
+            'lasso2d',
+            'select2d',
+            'zoom2d',
+            'pan2d',
+            'zoomIn2d',
+            'zoomOut2d',
+            'autoScale2d',
+            'toImage'
+          ]
+        }}
+      />
     </Box>
   );
 };
@@ -226,30 +257,11 @@ const sx = {
     justifyContent: 'center',
     gap: 1
   },
-  chartsGrid: {
+  plotContainer: {
     width: '100%',
     height: '100%',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-    gap: 2,
-    padding: 2
-  },
-  singleChartContainer: {
     display: 'flex',
-    flexDirection: 'column',
-    minHeight: '150px',
-    height: '100%'
-  },
-  chartTitle: {
-    fontWeight: 600,
-    marginBottom: 1,
-    textAlign: 'center',
-    color: '#ffffff'
-  },
-  graphWrapper: {
     overflow: 'hidden',
-    flex: 1,
-    width: '100%',
-    minHeight: '200px'
+    padding: 2
   }
 };
