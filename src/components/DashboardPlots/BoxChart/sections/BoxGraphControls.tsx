@@ -13,7 +13,7 @@ export const BoxGraphControls = () => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore();
   const [selectedROIs, setSelectedROIs] = useState<string[]>([]);
   const [selectedGene, setSelectedGene] = useState<string | undefined>(' ');
-  const [selectedHue, setSelectedHue] = useState<keyof HueValueOptions | string>('');
+  const [selectedHue, setSelectedHue] = useState<keyof HueValueOptions | 'none'>('none');
 
   const availableROIOptions = useMemo(
     () =>
@@ -34,9 +34,6 @@ export const BoxGraphControls = () => {
     }
     if (!selectedGene && availableGenes.length) {
       setSelectedGene(availableGenes[0]);
-    }
-    if (!selectedHue) {
-      setSelectedHue(AVAILABLE_HUE_OPTIONS[0]);
     }
     //eslint-disable-next-line
   }, []);
@@ -108,6 +105,7 @@ export const BoxGraphControls = () => {
           fullWidth
           onChange={(e) => setSelectedHue(e.target.value as keyof HueValueOptions)}
         >
+          <MenuItem value={'none'}>{t('general.none')}</MenuItem>
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
             <MenuItem value={hueEntry}>{hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}</MenuItem>
           ))}
