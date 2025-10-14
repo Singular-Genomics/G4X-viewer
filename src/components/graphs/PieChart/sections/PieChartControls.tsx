@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
 import { RoiMultiSelect } from './controls';
 
-type GxDashboardPieChartControlsProps = {
+type PieChartControlsProps = {
   selectedRois: number[];
   onRoiChange: (rois: number[]) => void;
 };
 
-export const GxDashboardPieChartControls = ({ selectedRois, onRoiChange }: GxDashboardPieChartControlsProps) => {
+export const PieChartControls = ({ selectedRois, onRoiChange }: PieChartControlsProps) => {
   return (
     <Box sx={sx.container}>
       <RoiMultiSelect

@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { GxDashboardGraphWindow } from '../GxDashboardGraphWindow';
-import { GxDashboardPieChartPlot } from './sections/GxDashboardPieChartPlot';
-import { GxDashboardPieChartControls } from './sections/GxDashboardPieChartControls';
-import { GxDashboardPieChartProps } from './GxDashboardPieChart.types';
-import { PIE_CHART_CONFIG } from './GxDashboardPieChart.config';
+import { GxDashboardGraphWindow } from '../../GxDashboardGraphWindow';
+import { PieChartPlot } from './sections/PieChartPlot';
+import { PieChartControls } from './sections/PieChartControls';
+import { PieChartProps } from './PieChart.types';
+import { PIE_CHART_CONFIG } from './PieChart.config';
 
-export const GxDashboardPieChart = ({
+export const PieChart = ({
   id,
   title = PIE_CHART_CONFIG.label,
   backgroundColor = PIE_CHART_CONFIG.defaultBackgroundColor,
   removable = true,
   initialRois = []
-}: GxDashboardPieChartProps) => {
+}: PieChartProps) => {
   const [selectedRois, setSelectedRois] = useState<number[]>(() => [...initialRois].sort((a, b) => a - b));
 
   useEffect(() => {
@@ -27,12 +27,12 @@ export const GxDashboardPieChart = ({
       backgroundColor={backgroundColor}
       removable={removable}
       controlsContent={
-        <GxDashboardPieChartControls
+        <PieChartControls
           selectedRois={selectedRois}
           onRoiChange={setSelectedRois}
         />
       }
-      graphContent={<GxDashboardPieChartPlot selectedRois={selectedRois} />}
+      graphContent={<PieChartPlot selectedRois={selectedRois} />}
     />
   );
 };

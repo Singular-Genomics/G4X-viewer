@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GxMultiSelect, GxMultiSelectOption } from '../../../../shared/components/GxMultiSelect';
-import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { GxMultiSelect, GxMultiSelectOption } from '../../../../../shared/components/GxMultiSelect';
+import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 
 type RoiMultiSelectProps = {

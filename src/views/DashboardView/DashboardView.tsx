@@ -3,7 +3,7 @@ import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
-import { GxDashboardPieChart, PIE_CHART_CONFIG } from '../../components/GxDashboardPieChart';
+import { PieChart, PIE_CHART_CONFIG } from '../../components/graphs/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
@@ -70,7 +70,7 @@ export const DashboardView = () => {
         .filter((id): id is number => id !== undefined);
 
       const newItem: DashboardGridItem = (
-        <GxDashboardPieChart
+        <PieChart
           key={newItemId}
           id={newItemId}
           title={graphOption?.label || 'Pie Chart'}

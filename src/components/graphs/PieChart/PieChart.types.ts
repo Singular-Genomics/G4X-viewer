@@ -1,4 +1,4 @@
-export type GxDashboardPieChartProps = {
+export type PieChartProps = {
   id: string;
   title?: string;
   backgroundColor?: string;
@@ -6,7 +6,7 @@ export type GxDashboardPieChartProps = {
   initialRois?: number[];
 };
 
-export type GxDashboardPieChartPlotProps = {
+export type PieChartPlotProps = {
   selectedRois: number[];
 };
 

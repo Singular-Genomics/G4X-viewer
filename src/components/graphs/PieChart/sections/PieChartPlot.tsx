@@ -4,17 +4,17 @@ import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
 import type { Data, Layout } from 'plotly.js';
 import { debounce } from 'lodash';
-import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore';
-import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import type { CellSegmentationColormapEntry } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import type { CellSegmentationColormapEntry } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useShallow } from 'zustand/react/shallow';
-import type { GxDashboardPieChartPlotProps } from '../GxDashboardPieChart.types';
+import type { PieChartPlotProps } from '../PieChart.types';
 
 const buildColorMap = (colorMapConfig: CellSegmentationColormapEntry[]) => {
   return Object.fromEntries(colorMapConfig.map((entry) => [entry.clusterId, `rgb(${entry.color.join(',')})`]));
 };
 
-export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlotProps) => {
+export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
