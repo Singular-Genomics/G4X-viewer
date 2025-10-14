@@ -21,8 +21,9 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
   const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
-  const { cellMasksData } = useCellSegmentationLayerStore();
-  const [colorMapConfig] = useCellSegmentationLayerStore(useShallow((store) => [store.cellColormapConfig]));
+  const [selectedCells, colorMapConfig] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.selectedCells, store.cellColormapConfig])
+  );
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -46,7 +47,7 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
   }, []);
 
   const pieChartData = useMemo(() => {
-    if (!cellMasksData || !polygonFeatures) return [];
+    if (!selectedCells || !polygonFeatures) return [];
 
     const colorMap = buildColorMap(colorMapConfig);
     const pieData: Partial<Data>[] = [];
@@ -66,8 +67,11 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
       const selectedPolygon = polygonFeatures.find((feature) => feature.properties?.polygonId === roiId);
       if (!selectedPolygon) return;
 
+      const roiCells = selectedCells.find((selection) => selection.roiId === roiId)?.data;
+      if (!roiCells || roiCells.length === 0) return;
+
       const clusterCounts = new Map<string, number>();
-      cellMasksData.forEach((mask) => {
+      roiCells.forEach((mask) => {
         clusterCounts.set(mask.clusterId, (clusterCounts.get(mask.clusterId) || 0) + 1);
       });
 
@@ -108,7 +112,7 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
     });
 
     return pieData;
-  }, [cellMasksData, polygonFeatures, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width]);
+  }, [selectedCells, polygonFeatures, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width]);
 
   const layout: Partial<Layout> = useMemo(() => {
     const annotations: any[] = [];
@@ -178,7 +182,7 @@ export const GxDashboardPieChartPlot = ({ selectedRois }: GxDashboardPieChartPlo
     };
   }, [dimensions, selectedRois, t, theme.palette.gx.primary.white]);
 
-  if (!cellMasksData || cellMasksData.length === 0) {
+  if (!selectedCells || selectedCells.length === 0) {
     return (
       <Box sx={sx.container}>
         <Typography

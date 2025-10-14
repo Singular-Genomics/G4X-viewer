@@ -12,11 +12,11 @@ export const GxDashboardPieChart = ({
   removable = true,
   initialRois = []
 }: GxDashboardPieChartProps) => {
-  const [selectedRois, setSelectedRois] = useState<number[]>(initialRois);
+  const [selectedRois, setSelectedRois] = useState<number[]>(() => [...initialRois].sort((a, b) => a - b));
 
   useEffect(() => {
     if (initialRois.length > 0 && selectedRois.length === 0) {
-      setSelectedRois(initialRois);
+      setSelectedRois([...initialRois].sort((a, b) => a - b));
     }
   }, [initialRois, selectedRois.length]);
 
