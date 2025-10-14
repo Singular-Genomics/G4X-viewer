@@ -3,9 +3,12 @@ import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
+import { GxDashboardPieChart, PIE_CHART_CONFIG } from '../../components/GxDashboardPieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -13,7 +16,12 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions = [{ id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label }];
+  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
+
+  const graphOptions = [
+    { id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label },
+    { id: PIE_CHART_CONFIG.id, label: PIE_CHART_CONFIG.label }
+  ];
 
   // Example items
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
@@ -46,6 +54,29 @@ export const DashboardView = () => {
           title={graphOption?.label || 'Example Chart'}
           backgroundColor={'#' + Math.floor(Math.random() * 16777215).toString(16)}
           removable={true}
+        />
+      );
+
+      setGridItems((prev) => [newItem, ...prev]);
+      enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+    } else if (graphId === PIE_CHART_CONFIG.id) {
+      if (polygonFeatures.length === 0) {
+        enqueueSnackbar(t('dashboard.noPolygonsAvailable'), { variant: 'warning' });
+        return;
+      }
+
+      const availableRois = polygonFeatures
+        .map((f) => f.properties?.polygonId)
+        .filter((id): id is number => id !== undefined);
+
+      const newItem: DashboardGridItem = (
+        <GxDashboardPieChart
+          key={newItemId}
+          id={newItemId}
+          title={graphOption?.label || 'Pie Chart'}
+          backgroundColor={PIE_CHART_CONFIG.defaultBackgroundColor}
+          removable={true}
+          initialRois={availableRois.slice(0, 1)}
         />
       );
 

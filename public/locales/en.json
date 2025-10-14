@@ -279,6 +279,16 @@
   "dashboard": {
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
+    "noPolygonsAvailable": "No polygon ROIs available",
     "settings": "Settings"
+  },
+  "pieChart": {
+    "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
+    "noDataForPolygon": "No data available for this polygon",
+    "clusterId": "Cluster ID",
+    "roiTitle": "ROI {{polygonId}}",
+    "noCellSegmentationData": "No cell segmentation data available",
+    "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
+    "selectRoi": "Select ROI"
   }
 }
