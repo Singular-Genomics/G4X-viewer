@@ -48,7 +48,7 @@ export const DashboardView = () => {
           <BoxGraph
             key={newItemId}
             id={newItemId}
-            title={graphOption?.label || 'Example Chart'}
+            title={graphOption.label}
             removable={true}
           />
         );

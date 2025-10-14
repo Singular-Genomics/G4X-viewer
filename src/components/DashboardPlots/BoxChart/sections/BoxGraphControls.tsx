@@ -1,48 +1,48 @@
 import { Box, FormControl, MenuItem, SelectChangeEvent, Typography } from '@mui/material';
-import { GxMultiSelect, GxMultiSelectOption } from '../../../../shared/components/GxMultiSelect';
-import { useEffect, useMemo, useState } from 'react';
+import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
+import { useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
-import { HueValueOptions } from './BoxGraphControls.types';
+import { BoxGraphControlsProps, HueValueOptions } from './BoxGraphControls.types';
+import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 
-const AVAILABLE_HUE_OPTIONS: (keyof HueValueOptions)[] = ['clusterId'];
+const AVAILABLE_HUE_OPTIONS: HueValueOptions[] = ['none', 'clusterId', 'roi'];
 
-export const BoxGraphControls = () => {
+export const BoxGraphControls = ({
+  selectedGene,
+  selectedROIs,
+  selectedHue,
+  onRoiChange,
+  onGeneChange,
+  onHueChange
+}: BoxGraphControlsProps) => {
   const { t } = useTranslation();
-  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore();
-  const [selectedROIs, setSelectedROIs] = useState<string[]>([]);
-  const [selectedGene, setSelectedGene] = useState<string | undefined>(' ');
-  const [selectedHue, setSelectedHue] = useState<keyof HueValueOptions | 'none'>('none');
+  const { polygonFeatures } = usePolygonDrawingStore();
+  const { segmentationMetadata } = useCellSegmentationLayerStore();
 
   const availableROIOptions = useMemo(
     () =>
-      selectedCells.map(
-        (entry): GxMultiSelectOption => ({
-          label: t('general.roiEntry', { index: entry.roiId }),
-          value: entry.roiId.toString()
+      polygonFeatures
+        .map((feature) => {
+          const polygonId = feature.properties?.polygonId;
+          if (polygonId === undefined) return null;
+          return {
+            value: String(polygonId),
+            label: t('general.roiEntry', { index: polygonId })
+          };
         })
-      ),
-    [t, selectedCells]
+        .filter((entry) => !!entry),
+    [t, polygonFeatures]
   );
 
   const availableGenes = segmentationMetadata?.geneNames || [];
 
-  useEffect(() => {
-    if (!selectedROIs) {
-      setSelectedROIs(availableROIOptions.map((entry) => entry.value));
-    }
-    if (!selectedGene && availableGenes.length) {
-      setSelectedGene(availableGenes[0]);
-    }
-    //eslint-disable-next-line
-  }, []);
-
-  const handleRoiChange = (event: SelectChangeEvent<typeof selectedROIs>) => {
+  const handleRoiChange = (event: SelectChangeEvent<string[] | string>) => {
     const {
       target: { value }
     } = event;
-    setSelectedROIs(typeof value === 'string' ? value.split(',') : value);
+    onRoiChange(Array.isArray(value) ? value.map(Number) : [Number(value)]);
   };
 
   return (
@@ -53,7 +53,7 @@ export const BoxGraphControls = () => {
       >
         <Typography sx={sx.inputLabel}>{t('dashboard.availableROILabel')}:</Typography>
         <GxMultiSelect
-          value={selectedROIs}
+          value={selectedROIs.map(String)}
           onChange={handleRoiChange}
           options={availableROIOptions}
           renderValue={(selected) => {
@@ -82,7 +82,7 @@ export const BoxGraphControls = () => {
               maxHeight: '500px'
             }
           }}
-          onChange={(e) => setSelectedGene(e.target.value as string)}
+          onChange={(e) => onGeneChange(e.target.value as string)}
         >
           <MenuItem
             value={' '}
@@ -103,9 +103,8 @@ export const BoxGraphControls = () => {
         <GxSelect
           value={selectedHue}
           fullWidth
-          onChange={(e) => setSelectedHue(e.target.value as keyof HueValueOptions)}
+          onChange={(e) => onHueChange(e.target.value as HueValueOptions)}
         >
-          <MenuItem value={'none'}>{t('general.none')}</MenuItem>
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
             <MenuItem value={hueEntry}>{hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}</MenuItem>
           ))}
