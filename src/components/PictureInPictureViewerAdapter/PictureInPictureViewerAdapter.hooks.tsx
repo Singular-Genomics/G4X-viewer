@@ -316,6 +316,8 @@ export const usePolygonDrawingLayer = () => {
   const { detectPointsInPolygon, detectCellPolygonsInPolygon } = usePolygonDetectionWorker();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const polygonFeaturesBeforeEdit = useRef<PolygonFeature[]>([]);
+
   const getPolygonColor = (
     feature: any,
     alphaFill: number,
@@ -347,6 +349,12 @@ export const usePolygonDrawingLayer = () => {
   };
 
   const onEdit = async ({ updatedData, editType }: any) => {
+    if (editType === 'movePosition' || editType === 'addPosition' || editType === 'removePosition') {
+      if (polygonFeaturesBeforeEdit.current.length === 0) {
+        polygonFeaturesBeforeEdit.current = [...polygonFeatures];
+      }
+    }
+
     // Store previous state for rollback if validation fails
     const previousFeatures = [...polygonFeatures];
 
@@ -479,7 +487,11 @@ export const usePolygonDrawingLayer = () => {
     if (editType === 'finishMovePosition') {
       // Find the edited polygon by comparing with previous state
       const allPolygons = updatedData.features;
-      const { editedPolygon, editedPolygonIndex } = findEditedPolygon(allPolygons, previousFeatures);
+      const initialFeatures =
+        polygonFeaturesBeforeEdit.current.length > 0 ? polygonFeaturesBeforeEdit.current : previousFeatures;
+      const { editedPolygon, editedPolygonIndex } = findEditedPolygon(allPolygons, initialFeatures);
+
+      polygonFeaturesBeforeEdit.current = [];
 
       if (!editedPolygon) {
         console.warn('No polygon found to process');

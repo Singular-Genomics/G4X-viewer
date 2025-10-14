@@ -371,18 +371,20 @@ export const findEditedPolygon = (
 
   // First try to find changed polygon by comparing coordinates
   for (let i = 0; i < currentFeatures.length; i++) {
-    const polygon = currentFeatures[i];
-    const previousPolygon = previousFeatures[i];
+    const currentPolygon = currentFeatures[i];
+    const currentPolygonId = currentPolygon.properties?.polygonId;
+
+    const previousPolygon = previousFeatures.find((p) => p.properties?.polygonId === currentPolygonId);
 
     if (!previousPolygon) {
       // New polygon at this index
-      editedPolygon = polygon;
-      editedPolygonIndex = i;
+      editedPolygon = currentPolygon;
+      editedPolygonIndex = currentPolygonId ?? i;
       break;
     }
 
     // Compare coordinates with tolerance for floating point precision
-    const coordsChanged = polygon.geometry.coordinates[0].some((coord: number[], coordIndex: number) => {
+    const coordsChanged = currentPolygon.geometry.coordinates[0].some((coord: number[], coordIndex: number) => {
       const prevCoord = previousPolygon.geometry.coordinates[0][coordIndex];
       if (!prevCoord) return true;
 
@@ -391,8 +393,8 @@ export const findEditedPolygon = (
     });
 
     if (coordsChanged) {
-      editedPolygon = polygon;
-      editedPolygonIndex = previousPolygon.properties?.polygonId;
+      editedPolygon = currentPolygon;
+      editedPolygonIndex = currentPolygonId ?? i;
       break;
     }
   }
@@ -400,7 +402,7 @@ export const findEditedPolygon = (
   // If no specific polygon found, assume the last one was edited (fallback)
   if (!editedPolygon && currentFeatures.length > 0) {
     editedPolygon = currentFeatures[currentFeatures.length - 1];
-    editedPolygonIndex = currentFeatures.length - 1;
+    editedPolygonIndex = editedPolygon.properties?.polygonId ?? currentFeatures.length - 1;
     console.warn('Could not identify specific edited polygon, using last polygon as fallback');
   }
 
