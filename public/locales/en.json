@@ -59,7 +59,9 @@
     "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
+    "roiEntry": "ROI {{index}}",
     "segmentation": "Segmentation",
+    "selectOne": "Select One",
     "shape": "Shape",
     "transcripts": "Transcripts",
     "warning": "Warning"
@@ -279,6 +281,13 @@
   "dashboard": {
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
-    "settings": "Settings"
+    "settings": "Settings",
+    "graphOptions_boxGraph": "Intensity Box Graph",
+    "availableROILabel": "Available ROIs",
+    "availableGenesLabel": "Available Genes",
+    "availableHueLabel": "Available Hue",
+    "selectROILabel": "Select ROIs",
+    "allROILabel": "All ROIs",
+    "multipleROISelected": "{{count}} ROIs selected"
   }
 }
