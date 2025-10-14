@@ -113,7 +113,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
           y: [yStart, yEnd]
         },
         textinfo: 'label+percent',
-        hoverinfo: 'label+value+percent',
+        hovertemplate: '<b>Cluster ID: %{label}</b><br>Count: %{value}<br>Percent: %{percent}<extra></extra>',
         showlegend: roiId === roiWithMostClusters,
         legendgroup: 'clusters'
       });
