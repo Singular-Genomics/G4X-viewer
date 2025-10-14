@@ -29,14 +29,17 @@ export const RoiMultiSelect = ({ selectedRois, onChange }: RoiMultiSelectProps) 
   }, [polygonFeatures, t]);
 
   useEffect(() => {
-    const validRois = selectedRois.filter((roiId) => roiOptions.some((opt) => Number(opt.value) === roiId));
-    if (validRois.length !== selectedRois.length) {
-      onChange(validRois);
+    const sortedValidRois = selectedRois
+      .filter((roiId) => roiOptions.some((opt) => Number(opt.value) === roiId))
+      .sort((a, b) => a - b);
+    if (sortedValidRois.some((roi, index) => roi !== selectedRois[index])) {
+      onChange(sortedValidRois);
     }
   }, [roiOptions, selectedRois, onChange]);
 
   const handleChange = (newValues: string[]) => {
-    onChange(newValues.map(Number));
+    const sortedRois = newValues.map(Number).sort((a, b) => a - b);
+    onChange(sortedRois);
   };
 
   return (
