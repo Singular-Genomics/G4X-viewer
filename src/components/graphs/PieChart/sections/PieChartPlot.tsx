@@ -63,6 +63,9 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     const actualCols = numRois < cols ? numRois : cols;
     const offset = (cols - actualCols) / (2 * cols);
 
+    let roiWithMostClusters = selectedRois[0];
+    let maxClusterCount = 0;
+
     selectedRois.forEach((roiId, roiIndex) => {
       const selectedPolygon = polygonFeatures.find((feature) => feature.properties?.polygonId === roiId);
       if (!selectedPolygon) return;
@@ -76,6 +79,11 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
       });
 
       if (clusterCounts.size === 0) return;
+
+      if (clusterCounts.size > maxClusterCount) {
+        maxClusterCount = clusterCounts.size;
+        roiWithMostClusters = roiId;
+      }
 
       const sortedClusters = Array.from(clusterCounts.entries()).sort((a, b) => Number(a[0]) - Number(b[0]));
 
@@ -106,7 +114,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
         },
         textinfo: 'label+percent',
         hoverinfo: 'label+value+percent',
-        showlegend: roiIndex === 0,
+        showlegend: roiId === roiWithMostClusters,
         legendgroup: 'clusters'
       });
     });
