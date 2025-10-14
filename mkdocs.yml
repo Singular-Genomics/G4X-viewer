@@ -1,0 +1,21 @@
+# repo-a/mkdocs.yml
+INHERIT: docs/_core/core.mkdocs.yml
+
+# region Site
+site_name: G4X-viewer
+site_url: https://docs.singulargenomics.com/G4X-viewer/
+site_description: Singular Genomics G4X-viewer documentation site
+
+repo_name: G4X-viewer
+repo_url: https://github.com/Singular-Genomics/G4X-viewer
+
+exclude_docs: |
+  _core/_partials/**
+  _core/README.md
+
+# region Nav
+nav:
+  - G4X-viewer:
+    - index.md
+    - resources: resources.md
+    - contribute: contributing.md
