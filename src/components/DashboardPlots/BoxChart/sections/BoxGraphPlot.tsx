@@ -6,14 +6,14 @@ import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
 import { debounce } from 'lodash';
 
-export const BoxGraphPlot = ({ selectedROIs, selectedValueType, selectedValue }: BoxGraphPlotProps) => {
+export const BoxGraphPlot = ({ selectedROIs, selectedValueType, selectedValue, selectedHue }: BoxGraphPlotProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { parseCellsByRoi } = useBoxGraphPlotDataParser();
 
   const boxPlotData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue, false, 'horizontal'),
-    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType]
+    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue, selectedHue !== 'none', 'horizontal'),
+    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, selectedHue]
   );
 
   useEffect(() => {
@@ -44,11 +44,7 @@ export const BoxGraphPlot = ({ selectedROIs, selectedValueType, selectedValue }:
     paper_bgcolor: 'white',
     autosize: true,
     showlegend: true,
-    title: {
-      text: 'test title',
-      font: { size: 16, color: '#333' }
-    },
-    // boxmode: boxmode,
+    boxmode: selectedHue === 'none' ? undefined : 'group',
     annotations: []
   };
 
@@ -67,16 +63,7 @@ export const BoxGraphPlot = ({ selectedROIs, selectedValueType, selectedValue }:
             scrollZoom: false,
             displayModeBar: true,
             displaylogo: false,
-            modeBarButtonsToRemove: [
-              'lasso2d',
-              'select2d',
-              'zoom2d',
-              'pan2d',
-              'zoomIn2d',
-              'zoomOut2d',
-              'autoScale2d',
-              'toImage'
-            ]
+            modeBarButtonsToRemove: ['lasso2d', 'select2d']
           }}
         />
       ) : (

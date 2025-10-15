@@ -3,10 +3,20 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { BoxGraphDataEntry, BoxGraphOrientation } from './BoxGraphPlot.types';
 import { useTranslation } from 'react-i18next';
 import { BoxGraphValueType } from './BoxGraphControls.types';
+import { rgbToHex } from '../../../../utils/utils';
+import { SingleMask } from '../../../../shared/types';
 
 export function useBoxGraphPlotDataParser() {
   const { t } = useTranslation();
   const { selectedCells, segmentationMetadata, cellColormapConfig } = useCellSegmentationLayerStore();
+
+  const getGeneValue = (cell: SingleMask, selectedValueIndex: number): number | null => {
+    const idx = cell.nonzeroGeneIndices.findIndex((index: number) => index === selectedValueIndex);
+    return idx === -1 ? null : cell.nonzeroGeneValues[idx];
+  };
+
+  const getProteinValue = (cell: SingleMask, selectedValueIndex: number): number =>
+    cell.proteinValues[selectedValueIndex];
 
   const parseCellsByRoi = useCallback(
     (
@@ -16,68 +26,89 @@ export function useBoxGraphPlotDataParser() {
       addHue: boolean,
       orientation: BoxGraphOrientation
     ): BoxGraphDataEntry[] => {
-      const plotData: BoxGraphDataEntry[] = [];
-
       if (!selectedCells.length || !segmentationMetadata) {
-        return plotData;
+        return [];
       }
 
       const selectedValueIndex = (
         valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames
-      ).findIndex((geneName) => geneName === selectedvalue);
+      ).findIndex((name) => name === selectedvalue);
 
-      const allClusterIds = new Set<string>();
+      const validSelection = rois ? selectedCells.filter((sel) => rois.includes(sel.roiId)) : [];
+      const parsedColormap = cellColormapConfig.reduce(
+        (acc, item) => {
+          acc[item.clusterId] = rgbToHex(item.color);
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
-      //1. Filter out all selection which ROIs we exclude
-      const validSelection = rois ? selectedCells.filter((selection) => rois.includes(selection.roiId)) : [];
+      const getCellValue = valueType === 'gene' ? getGeneValue : getProteinValue;
 
-      //2. If we use hue we will need cluster ids
       if (addHue) {
-        return plotData;
-      } else {
-        const singleTrace: BoxGraphDataEntry = {
-          name: selectedvalue,
+        const clusterData = new Map<string, { y: number[]; x: string[] }>();
+
+        for (const selection of validSelection) {
+          if (!selection.data?.length) continue;
+
+          const roiLabel = t('general.roiEntry', { index: selection.roiId });
+
+          for (const cell of selection.data) {
+            const value = getCellValue(cell, selectedValueIndex);
+            if (value === null || value === undefined) continue;
+
+            const clusterId = cell.clusterId;
+            if (!clusterData.has(clusterId)) {
+              clusterData.set(clusterId, { y: [], x: [] });
+            }
+
+            const data = clusterData.get(clusterId)!;
+            data.y.push(value);
+            data.x.push(roiLabel);
+          }
+        }
+
+        // Convert to plot data entries
+        return Array.from(clusterData.entries()).map(([clusterId, data]) => ({
+          name: `Cluster ${clusterId}`,
           type: 'box',
-          y: [],
-          x: [],
-          boxpoints: 'suspectedoutliers'
-        };
+          y: data.y,
+          x: data.x,
+          xaxis: 'x',
+          yaxis: 'y',
+          boxpoints: 'outliers',
+          marker: { color: parsedColormap[clusterId] },
+          legendgroup: `cluster-${clusterId}`,
+          showlegend: true
+        }));
+      }
 
-        if (valueType === 'gene') {
-          for (const selection of validSelection) {
-            if (!selection.data || !selection.data.length) {
-              continue;
-            }
+      // Without cluster-based coloring
+      const singleTrace: BoxGraphDataEntry = {
+        name: selectedvalue,
+        type: 'box',
+        y: [],
+        x: [],
+        boxpoints: 'suspectedoutliers'
+      };
 
-            for (const cell of selection.data) {
-              const geneValueIndex = cell.nonzeroGeneIndices.findIndex((index) => index === selectedValueIndex);
-              if (geneValueIndex === -1) {
-                continue;
-              }
+      for (const selection of validSelection) {
+        if (!selection.data?.length) continue;
 
-              singleTrace.y.push(cell.nonzeroGeneValues[geneValueIndex]);
-              singleTrace.x.push(t('general.roiEntry', { index: selection.roiId }));
-            }
+        const roiLabel = t('general.roiEntry', { index: selection.roiId });
+
+        for (const cell of selection.data) {
+          const value = getCellValue(cell, selectedValueIndex);
+          if (value !== null && value !== undefined) {
+            singleTrace.y.push(value);
+            singleTrace.x.push(roiLabel);
           }
-
-          return [singleTrace];
-        } else {
-          for (const selection of validSelection) {
-            if (!selection.data || !selection.data.length) {
-              continue;
-            }
-
-            for (const cell of selection.data) {
-              singleTrace.y.push(cell.proteinValues[selectedValueIndex]);
-              singleTrace.x.push(t('general.roiEntry', { index: selection.roiId }));
-            }
-          }
-
-          return [singleTrace];
         }
       }
+
+      return [singleTrace];
     },
-    [selectedCells, segmentationMetadata, t]
+    [selectedCells, segmentationMetadata, t, cellColormapConfig]
   );
 
   return {
