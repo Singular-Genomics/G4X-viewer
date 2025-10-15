@@ -1,21 +1,23 @@
-import { Box, FormControl, MenuItem, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Typography } from '@mui/material';
 import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
 import { useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
-import { BoxGraphControlsProps, HueValueOptions } from './BoxGraphControls.types';
+import { BoxGraphControlsProps, BoxGraphValueType, HueValueOptions } from './BoxGraphControls.types';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 
 const AVAILABLE_HUE_OPTIONS: HueValueOptions[] = ['none', 'clusterId', 'roi'];
 
 export const BoxGraphControls = ({
-  selectedGene,
+  selectedValue,
   selectedROIs,
   selectedHue,
+  selectedValueType,
   onRoiChange,
-  onGeneChange,
-  onHueChange
+  onValueChange,
+  onHueChange,
+  onValueTypeChange
 }: BoxGraphControlsProps) => {
   const { t } = useTranslation();
   const { polygonFeatures } = usePolygonDrawingStore();
@@ -37,6 +39,7 @@ export const BoxGraphControls = ({
   );
 
   const availableGenes = segmentationMetadata?.geneNames || [];
+  const availableProteins = segmentationMetadata?.proteinNames || [];
 
   const handleRoiChange = (event: SelectChangeEvent<string[] | string>) => {
     const {
@@ -73,16 +76,49 @@ export const BoxGraphControls = ({
         sx={sx.controlWrapper}
         size="small"
       >
-        <Typography sx={sx.inputLabel}>{t('dashboard.availableGenesLabel')}:</Typography>
+        <Typography sx={sx.inputLabel}>{t('dashboard.boxPlotValueType')}:</Typography>
         <GxSelect
-          value={selectedGene}
+          value={selectedValueType}
           fullWidth
           MenuProps={{
             sx: {
               maxHeight: '500px'
             }
           }}
-          onChange={(e) => onGeneChange(e.target.value as string)}
+          onChange={(e) => {
+            const newType = e.target.value as BoxGraphValueType;
+            onValueTypeChange(newType);
+            onValueChange(
+              newType === 'gene'
+                ? availableGenes.length
+                  ? availableGenes[0]
+                  : ' '
+                : availableProteins.length
+                  ? availableProteins[0]
+                  : ' '
+            );
+          }}
+        >
+          <MenuItem value={'gene'}>Gene</MenuItem>
+          <MenuItem value={'protein'}>Protein</MenuItem>
+        </GxSelect>
+      </FormControl>
+      <FormControl
+        sx={sx.controlWrapper}
+        size="small"
+      >
+        <Typography sx={sx.inputLabel}>
+          {selectedValueType === 'gene' ? t('dashboard.availableGenesLabel') : t('dashboard.availableProteinsLabel')}:
+        </Typography>
+        <GxSelect
+          value={selectedValue}
+          fullWidth
+          MenuProps={{
+            sx: {
+              maxHeight: '500px'
+            }
+          }}
+          onChange={(e) => onValueChange(e.target.value as string)}
         >
           <MenuItem
             value={' '}
@@ -90,7 +126,7 @@ export const BoxGraphControls = ({
           >
             {t('general.selectOne')}
           </MenuItem>
-          {availableGenes?.map((geneName) => (
+          {(selectedValueType === 'gene' ? availableGenes : availableProteins).map((geneName) => (
             <MenuItem value={geneName}>{geneName}</MenuItem>
           ))}
         </GxSelect>
@@ -114,14 +150,15 @@ export const BoxGraphControls = ({
   );
 };
 
-const sx = {
+const sx: Record<string, SxProps> = {
   container: {
     width: '100%',
     display: 'flex',
+    flexWrap: 'wrap',
     gap: 1
   },
   controlWrapper: {
-    width: '100%',
+    flex: '1 1 150px',
     minWidth: 'min-content'
   },
   inputLabel: {

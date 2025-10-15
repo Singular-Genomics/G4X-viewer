@@ -1,12 +1,16 @@
 import { SingleMask } from '../../../../shared/types';
 
 export type BoxGraphControlsProps = {
-  selectedGene: string;
+  selectedValue: string;
   selectedROIs: number[];
   selectedHue: HueValueOptions;
+  selectedValueType: BoxGraphValueType;
   onRoiChange: (newRoiValues: number[]) => void;
-  onGeneChange: (newGeneValue: string) => void;
+  onValueChange: (newGeneValue: string) => void;
   onHueChange: (newHueValue: HueValueOptions) => void;
+  onValueTypeChange: (newType: BoxGraphValueType) => void;
 };
+
+export type BoxGraphValueType = 'gene' | 'protein';
 
 export type HueValueOptions = keyof Pick<SingleMask, 'clusterId'> | 'roi' | 'none';

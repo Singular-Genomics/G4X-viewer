@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { GxDashboardGraphWindow } from '../../../shared/components/GxDashboardGraphWindow';
 import { BoxGraphProps } from './BoxGraph.types';
 import { BoxGraphControls, BoxGraphPlot, BoxGraphSettings } from './sections';
-import { HueValueOptions } from './sections/BoxGraphControls.types';
+import { BoxGraphValueType, HueValueOptions } from './sections/BoxGraphControls.types';
 
 export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
   const [selectedRois, setSelectedRois] = useState<number[]>([]);
-  const [selectedGene, setSelectedGene] = useState<string>(' ');
+  const [selectedValue, setSelectedValue] = useState<string>(' ');
   const [selectedHue, setSelectedHue] = useState<HueValueOptions>('none');
+  const [selectedValueType, setSelectedValueType] = useState<BoxGraphValueType>('protein');
 
   return (
     <GxDashboardGraphWindow
@@ -16,12 +17,14 @@ export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
       removable={removable}
       controlsContent={
         <BoxGraphControls
-          selectedGene={selectedGene}
+          selectedValue={selectedValue}
           selectedROIs={selectedRois}
           selectedHue={selectedHue}
+          selectedValueType={selectedValueType}
           onRoiChange={setSelectedRois}
-          onGeneChange={setSelectedGene}
+          onValueChange={setSelectedValue}
           onHueChange={setSelectedHue}
+          onValueTypeChange={setSelectedValueType}
         />
       }
       settingsContent={<BoxGraphSettings />}
