@@ -28,7 +28,14 @@ export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
         />
       }
       settingsContent={<BoxGraphSettings />}
-      graphContent={<BoxGraphPlot />}
+      graphContent={
+        <BoxGraphPlot
+          selectedROIs={selectedRois}
+          selectedValueType={selectedValueType}
+          selectedValue={selectedValue}
+          selectedHue={selectedHue}
+        />
+      }
     />
   );
 };
