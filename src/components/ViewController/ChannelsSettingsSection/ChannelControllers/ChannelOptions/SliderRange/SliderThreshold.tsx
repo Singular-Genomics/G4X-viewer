@@ -1,26 +1,19 @@
 import { Box, Input } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-
-interface SliderProps {
-  initialMin: number;
-  initialMax: number;
-}
+import type { SliderThresholdProps } from './SliderThreshold.types';
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
 const CHANNEL_STEP = 1;
 
-export const SliderThreshold = ({ initialMin, initialMax }: SliderProps) => {
-  const [rangeMin, setRangeMin] = useState(initialMin);
-  const [rangeMax, setRangeMax] = useState(initialMax);
+export const SliderThreshold = ({ rangeMin, rangeMax, setRangeMin, setRangeMax }: SliderThresholdProps) => {
   const { t } = useTranslation();
   return (
     <Box sx={sx.container}>
       <Box sx={sx.inputGroup}>
         <label
           htmlFor="slider_range_min"
-          style={sx.label as React.CSSProperties}
+          style={sx.label}
         >
           {t('channelSettings.sliderRangeMinLabel')}
         </label>
@@ -43,7 +36,7 @@ export const SliderThreshold = ({ initialMin, initialMax }: SliderProps) => {
       <Box sx={sx.inputGroup}>
         <label
           htmlFor="slider_range_max"
-          style={sx.label as React.CSSProperties}
+          style={sx.label}
         >
           {t('channelSettings.sliderRangeMaxLabel')}
         </label>

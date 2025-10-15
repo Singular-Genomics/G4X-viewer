@@ -1,6 +1,4 @@
-export type ChannelOptionsProps = {
-  disabled: boolean;
-  handleColorSelect: (newColor: number[]) => void;
+export type SliderThresholdProps = {
   rangeMin: number;
   rangeMax: number;
   setRangeMin: (value: number) => void;

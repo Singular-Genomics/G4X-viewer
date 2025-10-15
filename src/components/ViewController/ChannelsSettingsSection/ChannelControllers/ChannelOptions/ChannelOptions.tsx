@@ -4,9 +4,16 @@ import { ChannelOptionsProps } from './ChannelOption.types';
 import { useRef, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ColorPalette } from './ColorPalette';
-import { SliderThreshold } from './SliderThreshold';
+import { SliderThreshold } from './SliderRange/SliderThreshold';
 
-export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsProps) => {
+export const ChannelOptions = ({
+  handleColorSelect,
+  disabled,
+  rangeMin,
+  rangeMax,
+  setRangeMin,
+  setRangeMax
+}: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
@@ -40,8 +47,10 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
             <MenuList>
               <ColorPalette handleColorSelect={handleColorSelect} />
               <SliderThreshold
-                initialMin={10}
-                initialMax={300}
+                rangeMin={rangeMin}
+                rangeMax={rangeMax}
+                setRangeMin={setRangeMin}
+                setRangeMax={setRangeMax}
               />
             </MenuList>
           </ClickAwayListener>

@@ -8,6 +8,7 @@ import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 export const ChannelController = ({
   color,
@@ -27,6 +28,9 @@ export const ChannelController = ({
   const { t } = useTranslation();
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
+  const [currentMinValue, currentMaxValue] = slider;
+  const [rangeMin, setRangeMin] = useState(currentMinValue);
+  const [rangeMax, setRangeMax] = useState(currentMaxValue);
 
   return (
     <Grid
@@ -62,6 +66,10 @@ export const ChannelController = ({
           <ChannelOptions
             handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
+            rangeMin={rangeMin}
+            rangeMax={rangeMax}
+            setRangeMin={setRangeMin}
+            setRangeMax={setRangeMax}
           />
           <Tooltip
             title={t('channelSettings.removeChannel')}
@@ -86,6 +94,8 @@ export const ChannelController = ({
         slider={slider}
         handleSliderChange={handleSliderChange}
         isLoading={isLoading}
+        rangeMin={rangeMin}
+        rangeMax={rangeMax}
       />
     </Grid>
   );
