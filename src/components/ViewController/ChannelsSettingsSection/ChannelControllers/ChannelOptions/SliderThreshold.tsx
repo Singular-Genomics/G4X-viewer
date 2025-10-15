@@ -16,23 +16,22 @@ export const SliderThreshold = ({ initialMin, initialMax }: SliderProps) => {
   const [rangeMax, setRangeMax] = useState(initialMax);
   const { t } = useTranslation();
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <Box sx={sx.container}>
+      <Box sx={sx.inputGroup}>
         <label
           htmlFor="slider_range_min"
-          style={{ fontSize: 12, marginBottom: 0.5, color: '#fff' }}
+          style={sx.label as React.CSSProperties}
         >
           {t('channelSettings.sliderRangeMinLabel')}
         </label>
         <Input
           id="slider_range_min"
           type="number"
-          sx={{ color: '#fff', input: { color: '#fff' } }}
+          sx={sx.input}
           value={rangeMin}
           onChange={(e) => {
             const value = Number(e.target.value);
             setRangeMin(value);
-            // setMinInputValue(value.toString());
           }}
           inputProps={{
             min: CHANNEL_MIN,
@@ -41,22 +40,21 @@ export const SliderThreshold = ({ initialMin, initialMax }: SliderProps) => {
           }}
         />
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+      <Box sx={sx.inputGroup}>
         <label
           htmlFor="slider_range_max"
-          style={{ fontSize: 12, marginBottom: 0.5, color: '#fff' }}
+          style={sx.label as React.CSSProperties}
         >
           {t('channelSettings.sliderRangeMaxLabel')}
         </label>
         <Input
           id="slider_range_max"
           type="number"
-          sx={{ color: '#fff', input: { color: '#fff' } }}
+          sx={sx.input}
           value={rangeMax}
           onChange={(e) => {
             const value = Number(e.target.value);
             setRangeMax(value);
-            // setMaxInputValue(value.toString());
           }}
           inputProps={{
             min: rangeMin + 1,
@@ -67,4 +65,11 @@ export const SliderThreshold = ({ initialMin, initialMax }: SliderProps) => {
       </Box>
     </Box>
   );
+};
+
+const sx = {
+  container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, marginTop: 4 },
+  inputGroup: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' },
+  label: { fontSize: 12, marginBottom: 4, color: '#fff' },
+  input: { color: '#fff', input: { color: '#fff' } }
 };
