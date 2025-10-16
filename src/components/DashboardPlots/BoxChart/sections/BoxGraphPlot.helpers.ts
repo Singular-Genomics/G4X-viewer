@@ -73,6 +73,7 @@ export function useBoxGraphPlotDataParser() {
           type: 'box',
           ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
           ...(dataMode !== 'none' ? { boxpoints: dataMode } : {}),
+          boxpoints: dataMode !== 'none' && dataMode,
           marker: { color: parsedColormap[clusterId] },
           legendgroup: t('general.clusterEntry', { index: clusterId }),
           showlegend: true,
@@ -103,7 +104,7 @@ export function useBoxGraphPlotDataParser() {
           name: t('general.roiEntry', { index: roiId }),
           type: 'box',
           ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
-          ...(dataMode !== 'none' ? { boxpoints: dataMode } : {}),
+          boxpoints: dataMode !== 'none' && dataMode,
           marker: { color: rgbToHex(generatePolygonColor(Number(roiId) - 1)) },
           legendgroup: t('general.roiEntry', { index: roiId }),
           showlegend: true,
@@ -133,7 +134,7 @@ export function useBoxGraphPlotDataParser() {
           name: selectedvalue,
           type: 'box',
           ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
-          ...(dataMode !== 'none' ? { boxpoints: dataMode } : {}),
+          boxpoints: dataMode !== 'none' && dataMode,
           orientation: orientation,
           showlegend: false
         }
