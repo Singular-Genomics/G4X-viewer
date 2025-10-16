@@ -283,6 +283,8 @@
     "graphAdded": "{{graphName}} added successfully",
     "settings": "Settings",
     "boxPlotValueType": "Value Type",
+    "boxPlotSwapAxisLabel": "Swap Axis",
+    "boxPlotDataModeLabel": "Data Mode",
     "graphOptions_boxGraph": "Intensity Box Graph",
     "availableROILabel": "Available ROIs",
     "availableGenesLabel": "Available Genes",

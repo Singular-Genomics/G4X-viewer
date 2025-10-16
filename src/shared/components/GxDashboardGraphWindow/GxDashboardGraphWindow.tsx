@@ -53,7 +53,7 @@ export const GxDashboardGraphWindow = ({
                     <CloseIcon />
                   </IconButton>
                 </Box>
-                {settingsContent}
+                <Box sx={sx.settingsContent}>{settingsContent}</Box>
               </Box>
             </Modal>
           </Box>
@@ -133,6 +133,12 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: '8px'
+  },
+  settingsContent: {
+    width: '100%',
+    borderRadius: '8px',
+    background: theme.palette.gx.lightGrey[900],
+    padding: '8px'
   },
   title: {
     fontSize: '1.25rem',

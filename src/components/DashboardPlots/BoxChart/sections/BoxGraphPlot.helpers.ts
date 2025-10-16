@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { BoxGraphValueType } from './BoxGraphControls.types';
 import { rgbToHex } from '../../../../utils/utils';
 import { SingleMask } from '../../../../shared/types';
+import { BoxGraphDataMode } from './BoxGraphSettings.types';
 
 export function useBoxGraphPlotDataParser() {
   const { t } = useTranslation();
@@ -24,7 +25,8 @@ export function useBoxGraphPlotDataParser() {
       valueType: BoxGraphValueType,
       selectedvalue: string,
       addHue: boolean,
-      orientation: BoxGraphOrientation
+      orientation: BoxGraphOrientation,
+      dataMode: BoxGraphDataMode
     ): BoxGraphDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
@@ -72,25 +74,17 @@ export function useBoxGraphPlotDataParser() {
         return Array.from(clusterData.entries()).map(([clusterId, data]) => ({
           name: `Cluster ${clusterId}`,
           type: 'box',
-          y: data.y,
-          x: data.x,
-          xaxis: 'x',
-          yaxis: 'y',
-          boxpoints: 'outliers',
+          ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
+          ...(dataMode !== 'none' ? { boxpoints: dataMode } : {}),
           marker: { color: parsedColormap[clusterId] },
           legendgroup: `cluster-${clusterId}`,
-          showlegend: true
+          showlegend: true,
+          orientation: orientation
         }));
       }
 
       // Without cluster-based coloring
-      const singleTrace: BoxGraphDataEntry = {
-        name: selectedvalue,
-        type: 'box',
-        y: [],
-        x: [],
-        boxpoints: 'suspectedoutliers'
-      };
+      const data: { x: string[]; y: number[] } = { x: [], y: [] };
 
       for (const selection of validSelection) {
         if (!selection.data?.length) continue;
@@ -100,13 +94,22 @@ export function useBoxGraphPlotDataParser() {
         for (const cell of selection.data) {
           const value = getCellValue(cell, selectedValueIndex);
           if (value !== null && value !== undefined) {
-            singleTrace.y.push(value);
-            singleTrace.x.push(roiLabel);
+            data.y.push(value);
+            data.x.push(roiLabel);
           }
         }
       }
 
-      return [singleTrace];
+      return [
+        {
+          name: selectedvalue,
+          type: 'box',
+          ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
+          ...(dataMode !== 'none' ? { boxpoints: dataMode } : {}),
+          orientation: orientation,
+          showlegend: false
+        }
+      ];
     },
     [selectedCells, segmentationMetadata, t, cellColormapConfig]
   );

@@ -1,12 +1,13 @@
 import { BoxPlotData } from 'plotly.js';
 import { BoxGraphValueType, HueValueOptions } from './BoxGraphControls.types';
+import { BoxGraphSettingOptions } from './BoxGraphSettings.types';
 
 export type BoxGraphPlotProps = {
   selectedROIs: number[];
   selectedValueType: BoxGraphValueType;
   selectedValue: string;
   selectedHue: HueValueOptions;
-  orientation?: BoxGraphOrientation;
+  settings: BoxGraphSettingOptions;
 };
 
 export type BoxGraphDataEntry = {
@@ -14,4 +15,4 @@ export type BoxGraphDataEntry = {
   y: (number | string)[];
 } & Partial<Omit<BoxPlotData, 'x' | 'y'>>;
 
-export type BoxGraphOrientation = 'horizontal' | 'vertical';
+export type BoxGraphOrientation = 'h' | 'v';
