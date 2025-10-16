@@ -1,6 +1,6 @@
 import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Typography } from '@mui/material';
 import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
@@ -37,6 +37,12 @@ export const BoxGraphControls = ({
         .filter((entry) => !!entry),
     [t, polygonFeatures]
   );
+
+  useEffect(() => {
+    const availableId = availableROIOptions.map((entry) => Number(entry.value));
+    onRoiChange(selectedROIs.filter((roiId) => availableId.includes(roiId)));
+    //eslint-disable-next-line
+  }, [availableROIOptions]);
 
   const availableGenes = segmentationMetadata?.geneNames || [];
   const availableProteins = segmentationMetadata?.proteinNames || [];
