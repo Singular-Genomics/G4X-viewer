@@ -5,7 +5,6 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
 import { BoxGraphControlsProps, BoxGraphValueType, BoxGraphHueValueOptions } from './BoxGraphControls.types';
-import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 
 const AVAILABLE_HUE_OPTIONS: BoxGraphHueValueOptions[] = ['none', 'clusterId', 'roi'];
 
@@ -20,14 +19,13 @@ export const BoxGraphControls = ({
   onValueTypeChange
 }: BoxGraphControlsProps) => {
   const { t } = useTranslation();
-  const { polygonFeatures } = usePolygonDrawingStore();
-  const { segmentationMetadata } = useCellSegmentationLayerStore();
+  const { segmentationMetadata, selectedCells } = useCellSegmentationLayerStore();
 
   const availableROIOptions = useMemo(
     () =>
-      polygonFeatures
+      selectedCells
         .map((feature) => {
-          const polygonId = feature.properties?.polygonId;
+          const polygonId = feature.roiId;
           if (polygonId === undefined) return null;
           return {
             value: String(polygonId),
@@ -35,7 +33,7 @@ export const BoxGraphControls = ({
           };
         })
         .filter((entry) => !!entry),
-    [t, polygonFeatures]
+    [t, selectedCells]
   );
 
   useEffect(() => {
@@ -68,10 +66,10 @@ export const BoxGraphControls = ({
           renderValue={(selected) => {
             if (!selected.length) {
               return `${t('dashboard.selectROILabel')}...`;
-            } else if (selected.length < 4) {
-              return selected.map((entry) => t('general.roiEntry', { index: entry })).join(', ');
             } else if (selected.length === availableROIOptions.length) {
               return t('dashboard.allROILabel');
+            } else if (selected.length < 3) {
+              return selected.map((entry) => t('general.roiEntry', { index: entry })).join(', ');
             }
 
             return t('dashboard.multipleROISelected', { count: selected.length });
