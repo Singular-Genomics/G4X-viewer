@@ -8,18 +8,25 @@ import { useTranslation } from 'react-i18next';
 import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardPlots.helpers';
 import { GraphOption } from './DashboardView.types';
 import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
+import { BarChart } from '../../components/DashboardPlots/BarChart';
+import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 
 export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const { selectedCells } = useCellSegmentationLayerStore();
 
   const graphOptions: GraphOption[] = useMemo(
     () => [
       {
         id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
         label: t('dashboard.graphOptions_boxGraph')
+      },
+      {
+        id: DASHBOARD_GRAPHS_IDS.BAR_GRAPH,
+        label: t('barChart.title')
       }
     ],
     [t]
@@ -39,6 +46,11 @@ export const DashboardView = () => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     if (!graphOption) return;
 
+    if (selectedCells.length === 0) {
+      enqueueSnackbar(t('dashboard.noROIAvailableError'), { variant: 'error' });
+      return;
+    }
+
     let newItem: DashboardGridItem;
     const newItemId = `item-${Date.now()}`;
 
@@ -46,6 +58,16 @@ export const DashboardView = () => {
       case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
         newItem = (
           <BoxGraph
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_GRAPHS_IDS.BAR_GRAPH:
+        newItem = (
+          <BarChart
             key={newItemId}
             id={newItemId}
             title={graphOption.label}

@@ -293,6 +293,13 @@
     "availableHueLabel": "Available Hue",
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
-    "multipleROISelected": "{{count}} ROIs selected"
+    "multipleROISelected": "{{count}} ROIs selected",
+    "gene": "Gene",
+    "protein": "Protein",
+    "noROIAvailableError": "No ROI data available. Please create or import ROI polygons first."
+  },
+  "barChart": {
+    "title": "Bar Chart", 
+    "barModeLabel": "Bar Mode",
   }
 }

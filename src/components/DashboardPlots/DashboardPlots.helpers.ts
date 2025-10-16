@@ -1,3 +1,4 @@
 export const DASHBOARD_GRAPHS_IDS = {
-  BOX_GRAPH: 'box-chart'
+  BOX_GRAPH: 'box-chart',
+  BAR_GRAPH: 'bar-chart'
 };
