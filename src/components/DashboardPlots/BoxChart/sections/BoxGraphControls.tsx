@@ -103,8 +103,8 @@ export const BoxGraphControls = ({
             );
           }}
         >
-          <MenuItem value={'gene'}>Gene</MenuItem>
-          <MenuItem value={'protein'}>Protein</MenuItem>
+          <MenuItem value={'gene'}>{t('general.gene')}</MenuItem>
+          <MenuItem value={'protein'}>{t('general.protein')}</MenuItem>
         </GxSelect>
       </FormControl>
       <FormControl
