@@ -1,1 +1,1 @@
-export * from './BoxGraph';
+export * from './BoxChart';

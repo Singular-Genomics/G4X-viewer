@@ -1,3 +1,3 @@
-export * from './BoxGraphControls';
-export * from './BoxGraphSettings';
-export * from './BoxGraphPlot';
+export * from './BoxChartControls';
+export * from './BoxChartSettings';
+export * from './BoxChartPlot';

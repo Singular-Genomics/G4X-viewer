@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardPlots.helpers';
 import { GraphOption } from './DashboardView.types';
-import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
+import { BoxChart } from '../../components/DashboardPlots/BoxChart';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -45,7 +45,7 @@ export const DashboardView = () => {
     switch (graphOption.id) {
       case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
         newItem = (
-          <BoxGraph
+          <BoxChart
             key={newItemId}
             id={newItemId}
             title={graphOption.label}
