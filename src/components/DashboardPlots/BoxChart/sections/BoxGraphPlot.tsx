@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { BoxGraphPlotProps } from './BoxGraphPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useBoxGraphPlotDataParser } from './BoxGraphPlot.helpers';
@@ -23,7 +23,7 @@ export const BoxGraphPlot = ({
         selectedROIs,
         selectedValueType,
         selectedValue,
-        selectedHue !== 'none',
+        selectedHue,
         settings.swapAxis ? 'h' : 'v',
         settings.dataMode
       ),
@@ -67,22 +67,18 @@ export const BoxGraphPlot = ({
       ref={containerRef}
       sx={sx.plotContainer}
     >
-      {boxPlotData.length ? (
-        <Plot
-          data={boxPlotData}
-          layout={layout}
-          style={{ width: '100%', height: '100%' }}
-          useResizeHandler={true}
-          config={{
-            scrollZoom: false,
-            displayModeBar: true,
-            displaylogo: false,
-            modeBarButtonsToRemove: ['lasso2d', 'select2d']
-          }}
-        />
-      ) : (
-        <Typography>No Data</Typography>
-      )}
+      <Plot
+        data={boxPlotData}
+        layout={layout}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler={true}
+        config={{
+          scrollZoom: false,
+          displayModeBar: true,
+          displaylogo: false,
+          modeBarButtonsToRemove: ['lasso2d', 'select2d']
+        }}
+      />
     </Box>
   );
 };

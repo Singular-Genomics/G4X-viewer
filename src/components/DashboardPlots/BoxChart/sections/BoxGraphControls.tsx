@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
-import { BoxGraphControlsProps, BoxGraphValueType, HueValueOptions } from './BoxGraphControls.types';
+import { BoxGraphControlsProps, BoxGraphValueType, BoxGraphHueValueOptions } from './BoxGraphControls.types';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 
-const AVAILABLE_HUE_OPTIONS: HueValueOptions[] = ['none', 'clusterId', 'roi'];
+const AVAILABLE_HUE_OPTIONS: BoxGraphHueValueOptions[] = ['none', 'clusterId', 'roi'];
 
 export const BoxGraphControls = ({
   selectedValue,
@@ -139,7 +139,7 @@ export const BoxGraphControls = ({
         <GxSelect
           value={selectedHue}
           fullWidth
-          onChange={(e) => onHueChange(e.target.value as HueValueOptions)}
+          onChange={(e) => onHueChange(e.target.value as BoxGraphHueValueOptions)}
         >
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
             <MenuItem value={hueEntry}>{hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}</MenuItem>

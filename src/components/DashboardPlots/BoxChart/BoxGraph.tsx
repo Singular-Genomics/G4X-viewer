@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { GxDashboardGraphWindow } from '../../../shared/components/GxDashboardGraphWindow';
 import { BoxGraphProps } from './BoxGraph.types';
 import { BoxGraphControls, BoxGraphPlot, BoxGraphSettings } from './sections';
-import { BoxGraphValueType, HueValueOptions } from './sections/BoxGraphControls.types';
+import { BoxGraphValueType, BoxGraphHueValueOptions } from './sections/BoxGraphControls.types';
 import { BoxGraphSettingOptions } from './sections/BoxGraphSettings.types';
 
 export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
   const [selectedRois, setSelectedRois] = useState<number[]>([]);
   const [selectedValue, setSelectedValue] = useState<string>(' ');
-  const [selectedHue, setSelectedHue] = useState<HueValueOptions>('none');
+  const [selectedHue, setSelectedHue] = useState<BoxGraphHueValueOptions>('none');
   const [selectedValueType, setSelectedValueType] = useState<BoxGraphValueType>('protein');
   const [settings, setSettings] = useState<BoxGraphSettingOptions>({
     swapAxis: false,

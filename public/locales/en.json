@@ -34,6 +34,7 @@
     "cancel": "Cancel",
     "clear": "Clear",
     "cloudUpload": "Cloud Upload",
+    "clusterEntry": "Cluster {{index}}",
     "confirm": "Confirm",
     "dontAskAgain": "Don't ask me again",
     "dropFile": "Drop File",
