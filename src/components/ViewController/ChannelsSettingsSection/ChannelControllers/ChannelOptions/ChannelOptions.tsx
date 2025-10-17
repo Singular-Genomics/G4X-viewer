@@ -63,7 +63,7 @@ export const ChannelOptions = ({
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
-    padding: '8px'
+    padding: '4px'
   },
   channelOptionsButton: {
     '&:hover': {
