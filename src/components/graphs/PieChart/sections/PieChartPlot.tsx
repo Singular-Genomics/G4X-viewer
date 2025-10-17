@@ -1,10 +1,9 @@
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
 import type { Data, Layout } from 'plotly.js';
 import { debounce } from 'lodash';
-import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { CellSegmentationColormapEntry } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useShallow } from 'zustand/react/shallow';
@@ -14,13 +13,16 @@ const buildColorMap = (colorMapConfig: CellSegmentationColormapEntry[]) => {
   return Object.fromEntries(colorMapConfig.map((entry) => [entry.clusterId, `rgb(${entry.color.join(',')})`]));
 };
 
+const buildHoverTemplate = (clusterIdLabel: string, countLabel: string, percentLabel: string) => {
+  return `<b>${clusterIdLabel}: %{label}</b><br>${countLabel}: %{value}<br>${percentLabel}: %{percent}<extra></extra>`;
+};
+
 export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
   const [selectedCells, colorMapConfig] = useCellSegmentationLayerStore(
     useShallow((store) => [store.selectedCells, store.cellColormapConfig])
   );
@@ -47,9 +49,14 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
   }, []);
 
   const pieChartData = useMemo(() => {
-    if (!selectedCells || !polygonFeatures) return [];
+    if (!selectedCells) return [];
 
     const colorMap = buildColorMap(colorMapConfig);
+    const hoverTemplate = buildHoverTemplate(
+      t('pieChart.clusterId'),
+      t('pieChart.hoverCount'),
+      t('pieChart.hoverPercent')
+    );
     const pieData: Partial<Data>[] = [];
     const numRois = selectedRois.length;
 
@@ -66,19 +73,22 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     let roiWithMostClusters = selectedRois[0];
     let maxClusterCount = 0;
 
-    selectedRois.forEach((roiId, roiIndex) => {
-      const selectedPolygon = polygonFeatures.find((feature) => feature.properties?.polygonId === roiId);
-      if (!selectedPolygon) return;
+    let roiIndex = 0;
+    for (const selection of selectedCells) {
+      const roiId = selection.roiId;
 
-      const roiCells = selectedCells.find((selection) => selection.roiId === roiId)?.data;
-      if (!roiCells || roiCells.length === 0) return;
+      // Skip selections that are not in the selectedRois
+      if (!selectedRois.includes(roiId)) continue;
+
+      const roiCells = selection.data;
+      if (!roiCells || roiCells.length === 0) continue;
 
       const clusterCounts = new Map<string, number>();
       roiCells.forEach((mask) => {
         clusterCounts.set(mask.clusterId, (clusterCounts.get(mask.clusterId) || 0) + 1);
       });
 
-      if (clusterCounts.size === 0) return;
+      if (clusterCounts.size === 0) continue;
 
       if (clusterCounts.size > maxClusterCount) {
         maxClusterCount = clusterCounts.size;
@@ -106,21 +116,23 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
         type: 'pie',
         labels: labels,
         values: values,
-        name: `ROI ${roiId}`,
+        name: t('pieChart.roiName', { roiId }),
         marker: { colors: colors },
         domain: {
           x: [xStart, xEnd],
           y: [yStart, yEnd]
         },
         textinfo: 'label+percent',
-        hovertemplate: '<b>Cluster ID: %{label}</b><br>Count: %{value}<br>Percent: %{percent}<extra></extra>',
+        hovertemplate: hoverTemplate,
         showlegend: roiId === roiWithMostClusters,
         legendgroup: 'clusters'
       });
-    });
+
+      roiIndex++;
+    }
 
     return pieData;
-  }, [selectedCells, polygonFeatures, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width]);
+  }, [selectedCells, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width, t]);
 
   const layout: Partial<Layout> = useMemo(() => {
     const annotations: any[] = [];
@@ -186,9 +198,14 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
           color: theme.palette.gx.primary.white
         }
       },
+      modebar: {
+        bgcolor: 'transparent',
+        color: theme.palette.gx.primary.white,
+        activecolor: theme.palette.primary.main
+      },
       annotations: annotations
     };
-  }, [dimensions, selectedRois, t, theme.palette.gx.primary.white]);
+  }, [dimensions, selectedRois, t, theme.palette.gx.primary.white, theme.palette.primary.main]);
 
   if (!selectedCells || selectedCells.length === 0) {
     return (
@@ -243,23 +260,14 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
           scrollZoom: false,
           displayModeBar: true,
           displaylogo: false,
-          modeBarButtonsToRemove: [
-            'lasso2d',
-            'select2d',
-            'zoom2d',
-            'pan2d',
-            'zoomIn2d',
-            'zoomOut2d',
-            'autoScale2d',
-            'toImage'
-          ]
+          modeBarButtonsToRemove: ['lasso2d', 'select2d', 'zoom2d', 'pan2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d']
         }}
       />
     </Box>
   );
 };
 
-const sx = {
+const sx: Record<string, SxProps<Theme>> = {
   container: {
     width: '100%',
     height: '100%',

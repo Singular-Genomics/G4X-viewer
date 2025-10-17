@@ -45,9 +45,10 @@ export const DashboardView = () => {
   const handleAddGraph = (graphId: string) => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     const newItemId = `item-${Date.now()}`;
+    let newItem: DashboardGridItem | null = null;
 
     if (graphId === EXAMPLE_CHART_CONFIG.id) {
-      const newItem: DashboardGridItem = (
+      newItem = (
         <GxDashboardGraphWindowExample
           key={newItemId}
           id={newItemId}
@@ -56,9 +57,6 @@ export const DashboardView = () => {
           removable={true}
         />
       );
-
-      setGridItems((prev) => [newItem, ...prev]);
-      enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
     } else if (graphId === PIE_CHART_CONFIG.id) {
       if (polygonFeatures.length === 0) {
         enqueueSnackbar(t('dashboard.noPolygonsAvailable'), { variant: 'warning' });
@@ -69,7 +67,7 @@ export const DashboardView = () => {
         .map((f) => f.properties?.polygonId)
         .filter((id): id is number => id !== undefined);
 
-      const newItem: DashboardGridItem = (
+      newItem = (
         <PieChart
           key={newItemId}
           id={newItemId}
@@ -79,7 +77,9 @@ export const DashboardView = () => {
           initialRois={availableRois.slice(0, 1)}
         />
       );
+    }
 
+    if (newItem) {
       setGridItems((prev) => [newItem, ...prev]);
       enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
     }

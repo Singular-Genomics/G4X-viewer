@@ -2,31 +2,22 @@ import { Box, Typography } from '@mui/material';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GxMultiSelect, GxMultiSelectOption } from '../../../../../shared/components/GxMultiSelect';
-import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore/PolygonDrawingStore';
-import { useShallow } from 'zustand/react/shallow';
 
 type RoiMultiSelectProps = {
   selectedRois: number[];
+  availableRois: number[];
   onChange: (rois: number[]) => void;
 };
 
-export const RoiMultiSelect = ({ selectedRois, onChange }: RoiMultiSelectProps) => {
+export const RoiMultiSelect = ({ selectedRois, availableRois, onChange }: RoiMultiSelectProps) => {
   const { t } = useTranslation();
-  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
 
   const roiOptions: GxMultiSelectOption[] = useMemo(() => {
-    return polygonFeatures
-      .map((feature) => {
-        const polygonId = feature.properties?.polygonId;
-        if (polygonId === undefined) return null;
-        return {
-          value: String(polygonId),
-          label: t('pieChart.roiTitle', { polygonId })
-        };
-      })
-      .filter((option): option is GxMultiSelectOption => option !== null)
-      .sort((a, b) => Number(a.value) - Number(b.value));
-  }, [polygonFeatures, t]);
+    return availableRois.map((polygonId) => ({
+      value: String(polygonId),
+      label: t('pieChart.roiTitle', { polygonId })
+    }));
+  }, [availableRois, t]);
 
   const handleChange = (newValues: string[]) => {
     const sortedRois = newValues.map(Number).sort((a, b) => a - b);

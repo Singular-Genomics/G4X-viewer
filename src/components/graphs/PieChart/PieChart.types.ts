@@ -9,13 +9,3 @@ export type PieChartProps = {
 export type PieChartPlotProps = {
   selectedRois: number[];
 };
-
-export type ClusterData = {
-  clusterId: string;
-  count: number;
-  color: string;
-};
-
-export type SinglePieChartProps = {
-  polygonId: number;
-};

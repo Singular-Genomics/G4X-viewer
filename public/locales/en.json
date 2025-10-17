@@ -288,8 +288,11 @@
     "noDataForPolygon": "No data available for this polygon",
     "clusterId": "Cluster ID",
     "roiTitle": "ROI {{polygonId}}",
+    "roiName": "ROI {{roiId}}",
     "noCellSegmentationData": "No cell segmentation data available",
     "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
-    "selectRoi": "Select ROI"
+    "selectRoi": "Select ROI",
+    "hoverCount": "Count",
+    "hoverPercent": "Percent"
   }
 }

@@ -5,7 +5,7 @@ import { PieChartPlot } from './sections/PieChartPlot';
 import { PieChartControls } from './sections/PieChartControls';
 import { PieChartProps } from './PieChart.types';
 import { PIE_CHART_CONFIG } from './PieChart.config';
-import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export const PieChart = ({
@@ -18,13 +18,11 @@ export const PieChart = ({
   const { t } = useTranslation();
   const defaultTitle = t(PIE_CHART_CONFIG.labelKey);
   const [selectedRois, setSelectedRois] = useState<number[]>(() => [...initialRois].sort((a, b) => a - b));
-  const polygonFeatures = usePolygonDrawingStore(useShallow((store) => store.polygonFeatures));
+  const selectedCells = useCellSegmentationLayerStore(useShallow((store) => store.selectedCells));
 
   const availablePolygonIds = useMemo(() => {
-    return new Set(
-      polygonFeatures.map((feature) => feature.properties?.polygonId).filter((id): id is number => id !== undefined)
-    );
-  }, [polygonFeatures]);
+    return new Set(selectedCells.map((selection) => selection.roiId));
+  }, [selectedCells]);
 
   useEffect(() => {
     const validRois = selectedRois.filter((roiId) => availablePolygonIds.has(roiId));
