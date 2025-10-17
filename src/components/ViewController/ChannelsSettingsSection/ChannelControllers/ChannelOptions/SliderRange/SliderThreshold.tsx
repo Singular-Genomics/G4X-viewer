@@ -6,7 +6,14 @@ const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
 const CHANNEL_STEP = 1;
 
-export const SliderThreshold = ({ rangeMin, rangeMax, setRangeMin, setRangeMax }: SliderThresholdProps) => {
+export const SliderThreshold = ({
+  rangeMin,
+  rangeMax,
+  setRangeMin,
+  setRangeMax,
+  setMinInputValue,
+  setMaxInputValue
+}: SliderThresholdProps) => {
   const { t } = useTranslation();
   return (
     <Box sx={sx.container}>
@@ -25,6 +32,7 @@ export const SliderThreshold = ({ rangeMin, rangeMax, setRangeMin, setRangeMax }
           onChange={(e) => {
             const value = Number(e.target.value);
             setRangeMin(value);
+            setMinInputValue(e.target.value);
           }}
           inputProps={{
             min: CHANNEL_MIN,
@@ -48,6 +56,7 @@ export const SliderThreshold = ({ rangeMin, rangeMax, setRangeMin, setRangeMax }
           onChange={(e) => {
             const value = Number(e.target.value);
             setRangeMax(value);
+            setMaxInputValue(e.target.value);
           }}
           inputProps={{
             min: rangeMin + 1,

@@ -12,7 +12,9 @@ export const ChannelOptions = ({
   rangeMin,
   rangeMax,
   setRangeMin,
-  setRangeMax
+  setRangeMax,
+  setMinInputValue,
+  setMaxInputValue
 }: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -51,6 +53,8 @@ export const ChannelOptions = ({
                 rangeMax={rangeMax}
                 setRangeMin={setRangeMin}
                 setRangeMax={setRangeMax}
+                setMinInputValue={setMinInputValue}
+                setMaxInputValue={setMaxInputValue}
               />
             </MenuList>
           </ClickAwayListener>

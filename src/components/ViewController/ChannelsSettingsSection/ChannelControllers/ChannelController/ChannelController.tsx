@@ -31,6 +31,8 @@ export const ChannelController = ({
   const [currentMinValue, currentMaxValue] = slider;
   const [rangeMin, setRangeMin] = useState(currentMinValue);
   const [rangeMax, setRangeMax] = useState(currentMaxValue);
+  const [minInputValue, setMinInputValue] = useState<string>('');
+  const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   return (
     <Grid
@@ -70,6 +72,8 @@ export const ChannelController = ({
             rangeMax={rangeMax}
             setRangeMin={setRangeMin}
             setRangeMax={setRangeMax}
+            setMinInputValue={setMinInputValue}
+            setMaxInputValue={setMaxInputValue}
           />
           <Tooltip
             title={t('channelSettings.removeChannel')}
@@ -96,6 +100,10 @@ export const ChannelController = ({
         isLoading={isLoading}
         rangeMin={rangeMin}
         rangeMax={rangeMax}
+        minInputValue={minInputValue}
+        maxInputValue={maxInputValue}
+        setMinInputValue={setMinInputValue}
+        setMaxInputValue={setMaxInputValue}
       />
     </Grid>
   );

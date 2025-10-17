@@ -1,7 +1,7 @@
 import { Box, Input, Theme, useTheme } from '@mui/material';
 import { colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
@@ -18,12 +18,14 @@ export const ChannelRangeSlider = ({
   handleSliderChange,
   isLoading,
   rangeMin,
-  rangeMax
+  rangeMax,
+  minInputValue,
+  maxInputValue,
+  setMinInputValue,
+  setMaxInputValue
 }: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [minInputValue, setMinInputValue] = useState<string>('');
-  const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   const [currentMinValue, currentMaxValue] = slider;
 
