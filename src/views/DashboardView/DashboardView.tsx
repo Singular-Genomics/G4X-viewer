@@ -20,7 +20,7 @@ export const DashboardView = () => {
 
   const graphOptions = [
     { id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label },
-    { id: PIE_CHART_CONFIG.id, label: PIE_CHART_CONFIG.label }
+    { id: PIE_CHART_CONFIG.id, label: t(PIE_CHART_CONFIG.labelKey) }
   ];
 
   // Example items

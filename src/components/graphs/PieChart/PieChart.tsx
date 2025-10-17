@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GxDashboardGraphWindow } from '../../GxDashboardGraphWindow';
 import { PieChartPlot } from './sections/PieChartPlot';
 import { PieChartControls } from './sections/PieChartControls';
@@ -9,11 +10,13 @@ import { useShallow } from 'zustand/react/shallow';
 
 export const PieChart = ({
   id,
-  title = PIE_CHART_CONFIG.label,
+  title,
   backgroundColor = PIE_CHART_CONFIG.defaultBackgroundColor,
   removable = true,
   initialRois = []
 }: PieChartProps) => {
+  const { t } = useTranslation();
+  const defaultTitle = t(PIE_CHART_CONFIG.labelKey);
   const [selectedRois, setSelectedRois] = useState<number[]>(() => [...initialRois].sort((a, b) => a - b));
   const polygonFeatures = usePolygonDrawingStore(useShallow((store) => store.polygonFeatures));
 
@@ -34,7 +37,7 @@ export const PieChart = ({
   return (
     <GxDashboardGraphWindow
       id={id}
-      title={title}
+      title={title ?? defaultTitle}
       backgroundColor={backgroundColor}
       removable={removable}
       controlsContent={

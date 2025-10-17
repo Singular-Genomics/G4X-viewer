@@ -283,6 +283,7 @@
     "settings": "Settings"
   },
   "pieChart": {
+    "title": "Pie Chart",
     "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
     "noDataForPolygon": "No data available for this polygon",
     "clusterId": "Cluster ID",
