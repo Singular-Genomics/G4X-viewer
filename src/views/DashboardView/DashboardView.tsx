@@ -10,6 +10,7 @@ import { GraphOption } from './DashboardView.types';
 import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
 import { BarChart } from '../../components/DashboardPlots/BarChart';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { BAR_CHART_CONFIG } from '../../components/DashboardPlots/BarChart/BarChart.config';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -25,8 +26,8 @@ export const DashboardView = () => {
         label: t('dashboard.graphOptions_boxGraph')
       },
       {
-        id: DASHBOARD_GRAPHS_IDS.BAR_GRAPH,
-        label: t('barChart.title')
+        id: BAR_CHART_CONFIG.id,
+        label: t(BAR_CHART_CONFIG.labelKey)
       }
     ],
     [t]
@@ -65,7 +66,7 @@ export const DashboardView = () => {
           />
         );
         break;
-      case DASHBOARD_GRAPHS_IDS.BAR_GRAPH:
+      case BAR_CHART_CONFIG.id:
         newItem = (
           <BarChart
             key={newItemId}
