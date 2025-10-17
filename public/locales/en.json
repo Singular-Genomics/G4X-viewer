@@ -300,6 +300,6 @@
   },
   "barChart": {
     "title": "Bar Chart", 
-    "barModeLabel": "Bar Mode",
+    "barModeLabel": "Bar Mode"
   }
 }
