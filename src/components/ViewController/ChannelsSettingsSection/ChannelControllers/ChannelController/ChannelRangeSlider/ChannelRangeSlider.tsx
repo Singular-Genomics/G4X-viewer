@@ -32,7 +32,7 @@ export const ChannelRangeSlider = ({
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
     setMaxInputValue(currentMaxValue.toString());
-  }, [currentMaxValue, currentMinValue]);
+  }, [currentMaxValue, currentMinValue, setMinInputValue, setMaxInputValue]);
 
   const colormap = useViewerStore((store) => store.colormap);
   const rgbColor = colormapToRgb(!!colormap, color);
@@ -50,7 +50,7 @@ export const ChannelRangeSlider = ({
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMaxValue, handleSliderChange]
+    [currentMaxValue, handleSliderChange, setMinInputValue]
   );
 
   const handleMinInputChange = useCallback(
@@ -58,7 +58,7 @@ export const ChannelRangeSlider = ({
       setMinInputValue(e.target.value);
       debouncedMinInputChange(e.target.value);
     },
-    [debouncedMinInputChange]
+    [debouncedMinInputChange, setMinInputValue]
   );
 
   const debouncedMaxInputChange = useMemo(
@@ -74,7 +74,7 @@ export const ChannelRangeSlider = ({
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, handleSliderChange]
+    [currentMinValue, handleSliderChange, setMaxInputValue]
   );
 
   const handleMaxInputChange = useCallback(
@@ -82,7 +82,7 @@ export const ChannelRangeSlider = ({
       setMaxInputValue(e.target.value);
       debouncedMaxInputChange(e.target.value);
     },
-    [debouncedMaxInputChange]
+    [debouncedMaxInputChange, setMaxInputValue]
   );
 
   return (
