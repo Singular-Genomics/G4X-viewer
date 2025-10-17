@@ -80,7 +80,7 @@ export const BoxChartControls = ({
         sx={sx.controlWrapper}
         size="small"
       >
-        <Typography sx={sx.inputLabel}>{t('dashboard.boxPlotValueType')}:</Typography>
+        <Typography sx={sx.inputLabel}>{t('dashboard.plotValueType')}:</Typography>
         <GxSelect
           value={selectedValueType}
           fullWidth

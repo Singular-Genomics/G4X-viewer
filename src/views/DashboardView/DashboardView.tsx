@@ -19,7 +19,7 @@ export const DashboardView = () => {
     () => [
       {
         id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
-        label: t('dashboard.graphOptions_boxGraph')
+        label: t('boxChart.chartTitle')
       }
     ],
     [t]

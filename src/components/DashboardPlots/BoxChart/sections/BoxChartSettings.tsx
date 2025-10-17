@@ -25,7 +25,7 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
           alignContent={'center'}
           sx={sx.settingLabel}
         >
-          <Typography>{t('dashboard.boxPlotSwapAxisLabel')}:</Typography>
+          <Typography>{t('dashboard.plotSwapAxisLabel')}:</Typography>
         </Grid>
         <Grid size={1}>
           <GxCheckbox
@@ -44,7 +44,7 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
           alignContent={'center'}
           sx={sx.settingLabel}
         >
-          <Typography>{t('dashboard.boxPlotDataModeLabel')}:</Typography>
+          <Typography>{t('dashboard.plotDataModeLabel')}:</Typography>
         </Grid>
         <Grid size={1}>
           <GxSelect

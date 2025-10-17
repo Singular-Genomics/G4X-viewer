@@ -283,12 +283,10 @@
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
-    "graphAdded": "{{graphName}} added successfully",
     "settings": "Settings",
-    "boxPlotValueType": "Value Type",
-    "boxPlotSwapAxisLabel": "Swap Axis",
-    "boxPlotDataModeLabel": "Data Mode",
-    "graphOptions_boxGraph": "Intensity Box Graph",
+    "plotValueType": "Value Type",
+    "plotSwapAxisLabel": "Swap Axis",
+    "plotDataModeLabel": "Data Mode",
     "availableROILabel": "Available ROIs",
     "availableGenesLabel": "Available Genes",
     "availableProteinsLabel": "Available Proteins",
@@ -296,5 +294,8 @@
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
     "multipleROISelected": "{{count}} ROIs selected"
+  }, 
+  "boxChart": {
+    "chartTitle": "Intensity Box Chart"
   }
 }
