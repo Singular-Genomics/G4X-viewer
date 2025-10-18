@@ -7,6 +7,7 @@ import { ColorPalette } from './ColorPalette';
 import { SliderThreshold } from './SliderRange/SliderThreshold';
 
 export const ChannelOptions = ({
+  slider,
   handleColorSelect,
   disabled,
   rangeMin,
@@ -14,7 +15,8 @@ export const ChannelOptions = ({
   setRangeMin,
   setRangeMax,
   setMinInputValue,
-  setMaxInputValue
+  setMaxInputValue,
+  handleSliderChange
 }: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -49,12 +51,14 @@ export const ChannelOptions = ({
             <MenuList>
               <ColorPalette handleColorSelect={handleColorSelect} />
               <SliderThreshold
+                slider={slider}
                 rangeMin={rangeMin}
                 rangeMax={rangeMax}
                 setRangeMin={setRangeMin}
                 setRangeMax={setRangeMax}
                 setMinInputValue={setMinInputValue}
                 setMaxInputValue={setMaxInputValue}
+                handleSliderChange={handleSliderChange}
               />
             </MenuList>
           </ClickAwayListener>

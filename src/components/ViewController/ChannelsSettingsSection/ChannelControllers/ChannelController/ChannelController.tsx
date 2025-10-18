@@ -8,7 +8,7 @@ import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export const ChannelController = ({
   color,
@@ -31,8 +31,11 @@ export const ChannelController = ({
   const [currentMinValue, currentMaxValue] = slider;
   const [rangeMin, setRangeMin] = useState(currentMinValue);
   const [rangeMax, setRangeMax] = useState(currentMaxValue);
-  const [minInputValue, setMinInputValue] = useState<string>('');
-  const [maxInputValue, setMaxInputValue] = useState<string>('');
+  const [minInputValue, setMinInputValueRaw] = useState<string>('');
+  const [maxInputValue, setMaxInputValueRaw] = useState<string>('');
+
+  const setMinInputValue = useCallback((value: string) => setMinInputValueRaw(value), []);
+  const setMaxInputValue = useCallback((value: string) => setMaxInputValueRaw(value), []);
 
   return (
     <Grid
@@ -66,6 +69,7 @@ export const ChannelController = ({
         </GxSelect>
         <Box>
           <ChannelOptions
+            slider={slider}
             handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
             rangeMin={rangeMin}
@@ -74,6 +78,7 @@ export const ChannelController = ({
             setRangeMax={setRangeMax}
             setMinInputValue={setMinInputValue}
             setMaxInputValue={setMaxInputValue}
+            handleSliderChange={handleSliderChange}
           />
           <Tooltip
             title={t('channelSettings.removeChannel')}
