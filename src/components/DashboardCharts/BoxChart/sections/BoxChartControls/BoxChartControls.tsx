@@ -85,7 +85,7 @@ export const BoxChartControls = ({
           value={selectedValueType}
           fullWidth
           MenuProps={{
-            sx: sx.controlMenu
+            sx: sx.selectMenu
           }}
           onChange={(e) => {
             const newType = e.target.value as BoxChartValueType;
@@ -116,7 +116,7 @@ export const BoxChartControls = ({
           value={selectedValue}
           fullWidth
           MenuProps={{
-            sx: sx.controlMenu
+            sx: sx.selectMenu
           }}
           onChange={(e) => onValueChange(e.target.value as string)}
         >
@@ -142,7 +142,12 @@ export const BoxChartControls = ({
           onChange={(e) => onHueChange(e.target.value as BoxChartHueValueOptions)}
         >
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
-            <MenuItem value={hueEntry}>{hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}</MenuItem>
+            <MenuItem
+              key={hueEntry}
+              value={hueEntry}
+            >
+              {hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+            </MenuItem>
           ))}
         </GxSelect>
       </FormControl>
@@ -161,14 +166,14 @@ const sx: Record<string, SxProps<Theme>> = {
     flex: '1 1 150px',
     minWidth: 'min-content'
   },
-  controlMenu: {
-    maxHeight: '500px'
-  },
   inputLabel: {
     fontSize: '12px',
     fontWeight: 600,
     marginInlineStart: '4px',
     lineHeight: '1.2',
     textWrap: 'nowrap'
+  },
+  selectMenu: {
+    maxHeight: '500px'
   }
 };
