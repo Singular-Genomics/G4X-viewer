@@ -2,20 +2,23 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
+import { PieChart, PIE_CHART_CONFIG } from '../../components/graphs/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
-import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { useShallow } from 'zustand/react/shallow';
 import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardCharts/DashboardPlots.helpers';
-import { GraphOption } from './DashboardView.types';
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 
 export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions: GraphOption[] = [
+  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
+
+  const graphOptions = [
+    { id: PIE_CHART_CONFIG.id, label: t(PIE_CHART_CONFIG.labelKey) },
     {
       id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
       label: t('boxChart.chartTitle')
@@ -39,6 +42,10 @@ export const DashboardView = () => {
     let newItem: DashboardGridItem;
     const newItemId = `item-${Date.now()}`;
 
+    const availableRois = polygonFeatures
+      .map((f) => f.properties?.polygonId)
+      .filter((id): id is number => id !== undefined);
+
     switch (graphOption.id) {
       case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
         newItem = (
@@ -50,12 +57,25 @@ export const DashboardView = () => {
           />
         );
         break;
+      case PIE_CHART_CONFIG.id:
+        newItem = (
+          <PieChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption?.label || 'Pie Chart'}
+            backgroundColor={PIE_CHART_CONFIG.defaultBackgroundColor}
+            removable={true}
+            initialRois={availableRois.slice(0, 1)}
+          />
+        );
+        break;
       default:
         return;
     }
 
-    setGridItems((prev) => [newItem, ...prev]);
-    enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+    if (newItem) {
+      setGridItems((prev) => [newItem, ...prev]);
+    }
   };
 
   return (

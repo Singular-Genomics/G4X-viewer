@@ -283,6 +283,8 @@
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
+    "graphAdded": "{{graphName}} added successfully",
+    "noPolygonsAvailable": "No polygon ROIs available",
     "settings": "Settings",
     "plotValueType": "Value Type",
     "plotSwapAxisLabel": "Swap Axis",
@@ -294,8 +296,21 @@
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
     "multipleROISelected": "{{count}} ROIs selected"
-  }, 
-  "boxChart": {
+  },
+  "pieChart": {
+    "title": "Pie Chart",
+    "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
+    "noDataForPolygon": "No data available for this polygon",
+    "clusterId": "Cluster ID",
+    "roiTitle": "ROI {{polygonId}}",
+    "roiName": "ROI {{roiId}}",
+    "noCellSegmentationData": "No cell segmentation data available",
+    "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
+    "selectRoi": "Select ROI",
+    "hoverCount": "Count",
+    "hoverPercent": "Percent"
+  },
+   "boxChart": {
     "chartTitle": "Intensity Box Chart"
   }
 }
