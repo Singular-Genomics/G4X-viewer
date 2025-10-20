@@ -1,6 +1,6 @@
 import { Box, Grid, MenuItem, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
-import { GxSelect } from '../../../../shared/components/GxSelect';
+import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
+import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { BoxChartDataMode, BoxChartSettingsProps } from './BoxChartSettings.types';
 import { useTranslation } from 'react-i18next';
 

@@ -1,7 +1,7 @@
 import { BoxPlotData } from 'plotly.js';
-import { BoxChartValueType } from './BoxChartControls.types';
-import { BoxChartSettingOptions } from './BoxChartSettings.types';
-import { BoxChartHueValueOptions } from './BoxChartControls.types';
+import { BoxChartValueType } from '../BoxChartControls/BoxChartControls.types';
+import { BoxChartSettingOptions } from '../BoxChartSettings/BoxChartSettings.types';
+import { BoxChartHueValueOptions } from '../BoxChartControls/BoxChartControls.types';
 
 export type BoxChartPlotProps = {
   selectedROIs: number[];

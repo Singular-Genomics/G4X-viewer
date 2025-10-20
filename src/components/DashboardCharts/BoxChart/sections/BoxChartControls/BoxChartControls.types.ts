@@ -1,4 +1,4 @@
-import { SingleMask } from '../../../../shared/types';
+import { SingleMask } from '../../../../../shared/types';
 
 export type BoxChartControlsProps = {
   selectedValue: string;

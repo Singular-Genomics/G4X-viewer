@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { BoxChartDataEntry, BoxChartOrientation } from './BoxChartPlot.types';
 import { useTranslation } from 'react-i18next';
-import { BoxChartHueValueOptions, BoxChartValueType } from './BoxChartControls.types';
-import { generatePolygonColor, rgbToHex } from '../../../../utils/utils';
-import { SingleMask } from '../../../../shared/types';
-import { BoxChartDataMode } from './BoxChartSettings.types';
+import { BoxChartHueValueOptions, BoxChartValueType } from '../BoxChartControls/BoxChartControls.types';
+import { generatePolygonColor, rgbToHex } from '../../../../../utils/utils';
+import { SingleMask } from '../../../../../shared/types';
+import { BoxChartDataMode } from '../BoxChartSettings/BoxChartSettings.types';
 
 export function useBoxChartPlotDataParser() {
   const { t } = useTranslation();

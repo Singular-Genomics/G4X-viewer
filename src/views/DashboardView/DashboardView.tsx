@@ -5,9 +5,9 @@ import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
-import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardPlots.helpers';
+import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardCharts/DashboardPlots.helpers';
 import { GraphOption } from './DashboardView.types';
-import { BoxChart } from '../../components/DashboardPlots/BoxChart';
+import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 
 export const DashboardView = () => {
   const theme = useTheme();

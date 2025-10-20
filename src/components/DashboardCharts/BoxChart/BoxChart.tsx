@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { BoxChartProps } from './BoxChart.types';
-import { BoxChartControls, BoxChartPlot, BoxChartSettings } from './sections';
-import { BoxChartValueType, BoxChartHueValueOptions } from './sections/BoxChartControls.types';
-import { BoxChartSettingOptions } from './sections/BoxChartSettings.types';
+import {
+  BoxChartControls,
+  BoxChartHueValueOptions,
+  BoxChartPlot,
+  BoxChartSettingOptions,
+  BoxChartSettings,
+  BoxChartValueType
+} from './sections';
 import { GxDashboardGraphWindow } from '../../../shared/components/GxDashboardGraphWindow';
 
 export const BoxChart = ({ id, title, removable = true }: BoxChartProps) => {

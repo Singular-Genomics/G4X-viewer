@@ -1,9 +1,9 @@
 import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
-import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
+import { GxMultiSelect } from '../../../../../shared/components/GxMultiSelect';
 import { useEffect, useMemo } from 'react';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
-import { GxSelect } from '../../../../shared/components/GxSelect';
+import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { BoxChartControlsProps, BoxChartValueType, BoxChartHueValueOptions } from './BoxChartControls.types';
 
 const AVAILABLE_HUE_OPTIONS: BoxChartHueValueOptions[] = ['none', 'clusterId', 'roi'];
