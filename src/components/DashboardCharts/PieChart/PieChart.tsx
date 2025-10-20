@@ -1,50 +1,23 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { GxDashboardGraphWindow } from '../../GxDashboardGraphWindow';
-import { PieChartPlot } from './sections/PieChartPlot';
-import { PieChartControls } from './sections/PieChartControls';
+import { useState } from 'react';
 import { PieChartProps } from './PieChart.types';
-import { PIE_CHART_CONFIG } from './PieChart.config';
-import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useShallow } from 'zustand/react/shallow';
+import { GxDashboardGraphWindow } from '../../../shared/components/GxDashboardGraphWindow';
+import { PieChartControls, PieChartPlot } from './sections';
 
-export const PieChart = ({
-  id,
-  title,
-  backgroundColor = PIE_CHART_CONFIG.defaultBackgroundColor,
-  removable = true,
-  initialRois = []
-}: PieChartProps) => {
-  const { t } = useTranslation();
-  const defaultTitle = t(PIE_CHART_CONFIG.labelKey);
-  const [selectedRois, setSelectedRois] = useState<number[]>(() => [...initialRois].sort((a, b) => a - b));
-  const selectedCells = useCellSegmentationLayerStore(useShallow((store) => store.selectedCells));
-
-  const availablePolygonIds = useMemo(() => {
-    return new Set(selectedCells.map((selection) => selection.roiId));
-  }, [selectedCells]);
-
-  useEffect(() => {
-    const validRois = selectedRois.filter((roiId) => availablePolygonIds.has(roiId));
-
-    if (validRois.length !== selectedRois.length) {
-      setSelectedRois(validRois);
-    }
-  }, [availablePolygonIds, selectedRois]);
+export const PieChart = ({ id, title, removable = true }: PieChartProps) => {
+  const [selectedROIs, setSelectedROIs] = useState<number[]>([]);
 
   return (
     <GxDashboardGraphWindow
       id={id}
-      title={title ?? defaultTitle}
-      backgroundColor={backgroundColor}
+      title={title}
       removable={removable}
       controlsContent={
         <PieChartControls
-          selectedRois={selectedRois}
-          onRoiChange={setSelectedRois}
+          selectedROIs={selectedROIs}
+          onRoiChange={setSelectedROIs}
         />
       }
-      graphContent={<PieChartPlot selectedRois={selectedRois} />}
+      graphContent={<PieChartPlot selectedRois={selectedROIs} />}
     />
   );
 };

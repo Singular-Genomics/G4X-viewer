@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
-import { PieChart, PIE_CHART_CONFIG } from '../../components/DashboardCharts/PieChart';
+import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useTranslation } from 'react-i18next';
-import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore/PolygonDrawingStore';
-import { useShallow } from 'zustand/react/shallow';
-import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardCharts/DashboardPlots.helpers';
+import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 
 export const DashboardView = () => {
@@ -15,13 +13,14 @@ export const DashboardView = () => {
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
-
   const graphOptions = [
-    { id: PIE_CHART_CONFIG.id, label: t(PIE_CHART_CONFIG.labelKey) },
     {
-      id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
-      label: t('boxChart.chartTitle')
+      id: DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.labelKey)
     }
   ];
 
@@ -42,12 +41,8 @@ export const DashboardView = () => {
     let newItem: DashboardGridItem;
     const newItemId = `item-${Date.now()}`;
 
-    const availableRois = polygonFeatures
-      .map((f) => f.properties?.polygonId)
-      .filter((id): id is number => id !== undefined);
-
     switch (graphOption.id) {
-      case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
+      case DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id:
         newItem = (
           <BoxChart
             key={newItemId}
@@ -57,15 +52,13 @@ export const DashboardView = () => {
           />
         );
         break;
-      case PIE_CHART_CONFIG.id:
+      case DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id:
         newItem = (
           <PieChart
             key={newItemId}
             id={newItemId}
-            title={graphOption?.label || 'Pie Chart'}
-            backgroundColor={PIE_CHART_CONFIG.defaultBackgroundColor}
+            title={graphOption?.label}
             removable={true}
-            initialRois={availableRois.slice(0, 1)}
           />
         );
         break;

@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
 import type { Data, Layout } from 'plotly.js';
 import { debounce } from 'lodash';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import type { CellSegmentationColormapEntry } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import type { CellSegmentationColormapEntry } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useShallow } from 'zustand/react/shallow';
-import type { PieChartPlotProps } from '../PieChart.types';
+import { PieChartPlotProps } from './PieChartPlot.types';
 
 const buildColorMap = (colorMapConfig: CellSegmentationColormapEntry[]) => {
   return Object.fromEntries(colorMapConfig.map((entry) => [entry.clusterId, `rgb(${entry.color.join(',')})`]));
@@ -161,8 +161,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
         yref: 'paper',
         xanchor: 'center',
         yanchor: 'bottom',
-        showarrow: false,
-        font: { size: 14, color: theme.palette.gx.primary.white }
+        showarrow: false
       });
     });
 
@@ -171,12 +170,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
       height: dimensions.height,
       autosize: true,
       uirevision: 'true',
-      margin: { l: 30, r: 150, b: 30, t: 30 },
-      paper_bgcolor: 'transparent',
-      plot_bgcolor: 'transparent',
-      font: {
-        color: theme.palette.gx.primary.white
-      },
+      margin: { l: 30, r: 30, b: 30, t: 30 },
       showlegend: true,
       legend: {
         itemsizing: 'constant',
@@ -186,26 +180,15 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
         y: 0.5,
         yanchor: 'middle',
         title: {
-          text: `${t('pieChart.clusterId')}<br>`,
-          font: {
-            size: 13,
-            color: theme.palette.gx.primary.white,
-            weight: 500
-          }
-        },
-        font: {
-          size: 12,
-          color: theme.palette.gx.primary.white
+          text: `${t('pieChart.clusterId')}<br>`
         }
       },
       modebar: {
-        bgcolor: 'transparent',
-        color: theme.palette.gx.primary.white,
-        activecolor: theme.palette.primary.main
+        bgcolor: 'transparent'
       },
       annotations: annotations
     };
-  }, [dimensions, selectedRois, t, theme.palette.gx.primary.white, theme.palette.primary.main]);
+  }, [dimensions.width, dimensions.height, selectedRois, t]);
 
   if (!selectedCells || selectedCells.length === 0) {
     return (

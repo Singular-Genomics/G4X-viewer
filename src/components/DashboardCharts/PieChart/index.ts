@@ -1,3 +1,2 @@
-export { PieChart } from './PieChart';
-export { PIE_CHART_CONFIG } from './PieChart.config';
+export * from './PieChart';
 export type * from './PieChart.types';
