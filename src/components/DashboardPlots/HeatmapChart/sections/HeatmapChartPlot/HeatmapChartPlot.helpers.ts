@@ -4,6 +4,7 @@ import { HeatmapChartDataEntry } from './HeatmapChartPlot.types';
 import { useTranslation } from 'react-i18next';
 import { HeatmapChartValueType } from '../HeatmapChartControls';
 import { SingleMask } from '../../../../../shared/types';
+import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
 
 export function useHeatmapChartPlotDataParser() {
   const { t } = useTranslation();
@@ -18,7 +19,12 @@ export function useHeatmapChartPlotDataParser() {
     cell.proteinValues[selectedValueIndex];
 
   const parseCellsByRoi = useCallback(
-    (rois: number[], valueType: HeatmapChartValueType, selectedvalue: string): HeatmapChartDataEntry[] => {
+    (
+      rois: number[],
+      valueType: HeatmapChartValueType,
+      selectedvalue: string,
+      settings: HeatmapChartSettingOptions
+    ): HeatmapChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
       }
@@ -87,13 +93,21 @@ export function useHeatmapChartPlotDataParser() {
         zMatrix.push(row);
       }
 
+      // Prepare colorscale for Plotly
+      let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
+
+      if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
+        // Reverse the colorscale
+        colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+      }
+
       return [
         {
           z: zMatrix,
           x: xLabels,
           y: yLabels,
           type: 'heatmap',
-          colorscale: 'Viridis',
+          colorscale: colorscale,
           hoverongaps: false,
           hovertemplate:
             `<b>ROI:</b> %{x}<br>` + `<b>Cluster:</b> %{y}<br>` + `<b>Mean Value:</b> %{z:.2f}<br>` + `<extra></extra>`

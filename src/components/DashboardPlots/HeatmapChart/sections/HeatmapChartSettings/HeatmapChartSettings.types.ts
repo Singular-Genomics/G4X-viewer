@@ -3,6 +3,12 @@ export type HeatmapChartSettingsProps = {
   onChangeSettings: (newSettings: HeatmapChartSettingOptions) => void;
 };
 
+export type ColorScaleOption = {
+  label: string;
+  value: [number, string][];
+  reversed: boolean;
+};
+
 export type HeatmapChartSettingOptions = {
-  // Empty for now
+  colorscale?: ColorScaleOption;
 };

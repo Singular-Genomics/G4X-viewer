@@ -6,14 +6,19 @@ import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
 import { debounce } from 'lodash';
 
-export const HeatmapChartPlot = ({ selectedROIs, selectedValueType, selectedValue }: HeatmapChartPlotProps) => {
+export const HeatmapChartPlot = ({
+  selectedROIs,
+  selectedValueType,
+  selectedValue,
+  settings
+}: HeatmapChartPlotProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { parseCellsByRoi } = useHeatmapChartPlotDataParser();
 
   const heatmapData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue),
-    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType]
+    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue, settings),
+    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, settings]
   );
 
   useEffect(() => {
