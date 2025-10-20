@@ -24,12 +24,12 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
   };
 
   return (
-    <Box sx={{ padding: '8px' }}>
+    <Box sx={sx.container}>
       <Grid
         container
         columns={2}
         rowSpacing={1}
-        sx={{ width: '100%' }}
+        sx={sx.grid}
       >
         {/* Colorscale Select */}
         <Grid
@@ -44,7 +44,7 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
             size="small"
             value={settings.colorscale?.label || ''}
             onChange={(e) => onColorscaleSelect(e.target.value as string)}
-            MenuProps={{ sx: { zIndex: 10000 } }}
+            MenuProps={{ sx: sx.menu }}
           >
             {AVAILABLE_COLORSCALES.map((item) => (
               <MenuItem
@@ -72,4 +72,16 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
       </Grid>
     </Box>
   );
+};
+
+const sx = {
+  container: {
+    padding: '8px'
+  },
+  grid: {
+    width: '100%'
+  },
+  menu: {
+    zIndex: 10000
+  }
 };
