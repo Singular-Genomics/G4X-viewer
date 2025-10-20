@@ -6,5 +6,9 @@ export const DASHBOARD_CHARTS_CONFIG: Record<string, { id: string; labelKey: str
   PIE_CHART_CONFIG: {
     id: 'pie-chart',
     labelKey: 'pieChart.title'
+  },
+  BAR_CHART_CONFIG: {
+    id: 'bar-chart',
+    labelKey: 'barChart.title'
   }
 };

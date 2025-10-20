@@ -295,9 +295,16 @@
     "availableHueLabel": "Available Hue",
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
-    "multipleROISelected": "{{count}} ROIs selected"
+    "multipleROISelected": "{{count}} ROIs selected",
+    "boxPlotValueType": "Value Type",
+    "boxPlotSwapAxisLabel": "Swap Axis",
+    "boxPlotDataModeLabel": "Data Mode",
+    "graphOptions_boxGraph": "Intensity Box Graph",
+    "gene": "Gene",
+    "protein": "Protein",
+    "noROIAvailableError": "No ROI data available. Please create or import ROI polygons first."
   },
-  "pieChart": {
+    "pieChart": {
     "title": "Pie Chart",
     "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
     "noDataForPolygon": "No data available for this polygon",
@@ -309,5 +316,9 @@
   },
    "boxChart": {
     "chartTitle": "Intensity Box Chart"
+  },
+  "barChart": {
+    "title": "Bar Chart", 
+    "barModeLabel": "Bar Mode"
   }
 }
