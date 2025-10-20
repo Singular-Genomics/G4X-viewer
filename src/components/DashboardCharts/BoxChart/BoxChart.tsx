@@ -1,16 +1,21 @@
 import { useState } from 'react';
+import { BoxChartProps } from './BoxChart.types';
+import {
+  BoxChartControls,
+  BoxChartHueValueOptions,
+  BoxChartPlot,
+  BoxChartSettingOptions,
+  BoxChartSettings,
+  BoxChartValueType
+} from './sections';
 import { GxDashboardGraphWindow } from '../../../shared/components/GxDashboardGraphWindow';
-import { BoxGraphProps } from './BoxGraph.types';
-import { BoxGraphControls, BoxGraphPlot, BoxGraphSettings } from './sections';
-import { BoxGraphValueType, BoxGraphHueValueOptions } from './sections/BoxGraphControls.types';
-import { BoxGraphSettingOptions } from './sections/BoxGraphSettings.types';
 
-export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
+export const BoxChart = ({ id, title, removable = true }: BoxChartProps) => {
   const [selectedRois, setSelectedRois] = useState<number[]>([]);
   const [selectedValue, setSelectedValue] = useState<string>(' ');
-  const [selectedHue, setSelectedHue] = useState<BoxGraphHueValueOptions>('none');
-  const [selectedValueType, setSelectedValueType] = useState<BoxGraphValueType>('protein');
-  const [settings, setSettings] = useState<BoxGraphSettingOptions>({
+  const [selectedHue, setSelectedHue] = useState<BoxChartHueValueOptions>('none');
+  const [selectedValueType, setSelectedValueType] = useState<BoxChartValueType>('protein');
+  const [settings, setSettings] = useState<BoxChartSettingOptions>({
     swapAxis: false,
     dataMode: 'suspectedoutliers'
   });
@@ -21,7 +26,7 @@ export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
       title={title}
       removable={removable}
       controlsContent={
-        <BoxGraphControls
+        <BoxChartControls
           selectedValue={selectedValue}
           selectedROIs={selectedRois}
           selectedHue={selectedHue}
@@ -33,13 +38,13 @@ export const BoxGraph = ({ id, title, removable = true }: BoxGraphProps) => {
         />
       }
       settingsContent={
-        <BoxGraphSettings
+        <BoxChartSettings
           settings={settings}
           onChangeSettings={setSettings}
         />
       }
       graphContent={
-        <BoxGraphPlot
+        <BoxChartPlot
           selectedROIs={selectedRois}
           selectedValueType={selectedValueType}
           selectedValue={selectedValue}

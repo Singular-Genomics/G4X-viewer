@@ -62,7 +62,6 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
 
   return {
     rounded: {
-      fontSize: '14px',
       borderRadius: '8px',
       background: isDark ? theme.palette.gx.darkGrey[300] : theme.palette.gx.primary.white,
       minHeight: '40px',

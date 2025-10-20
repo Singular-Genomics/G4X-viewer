@@ -1,37 +1,33 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
+import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
-import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
-import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardPlots.helpers';
-import { GraphOption } from './DashboardView.types';
-import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
-import { BarChart } from '../../components/DashboardPlots/BarChart';
-import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { BAR_CHART_CONFIG } from '../../components/DashboardPlots/BarChart/BarChart.config';
+import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
+import { BoxChart } from '../../components/DashboardCharts/BoxChart';
+import { BarChart } from '../../components/DashboardCharts/BarChart';
 
 export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
-  const { selectedCells } = useCellSegmentationLayerStore();
 
-  const graphOptions: GraphOption[] = useMemo(
-    () => [
-      {
-        id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
-        label: t('dashboard.graphOptions_boxGraph')
-      },
-      {
-        id: BAR_CHART_CONFIG.id,
-        label: t(BAR_CHART_CONFIG.labelKey)
-      }
-    ],
-    [t]
-  );
+  const graphOptions = [
+    {
+      id: DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.labelKey)
+    }
+  ];
 
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
@@ -47,18 +43,13 @@ export const DashboardView = () => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     if (!graphOption) return;
 
-    if (selectedCells.length === 0) {
-      enqueueSnackbar(t('dashboard.noROIAvailableError'), { variant: 'error' });
-      return;
-    }
-
     let newItem: DashboardGridItem;
     const newItemId = `item-${Date.now()}`;
 
     switch (graphOption.id) {
-      case DASHBOARD_GRAPHS_IDS.BOX_GRAPH:
+      case DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id:
         newItem = (
-          <BoxGraph
+          <BoxChart
             key={newItemId}
             id={newItemId}
             title={graphOption.label}
@@ -66,7 +57,17 @@ export const DashboardView = () => {
           />
         );
         break;
-      case BAR_CHART_CONFIG.id:
+      case DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id:
+        newItem = (
+          <PieChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption?.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id:
         newItem = (
           <BarChart
             key={newItemId}
@@ -80,8 +81,9 @@ export const DashboardView = () => {
         return;
     }
 
-    setGridItems((prev) => [newItem, ...prev]);
-    enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
+    if (newItem) {
+      setGridItems((prev) => [newItem, ...prev]);
+    }
   };
 
   return (

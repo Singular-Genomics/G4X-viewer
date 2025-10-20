@@ -1,12 +1,12 @@
 import { Box, Grid, MenuItem, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
-import { GxSelect } from '../../../../shared/components/GxSelect';
-import { BoxGraphDataMode, BoxGraphSettingsProps } from './BoxGraphSettings.types';
+import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
+import { GxSelect } from '../../../../../shared/components/GxSelect';
+import { BoxChartDataMode, BoxChartSettingsProps } from './BoxChartSettings.types';
 import { useTranslation } from 'react-i18next';
 
-const AVAILABLE_DATA_MODES: BoxGraphDataMode[] = ['all', 'outliers', 'suspectedoutliers', 'none'];
+const AVAILABLE_DATA_MODES: BoxChartDataMode[] = ['all', 'outliers', 'suspectedoutliers', 'none'];
 
-export const BoxGraphSettings = ({ settings, onChangeSettings }: BoxGraphSettingsProps) => {
+export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSettingsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
@@ -25,7 +25,7 @@ export const BoxGraphSettings = ({ settings, onChangeSettings }: BoxGraphSetting
           alignContent={'center'}
           sx={sx.settingLabel}
         >
-          <Typography>{t('dashboard.boxPlotSwapAxisLabel')}:</Typography>
+          <Typography>{t('dashboard.plotSwapAxisLabel')}:</Typography>
         </Grid>
         <Grid size={1}>
           <GxCheckbox
@@ -44,7 +44,7 @@ export const BoxGraphSettings = ({ settings, onChangeSettings }: BoxGraphSetting
           alignContent={'center'}
           sx={sx.settingLabel}
         >
-          <Typography>{t('dashboard.boxPlotDataModeLabel')}:</Typography>
+          <Typography>{t('dashboard.plotDataModeLabel')}:</Typography>
         </Grid>
         <Grid size={1}>
           <GxSelect
@@ -54,7 +54,7 @@ export const BoxGraphSettings = ({ settings, onChangeSettings }: BoxGraphSetting
             onChange={(e) =>
               onChangeSettings({
                 ...settings,
-                dataMode: e.target.value as BoxGraphDataMode
+                dataMode: e.target.value as BoxChartDataMode
               })
             }
             MenuProps={{ sx: { zIndex: 3000 } }}
