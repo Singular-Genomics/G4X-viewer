@@ -34,6 +34,7 @@
     "cancel": "Cancel",
     "clear": "Clear",
     "cloudUpload": "Cloud Upload",
+    "clusterEntry": "Cluster {{index}}",
     "confirm": "Confirm",
     "dontAskAgain": "Don't ask me again",
     "dropFile": "Drop File",
@@ -49,6 +50,7 @@
     "filterMissingColormap": "Missing colormap config data - filtering disabled.",
     "filterShowActiveOnly": "Show active filters only",
     "filterShowDiscarded": "Show Discarded",
+    "gene": "Gene",
     "imageURL": "Image URL",
     "import": "Import",
     "includeGeneExpressions": "Include gene expressions",
@@ -59,7 +61,10 @@
     "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
+    "protein": "Protein",
+    "roiEntry": "ROI {{index}}",
     "segmentation": "Segmentation",
+    "selectOne": "Select One",
     "shape": "Shape",
     "transcripts": "Transcripts",
     "warning": "Warning"
@@ -280,19 +285,29 @@
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
     "noPolygonsAvailable": "No polygon ROIs available",
-    "settings": "Settings"
+    "settings": "Settings",
+    "plotValueType": "Value Type",
+    "plotSwapAxisLabel": "Swap Axis",
+    "plotDataModeLabel": "Data Mode",
+    "availableROILabel": "Available ROIs",
+    "availableGenesLabel": "Available Genes",
+    "availableProteinsLabel": "Available Proteins",
+    "availableHueLabel": "Available Hue",
+    "selectROILabel": "Select ROIs",
+    "allROILabel": "All ROIs",
+    "multipleROISelected": "{{count}} ROIs selected"
   },
   "pieChart": {
     "title": "Pie Chart",
     "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
     "noDataForPolygon": "No data available for this polygon",
     "clusterId": "Cluster ID",
-    "roiTitle": "ROI {{polygonId}}",
-    "roiName": "ROI {{roiId}}",
     "noCellSegmentationData": "No cell segmentation data available",
     "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
-    "selectRoi": "Select ROI",
     "hoverCount": "Count",
     "hoverPercent": "Percent"
+  },
+   "boxChart": {
+    "chartTitle": "Intensity Box Chart"
   }
 }

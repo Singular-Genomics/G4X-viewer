@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Box, Theme, useTheme } from '@mui/material';
+import { alpha, Box, Theme, useTheme } from '@mui/material';
 import GridLayout, { WidthProvider, Layout } from 'react-grid-layout';
 import { GxGridItem } from '../../shared/components/GxGridItem';
 import { DashboardGridProps } from './DashboardGrid.types';
@@ -74,8 +74,8 @@ export const DashboardGrid = ({ items, onLayoutChange, onRemoveItem }: Dashboard
           <div key={item.props.id}>
             <GxGridItem
               title={item.props.title}
-              backgroundColor={item.props.backgroundColor}
               onRemove={item.props.removable ? () => handleRemoveItem(item.props.id) : undefined}
+              backgroundColor={alpha(theme.palette.gx.mediumGrey[100], 0.2)}
             >
               {item}
             </GxGridItem>

@@ -1,1 +1,0 @@
-export { ExampleMultiSelect } from './ExampleMultiSelect';
