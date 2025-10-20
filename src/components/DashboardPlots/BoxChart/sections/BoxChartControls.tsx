@@ -1,4 +1,4 @@
-import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
 import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
 import { useEffect, useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -85,9 +85,7 @@ export const BoxChartControls = ({
           value={selectedValueType}
           fullWidth
           MenuProps={{
-            sx: {
-              maxHeight: '500px'
-            }
+            sx: sx.controlMenu
           }}
           onChange={(e) => {
             const newType = e.target.value as BoxChartValueType;
@@ -118,9 +116,7 @@ export const BoxChartControls = ({
           value={selectedValue}
           fullWidth
           MenuProps={{
-            sx: {
-              maxHeight: '500px'
-            }
+            sx: sx.controlMenu
           }}
           onChange={(e) => onValueChange(e.target.value as string)}
         >
@@ -154,7 +150,7 @@ export const BoxChartControls = ({
   );
 };
 
-const sx: Record<string, SxProps> = {
+const sx: Record<string, SxProps<Theme>> = {
   container: {
     width: '100%',
     display: 'flex',
@@ -164,6 +160,9 @@ const sx: Record<string, SxProps> = {
   controlWrapper: {
     flex: '1 1 150px',
     minWidth: 'min-content'
+  },
+  controlMenu: {
+    maxHeight: '500px'
   },
   inputLabel: {
     fontSize: '12px',

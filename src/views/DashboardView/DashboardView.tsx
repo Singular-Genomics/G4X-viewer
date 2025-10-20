@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
@@ -15,15 +15,12 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions: GraphOption[] = useMemo(
-    () => [
-      {
-        id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
-        label: t('boxChart.chartTitle')
-      }
-    ],
-    [t]
-  );
+  const graphOptions: GraphOption[] = [
+    {
+      id: DASHBOARD_GRAPHS_IDS.BOX_GRAPH,
+      label: t('boxChart.chartTitle')
+    }
+  ];
 
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
