@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
-import { PieChart, PIE_CHART_CONFIG } from '../../components/graphs/PieChart';
+import { PieChart, PIE_CHART_CONFIG } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useTranslation } from 'react-i18next';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore/PolygonDrawingStore';
