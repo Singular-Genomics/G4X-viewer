@@ -1,4 +1,4 @@
-import { Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { Box, SxProps, Theme, useTheme } from '@mui/material';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
@@ -190,45 +190,6 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     };
   }, [dimensions.width, dimensions.height, selectedRois, t]);
 
-  if (!selectedCells || selectedCells.length === 0) {
-    return (
-      <Box sx={sx.container}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          {t('pieChart.noCellSegmentationData')}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (selectedRois.length === 0) {
-    return (
-      <Box sx={sx.container}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          {t('pieChart.noRoiSelected')}
-        </Typography>
-      </Box>
-    );
-  }
-
-  if (pieChartData.length === 0) {
-    return (
-      <Box sx={sx.container}>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          {t('pieChart.noDataForPolygon')}
-        </Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box
       ref={containerRef}
@@ -251,15 +212,6 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
 };
 
 const sx: Record<string, SxProps<Theme>> = {
-  container: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 1
-  },
   plotContainer: {
     width: '100%',
     height: '100%',
