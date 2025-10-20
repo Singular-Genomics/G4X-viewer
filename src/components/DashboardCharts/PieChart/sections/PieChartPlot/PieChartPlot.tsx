@@ -116,7 +116,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
         type: 'pie',
         labels: labels,
         values: values,
-        name: t('pieChart.roiName', { roiId }),
+        name: t('general.roiEntry', { roiId }),
         marker: { colors: colors },
         domain: {
           x: [xStart, xEnd],
@@ -154,7 +154,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
       const cellHeight = 1 / rows;
 
       annotations.push({
-        text: `<b>${t('pieChart.roiTitle', { polygonId: roiId })}</b>`,
+        text: `<b>${t('general.roiEntry', { index: roiId })}</b>`,
         x: offset + (col + 0.5) * cellWidth,
         y: 1 - row * cellHeight - verticalSpacing / 3,
         xref: 'paper',
