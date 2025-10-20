@@ -3,9 +3,12 @@ import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
+import { PieChart, PIE_CHART_CONFIG } from '../../components/graphs/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore/PolygonDrawingStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -13,7 +16,12 @@ export const DashboardView = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const graphOptions = [{ id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label }];
+  const [polygonFeatures] = usePolygonDrawingStore(useShallow((store) => [store.polygonFeatures]));
+
+  const graphOptions = [
+    { id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label },
+    { id: PIE_CHART_CONFIG.id, label: t(PIE_CHART_CONFIG.labelKey) }
+  ];
 
   // Example items
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
@@ -37,9 +45,10 @@ export const DashboardView = () => {
   const handleAddGraph = (graphId: string) => {
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     const newItemId = `item-${Date.now()}`;
+    let newItem: DashboardGridItem | null = null;
 
     if (graphId === EXAMPLE_CHART_CONFIG.id) {
-      const newItem: DashboardGridItem = (
+      newItem = (
         <GxDashboardGraphWindowExample
           key={newItemId}
           id={newItemId}
@@ -48,7 +57,29 @@ export const DashboardView = () => {
           removable={true}
         />
       );
+    } else if (graphId === PIE_CHART_CONFIG.id) {
+      if (polygonFeatures.length === 0) {
+        enqueueSnackbar(t('dashboard.noPolygonsAvailable'), { variant: 'warning' });
+        return;
+      }
 
+      const availableRois = polygonFeatures
+        .map((f) => f.properties?.polygonId)
+        .filter((id): id is number => id !== undefined);
+
+      newItem = (
+        <PieChart
+          key={newItemId}
+          id={newItemId}
+          title={graphOption?.label || 'Pie Chart'}
+          backgroundColor={PIE_CHART_CONFIG.defaultBackgroundColor}
+          removable={true}
+          initialRois={availableRois.slice(0, 1)}
+        />
+      );
+    }
+
+    if (newItem) {
       setGridItems((prev) => [newItem, ...prev]);
       enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
     }

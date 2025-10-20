@@ -56,6 +56,7 @@
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
     "layers": "Layers",
+    "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
     "segmentation": "Segmentation",
@@ -278,6 +279,20 @@
   "dashboard": {
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
+    "noPolygonsAvailable": "No polygon ROIs available",
     "settings": "Settings"
+  },
+  "pieChart": {
+    "title": "Pie Chart",
+    "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
+    "noDataForPolygon": "No data available for this polygon",
+    "clusterId": "Cluster ID",
+    "roiTitle": "ROI {{polygonId}}",
+    "roiName": "ROI {{roiId}}",
+    "noCellSegmentationData": "No cell segmentation data available",
+    "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
+    "selectRoi": "Select ROI",
+    "hoverCount": "Count",
+    "hoverPercent": "Percent"
   }
 }
