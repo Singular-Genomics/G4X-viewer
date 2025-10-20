@@ -9,8 +9,10 @@ import { DASHBOARD_GRAPHS_IDS } from '../../components/DashboardPlots/DashboardP
 import { GraphOption } from './DashboardView.types';
 import { BoxGraph } from '../../components/DashboardPlots/BoxChart';
 import { BarChart } from '../../components/DashboardPlots/BarChart';
+import { HeatmapChart } from '../../components/DashboardPlots/HeatmapChart';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { BAR_CHART_CONFIG } from '../../components/DashboardPlots/BarChart/BarChart.config';
+import { HEATMAP_CHART_CONFIG } from '../../components/DashboardPlots/HeatmapChart/HeatmapChart.config';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -28,6 +30,10 @@ export const DashboardView = () => {
       {
         id: BAR_CHART_CONFIG.id,
         label: t(BAR_CHART_CONFIG.labelKey)
+      },
+      {
+        id: HEATMAP_CHART_CONFIG.id,
+        label: t(HEATMAP_CHART_CONFIG.labelKey)
       }
     ],
     [t]
@@ -69,6 +75,16 @@ export const DashboardView = () => {
       case BAR_CHART_CONFIG.id:
         newItem = (
           <BarChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      case HEATMAP_CHART_CONFIG.id:
+        newItem = (
+          <HeatmapChart
             key={newItemId}
             id={newItemId}
             title={graphOption.label}

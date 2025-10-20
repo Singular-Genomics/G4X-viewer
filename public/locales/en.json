@@ -299,7 +299,10 @@
     "noROIAvailableError": "No ROI data available. Please create or import ROI polygons first."
   },
   "barChart": {
-    "title": "Bar Chart", 
+    "title": "Bar Chart",
     "barModeLabel": "Bar Mode"
+  },
+  "heatmapChart": {
+    "title": "Heatmap Chart"
   }
 }
