@@ -1,28 +1,29 @@
 import { alpha, Box, ClickAwayListener, IconButton, Popover, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
-import { PointFilterColorPickerCellProps } from './PointFilterColorPickerCell.types';
+import { GxFilterTableColorCellProps } from './GxFilterTableColorCell.types';
 import { useRef, useState } from 'react';
 import LensIcon from '@mui/icons-material/Lens';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
-import { GxColorPicker } from '../../../../../shared/components/GxColorPicker/GxColorPicker';
-import { ColorHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.types';
-import { HsvToRgb, RgbToHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.helpers';
+import { GxColorPicker } from '../../GxColorPicker/GxColorPicker';
+import { ColorHsv } from '../../GxColorPicker/GxColorPicker.types';
+import { HsvToRgb, RgbToHsv } from '../../GxColorPicker/GxColorPicker.helpers';
 import { useTranslation } from 'react-i18next';
 
-export const PointFilterColorPickerCell = ({ row }: PointFilterColorPickerCellProps) => {
+export const GxFilterTableColorCell = ({
+  currentColor,
+  currnetValueName,
+  handleColorUpdate
+}: GxFilterTableColorCellProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const anchorRef = useRef(null);
-  const { setColormapConfig, colorMapConfig } = useBinaryFilesStore();
-  const [color, setColor] = useState<ColorHsv>(RgbToHsv({ r: row.color[0], g: row.color[1], b: row.color[2] }));
+  const [color, setColor] = useState<ColorHsv>(
+    RgbToHsv({ r: currentColor[0], g: currentColor[1], b: currentColor[2] })
+  );
 
   const handleConfirm = () => {
     const newColorRgb = HsvToRgb(color);
-    const updatedConfig = colorMapConfig.map((entry) =>
-      entry.gene_name === row.gene_name ? { ...entry, color: [newColorRgb.r, newColorRgb.g, newColorRgb.b] } : entry
-    );
-    setColormapConfig(updatedConfig);
+    handleColorUpdate([newColorRgb.r, newColorRgb.g, newColorRgb.b], currnetValueName);
     setIsOpen(false);
   };
 
@@ -35,9 +36,9 @@ export const PointFilterColorPickerCell = ({ row }: PointFilterColorPickerCellPr
             event.stopPropagation();
             setIsOpen((prev) => !prev);
           }}
-          sx={sx.geneColorButton}
+          sx={sx.colorButton}
         >
-          <LensIcon style={{ color: `rgb(${row.color})` }} />
+          <LensIcon style={{ color: `rgb(${currentColor})` }} />
         </IconButton>
       </Tooltip>
       <Popover
@@ -68,7 +69,7 @@ export const PointFilterColorPickerCell = ({ row }: PointFilterColorPickerCellPr
 };
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
-  geneColorButton: {
+  colorButton: {
     padding: '4px'
   },
   paper: {
