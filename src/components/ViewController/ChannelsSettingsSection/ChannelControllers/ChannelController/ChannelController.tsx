@@ -29,8 +29,8 @@ export const ChannelController = ({
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
   const [currentMinValue, currentMaxValue] = slider;
-  const [rangeMin, setRangeMin] = useState(currentMinValue);
-  const [rangeMax, setRangeMax] = useState(currentMaxValue);
+  const [rangeMin, setRangeMin] = useState(currentMinValue.toString());
+  const [rangeMax, setRangeMax] = useState(currentMaxValue.toString());
   const [minInputValue, setMinInputValueRaw] = useState<string>('');
   const [maxInputValue, setMaxInputValueRaw] = useState<string>('');
 

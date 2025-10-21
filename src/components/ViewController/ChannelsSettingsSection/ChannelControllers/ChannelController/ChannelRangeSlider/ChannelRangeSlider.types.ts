@@ -3,8 +3,8 @@ export type ChannelRangeSliderProps = {
   color: [number, number, number];
   handleSliderChange: (newValue: [number, number]) => void;
   isLoading?: boolean;
-  rangeMin: number;
-  rangeMax: number;
+  rangeMin: string;
+  rangeMax: string;
   minInputValue: string;
   maxInputValue: string;
   setMinInputValue: (newVaule: string) => void;

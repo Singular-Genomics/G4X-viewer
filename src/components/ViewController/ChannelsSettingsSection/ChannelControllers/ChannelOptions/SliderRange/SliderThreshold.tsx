@@ -31,18 +31,20 @@ export const SliderThreshold = ({
             : +currentValue < CHANNEL_MIN
               ? CHANNEL_MIN
               : +currentValue;
-        setRangeMin(newValue);
+        setRangeMin(newValue.toString());
+        setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMaxValue, handleSliderChange, setRangeMin]
+    [currentMaxValue, handleSliderChange, setRangeMin, setMinInputValue]
   );
 
   const handleRangeMinInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      setRangeMin(e.target.value);
       setMinInputValue(e.target.value);
       debouncedMinInputChange(e.target.value);
     },
-    [debouncedMinInputChange, setMinInputValue]
+    [debouncedMinInputChange, setRangeMin, setMinInputValue]
   );
 
   const debouncedMaxInputChange = useMemo(
@@ -55,18 +57,20 @@ export const SliderThreshold = ({
             : +currentValue > CHANNEL_MAX
               ? CHANNEL_MAX
               : +currentValue;
-        setRangeMax(newValue);
+        setRangeMax(newValue.toString());
+        setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, handleSliderChange, setRangeMax]
+    [currentMinValue, handleSliderChange, setRangeMax, setMaxInputValue]
   );
 
   const handleRangeMaxInput = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      setRangeMax(e.target.value);
       setMaxInputValue(e.target.value);
       debouncedMaxInputChange(e.target.value);
     },
-    [debouncedMaxInputChange, setMaxInputValue]
+    [debouncedMaxInputChange, setMaxInputValue, setRangeMax]
   );
   return (
     <Box sx={sx.container}>
@@ -85,7 +89,7 @@ export const SliderThreshold = ({
           onChange={handleRangeMinInput}
           inputProps={{
             min: CHANNEL_MIN,
-            max: rangeMax - 1,
+            max: CHANNEL_MAX,
             step: CHANNEL_STEP
           }}
         />
@@ -104,7 +108,7 @@ export const SliderThreshold = ({
           value={rangeMax}
           onChange={handleRangeMaxInput}
           inputProps={{
-            min: rangeMin + 1,
+            min: CHANNEL_MIN,
             max: CHANNEL_MAX,
             step: CHANNEL_STEP
           }}

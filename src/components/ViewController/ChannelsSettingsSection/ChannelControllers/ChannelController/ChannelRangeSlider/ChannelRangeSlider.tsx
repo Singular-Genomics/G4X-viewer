@@ -111,8 +111,8 @@ export const ChannelRangeSlider = ({
         value={slider}
         onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
         valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-        min={rangeMin}
-        max={rangeMax}
+        min={Number(rangeMin)}
+        max={Number(rangeMax)}
         step={CHANNEL_STEP}
         orientation="horizontal"
         style={{ color: rgbColor }}
