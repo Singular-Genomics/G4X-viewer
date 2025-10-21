@@ -101,7 +101,7 @@ export const BoxChartControls = ({
             );
           }}
         >
-          <MenuItem value={'gene'}>{t('general.gene')}</MenuItem>
+          <MenuItem value={'gene'}>{t('general.rna')}</MenuItem>
           <MenuItem value={'protein'}>{t('general.protein')}</MenuItem>
         </GxSelect>
       </FormControl>

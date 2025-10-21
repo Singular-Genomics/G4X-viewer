@@ -63,6 +63,7 @@
     "none": "None",
     "protein": "Protein",
     "roiEntry": "ROI {{index}}",
+    "rna": "RNA",
     "segmentation": "Segmentation",
     "selectOne": "Select One",
     "shape": "Shape",
@@ -291,11 +292,11 @@
     "availableROILabel": "Available ROIs",
     "availableGenesLabel": "Available Genes",
     "availableProteinsLabel": "Available Proteins",
-    "availableHueLabel": "Available Hue",
+    "availableHueLabel": "Grouping Value",
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
     "multipleROISelected": "{{count}} ROIs selected",
-    "boxPlotValueType": "Value Type",
+    "boxPlotValueType": "Modality",
     "boxPlotSwapAxisLabel": "Swap Axis",
     "boxPlotDataModeLabel": "Data Mode",
     "graphOptions_boxGraph": "Intensity Box Graph",
@@ -314,7 +315,7 @@
     "hoverPercent": "Percent"
   },
    "boxChart": {
-    "title": "Intensity Box Chart"
+    "title": "Expression Box Chart"
   },
   "barChart": {
     "title": "Bar Chart", 

@@ -98,7 +98,7 @@ export const HeatmapChartControls = ({
             );
           }}
         >
-          <MenuItem value={'gene'}>{t('dashboard.gene')}</MenuItem>
+          <MenuItem value={'gene'}>{t('dashboard.rna')}</MenuItem>
           <MenuItem value={'protein'}>{t('dashboard.protein')}</MenuItem>
         </GxSelect>
       </FormControl>
