@@ -195,6 +195,7 @@
     "pointFilters": "Point Filters",
     "pointSize": "Point Size",
     "sectionTitle": "Transcript Layer Settings",
+    "clickToChange": "Click to change",
     "subsamplingControlLabel": "Enable transcript subsampling control",
     "subsamplingControlWarning": "You are about to override the number of visible transcript layers.<br />These operations demand significant computational resources and might cause the application to crash. Perform these operations if:",
     "subsamplingControlWarningCaseOne": "Your PC is equipped with high-end components (mainly GPU and CPU) and allows for hardware acceleration.",

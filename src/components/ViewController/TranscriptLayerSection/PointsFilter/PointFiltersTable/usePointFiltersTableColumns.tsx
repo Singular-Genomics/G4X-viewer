@@ -1,8 +1,8 @@
 import { GetApplyQuickFilterFn, GridColDef } from '@mui/x-data-grid';
-import LensIcon from '@mui/icons-material/Lens';
-import { Tooltip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
+import { PointFilterColorPickerCell } from '../PointFilterColorPickerCell/PointFilterColorPickerCell';
 
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
   const { t } = useTranslation();
@@ -31,11 +31,7 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
       filterable: false,
       flex: 1,
       getApplyQuickFilterFn: geneColorQuickFilter,
-      renderCell: (params) => (
-        <Tooltip title={`RGB: ${params.row.color.join(' ')}`}>
-          <LensIcon style={{ color: `rgb(${params.row.color})` }} />
-        </Tooltip>
-      )
+      renderCell: (params) => <PointFilterColorPickerCell row={params.row} />
     }
   ];
 };
