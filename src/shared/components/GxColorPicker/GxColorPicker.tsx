@@ -80,7 +80,7 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm }: GxCol
           />
         </Box>
       </Box>
-      <Box sx={{ padding: '0 6px' }}>
+      <Box sx={sx.hueSliderWrapper}>
         <Slider
           sx={sx.hueSlider(HsvToHex({ h: color.h, s: 1, v: 1 }))}
           min={0}
@@ -128,6 +128,9 @@ const styles = (theme: Theme) => ({
     '&:hover': {
       boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}`
     }
+  },
+  hueSliderWrapper: {
+    padding: '0 6px'
   },
   hueSlider: (color: ColorHex) => ({
     '& .MuiSlider-rail': {

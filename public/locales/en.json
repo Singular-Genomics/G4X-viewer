@@ -36,7 +36,7 @@
     "cloudUpload": "Cloud Upload",
     "colormapConfig": "Colormap Configuration",
     "colormapImportSuccess": "Custom color map imported!",
-    "colormapImportFailure": "Failed to laod the custom colormap",
+    "colormapImportFailure": "Failed to load the custom colormap",
     "colormapExportFailure": "Failed to export the custom colormap",
     "colormapExportSuccess": "Custom colormap exported",
     "confirm": "Confirm",
