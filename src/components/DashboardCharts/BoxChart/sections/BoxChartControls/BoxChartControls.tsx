@@ -1,14 +1,14 @@
-import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Typography } from '@mui/material';
+import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Theme, Typography } from '@mui/material';
 import { GxMultiSelect } from '../../../../../shared/components/GxMultiSelect';
 import { useEffect, useMemo } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
-import { BarChartControlsProps, BarChartValueType, BarChartHueValueOptions } from './BarChartControls.types';
+import { BoxChartControlsProps, BoxChartValueType, BoxChartHueValueOptions } from './BoxChartControls.types';
 
-const AVAILABLE_HUE_OPTIONS: BarChartHueValueOptions[] = ['none', 'clusterId', 'roi'];
+const AVAILABLE_HUE_OPTIONS: BoxChartHueValueOptions[] = ['none', 'clusterId', 'roi'];
 
-export const BarChartControls = ({
+export const BoxChartControls = ({
   selectedValue,
   selectedROIs,
   selectedHue,
@@ -17,7 +17,7 @@ export const BarChartControls = ({
   onValueChange,
   onHueChange,
   onValueTypeChange
-}: BarChartControlsProps) => {
+}: BoxChartControlsProps) => {
   const { t } = useTranslation();
   const { segmentationMetadata, selectedCells } = useCellSegmentationLayerStore();
 
@@ -80,16 +80,15 @@ export const BarChartControls = ({
         sx={sx.controlWrapper}
         size="small"
       >
-        <Typography sx={sx.inputLabel}>{t('dashboard.boxPlotValueType')}:</Typography>
+        <Typography sx={sx.inputLabel}>{t('dashboard.plotValueType')}:</Typography>
         <GxSelect
           value={selectedValueType}
           fullWidth
-          sx={sx.select}
           MenuProps={{
             sx: sx.selectMenu
           }}
           onChange={(e) => {
-            const newType = e.target.value as BarChartValueType;
+            const newType = e.target.value as BoxChartValueType;
             onValueTypeChange(newType);
             onValueChange(
               newType === 'gene'
@@ -102,8 +101,8 @@ export const BarChartControls = ({
             );
           }}
         >
-          <MenuItem value={'gene'}>{t('dashboard.gene')}</MenuItem>
-          <MenuItem value={'protein'}>{t('dashboard.protein')}</MenuItem>
+          <MenuItem value={'gene'}>{t('general.gene')}</MenuItem>
+          <MenuItem value={'protein'}>{t('general.protein')}</MenuItem>
         </GxSelect>
       </FormControl>
       <FormControl
@@ -116,7 +115,6 @@ export const BarChartControls = ({
         <GxSelect
           value={selectedValue}
           fullWidth
-          sx={sx.select}
           MenuProps={{
             sx: sx.selectMenu
           }}
@@ -129,12 +127,7 @@ export const BarChartControls = ({
             {t('general.selectOne')}
           </MenuItem>
           {(selectedValueType === 'gene' ? availableGenes : availableProteins).map((geneName) => (
-            <MenuItem
-              key={geneName}
-              value={geneName}
-            >
-              {geneName}
-            </MenuItem>
+            <MenuItem value={geneName}>{geneName}</MenuItem>
           ))}
         </GxSelect>
       </FormControl>
@@ -146,11 +139,7 @@ export const BarChartControls = ({
         <GxSelect
           value={selectedHue}
           fullWidth
-          sx={sx.select}
-          MenuProps={{
-            sx: sx.selectMenu
-          }}
-          onChange={(e) => onHueChange(e.target.value as BarChartHueValueOptions)}
+          onChange={(e) => onHueChange(e.target.value as BoxChartHueValueOptions)}
         >
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
             <MenuItem
@@ -166,7 +155,7 @@ export const BarChartControls = ({
   );
 };
 
-const sx: Record<string, SxProps> = {
+const sx: Record<string, SxProps<Theme>> = {
   container: {
     width: '100%',
     display: 'flex',
@@ -186,21 +175,5 @@ const sx: Record<string, SxProps> = {
   },
   selectMenu: {
     maxHeight: '500px'
-  },
-  select: {
-    '& .MuiSelect-select': {
-      fontSize: '14px',
-      fontWeight: 400,
-      padding: '8px 12px'
-    },
-    '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.23)'
-    },
-    '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.4)'
-    },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'primary.main'
-    }
   }
 };

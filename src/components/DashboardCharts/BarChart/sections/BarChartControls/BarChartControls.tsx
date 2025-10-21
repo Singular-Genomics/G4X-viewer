@@ -1,14 +1,14 @@
 import { Box, FormControl, MenuItem, SelectChangeEvent, SxProps, Typography } from '@mui/material';
-import { GxMultiSelect } from '../../../../shared/components/GxMultiSelect';
+import { GxMultiSelect } from '../../../../../shared/components/GxMultiSelect';
 import { useEffect, useMemo } from 'react';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranslation } from 'react-i18next';
-import { GxSelect } from '../../../../shared/components/GxSelect';
-import { BoxGraphControlsProps, BoxGraphValueType, BoxGraphHueValueOptions } from './BoxGraphControls.types';
+import { GxSelect } from '../../../../../shared/components/GxSelect';
+import { BarChartControlsProps, BarChartValueType, BarChartHueValueOptions } from './BarChartControls.types';
 
-const AVAILABLE_HUE_OPTIONS: BoxGraphHueValueOptions[] = ['none', 'clusterId', 'roi'];
+const AVAILABLE_HUE_OPTIONS: BarChartHueValueOptions[] = ['none', 'clusterId', 'roi'];
 
-export const BoxGraphControls = ({
+export const BarChartControls = ({
   selectedValue,
   selectedROIs,
   selectedHue,
@@ -17,7 +17,7 @@ export const BoxGraphControls = ({
   onValueChange,
   onHueChange,
   onValueTypeChange
-}: BoxGraphControlsProps) => {
+}: BarChartControlsProps) => {
   const { t } = useTranslation();
   const { segmentationMetadata, selectedCells } = useCellSegmentationLayerStore();
 
@@ -84,13 +84,12 @@ export const BoxGraphControls = ({
         <GxSelect
           value={selectedValueType}
           fullWidth
+          sx={sx.select}
           MenuProps={{
-            sx: {
-              maxHeight: '500px'
-            }
+            sx: sx.selectMenu
           }}
           onChange={(e) => {
-            const newType = e.target.value as BoxGraphValueType;
+            const newType = e.target.value as BarChartValueType;
             onValueTypeChange(newType);
             onValueChange(
               newType === 'gene'
@@ -103,8 +102,8 @@ export const BoxGraphControls = ({
             );
           }}
         >
-          <MenuItem value={'gene'}>Gene</MenuItem>
-          <MenuItem value={'protein'}>Protein</MenuItem>
+          <MenuItem value={'gene'}>{t('dashboard.gene')}</MenuItem>
+          <MenuItem value={'protein'}>{t('dashboard.protein')}</MenuItem>
         </GxSelect>
       </FormControl>
       <FormControl
@@ -117,10 +116,9 @@ export const BoxGraphControls = ({
         <GxSelect
           value={selectedValue}
           fullWidth
+          sx={sx.select}
           MenuProps={{
-            sx: {
-              maxHeight: '500px'
-            }
+            sx: sx.selectMenu
           }}
           onChange={(e) => onValueChange(e.target.value as string)}
         >
@@ -131,7 +129,12 @@ export const BoxGraphControls = ({
             {t('general.selectOne')}
           </MenuItem>
           {(selectedValueType === 'gene' ? availableGenes : availableProteins).map((geneName) => (
-            <MenuItem value={geneName}>{geneName}</MenuItem>
+            <MenuItem
+              key={geneName}
+              value={geneName}
+            >
+              {geneName}
+            </MenuItem>
           ))}
         </GxSelect>
       </FormControl>
@@ -143,10 +146,18 @@ export const BoxGraphControls = ({
         <GxSelect
           value={selectedHue}
           fullWidth
-          onChange={(e) => onHueChange(e.target.value as BoxGraphHueValueOptions)}
+          MenuProps={{
+            sx: sx.selectMenu
+          }}
+          onChange={(e) => onHueChange(e.target.value as BarChartHueValueOptions)}
         >
           {AVAILABLE_HUE_OPTIONS.map((hueEntry) => (
-            <MenuItem value={hueEntry}>{hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}</MenuItem>
+            <MenuItem
+              key={hueEntry}
+              value={hueEntry}
+            >
+              {hueEntry.replace(/([a-z0-9])([A-Z])/g, '$1 $2')}
+            </MenuItem>
           ))}
         </GxSelect>
       </FormControl>
@@ -171,5 +182,8 @@ const sx: Record<string, SxProps> = {
     marginInlineStart: '4px',
     lineHeight: '1.2',
     textWrap: 'nowrap'
+  },
+  selectMenu: {
+    maxHeight: '500px'
   }
 };

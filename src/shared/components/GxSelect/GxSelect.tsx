@@ -1,13 +1,19 @@
 import { Select, SelectProps, Theme, alpha, menuItemClasses, outlinedInputClasses, useTheme } from '@mui/material';
 
-export const GxSelect = ({ children, sx: customStyles, ...rest }: SelectProps) => {
+export const GxSelect = ({ children, sx: customStyles, MenuProps: customMenuProps, ...rest }: SelectProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   return (
     <Select
       sx={{ ...sx.rounded, ...customStyles }}
-      MenuProps={{ sx: sx.roundedMenu }}
+      MenuProps={{
+        ...customMenuProps,
+        sx: {
+          ...sx.roundedMenu,
+          ...customMenuProps?.sx
+        }
+      }}
       {...rest}
     >
       {children}

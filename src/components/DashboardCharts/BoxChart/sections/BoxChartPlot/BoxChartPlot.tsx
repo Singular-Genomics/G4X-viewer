@@ -1,21 +1,21 @@
 import { Box } from '@mui/material';
-import { BoxGraphPlotProps } from './BoxGraphPlot.types';
+import { BoxChartPlotProps } from './BoxChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useBoxGraphPlotDataParser } from './BoxGraphPlot.helpers';
+import { useBoxChartPlotDataParser } from './BoxChartPlot.helpers';
 import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
 import { debounce } from 'lodash';
 
-export const BoxGraphPlot = ({
+export const BoxChartPlot = ({
   selectedROIs,
   selectedValueType,
   selectedValue,
   selectedHue,
   settings
-}: BoxGraphPlotProps) => {
+}: BoxChartPlotProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-  const { parseCellsByRoi } = useBoxGraphPlotDataParser();
+  const { parseCellsByRoi } = useBoxChartPlotDataParser();
 
   const boxPlotData = useMemo(
     () =>

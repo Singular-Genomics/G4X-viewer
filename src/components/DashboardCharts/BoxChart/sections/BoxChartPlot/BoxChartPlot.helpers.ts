@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { BoxGraphDataEntry, BoxGraphOrientation } from './BoxGraphPlot.types';
+import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { BoxChartDataEntry, BoxChartOrientation } from './BoxChartPlot.types';
 import { useTranslation } from 'react-i18next';
-import { BoxGraphHueValueOptions, BoxGraphValueType } from './BoxGraphControls.types';
-import { generatePolygonColor, rgbToHex } from '../../../../utils/utils';
-import { SingleMask } from '../../../../shared/types';
-import { BoxGraphDataMode } from './BoxGraphSettings.types';
+import { BoxChartHueValueOptions, BoxChartValueType } from '../BoxChartControls/BoxChartControls.types';
+import { generatePolygonColor, rgbToHex } from '../../../../../utils/utils';
+import { SingleMask } from '../../../../../shared/types';
+import { BoxChartDataMode } from '../BoxChartSettings/BoxChartSettings.types';
 
-export function useBoxGraphPlotDataParser() {
+export function useBoxChartPlotDataParser() {
   const { t } = useTranslation();
   const { selectedCells, segmentationMetadata, cellColormapConfig } = useCellSegmentationLayerStore();
 
@@ -22,12 +22,12 @@ export function useBoxGraphPlotDataParser() {
   const parseCellsByRoi = useCallback(
     (
       rois: number[],
-      valueType: BoxGraphValueType,
+      valueType: BoxChartValueType,
       selectedvalue: string,
-      hueValue: BoxGraphHueValueOptions,
-      orientation: BoxGraphOrientation,
-      dataMode: BoxGraphDataMode
-    ): BoxGraphDataEntry[] => {
+      hueValue: BoxChartHueValueOptions,
+      orientation: BoxChartOrientation,
+      dataMode: BoxChartDataMode
+    ): BoxChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
       }

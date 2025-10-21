@@ -1,0 +1,18 @@
+export const DASHBOARD_CHARTS_CONFIG: Record<string, { id: string; labelKey: string }> = {
+  BOX_CHART_CONFIG: {
+    id: 'box-chart',
+    labelKey: 'boxChart.title'
+  },
+  PIE_CHART_CONFIG: {
+    id: 'pie-chart',
+    labelKey: 'pieChart.title'
+  },
+  BAR_CHART_CONFIG: {
+    id: 'bar-chart',
+    labelKey: 'barChart.title'
+  },
+  HEATMAP_CHART_CONFIG: {
+    id: 'heatmap-chart',
+    labelKey: 'heatmapChart.title'
+  }
+};
