@@ -125,7 +125,8 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters
+    cellNameFilters,
+    cellColormapConfig
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -134,7 +135,8 @@ export const useCellSegmentationLayer = () => {
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters
+      store.cellNameFilters,
+      store.cellColormapConfig
     ])
   );
 
@@ -218,6 +220,7 @@ export const useCellSegmentationLayer = () => {
     cellFillOpacity,
     cellsData: filteredCells.unselectedCellsData,
     outlierCellsData: filteredCells.outlierCellsData,
+    colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
