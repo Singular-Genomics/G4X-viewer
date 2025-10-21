@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 import { BarChart } from '../../components/DashboardCharts/BarChart';
+import { HeatmapChart } from '../../components/DashboardCharts/HeatmapChart';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -26,6 +27,10 @@ export const DashboardView = () => {
     {
       id: DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id,
       label: t(DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.labelKey)
     }
   ];
 
@@ -70,6 +75,16 @@ export const DashboardView = () => {
       case DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id:
         newItem = (
           <BarChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.id:
+        newItem = (
+          <HeatmapChart
             key={newItemId}
             id={newItemId}
             title={graphOption.label}

@@ -284,7 +284,6 @@
   "dashboard": {
     "addGraphButton": "Add Graph",
     "graphAdded": "{{graphName}} added successfully",
-    "noPolygonsAvailable": "No polygon ROIs available",
     "settings": "Settings",
     "plotValueType": "Value Type",
     "plotSwapAxisLabel": "Swap Axis",
@@ -315,10 +314,13 @@
     "hoverPercent": "Percent"
   },
    "boxChart": {
-    "chartTitle": "Intensity Box Chart"
+    "title": "Intensity Box Chart"
   },
   "barChart": {
     "title": "Bar Chart", 
     "barModeLabel": "Bar Mode"
+  },
+  "heatmapChart": {
+    "title": "Heatmap Chart"
   }
 }
