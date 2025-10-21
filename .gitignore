@@ -25,3 +25,6 @@ dist-ssr
 
 # Cache files
 .eslintcache
+
+# docs
+site/
