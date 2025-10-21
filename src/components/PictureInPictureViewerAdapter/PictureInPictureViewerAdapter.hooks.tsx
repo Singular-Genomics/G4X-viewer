@@ -61,7 +61,9 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
+    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  );
 
   const [
     isTranscriptLayerOn,
@@ -103,6 +105,7 @@ export const useTranscriptLayer = () => {
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
+    colormap: colorMapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
