@@ -4,7 +4,6 @@ import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { BarChartBarMode, BarChartSettingsProps } from './BarChartSettings.types';
 import { useTranslation } from 'react-i18next';
 import { GxInput } from '../../../../../shared/components/GxInput';
-import { useState } from 'react';
 
 const AVAILABLE_BAR_MODES: BarChartBarMode[] = ['group', 'stack', 'relative', 'overlay'];
 
@@ -12,7 +11,6 @@ export const BarChartSettings = ({ settings, onChangeSettings }: BarChartSetting
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
-  const [customTitle, setCustomTitle] = useState(settings.customTitle ?? '');
 
   return (
     <Box>
@@ -33,13 +31,12 @@ export const BarChartSettings = ({ settings, onChangeSettings }: BarChartSetting
         </Grid>
         <Grid size={1}>
           <GxInput
-            value={customTitle}
+            value={settings.customTitle ?? ''}
             size="small"
-            onChange={(e) => setCustomTitle(e.target.value)}
-            onBlur={() =>
+            onChange={(e) =>
               onChangeSettings({
                 ...settings,
-                customTitle
+                customTitle: e.target.value
               })
             }
           />

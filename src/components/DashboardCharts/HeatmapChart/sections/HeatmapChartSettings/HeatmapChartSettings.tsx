@@ -4,14 +4,12 @@ import { AVAILABLE_COLORSCALES } from '../../../../../stores/CytometryGraphStore
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 import { GxInput } from '../../../../../shared/components/GxInput';
 
 export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChartSettingsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
-  const [customTitle, setCustomTitle] = useState(settings.customTitle ?? '');
 
   const onColorscaleSelect = (newColorScale: string) => {
     const colorscaleConfig = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
@@ -47,13 +45,12 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         </Grid>
         <Grid size={1}>
           <GxInput
-            value={customTitle}
+            value={settings.customTitle ?? ''}
             size="small"
-            onChange={(e) => setCustomTitle(e.target.value)}
-            onBlur={() =>
+            onChange={(e) =>
               onChangeSettings({
                 ...settings,
-                customTitle
+                customTitle: e.target.value
               })
             }
           />
