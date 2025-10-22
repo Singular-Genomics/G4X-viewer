@@ -9,11 +9,15 @@ import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/Dashbo
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 import { BarChart } from '../../components/DashboardCharts/BarChart';
 import { HeatmapChart } from '../../components/DashboardCharts/HeatmapChart';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import { useSnackbar } from 'notistack';
 
 export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const polygonFeatures = usePolygonDrawingStore((state) => state.polygonFeatures);
 
   const graphOptions = [
     {
@@ -45,6 +49,16 @@ export const DashboardView = () => {
   };
 
   const handleAddGraph = (graphId: string) => {
+    // Check if there are any ROI polygons available
+    if (!polygonFeatures || polygonFeatures.length === 0) {
+      enqueueSnackbar(t('dashboard.noROIAvailableError'), {
+        variant: 'gxSnackbar',
+        titleMode: 'error',
+        iconMode: 'error'
+      });
+      return;
+    }
+
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
     if (!graphOption) return;
 

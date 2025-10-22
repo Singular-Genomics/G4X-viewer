@@ -304,7 +304,7 @@
     "graphOptions_boxGraph": "Intensity Box Graph",
     "gene": "Gene",
     "protein": "Protein",
-    "noROIAvailableError": "No ROI data available. Please create or import ROI polygons first."
+    "noROIAvailableError": "No ROI data available. Please create or import ROI polygons."
   },
     "pieChart": {
     "title": "Pie Chart",
