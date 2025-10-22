@@ -66,6 +66,7 @@
     "rna": "RNA",
     "segmentation": "Segmentation",
     "selectOne": "Select One",
+    "selectAll": "Select All",
     "shape": "Shape",
     "transcripts": "Transcripts",
     "warning": "Warning"

@@ -6,10 +6,12 @@ import {
   outlinedInputClasses,
   useTheme,
   MenuItem,
-  ListItemText
+  ListItemText,
+  ListItemIcon
 } from '@mui/material';
 import { GxMultiSelectProps } from './GxMultiSelect.types';
 import { GxCheckbox } from '../GxCheckbox';
+import { t } from 'i18next';
 
 export const GxMultiSelect = ({
   options,
@@ -18,10 +20,12 @@ export const GxMultiSelect = ({
   sx: customStyles,
   renderValue,
   value,
+  enableSelectAll,
   ...rest
 }: GxMultiSelectProps) => {
   const theme = useTheme();
   const sx = styles(theme, colorVariant);
+  const isAllSelected = value && options.length > 0 && value.length === options.length;
 
   return (
     <Select
@@ -43,6 +47,20 @@ export const GxMultiSelect = ({
       renderValue={renderValue}
       {...rest}
     >
+      {enableSelectAll && (
+        <MenuItem
+          value="all"
+          sx={sx.selectedAll}
+        >
+          <ListItemIcon>
+            <GxCheckbox
+              checked={isAllSelected}
+              indeterminate={value && value.length > 0 && value.length < options.length}
+            />
+          </ListItemIcon>
+          <ListItemText>{t('general.selectAll')}</ListItemText>
+        </MenuItem>
+      )}
       {options.map((option) => (
         <MenuItem
           key={option.value}
@@ -145,6 +163,18 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
             }
           }
         }
+      }
+    },
+    indeterminateColor: {
+      color: '#f50057'
+    },
+    selectAllText: {
+      fontWeight: 500
+    },
+    selectedAll: {
+      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.08)'
       }
     }
   };
