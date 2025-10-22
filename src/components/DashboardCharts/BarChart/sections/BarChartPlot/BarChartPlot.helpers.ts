@@ -53,14 +53,13 @@ export function useBarChartPlotDataParser() {
 
           for (const cell of selection.data) {
             const value = getCellValue(cell, selectedValueIndex);
-            if (value === null || value === undefined) continue;
 
             if (!clusterData.has(cell.clusterId)) {
               clusterData.set(cell.clusterId, { values: [], labels: [] });
             }
 
             const data = clusterData.get(cell.clusterId)!;
-            data.values.push(value);
+            data.values.push(value ?? 0);
             data.labels.push(t('general.roiEntry', { index: selection.roiId }));
           }
         }
@@ -123,10 +122,9 @@ export function useBarChartPlotDataParser() {
 
           for (const cell of selection.data) {
             const value = getCellValue(cell, selectedValueIndex);
-            if (value === null || value === undefined) continue;
 
             const data = roiData.get(selection.roiId.toString())!;
-            data.values.push(value);
+            data.values.push(value ?? 0);
             data.labels.push(t('general.clusterEntry', { index: cell.clusterId }));
           }
         }
@@ -193,9 +191,7 @@ export function useBarChartPlotDataParser() {
 
         for (const cell of selection.data) {
           const value = getCellValue(cell, selectedValueIndex);
-          if (value !== null && value !== undefined) {
-            roiMap.get(roiLabel)!.push(value);
-          }
+          roiMap.get(roiLabel)!.push(value ?? 0);
         }
       }
 

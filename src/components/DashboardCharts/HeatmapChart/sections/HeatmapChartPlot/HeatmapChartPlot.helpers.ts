@@ -61,7 +61,6 @@ export function useHeatmapChartPlotDataParser() {
 
         for (const cell of selection.data) {
           const value = getCellValue(cell, selectedValueIndex);
-          if (value === null || value === undefined) continue;
 
           const clusterId = cell.clusterId;
           clusterIds.add(clusterId);
@@ -70,7 +69,7 @@ export function useHeatmapChartPlotDataParser() {
             dataMatrix[roiId][clusterId] = [];
           }
 
-          dataMatrix[roiId][clusterId].push(value);
+          dataMatrix[roiId][clusterId].push(value ?? 0);
         }
       }
 

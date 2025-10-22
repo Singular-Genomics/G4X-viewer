@@ -55,14 +55,13 @@ export function useBoxChartPlotDataParser() {
 
           for (const cell of selection.data) {
             const value = getCellValue(cell, selectedValueIndex);
-            if (value === null || value === undefined) continue;
 
             if (!clusterData.has(cell.clusterId)) {
               clusterData.set(cell.clusterId, { y: [], x: [] });
             }
 
             const data = clusterData.get(cell.clusterId)!;
-            data.y.push(value);
+            data.y.push(value ?? 0);
             data.x.push(t('general.roiEntry', { index: selection.roiId }));
           }
         }
@@ -91,10 +90,9 @@ export function useBoxChartPlotDataParser() {
 
           for (const cell of selection.data) {
             const value = getCellValue(cell, selectedValueIndex);
-            if (value === null || value === undefined) continue;
 
             const data = roiData.get(selection.roiId.toString())!;
-            data.y.push(value);
+            data.y.push(value ?? 0);
             data.x.push(t('general.clusterEntry', { index: cell.clusterId }));
           }
         }
@@ -122,10 +120,8 @@ export function useBoxChartPlotDataParser() {
 
         for (const cell of selection.data) {
           const value = getCellValue(cell, selectedValueIndex);
-          if (value !== null && value !== undefined) {
-            data.y.push(value);
-            data.x.push(roiLabel);
-          }
+          data.y.push(value ?? 0);
+          data.x.push(roiLabel);
         }
       }
 
