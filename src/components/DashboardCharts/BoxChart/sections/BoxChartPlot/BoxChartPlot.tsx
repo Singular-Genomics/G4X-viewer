@@ -59,7 +59,14 @@ export const BoxChartPlot = ({
     autosize: true,
     showlegend: true,
     boxmode: selectedHue === 'none' ? undefined : 'group',
-    annotations: []
+    annotations: [],
+    ...{
+      [settings.swapAxis ? 'xaxis' : 'yaxis']: {
+        title: {
+          text: selectedValue
+        }
+      }
+    }
   };
 
   return (
