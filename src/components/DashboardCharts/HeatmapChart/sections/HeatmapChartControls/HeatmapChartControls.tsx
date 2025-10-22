@@ -38,8 +38,10 @@ export const HeatmapChartControls = ({
     //eslint-disable-next-line
   }, [availableROIOptions]);
 
-  const availableGenes = segmentationMetadata?.geneNames || [];
-  const availableProteins = segmentationMetadata?.proteinNames || [];
+  const availableGenes =
+    segmentationMetadata?.geneNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) || [];
+  const availableProteins =
+    segmentationMetadata?.proteinNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) || [];
 
   const handleRoiChange = (event: SelectChangeEvent<string[] | string>) => {
     const value = event.target.value;
