@@ -11,4 +11,5 @@ export type ColorScaleOption = {
 
 export type HeatmapChartSettingOptions = {
   colorscale?: ColorScaleOption;
+  customTitle?: string;
 };

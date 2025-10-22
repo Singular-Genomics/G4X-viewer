@@ -1,12 +1,17 @@
-import { Box, Grid, MenuItem, Typography } from '@mui/material';
+import { Box, Grid, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import { HeatmapChartSettingsProps } from './HeatmapChartSettings.types';
 import { AVAILABLE_COLORSCALES } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { GxInput } from '../../../../../shared/components/GxInput';
 
 export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChartSettingsProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const sx = styles(theme);
+  const [customTitle, setCustomTitle] = useState(settings.customTitle ?? '');
 
   const onColorscaleSelect = (newColorScale: string) => {
     const colorscaleConfig = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
@@ -24,16 +29,39 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
   };
 
   return (
-    <Box sx={sx.container}>
+    <Box>
       <Grid
         container
         columns={2}
         rowSpacing={1}
-        sx={sx.grid}
+        columnSpacing={1}
+        sx={sx.container}
       >
+        {/* Custom Title  */}
+        <Grid
+          size={1}
+          alignContent={'center'}
+          sx={sx.settingLabel}
+        >
+          <Typography>{t('dashboard.customTitle')}:</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxInput
+            value={customTitle}
+            size="small"
+            onChange={(e) => setCustomTitle(e.target.value)}
+            onBlur={() =>
+              onChangeSettings({
+                ...settings,
+                customTitle
+              })
+            }
+          />
+        </Grid>
         {/* Colorscale Select */}
         <Grid
           alignContent={'center'}
+          sx={sx.settingLabel}
           size={1}
         >
           <Typography>{`${t('segmentationSettings.cytometryMenuColorscale')}:`}</Typography>
@@ -60,6 +88,7 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         <Grid
           alignContent={'center'}
           size={1}
+          sx={sx.settingLabel}
         >
           <Typography>{`${t('segmentationSettings.cytometryMenuReverseColorscale')}:`}</Typography>
         </Grid>
@@ -74,14 +103,18 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   container: {
-    padding: '8px'
-  },
-  grid: {
-    width: '100%'
+    width: '350px'
   },
   menu: {
     zIndex: 10000
+  },
+  settingLabel: {
+    borderRight: '2px solid',
+    borderColor: theme.palette.gx.mediumGrey[500],
+    textWrap: 'nowrap',
+    textAlign: 'end',
+    paddingInlineEnd: '8px'
   }
-};
+});

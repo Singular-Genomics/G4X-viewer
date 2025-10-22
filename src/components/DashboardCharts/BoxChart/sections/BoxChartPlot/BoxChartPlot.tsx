@@ -60,6 +60,11 @@ export const BoxChartPlot = ({
     showlegend: true,
     boxmode: selectedHue === 'none' ? undefined : 'group',
     annotations: [],
+    ...(settings.customTitle
+      ? {
+          title: { text: settings.customTitle }
+        }
+      : {}),
     ...{
       [settings.swapAxis ? 'xaxis' : 'yaxis']: {
         title: {

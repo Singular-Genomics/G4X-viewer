@@ -3,6 +3,8 @@ import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { BoxChartDataMode, BoxChartSettingsProps } from './BoxChartSettings.types';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import { GxInput } from '../../../../../shared/components/GxInput';
 
 const AVAILABLE_DATA_MODES: BoxChartDataMode[] = ['all', 'outliers', 'suspectedoutliers', 'none'];
 
@@ -10,6 +12,7 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
+  const [customTitle, setCustomTitle] = useState(settings.customTitle ?? '');
 
   return (
     <Box>
@@ -17,8 +20,30 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
         container
         columns={2}
         columnSpacing={1}
+        rowSpacing={1}
         sx={sx.container}
       >
+        {/* Custom Title  */}
+        <Grid
+          size={1}
+          alignContent={'center'}
+          sx={sx.settingLabel}
+        >
+          <Typography>{t('dashboard.customTitle')}:</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxInput
+            value={customTitle}
+            size="small"
+            onChange={(e) => setCustomTitle(e.target.value)}
+            onBlur={() =>
+              onChangeSettings({
+                ...settings,
+                customTitle
+              })
+            }
+          />
+        </Grid>
         {/* Axis Swap  */}
         <Grid
           size={1}

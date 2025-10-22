@@ -6,6 +6,7 @@ export type BoxChartSettingsProps = {
 export type BoxChartSettingOptions = {
   swapAxis: boolean;
   dataMode: BoxChartDataMode;
+  customTitle?: string;
 };
 
 export type BoxChartDataMode = 'all' | 'outliers' | 'suspectedoutliers' | 'none';

@@ -49,7 +49,12 @@ export const HeatmapChartPlot = ({
     paper_bgcolor: 'white',
     autosize: true,
     showlegend: false,
-    annotations: []
+    annotations: [],
+    ...(settings.customTitle
+      ? {
+          title: { text: settings.customTitle }
+        }
+      : {})
   };
 
   return (

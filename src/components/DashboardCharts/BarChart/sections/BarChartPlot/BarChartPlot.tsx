@@ -52,6 +52,11 @@ export const BarChartPlot = ({
     showlegend: true,
     barmode: selectedHue === 'none' ? undefined : settings.barMode,
     annotations: [],
+    ...(settings.customTitle
+      ? {
+          title: { text: settings.customTitle }
+        }
+      : {}),
     ...{
       [settings.swapAxis ? 'xaxis' : 'yaxis']: {
         title: {

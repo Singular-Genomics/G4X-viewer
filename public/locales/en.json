@@ -285,6 +285,7 @@
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
+    "customTitle": "Custom Title",
     "graphAdded": "{{graphName}} added successfully",
     "settings": "Settings",
     "plotValueType": "Value Type",
