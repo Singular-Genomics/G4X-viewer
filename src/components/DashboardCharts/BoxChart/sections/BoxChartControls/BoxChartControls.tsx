@@ -46,9 +46,17 @@ export const BoxChartControls = ({
   const availableProteins = segmentationMetadata?.proteinNames || [];
 
   const handleRoiChange = (event: SelectChangeEvent<string[] | string>) => {
-    const {
-      target: { value }
-    } = event;
+    const value = event.target.value;
+    if (value[value.length - 1] === 'all') {
+      onRoiChange(
+        Array.isArray(value)
+          ? value.length - 1 === availableROIOptions.length
+            ? []
+            : availableROIOptions.map((entry) => Number(entry.value))
+          : []
+      );
+      return;
+    }
     onRoiChange(Array.isArray(value) ? value.map(Number) : [Number(value)]);
   };
 
@@ -63,6 +71,7 @@ export const BoxChartControls = ({
           value={selectedROIs.map(String)}
           onChange={handleRoiChange}
           options={availableROIOptions}
+          enableSelectAll
           renderValue={(selected) => {
             if (!selected.length) {
               return `${t('dashboard.selectROILabel')}...`;
