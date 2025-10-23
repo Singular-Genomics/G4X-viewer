@@ -88,7 +88,7 @@ export const SliderThreshold = ({
       <Box sx={sx.inputGroup}>
         <Typography
           component="label"
-          htmlFor="slider_range_min"
+          htmlFor="slider_range_max"
           sx={sx.label}
         >
           {t('channelSettings.sliderRangeMaxLabel')}
