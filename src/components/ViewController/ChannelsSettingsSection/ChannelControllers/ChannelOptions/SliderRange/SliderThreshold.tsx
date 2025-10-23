@@ -1,4 +1,4 @@
-import { Box, Input } from '@mui/material';
+import { Box, Input, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { SliderThresholdProps } from './SliderThreshold.types';
 import { useCallback, useMemo, ChangeEvent } from 'react';
@@ -75,12 +75,13 @@ export const SliderThreshold = ({
   return (
     <Box sx={sx.container}>
       <Box sx={sx.inputGroup}>
-        <label
+        <Typography
+          component="label"
           htmlFor="slider_range_min"
-          style={sx.label}
+          sx={sx.label}
         >
           {t('channelSettings.sliderRangeMinLabel')}
-        </label>
+        </Typography>
         <Input
           id="slider_range_min"
           type="number"
@@ -95,12 +96,13 @@ export const SliderThreshold = ({
         />
       </Box>
       <Box sx={sx.inputGroup}>
-        <label
-          htmlFor="slider_range_max"
-          style={sx.label}
+        <Typography
+          component="label"
+          htmlFor="slider_range_min"
+          sx={sx.label}
         >
           {t('channelSettings.sliderRangeMaxLabel')}
-        </label>
+        </Typography>
         <Input
           id="slider_range_max"
           type="number"
@@ -121,6 +123,6 @@ export const SliderThreshold = ({
 const sx = {
   container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, marginTop: 4 },
   inputGroup: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' },
-  label: { fontSize: 12, marginBottom: 4, color: '#fff' },
+  label: { fontSize: 12, display: 'block', pmarginBottom: 2, color: '#fff' },
   input: { color: '#fff', input: { color: '#fff' } }
 };
