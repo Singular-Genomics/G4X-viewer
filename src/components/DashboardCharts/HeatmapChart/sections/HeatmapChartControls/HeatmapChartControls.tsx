@@ -138,7 +138,7 @@ export const HeatmapChartControls = ({
             if (!selected.length) {
               return `${t('general.selectOne')}...`;
             } else if (selected.length === availableOptions.length) {
-              return t('dashboard.allROILabel');
+              return selectedValueType === 'gene' ? t('dashboard.allGenesLabel') : t('dashboard.allProteinsLabel');
             } else if (selected.length < 3) {
               return selected.join(', ');
             }

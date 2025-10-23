@@ -297,6 +297,8 @@
     "availableHueLabel": "Grouping Value",
     "selectROILabel": "Select ROIs",
     "allROILabel": "All ROIs",
+    "allGenesLabel": "All Genes",
+    "allProteinsLabel": "All Proteins",
     "multipleROISelected": "{{count}} ROIs selected",
     "boxPlotValueType": "Modality",
     "boxPlotSwapAxisLabel": "Swap Axis",
