@@ -8,7 +8,7 @@ import { AVAILABLE_COLORSCALES } from '../../../stores/CytometryGraphStore/Cytom
 
 export const HeatmapChart = ({ id, title, removable = true }: HeatmapChartProps) => {
   const [selectedRois, setSelectedRois] = useState<number[]>([]);
-  const [selectedValue, setSelectedValue] = useState<string>(' ');
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValueType, setSelectedValueType] = useState<HeatmapChartValueType>('protein');
   const [settings, setSettings] = useState<HeatmapChartSettingOptions>({
     colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false }
@@ -21,11 +21,11 @@ export const HeatmapChart = ({ id, title, removable = true }: HeatmapChartProps)
       removable={removable}
       controlsContent={
         <HeatmapChartControls
-          selectedValue={selectedValue}
+          selectedValues={selectedValues}
           selectedROIs={selectedRois}
           selectedValueType={selectedValueType}
           onRoiChange={setSelectedRois}
-          onValueChange={setSelectedValue}
+          onValuesChange={setSelectedValues}
           onValueTypeChange={setSelectedValueType}
         />
       }
@@ -39,7 +39,7 @@ export const HeatmapChart = ({ id, title, removable = true }: HeatmapChartProps)
         <HeatmapChartPlot
           selectedROIs={selectedRois}
           selectedValueType={selectedValueType}
-          selectedValue={selectedValue}
+          selectedValues={selectedValues}
           settings={settings}
         />
       }

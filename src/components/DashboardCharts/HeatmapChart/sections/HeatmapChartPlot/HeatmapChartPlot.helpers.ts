@@ -22,17 +22,21 @@ export function useHeatmapChartPlotDataParser() {
     (
       rois: number[],
       valueType: HeatmapChartValueType,
-      selectedvalue: string,
+      selectedValues: string[],
       settings: HeatmapChartSettingOptions
     ): HeatmapChartDataEntry[] => {
-      if (!selectedCells.length || !segmentationMetadata) {
+      if (!selectedCells.length || !segmentationMetadata || !selectedValues.length) {
         return [];
       }
 
       const valueNames = valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames;
-      const selectedValueIndex = valueNames.findIndex((name) => name === selectedvalue);
 
-      if (selectedValueIndex === -1) {
+      // Map selected value names to their indices
+      const selectedValueIndices = selectedValues
+        .map((name) => valueNames.findIndex((vName) => vName === name))
+        .filter((idx) => idx !== -1);
+
+      if (!selectedValueIndices.length) {
         return [];
       }
 
@@ -43,75 +47,156 @@ export function useHeatmapChartPlotDataParser() {
       }
 
       const getCellValue = valueType === 'gene' ? getGeneValue : getProteinValue;
+      const multipleROIs = rois.length > 1;
 
-      // Collect all values by ROI and cluster
-      const dataMatrix: { [roiId: string]: { [clusterId: string]: number[] } } = {};
-      const roiIds = new Set<string>();
-      const clusterIds = new Set<string>();
+      // Multiple ROIs: X = ROI, Y = proteins/genes
+      if (multipleROIs) {
+        const dataMatrix: { [valueName: string]: { [roiId: string]: number[] } } = {};
+        const roiIds = new Set<string>();
+        const valueNamesSet = new Set<string>();
 
-      for (const selection of validSelection) {
-        if (!selection.data?.length) continue;
+        for (const selection of validSelection) {
+          if (!selection.data?.length) continue;
 
-        const roiId = selection.roiId.toString();
-        roiIds.add(roiId);
+          const roiId = selection.roiId.toString();
+          roiIds.add(roiId);
 
-        if (!dataMatrix[roiId]) {
-          dataMatrix[roiId] = {};
-        }
+          for (const cell of selection.data) {
+            for (let i = 0; i < selectedValueIndices.length; i++) {
+              const valueIndex = selectedValueIndices[i];
+              const valueName = selectedValues[i];
+              const value = getCellValue(cell, valueIndex);
 
-        for (const cell of selection.data) {
-          const value = getCellValue(cell, selectedValueIndex);
+              valueNamesSet.add(valueName);
 
-          const clusterId = cell.clusterId;
-          clusterIds.add(clusterId);
+              if (!dataMatrix[valueName]) {
+                dataMatrix[valueName] = {};
+              }
 
-          if (!dataMatrix[roiId][clusterId]) {
-            dataMatrix[roiId][clusterId] = [];
+              if (!dataMatrix[valueName][roiId]) {
+                dataMatrix[valueName][roiId] = [];
+              }
+
+              dataMatrix[valueName][roiId].push(value ?? 0);
+            }
           }
-
-          dataMatrix[roiId][clusterId].push(value ?? 0);
         }
+
+        // Build heatmap matrix: rows = proteins/genes, cols = ROIs
+        const sortedRoiIds = Array.from(roiIds).sort((a, b) => Number(a) - Number(b));
+        const sortedValueNames = Array.from(valueNamesSet);
+
+        const zMatrix: number[][] = [];
+        const xLabels = sortedRoiIds.map((id) => t('general.roiEntry', { index: id }));
+        const yLabels = sortedValueNames;
+
+        for (const valueName of sortedValueNames) {
+          const row: number[] = [];
+          for (const roiId of sortedRoiIds) {
+            const values = dataMatrix[valueName]?.[roiId] || [];
+            const meanValue = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
+            row.push(meanValue);
+          }
+          zMatrix.push(row);
+        }
+
+        let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
+
+        if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
+          colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+        }
+
+        return [
+          {
+            z: zMatrix,
+            x: xLabels,
+            y: yLabels,
+            type: 'heatmap',
+            colorscale: colorscale,
+            hoverongaps: false,
+            hovertemplate:
+              `<b>ROI:</b> %{x}<br>` +
+              `<b>${valueType === 'gene' ? 'Gene' : 'Protein'}:</b> %{y}<br>` +
+              `<b>Mean Value:</b> %{z:.2f}<br>` +
+              `<extra></extra>`
+          }
+        ];
       }
 
-      // Convert to arrays and calculate mean values
-      const sortedRoiIds = Array.from(roiIds).sort((a, b) => Number(a) - Number(b));
-      const sortedClusterIds = Array.from(clusterIds).sort();
+      // Single ROI: X = Cluster, Y = proteins/genes
+      else {
+        const dataMatrix: { [valueName: string]: { [clusterId: string]: number[] } } = {};
+        const clusterIds = new Set<string>();
+        const valueNamesSet = new Set<string>();
 
-      // Build z matrix (rows = clusters, cols = ROIs)
-      const zMatrix: number[][] = [];
-      const xLabels = sortedRoiIds.map((id) => t('general.roiEntry', { index: id }));
-      const yLabels = sortedClusterIds.map((id) => t('general.clusterEntry', { index: id }));
+        for (const selection of validSelection) {
+          if (!selection.data?.length) continue;
 
-      for (const clusterId of sortedClusterIds) {
-        const row: number[] = [];
-        for (const roiId of sortedRoiIds) {
-          const values = dataMatrix[roiId]?.[clusterId] || [];
-          const meanValue = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
-          row.push(meanValue);
+          for (const cell of selection.data) {
+            const clusterId = cell.clusterId;
+            clusterIds.add(clusterId);
+
+            for (let i = 0; i < selectedValueIndices.length; i++) {
+              const valueIndex = selectedValueIndices[i];
+              const valueName = selectedValues[i];
+              const value = getCellValue(cell, valueIndex);
+
+              valueNamesSet.add(valueName);
+
+              if (!dataMatrix[valueName]) {
+                dataMatrix[valueName] = {};
+              }
+
+              if (!dataMatrix[valueName][clusterId]) {
+                dataMatrix[valueName][clusterId] = [];
+              }
+
+              dataMatrix[valueName][clusterId].push(value ?? 0);
+            }
+          }
         }
-        zMatrix.push(row);
-      }
 
-      // Prepare colorscale for Plotly
-      let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
+        // Build heatmap matrix: rows = proteins/genes, cols = clusters
+        const sortedClusterIds = Array.from(clusterIds).sort();
+        const sortedValueNames = Array.from(valueNamesSet);
 
-      if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
-        // Reverse the colorscale
-        colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
-      }
+        const zMatrix: number[][] = [];
+        const xLabels = sortedClusterIds.map((id) => t('general.clusterEntry', { index: id }));
+        const yLabels = sortedValueNames;
 
-      return [
-        {
-          z: zMatrix,
-          x: xLabels,
-          y: yLabels,
-          type: 'heatmap',
-          colorscale: colorscale,
-          hoverongaps: false,
-          hovertemplate:
-            `<b>ROI:</b> %{x}<br>` + `<b>Cluster:</b> %{y}<br>` + `<b>Mean Value:</b> %{z:.2f}<br>` + `<extra></extra>`
+        for (const valueName of sortedValueNames) {
+          const row: number[] = [];
+          for (const clusterId of sortedClusterIds) {
+            const values = dataMatrix[valueName]?.[clusterId] || [];
+            const meanValue = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
+            row.push(meanValue);
+          }
+          zMatrix.push(row);
         }
-      ];
+
+        // Apply colorscale settings
+        let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
+
+        if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
+          colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+        }
+
+        return [
+          {
+            z: zMatrix,
+            x: xLabels,
+            y: yLabels,
+            type: 'heatmap',
+            colorscale: colorscale,
+            hoverongaps: false,
+            hovertemplate:
+              `<b>Cluster:</b> %{x}<br>` +
+              `<b>${valueType === 'gene' ? 'Gene' : 'Protein'}:</b> %{y}<br>` +
+              `<b>Mean Value:</b> %{z:.2f}<br>` +
+              `<extra></extra>`
+          }
+        ];
+      }
     },
     [selectedCells, segmentationMetadata, t]
   );

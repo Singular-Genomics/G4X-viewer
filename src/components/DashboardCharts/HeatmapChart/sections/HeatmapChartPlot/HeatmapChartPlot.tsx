@@ -9,7 +9,7 @@ import { debounce } from 'lodash';
 export const HeatmapChartPlot = ({
   selectedROIs,
   selectedValueType,
-  selectedValue,
+  selectedValues,
   settings
 }: HeatmapChartPlotProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -17,8 +17,8 @@ export const HeatmapChartPlot = ({
   const { parseCellsByRoi } = useHeatmapChartPlotDataParser();
 
   const heatmapData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue, settings),
-    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, settings]
+    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValues, settings),
+    [parseCellsByRoi, selectedValues, selectedROIs, selectedValueType, settings]
   );
 
   useEffect(() => {
@@ -50,6 +50,9 @@ export const HeatmapChartPlot = ({
     autosize: true,
     showlegend: false,
     annotations: [],
+    margin: {
+      l: 100
+    },
     ...(settings.customTitle
       ? {
           title: { text: settings.customTitle }

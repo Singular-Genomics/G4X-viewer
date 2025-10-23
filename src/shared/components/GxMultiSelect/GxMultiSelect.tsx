@@ -143,6 +143,7 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
         filter: 'none',
         fontSize: '14px',
         boxSizing: 'border-box',
+        maxHeight: '500px',
         '& .MuiMenu-list': {
           padding: '0'
         },

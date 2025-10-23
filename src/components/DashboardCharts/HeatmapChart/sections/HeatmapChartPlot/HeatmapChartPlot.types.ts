@@ -5,7 +5,7 @@ import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
 export type HeatmapChartPlotProps = {
   selectedROIs: number[];
   selectedValueType: HeatmapChartValueType;
-  selectedValue: string;
+  selectedValues: string[];
   settings: HeatmapChartSettingOptions;
 };
 

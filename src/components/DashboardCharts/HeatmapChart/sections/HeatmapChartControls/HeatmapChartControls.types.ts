@@ -1,9 +1,9 @@
 export type HeatmapChartControlsProps = {
-  selectedValue: string;
+  selectedValues: string[];
   selectedROIs: number[];
   selectedValueType: HeatmapChartValueType;
   onRoiChange: (newRoiValues: number[]) => void;
-  onValueChange: (newGeneValue: string) => void;
+  onValuesChange: (newValues: string[]) => void;
   onValueTypeChange: (newType: HeatmapChartValueType) => void;
 };
 

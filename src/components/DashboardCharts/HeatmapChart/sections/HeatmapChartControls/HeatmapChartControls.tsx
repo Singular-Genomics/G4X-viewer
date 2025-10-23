@@ -7,11 +7,11 @@ import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { HeatmapChartControlsProps, HeatmapChartValueType } from './HeatmapChartControls.types';
 
 export const HeatmapChartControls = ({
-  selectedValue,
+  selectedValues,
   selectedROIs,
   selectedValueType,
   onRoiChange,
-  onValueChange,
+  onValuesChange,
   onValueTypeChange
 }: HeatmapChartControlsProps) => {
   const { t } = useTranslation();
@@ -58,6 +58,19 @@ export const HeatmapChartControls = ({
     onRoiChange(Array.isArray(value) ? value.map(Number) : [Number(value)]);
   };
 
+  const handleValuesChange = (event: SelectChangeEvent<string[] | string>) => {
+    const value = event.target.value;
+    const availableOptions = selectedValueType === 'gene' ? availableGenes : availableProteins;
+
+    if (value[value.length - 1] === 'all') {
+      onValuesChange(
+        Array.isArray(value) ? (value.length - 1 === availableOptions.length ? [] : availableOptions) : []
+      );
+      return;
+    }
+    onValuesChange(Array.isArray(value) ? value : [value]);
+  };
+
   return (
     <Box sx={sx.container}>
       <FormControl
@@ -98,15 +111,7 @@ export const HeatmapChartControls = ({
           onChange={(e) => {
             const newType = e.target.value as HeatmapChartValueType;
             onValueTypeChange(newType);
-            onValueChange(
-              newType === 'gene'
-                ? availableGenes.length
-                  ? availableGenes[0]
-                  : ' '
-                : availableProteins.length
-                  ? availableProteins[0]
-                  : ' '
-            );
+            onValuesChange([]);
           }}
         >
           <MenuItem value={'gene'}>{t('general.rna')}</MenuItem>
@@ -120,30 +125,27 @@ export const HeatmapChartControls = ({
         <Typography sx={sx.inputLabel}>
           {selectedValueType === 'gene' ? t('dashboard.availableGenesLabel') : t('dashboard.availableProteinsLabel')}:
         </Typography>
-        <GxSelect
-          value={selectedValue}
-          fullWidth
-          sx={sx.select}
-          MenuProps={{
-            sx: sx.selectMenu
+        <GxMultiSelect
+          value={selectedValues}
+          onChange={handleValuesChange}
+          options={(selectedValueType === 'gene' ? availableGenes : availableProteins).map((name) => ({
+            value: name,
+            label: name
+          }))}
+          enableSelectAll
+          renderValue={(selected) => {
+            const availableOptions = selectedValueType === 'gene' ? availableGenes : availableProteins;
+            if (!selected.length) {
+              return `${t('general.selectOne')}...`;
+            } else if (selected.length === availableOptions.length) {
+              return t('dashboard.allROILabel');
+            } else if (selected.length < 3) {
+              return selected.join(', ');
+            }
+
+            return `${selected.length} selected`;
           }}
-          onChange={(e) => onValueChange(e.target.value as string)}
-        >
-          <MenuItem
-            value={' '}
-            disabled
-          >
-            {t('general.selectOne')}
-          </MenuItem>
-          {(selectedValueType === 'gene' ? availableGenes : availableProteins).map((geneName) => (
-            <MenuItem
-              key={geneName}
-              value={geneName}
-            >
-              {geneName}
-            </MenuItem>
-          ))}
-        </GxSelect>
+        />
       </FormControl>
     </Box>
   );
