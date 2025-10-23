@@ -6,10 +6,12 @@ import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
   protoRoot: protobuf.Root;
+  parsedColorMap: Record<string, number[]>;
 
   constructor(props: CellMasksLayerProps) {
     super(props);
     this.protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
+    this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.clusterId, entry.color]));
   }
 
   renderLayers() {
@@ -48,10 +50,10 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
         stroked: false,
         filled: this.props.showCellFill,
         getPolygon: (d) => d.vertices,
-        getLineColor: (d) => d.color,
-        getFillColor: (d) => [...d.color, opacityValue] as any,
+        getLineColor: (d) => (this.parsedColorMap[d.clusterId] as [number, number, number]) || [255, 255, 255],
+        getFillColor: (d) => [...(this.parsedColorMap[d.clusterId] || [255, 255, 255]), opacityValue] as any,
         updateTriggers: {
-          getFillColor: this.props.cellFillOpacity
+          getFillColor: [this.props.cellFillOpacity, this.props.colormap]
         },
         getLineWidth: 0,
         pickable: true,

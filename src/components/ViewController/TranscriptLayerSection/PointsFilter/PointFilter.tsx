@@ -4,14 +4,79 @@ import { PointFiltersTable } from './PointFiltersTable';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
 import { useTranslation } from 'react-i18next';
+import { GxFilterTableColormap } from '../../../../shared/components/GxFilterTable/GxFilterTableColormap/GxFilterTableColormap';
+import { useSnackbar } from 'notistack';
 
 export const PointFilter = () => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const colormapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+  const { colorMapConfig, setColormapConfig } = useBinaryFilesStore();
 
-  const isColormapConfigValid = colormapConfig && colormapConfig.length;
+  const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
+
+  const onDrop = (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
+
+    const file = acceptedFiles[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const importData = JSON.parse(content);
+        setColormapConfig(importData);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          message: t('general.colormapImportSuccess'),
+          titleMode: 'success'
+        });
+      } catch (error) {
+        console.error(error);
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          message: t('general.colormapImportFailure'),
+          titleMode: 'error'
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const onExport = () => {
+    let jsonData;
+    try {
+      jsonData = JSON.stringify(colorMapConfig, null, 2);
+    } catch (jsonError) {
+      console.error('Error stringifying channel settings:', jsonError);
+      enqueueSnackbar({
+        message: t('general.colormapExportFailure'),
+        variant: 'gxSnackbar',
+        titleMode: 'error'
+      });
+      return;
+    }
+
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const fileName = 'custom_transcripts-colormap';
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${fileName}.json`;
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    enqueueSnackbar({
+      message: t('general.colormapExportSuccess'),
+      variant: 'gxSnackbar',
+      titleMode: 'success'
+    });
+  };
 
   return (
     <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledWrapper) }}>
@@ -23,6 +88,10 @@ export const PointFilter = () => {
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <PointFilterOptions />
+        <GxFilterTableColormap
+          onDrop={onDrop}
+          onExport={onExport}
+        />
         <PointFiltersTable />
       </Box>
     </Box>
