@@ -1,7 +1,7 @@
 import { Box, Input, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { SliderThresholdProps } from './SliderThreshold.types';
-import { useCallback, useMemo, ChangeEvent } from 'react';
+import { useMemo, ChangeEvent } from 'react';
 import { debounce } from 'lodash';
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -33,14 +33,11 @@ export const SliderThreshold = ({
     [currentMaxValue, handleSliderChange, setRangeMin, setMinInputValue]
   );
 
-  const handleRangeMinInput = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setRangeMin(e.target.value);
-      setMinInputValue(e.target.value);
-      debouncedMinInputChange(e.target.value);
-    },
-    [debouncedMinInputChange, setRangeMin, setMinInputValue]
-  );
+  const handleRangeMinInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setRangeMin(e.target.value);
+    setMinInputValue(e.target.value);
+    debouncedMinInputChange(e.target.value);
+  };
 
   const debouncedMaxInputChange = useMemo(
     () =>
@@ -54,14 +51,12 @@ export const SliderThreshold = ({
     [currentMinValue, handleSliderChange, setRangeMax, setMaxInputValue]
   );
 
-  const handleRangeMaxInput = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setRangeMax(e.target.value);
-      setMaxInputValue(e.target.value);
-      debouncedMaxInputChange(e.target.value);
-    },
-    [debouncedMaxInputChange, setMaxInputValue, setRangeMax]
-  );
+  const handleRangeMaxInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setRangeMax(e.target.value);
+    setMaxInputValue(e.target.value);
+    debouncedMaxInputChange(e.target.value);
+  };
+
   return (
     <Box sx={sx.container}>
       <Box sx={sx.inputGroup}>
