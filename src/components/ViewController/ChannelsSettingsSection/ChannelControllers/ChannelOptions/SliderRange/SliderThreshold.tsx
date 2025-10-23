@@ -25,12 +25,7 @@ export const SliderThreshold = ({
     () =>
       debounce((currentValue: string) => {
         if (currentValue === '') return;
-        const newValue =
-          +currentValue >= currentMaxValue
-            ? currentMaxValue
-            : +currentValue < CHANNEL_MIN
-              ? CHANNEL_MIN
-              : +currentValue;
+        const newValue = Math.max(CHANNEL_MIN, Math.min(+currentValue, currentMaxValue));
         setRangeMin(newValue.toString());
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
@@ -51,12 +46,7 @@ export const SliderThreshold = ({
     () =>
       debounce((currentValue: string) => {
         if (currentValue === '') return;
-        const newValue =
-          +currentValue <= currentMinValue
-            ? currentMinValue
-            : +currentValue > CHANNEL_MAX
-              ? CHANNEL_MAX
-              : +currentValue;
+        const newValue = Math.min(CHANNEL_MAX, Math.max(Number(currentValue), currentMinValue));
         setRangeMax(newValue.toString());
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
