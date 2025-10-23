@@ -1,7 +1,7 @@
 import { Box, Input, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { SliderThresholdProps } from './SliderThreshold.types';
-import { ChangeEvent } from 'react';
+import { useCallback, useMemo, ChangeEvent } from 'react';
 import { debounce } from 'lodash';
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -21,34 +21,57 @@ export const SliderThreshold = ({
   const { t } = useTranslation();
   const [currentMinValue, currentMaxValue] = slider;
 
-  const debouncedMinInputChange = debounce((currentValue: string) => {
-    if (currentValue === '') return;
-    const newValue = Math.max(CHANNEL_MIN, Math.min(+currentValue, currentMaxValue));
-    setRangeMin(newValue.toString());
-    setMinInputValue(newValue.toString());
-    handleSliderChange([newValue, currentMaxValue] as [number, number]);
-  }, DEBOUNCE_TIME_MS);
+  const debouncedMinInputChange = useMemo(
+    () =>
+      debounce((currentValue: string) => {
+        if (currentValue === '') return;
+        const newValue =
+          +currentValue >= currentMaxValue
+            ? currentMaxValue
+            : +currentValue < CHANNEL_MIN
+              ? CHANNEL_MIN
+              : +currentValue;
+        setRangeMin(newValue.toString());
+        setMinInputValue(newValue.toString());
+        handleSliderChange([newValue, currentMaxValue] as [number, number]);
+      }, DEBOUNCE_TIME_MS),
+    [currentMaxValue, handleSliderChange, setRangeMin, setMinInputValue]
+  );
 
-  const handleRangeMinInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setRangeMin(e.target.value);
-    setMinInputValue(e.target.value);
-    debouncedMinInputChange(e.target.value);
-  };
+  const handleRangeMinInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setRangeMin(e.target.value);
+      setMinInputValue(e.target.value);
+      debouncedMinInputChange(e.target.value);
+    },
+    [debouncedMinInputChange, setRangeMin, setMinInputValue]
+  );
 
-  const debouncedMaxInputChange = debounce((currentValue: string) => {
-    if (currentValue === '') return;
-    const newValue = Math.min(CHANNEL_MAX, Math.max(+currentValue, currentMinValue));
-    setRangeMax(newValue.toString());
-    setMaxInputValue(newValue.toString());
-    handleSliderChange([currentMinValue, newValue] as [number, number]);
-  }, DEBOUNCE_TIME_MS);
+  const debouncedMaxInputChange = useMemo(
+    () =>
+      debounce((currentValue: string) => {
+        if (currentValue === '') return;
+        const newValue =
+          +currentValue <= currentMinValue
+            ? currentMinValue
+            : +currentValue > CHANNEL_MAX
+              ? CHANNEL_MAX
+              : +currentValue;
+        setRangeMax(newValue.toString());
+        setMaxInputValue(newValue.toString());
+        handleSliderChange([currentMinValue, newValue] as [number, number]);
+      }, DEBOUNCE_TIME_MS),
+    [currentMinValue, handleSliderChange, setRangeMax, setMaxInputValue]
+  );
 
-  const handleRangeMaxInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setRangeMax(e.target.value);
-    setMaxInputValue(e.target.value);
-    debouncedMaxInputChange(e.target.value);
-  };
-
+  const handleRangeMaxInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setRangeMax(e.target.value);
+      setMaxInputValue(e.target.value);
+      debouncedMaxInputChange(e.target.value);
+    },
+    [debouncedMaxInputChange, setMaxInputValue, setRangeMax]
+  );
   return (
     <Box sx={sx.container}>
       <Box sx={sx.inputGroup}>
