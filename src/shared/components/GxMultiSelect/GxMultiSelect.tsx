@@ -176,6 +176,11 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       backgroundColor: 'rgba(0, 0, 0, 0.08)',
       '&:hover': {
         backgroundColor: 'rgba(0, 0, 0, 0.08)'
+      },
+      '& .MuiCheckbox-root': {
+        '&, &.Mui-checked, &.MuiCheckbox-indeterminate': {
+          color: theme.palette.gx.accent.greenBlue
+        }
       }
     }
   };
