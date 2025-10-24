@@ -294,7 +294,7 @@
     "customTitle": "Custom Title",
     "graphAdded": "{{graphName}} added successfully",
     "settings": "Settings",
-    "plotValueType": "Value Type",
+    "plotValueType": "Modality",
     "plotSwapAxisLabel": "Swap Axis",
     "plotDataModeLabel": "Data Mode",
     "availableROILabel": "Available ROIs",
@@ -328,7 +328,7 @@
     "title": "Expression Box Chart"
   },
   "barChart": {
-    "title": "Bar Chart", 
+    "title": "Expression Bar Chart", 
     "barModeLabel": "Bar Mode"
   },
   "heatmapChart": {
