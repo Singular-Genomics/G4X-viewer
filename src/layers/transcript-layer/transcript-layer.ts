@@ -68,7 +68,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       id: `sub-point-layer-${this.props.id}`,
       data: points,
       getPosition: (d) => d.position,
-      getFillColor: (d) => d.color,
+      getFillColor: (d) => (this.props.parsedColorMap[d.geneName] as [number, number, number]) || [255, 255, 255],
       getRadius: this.props.pointSize,
       radiusUnits: 'pixels',
       pickable: true
@@ -82,10 +82,12 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   protoRoot: protobuf.Root;
+  parsedColorMap: Record<string, number[]>;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
+    this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {
@@ -186,7 +188,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
-          this.props.pointSize
+          this.props.pointSize,
+          this.props.colormap
         ]
       },
       renderSubLayers: ({ id, data }) =>
@@ -196,7 +199,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           pointSize: this.props.pointSize,
           showBoundries: this.props.showTilesBoundries,
           showData: this.props.showTilesData,
-          showDiscardedPoints: this.props.showDiscardedPoints
+          showDiscardedPoints: this.props.showDiscardedPoints,
+          parsedColorMap: this.parsedColorMap
         })
     });
     return [tiledLayer];

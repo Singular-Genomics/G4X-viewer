@@ -61,7 +61,9 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
+    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  );
 
   const [
     isTranscriptLayerOn,
@@ -103,6 +105,7 @@ export const useTranscriptLayer = () => {
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
+    colormap: colorMapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -122,7 +125,8 @@ export const useCellSegmentationLayer = () => {
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
-    cellNameFilters
+    cellNameFilters,
+    cellColormapConfig
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.cellMasksData,
@@ -131,7 +135,8 @@ export const useCellSegmentationLayer = () => {
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
-      store.cellNameFilters
+      store.cellNameFilters,
+      store.cellColormapConfig
     ])
   );
 
@@ -215,6 +220,7 @@ export const useCellSegmentationLayer = () => {
     cellFillOpacity,
     cellsData: filteredCells.unselectedCellsData,
     outlierCellsData: filteredCells.outlierCellsData,
+    colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
