@@ -108,6 +108,6 @@ export const SliderThreshold = ({
 const sx = {
   container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, marginTop: 4 },
   inputGroup: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' },
-  label: { fontSize: 12, display: 'block', pmarginBottom: 2, color: '#fff' },
+  label: { fontSize: 12, display: 'block', color: '#fff' },
   input: { color: '#fff', input: { color: '#fff' } }
 };
