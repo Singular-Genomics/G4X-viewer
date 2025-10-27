@@ -4,8 +4,20 @@ import { ChannelOptionsProps } from './ChannelOption.types';
 import { useRef, useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ColorPalette } from './ColorPalette';
+import { SliderThreshold } from './SliderRange/SliderThreshold';
 
-export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsProps) => {
+export const ChannelOptions = ({
+  slider,
+  handleColorSelect,
+  disabled,
+  rangeMin,
+  rangeMax,
+  setRangeMin,
+  setRangeMax,
+  setMinInputValue,
+  setMaxInputValue,
+  handleSliderChange
+}: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
@@ -38,6 +50,16 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
           <ClickAwayListener onClickAway={() => setIsOpen((prev) => !prev)}>
             <MenuList>
               <ColorPalette handleColorSelect={handleColorSelect} />
+              <SliderThreshold
+                slider={slider}
+                rangeMin={rangeMin}
+                rangeMax={rangeMax}
+                setRangeMin={setRangeMin}
+                setRangeMax={setRangeMax}
+                setMinInputValue={setMinInputValue}
+                setMaxInputValue={setMaxInputValue}
+                handleSliderChange={handleSliderChange}
+              />
             </MenuList>
           </ClickAwayListener>
         </Paper>
@@ -49,7 +71,7 @@ export const ChannelOptions = ({ handleColorSelect, disabled }: ChannelOptionsPr
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
-    padding: '8px'
+    padding: '4px'
   },
   channelOptionsButton: {
     '&:hover': {
