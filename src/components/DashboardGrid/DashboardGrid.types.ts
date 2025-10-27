@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Layout } from 'react-grid-layout';
-import { GxDashboardGraphWindowProps } from '../GxDashboardGraphWindow';
+import { GxDashboardGraphWindowProps } from '../../shared/components/GxDashboardGraphWindow';
 
 export type DashboardGridItem = ReactElement<GxDashboardGraphWindowProps>;
 

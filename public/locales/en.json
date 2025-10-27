@@ -34,6 +34,7 @@
     "cancel": "Cancel",
     "clear": "Clear",
     "cloudUpload": "Cloud Upload",
+    "clusterEntry": "Cluster {{index}}",
     "colormapConfig": "Colormap Configuration",
     "colormapImportSuccess": "Custom color map imported!",
     "colormapImportFailure": "Failed to load the custom colormap",
@@ -54,6 +55,7 @@
     "filterMissingColormap": "Missing colormap config data - filtering disabled.",
     "filterShowActiveOnly": "Show active filters only",
     "filterShowDiscarded": "Show Discarded",
+    "gene": "Gene",
     "imageURL": "Image URL",
     "import": "Import",
     "includeGeneExpressions": "Include gene expressions",
@@ -61,9 +63,15 @@
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
     "layers": "Layers",
+    "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
+    "protein": "Protein",
+    "roiEntry": "ROI {{index}}",
+    "rna": "RNA",
     "segmentation": "Segmentation",
+    "selectOne": "Select One",
+    "selectAll": "Select All",
     "shape": "Shape",
     "transcripts": "Transcripts",
     "warning": "Warning"
@@ -283,7 +291,47 @@
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
+    "customTitle": "Custom Title",
     "graphAdded": "{{graphName}} added successfully",
-    "settings": "Settings"
+    "settings": "Settings",
+    "plotValueType": "Modality",
+    "plotSwapAxisLabel": "Swap Axis",
+    "plotDataModeLabel": "Data Mode",
+    "availableROILabel": "Available ROIs",
+    "availableGenesLabel": "Available Genes",
+    "availableProteinsLabel": "Available Proteins",
+    "availableHueLabel": "Grouping Value",
+    "selectROILabel": "Select ROIs",
+    "allROILabel": "All ROIs",
+    "allGenesLabel": "All Genes",
+    "allProteinsLabel": "All Proteins",
+    "multipleROISelected": "{{count}} ROIs selected",
+    "boxPlotValueType": "Modality",
+    "boxPlotSwapAxisLabel": "Swap Axis",
+    "boxPlotDataModeLabel": "Data Mode",
+    "graphOptions_boxGraph": "Intensity Box Graph",
+    "gene": "Gene",
+    "protein": "Protein",
+    "noROIAvailableError": "No ROI data available. Please create or import ROI polygons."
+  },
+    "pieChart": {
+    "title": "Pie Chart",
+    "polygonNotFound": "Polygon ROI #{{polygonId}} not found",
+    "noDataForPolygon": "No data available for this polygon",
+    "clusterId": "Cluster ID",
+    "noCellSegmentationData": "No cell segmentation data available",
+    "noRoiSelected": "No ROI selected. Please select at least one ROI from the controls above.",
+    "hoverCount": "Count",
+    "hoverPercent": "Percent"
+  },
+   "boxChart": {
+    "title": "Expression Box Chart"
+  },
+  "barChart": {
+    "title": "Expression Bar Chart", 
+    "barModeLabel": "Bar Mode"
+  },
+  "heatmapChart": {
+    "title": "Heatmap Chart"
   }
 }

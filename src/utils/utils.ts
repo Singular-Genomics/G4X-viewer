@@ -39,6 +39,16 @@ export function getImageLayer(id: string, props: any) {
   });
 }
 
+function componentToHex(c: number) {
+  const hex = c.toString(16);
+  return hex.length == 1 ? '0' + hex : hex;
+}
+
+export function rgbToHex(color: number[]) {
+  if (color.length !== 3) return '#727272';
+  return '#' + componentToHex(color[0]) + componentToHex(color[1]) + componentToHex(color[2]);
+}
+
 export const POLYGON_COLORS: [number, number, number][] = [
   [99, 255, 132], // Green
   [54, 162, 235], // Blue

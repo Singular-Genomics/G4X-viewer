@@ -2,29 +2,43 @@ import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
 import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
-import { GxDashboardGraphWindowExample, EXAMPLE_CHART_CONFIG } from '../../components/GxDashboardGraphWindowExample';
+import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
-import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
+import { BoxChart } from '../../components/DashboardCharts/BoxChart';
+import { BarChart } from '../../components/DashboardCharts/BarChart';
+import { HeatmapChart } from '../../components/DashboardCharts/HeatmapChart';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import { useSnackbar } from 'notistack';
 
 export const DashboardView = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const polygonFeatures = usePolygonDrawingStore((state) => state.polygonFeatures);
 
-  const graphOptions = [{ id: EXAMPLE_CHART_CONFIG.id, label: EXAMPLE_CHART_CONFIG.label }];
+  const graphOptions = [
+    {
+      id: DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.labelKey)
+    },
+    {
+      id: DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.id,
+      label: t(DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.labelKey)
+    }
+  ];
 
-  // Example items
-  const [gridItems, setGridItems] = useState<DashboardGridItem[]>([
-    <GxDashboardGraphWindowExample
-      key="item-1"
-      id="item-1"
-      title={EXAMPLE_CHART_CONFIG.label}
-      backgroundColor={EXAMPLE_CHART_CONFIG.defaultBackgroundColor}
-      removable={true}
-    />
-  ]);
+  const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
   const handleLayoutChange = (layout: Layout[]) => {
     console.log('Layout changed:', layout);
@@ -35,22 +49,69 @@ export const DashboardView = () => {
   };
 
   const handleAddGraph = (graphId: string) => {
+    // Check if there are any ROI polygons available
+    if (!polygonFeatures || polygonFeatures.length === 0) {
+      enqueueSnackbar(t('dashboard.noROIAvailableError'), {
+        variant: 'gxSnackbar',
+        titleMode: 'error',
+        iconMode: 'error'
+      });
+      return;
+    }
+
     const graphOption = graphOptions.find((opt) => opt.id === graphId);
+    if (!graphOption) return;
+
+    let newItem: DashboardGridItem;
     const newItemId = `item-${Date.now()}`;
 
-    if (graphId === EXAMPLE_CHART_CONFIG.id) {
-      const newItem: DashboardGridItem = (
-        <GxDashboardGraphWindowExample
-          key={newItemId}
-          id={newItemId}
-          title={graphOption?.label || 'Example Chart'}
-          backgroundColor={'#' + Math.floor(Math.random() * 16777215).toString(16)}
-          removable={true}
-        />
-      );
+    switch (graphOption.id) {
+      case DASHBOARD_CHARTS_CONFIG.BOX_CHART_CONFIG.id:
+        newItem = (
+          <BoxChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_CHARTS_CONFIG.PIE_CHART_CONFIG.id:
+        newItem = (
+          <PieChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption?.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_CHARTS_CONFIG.BAR_CHART_CONFIG.id:
+        newItem = (
+          <BarChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      case DASHBOARD_CHARTS_CONFIG.HEATMAP_CHART_CONFIG.id:
+        newItem = (
+          <HeatmapChart
+            key={newItemId}
+            id={newItemId}
+            title={graphOption.label}
+            removable={true}
+          />
+        );
+        break;
+      default:
+        return;
+    }
 
+    if (newItem) {
       setGridItems((prev) => [newItem, ...prev]);
-      enqueueSnackbar(t('dashboard.graphAdded', { graphName: graphOption?.label }), { variant: 'success' });
     }
   };
 
