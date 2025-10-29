@@ -38,6 +38,7 @@ export type PolygonDrawingStoreValues = {
   isViewMode: boolean;
   isDeleteMode: boolean;
   polygonOpacity: number;
+  showROINumbers: boolean;
 };
 
 export type PolygonDrawingStoreMethods = {
