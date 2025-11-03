@@ -164,7 +164,6 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], ex
       'umapX',
       'umapY',
       'vertices',
-      'color',
       ...genesColumns,
       ...proteinColumns
     ];
@@ -180,8 +179,7 @@ export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], ex
         cell.clusterId || '',
         cell.umapValues?.umapX || 0,
         cell.umapValues?.umapY || 0,
-        JSON.stringify(cell.vertices || []),
-        JSON.stringify(cell.color || [])
+        JSON.stringify(cell.vertices || [])
       ] as (string | number)[];
 
       if (genesColumns.length > 0) {
@@ -214,7 +212,7 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
     const geneCountMap: Map<string, number> = new Map();
 
-    const header = ['gene_name', 'count', 'ROI', 'position', 'color', 'cellId'];
+    const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
 
     transcriptsInPolygon.forEach((transcript) => {
@@ -224,7 +222,6 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
         geneCountMap.get(geneName) || 0,
         polygonId,
         JSON.stringify(transcript.position || []),
-        JSON.stringify(transcript.color || []),
         transcript.cellId || ''
       ]);
     });
@@ -306,7 +303,6 @@ const generateCsvContentForSinglePolygon = (
       'umapX',
       'umapY',
       'vertices',
-      'color',
       ...genesColumns,
       ...proteinColumns
     ];
@@ -322,8 +318,7 @@ const generateCsvContentForSinglePolygon = (
         cell.clusterId || '',
         cell.umapValues?.umapX || 0,
         cell.umapValues?.umapY || 0,
-        JSON.stringify(cell.vertices || []),
-        JSON.stringify(cell.color || [])
+        JSON.stringify(cell.vertices || [])
       ] as (string | number)[];
 
       if (genesColumns.length > 0) {
@@ -347,7 +342,7 @@ const generateCsvContentForSinglePolygon = (
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
     const geneCountMap: Map<string, number> = new Map();
 
-    const header = ['gene_name', 'count', 'ROI', 'position', 'color', 'cellId'];
+    const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
 
     transcriptsInPolygon.forEach((transcript) => {
@@ -357,7 +352,6 @@ const generateCsvContentForSinglePolygon = (
         geneCountMap.get(geneName) || 0,
         polygonId,
         JSON.stringify(transcript.position || []),
-        JSON.stringify(transcript.color || []),
         transcript.cellId || ''
       ]);
     });
