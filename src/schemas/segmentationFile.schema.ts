@@ -22,14 +22,6 @@ export const SegmentationFileSchema = {
             packed: 'true'
           }
         },
-        color: {
-          rule: 'repeated',
-          type: 'uint32',
-          id: 2,
-          options: {
-            packed: 'true'
-          }
-        },
         area: {
           type: 'uint32',
           id: 3

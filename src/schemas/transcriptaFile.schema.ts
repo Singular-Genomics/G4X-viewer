@@ -10,14 +10,6 @@ export const TranscriptFileSchema = {
             packed: true
           }
         },
-        color: {
-          rule: 'repeated',
-          type: 'uint32',
-          id: 2,
-          options: {
-            packed: true
-          }
-        },
         geneName: {
           type: 'string',
           id: 3
