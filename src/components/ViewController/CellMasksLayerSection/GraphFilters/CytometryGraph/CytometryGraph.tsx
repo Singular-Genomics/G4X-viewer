@@ -12,12 +12,12 @@ import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
-import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
+import { mapValuesToColors } from './CytometryGraph.helpers';
 import { SingleMask } from '../../../../../shared/types';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
-import { GxColorscaleSlider } from '../../../../../shared/components/GxColorscaleSlider';
+import { GxColorscaleSlider, thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
 
 export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinIndices: ProteinIndices) {
   const handleDownload = () => {

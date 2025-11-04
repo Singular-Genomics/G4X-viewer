@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { HeatmapChartValueType } from '../HeatmapChartControls';
 import { SingleMask } from '../../../../../shared/types';
 import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
-import { thresholdColorMap } from '../../../../ViewController/CellMasksLayerSection/GraphFilters/CytometryGraph/CytometryGraph.helpers';
+import { thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
 
 export function useHeatmapChartPlotDataParser() {
   const { t } = useTranslation();
