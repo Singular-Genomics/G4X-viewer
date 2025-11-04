@@ -8,6 +8,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
@@ -34,7 +35,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
     exportPolygonsWithCells,
     exportPolygonsWithTranscripts,
     polygonFeatures,
-    isDetecting
+    isDetecting,
+    showROINumbers
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -50,7 +52,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       store.exportPolygonsWithCells,
       store.exportPolygonsWithTranscripts,
       store.polygonFeatures,
-      store.isDetecting
+      store.isDetecting,
+      store.showROINumbers
     ])
   );
 
@@ -286,7 +289,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
               color="primary"
               disabled={isDetecting}
             >
-              <VisibilityIcon />
+              {!showROINumbers ? <VisibilityOffIcon /> : <VisibilityIcon />}
             </IconButton>
           </MuiTooltip>
 

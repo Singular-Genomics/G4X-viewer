@@ -136,7 +136,6 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.darkGrey[100],
     fontWeight: '700',
     marginBottom: '8px',
-    textTransform: 'capitalize',
     fontSize: '1.1rem'
   },
   dataSection: {
@@ -153,7 +152,6 @@ const styles = (theme: Theme) => ({
   label: {
     color: theme.palette.gx.darkGrey[100],
     fontWeight: '500',
-    textTransform: 'capitalize',
     fontSize: '0.95rem'
   },
   value: {

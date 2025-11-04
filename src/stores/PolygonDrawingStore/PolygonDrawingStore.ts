@@ -18,7 +18,8 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isDetecting: false,
   isViewMode: false,
   isDeleteMode: false,
-  polygonOpacity: 0.5
+  polygonOpacity: 0.5,
+  showROINumbers: true
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -37,7 +38,16 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     })),
   setDrawPolygonMode: () => set({ mode: new DrawPolygonMode(), isViewMode: false, isDeleteMode: false }),
   setModifyMode: () => set({ mode: new ModifyMode(), isViewMode: false, isDeleteMode: false }),
-  setViewMode: () => set({ isViewMode: true, mode: undefined, isDeleteMode: false }),
+  setViewMode: () => {
+    const { isViewMode, showROINumbers } = get();
+    if (isViewMode) {
+      // If already in view mode, toggle ROI numbers visibility
+      set({ showROINumbers: !showROINumbers });
+    } else {
+      // If not in view mode, enter view mode with the last remembered showROINumbers state
+      set({ isViewMode: true, mode: undefined, isDeleteMode: false });
+    }
+  },
   setDeleteMode: () => set({ isDeleteMode: true, isViewMode: false, mode: undefined }),
   setPolygons: (features) =>
     set((store) => ({

@@ -3,7 +3,7 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { TarFileEntry } from './PolygonImportExport.types';
+import { TarFileEntry, ExportDataType, InternalDataType } from './PolygonImportExport.types';
 
 const escapeCsvValue = (value: string | number) => {
   const str = String(value ?? '');
@@ -112,18 +112,18 @@ const generateExportCsvFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.csv`;
 };
 
-const generateExportTarFilename = (roiCount: number): string => {
+const generateExportTarFilename = (roiCount: number, type: ExportDataType): string => {
   const viewerSource = useViewerStore.getState().source;
   const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
   const date = new Date().toISOString().split('T')[0];
-  return `${date}_${ometiffName}_${roiCount}ROIs.tar`;
+  return `${ometiffName}_${roiCount}ROIs_${type}_${date}.tar`;
 };
 
-const generateExportZipFilename = (roiCount: number): string => {
+const generateExportZipFilename = (roiCount: number, type: ExportDataType): string => {
   const viewerSource = useViewerStore.getState().source;
   const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
   const date = new Date().toISOString().split('T')[0];
-  return `${date}_${ometiffName}_${roiCount}ROIs.zip`;
+  return `${ometiffName}_${roiCount}ROIs_${type}_${date}.zip`;
 };
 
 const downloadZipFile = async (files: TarFileEntry[], fileName: string) => {
@@ -284,7 +284,7 @@ export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
 
 const generateCsvContentForSinglePolygon = (
   feature: PolygonFeature,
-  type: 'cells' | 'transcripts',
+  type: InternalDataType,
   exportGenes: boolean = true
 ): string => {
   const polygonId = feature.properties?.polygonId || 1;
@@ -403,11 +403,7 @@ const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string =
   return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
 };
 
-const createCSVTarFile = (
-  polygonFeatures: PolygonFeature[],
-  type: 'cells' | 'transcripts',
-  exportGenes: boolean = true
-) => {
+const createCSVTarFile = (polygonFeatures: PolygonFeature[], type: InternalDataType, exportGenes: boolean = true) => {
   const files: TarFileEntry[] = [];
 
   polygonFeatures.forEach((feature) => {
@@ -428,13 +424,14 @@ const createCSVTarFile = (
     content: generateMetadataCSVContent(polygonFeatures)
   });
 
-  const tarFileName = generateExportTarFilename(polygonFeatures.length);
+  const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
+  const tarFileName = generateExportTarFilename(polygonFeatures.length, fileType);
   downloadTarFile(files, tarFileName);
 };
 
 const createCSVZipFile = async (
   polygonFeatures: PolygonFeature[],
-  type: 'cells' | 'transcripts',
+  type: InternalDataType,
   exportGenes: boolean = true
 ) => {
   const files: TarFileEntry[] = [];
@@ -457,7 +454,8 @@ const createCSVZipFile = async (
     content: generateMetadataCSVContent(polygonFeatures)
   });
 
-  const zipFileName = generateExportZipFilename(polygonFeatures.length);
+  const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
+  const zipFileName = generateExportZipFilename(polygonFeatures.length, fileType);
   await downloadZipFile(files, zipFileName);
 };
 
