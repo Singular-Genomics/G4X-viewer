@@ -24,42 +24,42 @@ export const SegmentationFileSchema = {
         },
         area: {
           type: 'uint32',
-          id: 3
+          id: 2
         },
         totalCounts: {
           type: 'uint32',
-          id: 4
+          id: 3
         },
         totalGenes: {
           type: 'uint32',
-          id: 5
+          id: 4
         },
         cellId: {
           type: 'string',
-          id: 6
+          id: 5
         },
         clusterId: {
           type: 'string',
-          id: 7
+          id: 6
         },
         proteinValues: {
           rule: 'repeated',
           type: 'uint32',
-          id: 8
+          id: 7
         },
         nonzeroGeneIndices: {
           rule: 'repeated',
           type: 'uint32',
-          id: 9
+          id: 8
         },
         nonzeroGeneValues: {
           rule: 'repeated',
           type: 'uint32',
-          id: 10
+          id: 9
         },
         umapValues: {
           type: 'UmapEntry',
-          id: 11
+          id: 10
         }
       }
     },

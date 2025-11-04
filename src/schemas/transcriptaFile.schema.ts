@@ -12,11 +12,11 @@ export const TranscriptFileSchema = {
         },
         geneName: {
           type: 'string',
-          id: 3
+          id: 2
         },
         cellId: {
           type: 'string',
-          id: 4
+          id: 3
         }
       }
     },
