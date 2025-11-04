@@ -14,3 +14,8 @@ export type HeatmapChartDataEntry = {
   x?: (number | string)[];
   y?: (number | string)[];
 } & Partial<Omit<PlotData, 'x' | 'y' | 'z'>>;
+
+export type HeatmapChartConfig = {
+  zMin: number;
+  zMax: number;
+};

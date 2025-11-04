@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { HeatmapChartValueType } from '../HeatmapChartControls';
 import { SingleMask } from '../../../../../shared/types';
 import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
+import { thresholdColorMap } from '../../../../ViewController/CellMasksLayerSection/GraphFilters/CytometryGraph/CytometryGraph.helpers';
 
 export function useHeatmapChartPlotDataParser() {
   const { t } = useTranslation();
@@ -69,7 +70,9 @@ export function useHeatmapChartPlotDataParser() {
       rois: number[],
       valueType: HeatmapChartValueType,
       selectedValues: string[],
-      settings: HeatmapChartSettingOptions
+      settings: HeatmapChartSettingOptions,
+      upperThreshold?: number,
+      lowerThreshold?: number
     ): HeatmapChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata || !selectedValues.length) {
         return [];
@@ -164,7 +167,7 @@ export function useHeatmapChartPlotDataParser() {
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: colorscale,
+            colorscale: thresholdColorMap(settings.colorscale.value, upperThreshold, lowerThreshold),
             hoverongaps: false,
             hovertemplate:
               `<b>ROI:</b> %{x}<br>` +
@@ -239,7 +242,7 @@ export function useHeatmapChartPlotDataParser() {
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: colorscale,
+            colorscale: thresholdColorMap(settings.colorscale.value, upperThreshold, lowerThreshold),
             hoverongaps: false,
             hovertemplate:
               `<b>Cluster:</b> %{x}<br>` +
