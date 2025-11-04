@@ -1,10 +1,12 @@
 import { Box, Grid, MenuItem, Theme, Typography, useTheme } from '@mui/material';
-import { HeatmapChartSettingsProps } from './HeatmapChartSettings.types';
+import { HeatmapChartNormalizationOption, HeatmapChartSettingsProps } from './HeatmapChartSettings.types';
 import { AVAILABLE_COLORSCALES } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
 import { GxInput } from '../../../../../shared/components/GxInput';
+
+const AVAILABLE_NORMALIZATIONS: HeatmapChartNormalizationOption[] = ['none', 'min-max', 'z-score'];
 
 export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChartSettingsProps) => {
   const { t } = useTranslation();
@@ -15,15 +17,19 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
     const colorscaleConfig = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
     if (colorscaleConfig) {
       const newColorscaleOption = { ...colorscaleConfig, reversed: !!settings.colorscale?.reversed };
-      onChangeSettings({ colorscale: newColorscaleOption });
+      onChangeSettings({ ...settings, colorscale: newColorscaleOption });
     }
   };
 
   const onReverseColorscale = () => {
     if (settings.colorscale) {
       const newColorscaleOption = { ...settings.colorscale, reversed: !settings.colorscale.reversed };
-      onChangeSettings({ colorscale: newColorscaleOption });
+      onChangeSettings({ ...settings, colorscale: newColorscaleOption });
     }
+  };
+
+  const onChangeNormalization = (newNormalization: string) => {
+    onChangeSettings({ ...settings, normalization: newNormalization as HeatmapChartNormalizationOption });
   };
 
   return (
@@ -94,6 +100,27 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
             value={settings.colorscale?.reversed || false}
             onClick={onReverseColorscale}
           />
+        </Grid>
+        {/* Normalization option */}
+        <Grid
+          alignContent={'center'}
+          size={1}
+          sx={sx.settingLabel}
+        >
+          <Typography>{`${t('heatmapChart.normalizationLabel')}:`}</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxSelect
+            fullWidth
+            size="small"
+            value={settings.normalization || 'none'}
+            onChange={(e) => onChangeNormalization(e.target.value as string)}
+            MenuProps={{ sx: sx.menu }}
+          >
+            {AVAILABLE_NORMALIZATIONS.map((option) => (
+              <MenuItem value={option}>{option}</MenuItem>
+            ))}
+          </GxSelect>
         </Grid>
       </Grid>
     </Box>

@@ -12,4 +12,7 @@ export type ColorScaleOption = {
 export type HeatmapChartSettingOptions = {
   colorscale?: ColorScaleOption;
   customTitle?: string;
+  normalization?: HeatmapChartNormalizationOption;
 };
+
+export type HeatmapChartNormalizationOption = 'none' | 'min-max' | 'z-score';
