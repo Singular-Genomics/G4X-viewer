@@ -18,6 +18,52 @@ export function useHeatmapChartPlotDataParser() {
   const getProteinValue = (cell: SingleMask, selectedValueIndex: number): number =>
     cell.proteinValues[selectedValueIndex];
 
+  const normalizeMinMax = (zMatrix: number[][]) => {
+    if (!zMatrix.length) {
+      return zMatrix;
+    }
+
+    let minValue = Infinity;
+    let maxValue = -Infinity;
+
+    // Find min and max values in the matrix
+    for (const row of zMatrix) {
+      for (const value of row) {
+        if (value < minValue) minValue = value;
+        else if (value > maxValue) maxValue = value;
+      }
+    }
+
+    for (let i = 0; i < zMatrix.length; i++) {
+      for (let j = 0; j < zMatrix[i].length; j++) {
+        zMatrix[i][j] = (zMatrix[i][j] - minValue) / (maxValue - minValue);
+      }
+    }
+
+    return zMatrix;
+  };
+
+  const normlaizeZScore = (zMatrix: number[][]) => {
+    const flattenedValues = zMatrix.flat();
+
+    if (flattenedValues.length === 0) {
+      return zMatrix;
+    }
+
+    const mean = flattenedValues.reduce((sum, curr) => sum + curr, 0) / flattenedValues.length;
+    const standardDeviation = Math.sqrt(
+      flattenedValues.reduce((sum, curr) => sum + Math.pow(curr - mean, 2)) / flattenedValues.length
+    );
+
+    for (let i = 0; i < zMatrix.length; i++) {
+      for (let j = 0; j < zMatrix[i].length; j++) {
+        zMatrix[i][j] = (zMatrix[i][j] - mean) / standardDeviation;
+      }
+    }
+
+    return zMatrix;
+  };
+
   const parseCellsByRoi = useCallback(
     (
       rois: number[],
@@ -86,7 +132,7 @@ export function useHeatmapChartPlotDataParser() {
         const sortedRoiIds = Array.from(roiIds).sort((a, b) => Number(a) - Number(b));
         const sortedValueNames = Array.from(valueNamesSet);
 
-        const zMatrix: number[][] = [];
+        let zMatrix: number[][] = [];
         const xLabels = sortedRoiIds.map((id) => t('general.roiEntry', { index: id }));
         const yLabels = sortedValueNames;
 
@@ -104,6 +150,12 @@ export function useHeatmapChartPlotDataParser() {
 
         if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
           colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+        }
+
+        if (settings.normalization === 'min-max') {
+          zMatrix = normalizeMinMax(zMatrix);
+        } else if (settings.normalization === 'z-score') {
+          zMatrix = normlaizeZScore(zMatrix);
         }
 
         return [
