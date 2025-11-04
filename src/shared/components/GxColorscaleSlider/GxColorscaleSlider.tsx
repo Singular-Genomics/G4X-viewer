@@ -1,16 +1,20 @@
-import { alpha, Slider, Theme, useTheme } from '@mui/material';
-import { ColorscaleSliderProps } from './ColorscaleSlider.types';
+import { alpha, Slider, SxProps, Theme, useTheme } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { debounce } from 'lodash';
+import { GxColorscaleSliderProps } from './GxColorscaleSlider.types';
 
-export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) => {
+export const GxColorscaleSlider = ({
+  scaleMin,
+  scaleMax,
+  disabled,
+  colorscale,
+  lowerThreshold,
+  upperThreshold,
+  onThresholdChange
+}: GxColorscaleSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const [sliderValue, setSliderValues] = useState<number[]>([0, 1]);
-
-  const { settings, updateSettings } = useCytometryGraphStore.getState();
-  const { colorscale } = settings;
 
   const handleChange = (_: Event, newValue: number[]) => {
     setSliderValues(newValue);
@@ -20,32 +24,25 @@ export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) 
   const debouncedUpdate = useMemo(
     () =>
       debounce((newLowerThreshold: number, newUpperThreshold: number) => {
-        const currentColorscaleSettings = useCytometryGraphStore.getState().settings.colorscale;
-        updateSettings({
-          colorscale: {
-            ...currentColorscaleSettings,
-            upperThreshold: newUpperThreshold,
-            lowerThreshold: newLowerThreshold
-          }
-        });
+        onThresholdChange(newLowerThreshold, newUpperThreshold);
       }, 500),
-    [updateSettings]
+    [onThresholdChange]
   );
 
-  useEffect(() => {
-    const { upperThreshold, lowerThreshold } = useCytometryGraphStore.getState().settings.colorscale;
-    setSliderValues([lowerThreshold || 0, upperThreshold || 1]);
-  }, []);
-
   const marks = useMemo(() => {
-    if (typeof max !== 'undefined' && typeof min !== 'undefined') {
-      const totalRange = max - min;
+    if (typeof scaleMax !== 'undefined' && typeof scaleMin !== 'undefined') {
+      const totalRange = scaleMax - scaleMin;
       return [0, 0.25, 0.5, 0.75, 1].map((percentage) => ({
         value: percentage,
-        label: (min + percentage * totalRange).toFixed(0)
+        label: (scaleMin + percentage * totalRange).toFixed(0)
       }));
     }
-  }, [max, min]);
+  }, [scaleMax, scaleMin]);
+
+  useEffect(() => {
+    setSliderValues([lowerThreshold || 0, upperThreshold || 1]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Slider
@@ -90,7 +87,7 @@ export const ColorscaleSlider = ({ min, max, disabled }: ColorscaleSliderProps) 
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   slider: {
     marginTop: '3px',
     '&.MuiSlider-root': {

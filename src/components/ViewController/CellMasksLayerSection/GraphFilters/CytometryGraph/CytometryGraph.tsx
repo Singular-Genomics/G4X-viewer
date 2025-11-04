@@ -13,11 +13,11 @@ import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
 import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
-import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
 import { SingleMask } from '../../../../../shared/types';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
+import { GxColorscaleSlider } from '../../../../../shared/components/GxColorscaleSlider';
 
 export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinIndices: ProteinIndices) {
   const handleDownload = () => {
@@ -64,7 +64,7 @@ export const CytometryGraph = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData, segmentationMetadata } = useCellSegmentationLayerStore();
-  const { proteinIndices, settings } = useCytometryGraphStore();
+  const { proteinIndices, settings, updateSettings } = useCytometryGraphStore();
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const [heatmapData, setHeatmapData] = useState<GraphData>({ axisType: 'linear', graphMode: 'scattergl' });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -205,6 +205,17 @@ export const CytometryGraph = () => {
         }
       });
     }
+  };
+
+  const handleThresholdChange = (newLowerThreshold: number, newUpperThreshold: number) => {
+    const currentColorscaleSettings = useCytometryGraphStore.getState().settings.colorscale;
+    updateSettings({
+      colorscale: {
+        ...currentColorscaleSettings,
+        upperThreshold: newUpperThreshold,
+        lowerThreshold: newLowerThreshold
+      }
+    });
   };
 
   const xProteinName =
@@ -357,9 +368,13 @@ export const CytometryGraph = () => {
         />
       </Box>
       <Box sx={{ backgroundColor: theme.palette.gx.primary.white, paddingInline: '32px' }}>
-        <ColorscaleSlider
-          min={heatmapData.metadata?.zMin}
-          max={heatmapData.metadata?.zMax}
+        <GxColorscaleSlider
+          scaleMin={heatmapData.metadata?.zMin}
+          scaleMax={heatmapData.metadata?.zMax}
+          colorscale={settings.colorscale}
+          lowerThreshold={settings.colorscale.lowerThreshold}
+          upperThreshold={settings.colorscale.upperThreshold}
+          onThresholdChange={handleThresholdChange}
         />
       </Box>
       <GraphRangeInputs
