@@ -114,9 +114,12 @@ const detectPointsInPolygon = async (
     allPointArrays.push(...batchResults);
   }
 
-  allPointArrays.forEach((pointArray) => {
-    pointsInPolygon.push(...pointArray);
-  });
+  // Avoid stack overflow by using concat or iterative push instead of spread operator
+  for (const pointArray of allPointArrays) {
+    for (const point of pointArray) {
+      pointsInPolygon.push(point);
+    }
+  }
 
   const countByGeneName: Record<string, number> = {};
   for (const point of pointsInPolygon) {
