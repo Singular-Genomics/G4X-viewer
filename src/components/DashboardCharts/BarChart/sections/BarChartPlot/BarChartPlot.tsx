@@ -50,6 +50,7 @@ export const BarChartPlot = ({
     paper_bgcolor: 'white',
     autosize: true,
     showlegend: true,
+    uirevision: 'true',
     barmode: selectedHue === 'none' ? undefined : settings.barMode,
     annotations: [],
     ...(settings.customTitle

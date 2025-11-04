@@ -15,14 +15,14 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
     const colorscaleConfig = AVAILABLE_COLORSCALES.find((item) => item.label === newColorScale);
     if (colorscaleConfig) {
       const newColorscaleOption = { ...colorscaleConfig, reversed: !!settings.colorscale?.reversed };
-      onChangeSettings({ colorscale: newColorscaleOption });
+      onChangeSettings({ ...settings, colorscale: newColorscaleOption });
     }
   };
 
   const onReverseColorscale = () => {
     if (settings.colorscale) {
       const newColorscaleOption = { ...settings.colorscale, reversed: !settings.colorscale.reversed };
-      onChangeSettings({ colorscale: newColorscaleOption });
+      onChangeSettings({ ...settings, colorscale: newColorscaleOption });
     }
   };
 
