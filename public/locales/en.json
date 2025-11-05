@@ -61,7 +61,7 @@
     "imageURL": "Image URL",
     "import": "Import",
     "includeGeneExpressions": "Include gene expressions",
-    "invalidFiles": "Invalid File",
+    "invalidFile": "Invalid File",
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
     "layers": "Layers",

@@ -38,3 +38,7 @@ export const EXPORT_FORMATS = {
 } as const;
 
 export type ExportFormat = (typeof EXPORT_FORMATS)[keyof typeof EXPORT_FORMATS];
+
+export type ExportDataType = 'transcripts' | 'segmentation';
+
+export type InternalDataType = 'cells' | 'transcripts';

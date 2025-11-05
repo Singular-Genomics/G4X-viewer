@@ -64,6 +64,7 @@ export const HeatmapChartPlot = ({
     paper_bgcolor: 'white',
     autosize: true,
     showlegend: false,
+    uirevision: 'true',
     annotations: [],
     margin: {
       l: 100
