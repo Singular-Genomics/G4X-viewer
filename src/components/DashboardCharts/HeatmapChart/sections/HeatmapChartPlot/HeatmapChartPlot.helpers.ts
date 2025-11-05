@@ -167,7 +167,9 @@ export function useHeatmapChartPlotDataParser() {
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: thresholdColorMap(settings.colorscale.value, upperThreshold, lowerThreshold),
+            colorscale: Array.isArray(colorscale)
+              ? thresholdColorMap(colorscale, upperThreshold, lowerThreshold)
+              : colorscale,
             hoverongaps: false,
             hovertemplate:
               `<b>ROI:</b> %{x}<br>` +
@@ -242,7 +244,9 @@ export function useHeatmapChartPlotDataParser() {
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: thresholdColorMap(settings.colorscale.value, upperThreshold, lowerThreshold),
+            colorscale: Array.isArray(colorscale)
+              ? thresholdColorMap(colorscale, upperThreshold, lowerThreshold)
+              : colorscale,
             hoverongaps: false,
             hovertemplate:
               `<b>Cluster:</b> %{x}<br>` +
