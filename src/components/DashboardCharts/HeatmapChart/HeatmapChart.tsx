@@ -11,7 +11,8 @@ export const HeatmapChart = ({ id, title, removable = true }: HeatmapChartProps)
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [selectedValueType, setSelectedValueType] = useState<HeatmapChartValueType>('protein');
   const [settings, setSettings] = useState<HeatmapChartSettingOptions>({
-    colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false }
+    colorscale: { ...AVAILABLE_COLORSCALES[0], reversed: false },
+    normalization: 'none'
   });
 
   return (

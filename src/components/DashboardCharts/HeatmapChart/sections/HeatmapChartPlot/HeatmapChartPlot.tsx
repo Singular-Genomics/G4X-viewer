@@ -1,10 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import { HeatmapChartPlotProps } from './HeatmapChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHeatmapChartPlotDataParser } from './HeatmapChartPlot.helpers';
 import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
 import { debounce } from 'lodash';
+import { GxColorscaleSlider } from '../../../../../shared/components/GxColorscaleSlider';
 
 export const HeatmapChartPlot = ({
   selectedROIs,
@@ -13,12 +14,21 @@ export const HeatmapChartPlot = ({
   settings
 }: HeatmapChartPlotProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [threshold, setThreshold] = useState<{ lower?: number; upper?: number }>({});
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { parseCellsByRoi } = useHeatmapChartPlotDataParser();
 
   const heatmapData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValues, settings),
-    [parseCellsByRoi, selectedValues, selectedROIs, selectedValueType, settings]
+    () =>
+      parseCellsByRoi({
+        rois: selectedROIs,
+        valueType: selectedValueType,
+        selectedValues,
+        settings,
+        upperThreshold: threshold.upper,
+        lowerThreshold: threshold.lower
+      }),
+    [parseCellsByRoi, selectedValues, selectedROIs, selectedValueType, settings, threshold]
   );
 
   useEffect(() => {
@@ -42,6 +52,19 @@ export const HeatmapChartPlot = ({
     };
   }, []);
 
+  let minZValue: number | undefined = Infinity;
+  let maxZValue: number | undefined = -Infinity;
+
+  if (heatmapData.length === 1 && minZValue !== undefined && maxZValue !== undefined) {
+    heatmapData[0].z.flat().forEach((z) => {
+      if (z < minZValue!) minZValue = z;
+      if (z > maxZValue!) maxZValue = z;
+    });
+  } else {
+    minZValue = undefined;
+    maxZValue = undefined;
+  }
+
   const layout: Partial<Layout> = {
     width: dimensions.width,
     height: dimensions.height,
@@ -62,47 +85,67 @@ export const HeatmapChartPlot = ({
   };
 
   return (
-    <Box
-      ref={containerRef}
-      sx={sx.plotContainer}
-    >
-      <Plot
-        data={heatmapData}
-        layout={layout}
-        style={{ width: '100%', height: '100%' }}
-        useResizeHandler={true}
-        config={{
-          scrollZoom: false,
-          displayModeBar: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: [
-            'pan2d',
-            'lasso2d',
-            'select2d',
-            'zoom2d',
-            'zoomIn2d',
-            'zoomOut2d',
-            'autoScale2d',
-            'resetScale2d'
-          ]
-        }}
-      />
+    <Box sx={sx.container}>
+      <Box
+        ref={containerRef}
+        sx={sx.plotContainer}
+      >
+        <Plot
+          data={heatmapData}
+          layout={layout}
+          style={{ width: '100%', height: '100%' }}
+          useResizeHandler={true}
+          config={{
+            scrollZoom: false,
+            displayModeBar: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: [
+              'pan2d',
+              'lasso2d',
+              'select2d',
+              'zoom2d',
+              'zoomIn2d',
+              'zoomOut2d',
+              'autoScale2d',
+              'resetScale2d'
+            ]
+          }}
+        />
+      </Box>
+      <Box sx={sx.sliderWrapper}>
+        <GxColorscaleSlider
+          scaleMax={maxZValue}
+          scaleMin={minZValue}
+          colorscale={settings.colorscale}
+          lowerThreshold={threshold.lower}
+          upperThreshold={threshold.upper}
+          onThresholdChange={(lower, upper) => {
+            setThreshold({ lower, upper });
+          }}
+        />
+      </Box>
     </Box>
   );
 };
 
-const sx = {
+const sx: Record<string, SxProps> = {
   container: {
+    width: '100%',
+    height: '100%',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%'
+    flexDirection: 'column',
+    gap: '1px',
+    padding: 2
   },
   plotContainer: {
     width: '100%',
     height: '100%',
-    display: 'flex',
-    overflow: 'hidden',
-    padding: 2
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  sliderWrapper: {
+    width: '100%',
+    backgroundColor: 'white',
+    paddingInline: '32px'
   }
 };

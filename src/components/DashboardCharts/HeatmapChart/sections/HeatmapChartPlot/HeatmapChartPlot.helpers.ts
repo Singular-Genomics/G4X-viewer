@@ -1,10 +1,71 @@
 import { useCallback } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { HeatmapChartDataEntry } from './HeatmapChartPlot.types';
+import { HeatmapChartDataEntry, ParseCellsByRoiParams } from './HeatmapChartPlot.types';
 import { useTranslation } from 'react-i18next';
-import { HeatmapChartValueType } from '../HeatmapChartControls';
 import { SingleMask } from '../../../../../shared/types';
-import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
+import { thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
+
+const normalizeMinMax = (values: number[]): number[] => {
+  if (values.length === 0) return values;
+
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const range = maxValue - minValue;
+
+  if (range === 0) return values;
+
+  return values.map((v) => (v - minValue) / range);
+};
+
+const normalizeZScore = (values: number[]): number[] => {
+  if (values.length === 0) return values;
+
+  const mean = values.reduce((sum, curr) => sum + curr, 0) / values.length;
+  const standardDeviation = Math.sqrt(values.reduce((sum, curr) => sum + Math.pow(curr - mean, 2), 0) / values.length);
+
+  if (standardDeviation === 0) return values;
+
+  return values.map((v) => (v - mean) / standardDeviation);
+};
+
+const applyNormalization = (
+  zMatrix: number[][],
+  method: 'min-max' | 'z-score',
+  axis: 'x' | 'y' | 'both'
+): number[][] => {
+  if (!zMatrix.length) return zMatrix;
+
+  const normalizeFunc = method === 'min-max' ? normalizeMinMax : normalizeZScore;
+  const result = zMatrix.map((row) => [...row]);
+
+  if (axis === 'both') {
+    const flatValues = result.flat();
+    const normalized = normalizeFunc(flatValues);
+    let idx = 0;
+    for (let i = 0; i < result.length; i++) {
+      for (let j = 0; j < result[i].length; j++) {
+        result[i][j] = normalized[idx++];
+      }
+    }
+  } else if (axis === 'y') {
+    // Y-axis: normalize within each ROI/cluster (column)
+    const numCols = result[0]?.length || 0;
+    for (let j = 0; j < numCols; j++) {
+      const columnValues = result.map((row) => row[j]);
+      const normalized = normalizeFunc(columnValues);
+      for (let i = 0; i < result.length; i++) {
+        result[i][j] = normalized[i];
+      }
+    }
+  } else if (axis === 'x') {
+    // X-axis: normalize within each gene/protein (row)
+    for (let i = 0; i < result.length; i++) {
+      result[i] = normalizeFunc(result[i]);
+    }
+  }
+
+  return result;
+};
 
 export function useHeatmapChartPlotDataParser() {
   const { t } = useTranslation();
@@ -19,12 +80,14 @@ export function useHeatmapChartPlotDataParser() {
     cell.proteinValues[selectedValueIndex];
 
   const parseCellsByRoi = useCallback(
-    (
-      rois: number[],
-      valueType: HeatmapChartValueType,
-      selectedValues: string[],
-      settings: HeatmapChartSettingOptions
-    ): HeatmapChartDataEntry[] => {
+    ({
+      rois,
+      valueType,
+      selectedValues,
+      settings,
+      upperThreshold,
+      lowerThreshold
+    }: ParseCellsByRoiParams): HeatmapChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata || !selectedValues.length) {
         return [];
       }
@@ -86,7 +149,7 @@ export function useHeatmapChartPlotDataParser() {
         const sortedRoiIds = Array.from(roiIds).sort((a, b) => Number(a) - Number(b));
         const sortedValueNames = Array.from(valueNamesSet);
 
-        const zMatrix: number[][] = [];
+        let zMatrix: number[][] = [];
         const xLabels = sortedRoiIds.map((id) => t('general.roiEntry', { index: id }));
         const yLabels = sortedValueNames;
 
@@ -106,13 +169,22 @@ export function useHeatmapChartPlotDataParser() {
           colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
         }
 
+        const normalizationAxis = settings.normalizationAxis || 'both';
+        if (settings.normalization === 'min-max') {
+          zMatrix = applyNormalization(zMatrix, 'min-max', normalizationAxis);
+        } else if (settings.normalization === 'z-score') {
+          zMatrix = applyNormalization(zMatrix, 'z-score', normalizationAxis);
+        }
+
         return [
           {
             z: zMatrix,
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: colorscale,
+            colorscale: Array.isArray(colorscale)
+              ? thresholdColorMap(colorscale, upperThreshold, lowerThreshold)
+              : colorscale,
             hoverongaps: false,
             hovertemplate:
               `<b>ROI:</b> %{x}<br>` +
@@ -160,7 +232,7 @@ export function useHeatmapChartPlotDataParser() {
         const sortedClusterIds = Array.from(clusterIds).sort();
         const sortedValueNames = Array.from(valueNamesSet);
 
-        const zMatrix: number[][] = [];
+        let zMatrix: number[][] = [];
         const xLabels = sortedClusterIds.map((id) => t('general.clusterEntry', { index: id }));
         const yLabels = sortedValueNames;
 
@@ -174,11 +246,17 @@ export function useHeatmapChartPlotDataParser() {
           zMatrix.push(row);
         }
 
-        // Apply colorscale settings
         let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
 
         if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
           colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+        }
+
+        const normalizationAxis = settings.normalizationAxis || 'both';
+        if (settings.normalization === 'min-max') {
+          zMatrix = applyNormalization(zMatrix, 'min-max', normalizationAxis);
+        } else if (settings.normalization === 'z-score') {
+          zMatrix = applyNormalization(zMatrix, 'z-score', normalizationAxis);
         }
 
         return [
@@ -187,7 +265,9 @@ export function useHeatmapChartPlotDataParser() {
             x: xLabels,
             y: yLabels,
             type: 'heatmap',
-            colorscale: colorscale,
+            colorscale: Array.isArray(colorscale)
+              ? thresholdColorMap(colorscale, upperThreshold, lowerThreshold)
+              : colorscale,
             hoverongaps: false,
             hovertemplate:
               `<b>Cluster:</b> %{x}<br>` +

@@ -10,6 +10,11 @@ export type ColorScaleOption = {
 };
 
 export type HeatmapChartSettingOptions = {
-  colorscale?: ColorScaleOption;
+  colorscale: ColorScaleOption;
   customTitle?: string;
+  normalization?: HeatmapChartNormalizationOption;
+  normalizationAxis?: HeatmapChartNormalizationAxisOption;
 };
+
+export type HeatmapChartNormalizationOption = 'none' | 'min-max' | 'z-score';
+export type HeatmapChartNormalizationAxisOption = 'y' | 'x' | 'both';

@@ -334,6 +334,8 @@
     "barModeLabel": "Bar Mode"
   },
   "heatmapChart": {
-    "title": "Heatmap Chart"
+    "title": "Heatmap Chart",
+    "normalizationLabel": "Normalization Method",
+    "normalizationAxisLabel": "Normalization Axis"
   }
 }

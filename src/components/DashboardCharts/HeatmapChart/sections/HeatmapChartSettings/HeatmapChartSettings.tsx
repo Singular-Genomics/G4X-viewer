@@ -1,10 +1,22 @@
 import { Box, Grid, MenuItem, Theme, Typography, useTheme } from '@mui/material';
-import { HeatmapChartSettingsProps } from './HeatmapChartSettings.types';
+import {
+  HeatmapChartNormalizationAxisOption,
+  HeatmapChartNormalizationOption,
+  HeatmapChartSettingsProps
+} from './HeatmapChartSettings.types';
 import { AVAILABLE_COLORSCALES } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
 import { GxInput } from '../../../../../shared/components/GxInput';
+
+const AVAILABLE_NORMALIZATIONS: HeatmapChartNormalizationOption[] = ['none', 'min-max', 'z-score'];
+
+const AVAILABLE_NORMALIZATION_AXES: { value: HeatmapChartNormalizationAxisOption; label: string }[] = [
+  { value: 'y', label: 'Axis Y' },
+  { value: 'x', label: 'Axis X' },
+  { value: 'both', label: 'Both' }
+];
 
 export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChartSettingsProps) => {
   const { t } = useTranslation();
@@ -24,6 +36,28 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
       const newColorscaleOption = { ...settings.colorscale, reversed: !settings.colorscale.reversed };
       onChangeSettings({ ...settings, colorscale: newColorscaleOption });
     }
+  };
+
+  const onChangeNormalization = (newNormalization: string) => {
+    const normalizationValue = newNormalization as HeatmapChartNormalizationOption;
+    const newSettings = {
+      ...settings,
+      normalization: normalizationValue
+    };
+
+    // Set default axis when normalization is enabled
+    if (normalizationValue !== 'none' && !settings.normalizationAxis) {
+      newSettings.normalizationAxis = 'y';
+    }
+
+    onChangeSettings(newSettings);
+  };
+
+  const onChangeNormalizationAxis = (newAxis: string) => {
+    onChangeSettings({
+      ...settings,
+      normalizationAxis: newAxis as HeatmapChartNormalizationAxisOption
+    });
   };
 
   return (
@@ -95,6 +129,62 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
             onClick={onReverseColorscale}
           />
         </Grid>
+        {/* Normalization option */}
+        <Grid
+          alignContent={'center'}
+          size={1}
+          sx={sx.settingLabel}
+        >
+          <Typography>{`${t('heatmapChart.normalizationLabel')}:`}</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxSelect
+            fullWidth
+            size="small"
+            value={settings.normalization || 'none'}
+            onChange={(e) => onChangeNormalization(e.target.value as string)}
+            MenuProps={{ sx: sx.menu }}
+          >
+            {AVAILABLE_NORMALIZATIONS.map((option) => (
+              <MenuItem
+                key={option}
+                value={option}
+              >
+                {option}
+              </MenuItem>
+            ))}
+          </GxSelect>
+        </Grid>
+        {/* Normalization Axis - only shown when normalization is not 'none' */}
+        {settings.normalization && settings.normalization !== 'none' && (
+          <>
+            <Grid
+              alignContent={'center'}
+              size={1}
+              sx={sx.settingLabel}
+            >
+              <Typography>{`${t('heatmapChart.normalizationAxisLabel')}:`}</Typography>
+            </Grid>
+            <Grid size={1}>
+              <GxSelect
+                fullWidth
+                size="small"
+                value={settings.normalizationAxis || 'y'}
+                onChange={(e) => onChangeNormalizationAxis(e.target.value as string)}
+                MenuProps={{ sx: sx.menu }}
+              >
+                {AVAILABLE_NORMALIZATION_AXES.map((option) => (
+                  <MenuItem
+                    key={option.value}
+                    value={option.value}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </GxSelect>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Box>
   );
