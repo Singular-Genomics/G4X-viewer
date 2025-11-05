@@ -611,22 +611,22 @@ export const usePolygonDrawingLayer = () => {
 
 export const usePolygonTextLayer = () => {
   const [
-    isPolygonDrawingEnabled,
     isPolygonLayerVisible,
     polygonFeatures,
     isDetecting,
     isViewMode,
     isDeleteMode,
-    polygonOpacity
+    polygonOpacity,
+    showROINumbers
   ] = usePolygonDrawingStore(
     useShallow((store) => [
-      store.isPolygonDrawingEnabled,
       store.isPolygonLayerVisible,
       store.polygonFeatures,
       store.isDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.polygonOpacity
+      store.polygonOpacity,
+      store.showROINumbers
     ])
   );
 
@@ -634,8 +634,10 @@ export const usePolygonTextLayer = () => {
     return undefined;
   }
 
-  // Show text only in view mode or delete mode (when polygon drawing is disabled or explicitly in view/delete mode)
-  if (isPolygonDrawingEnabled && !isViewMode && !isDeleteMode) {
+  // Show text only when:
+  // 1. In view mode AND showROINumbers is true (user's preference)
+  // 2. OR in delete mode (always show numbers to identify which ROI to delete)
+  if (!isDeleteMode && (!isViewMode || !showROINumbers)) {
     return undefined;
   }
 

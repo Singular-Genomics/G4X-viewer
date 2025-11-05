@@ -58,6 +58,7 @@ export const BoxChartPlot = ({
     paper_bgcolor: 'white',
     autosize: true,
     showlegend: true,
+    uirevision: 'true',
     boxmode: selectedHue === 'none' ? undefined : 'group',
     annotations: [],
     ...(settings.customTitle

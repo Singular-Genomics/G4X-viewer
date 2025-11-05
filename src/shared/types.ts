@@ -5,7 +5,6 @@ export type UmapEntry = {
 
 export type SingleMask = {
   vertices: number[];
-  color: number[];
   area: number;
   totalCounts: number;
   totalGenes: number;
@@ -36,7 +35,6 @@ export type CellMasks = {
 
 export type PointData = {
   position: number[];
-  color: number[];
   geneName: string;
   cellId: string;
 };

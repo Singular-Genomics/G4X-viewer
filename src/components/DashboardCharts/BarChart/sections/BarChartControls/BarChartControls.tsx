@@ -43,9 +43,11 @@ export const BarChartControls = ({
   }, [availableROIOptions]);
 
   const availableGenes =
-    segmentationMetadata?.geneNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) || [];
+    segmentationMetadata?.geneNames.slice().sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) ||
+    [];
   const availableProteins =
-    segmentationMetadata?.proteinNames.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) || [];
+    segmentationMetadata?.proteinNames.slice().sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })) ||
+    [];
 
   const handleRoiChange = (event: SelectChangeEvent<string[] | string>) => {
     const value = event.target.value;
