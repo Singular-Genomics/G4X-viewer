@@ -34,7 +34,7 @@ export const GxColorscaleSlider = ({
       const totalRange = scaleMax - scaleMin;
       return [0, 0.25, 0.5, 0.75, 1].map((percentage) => ({
         value: percentage,
-        label: (scaleMin + percentage * totalRange).toFixed(0)
+        label: (scaleMin + percentage * totalRange).toFixed(1)
       }));
     }
   }, [scaleMax, scaleMin]);
