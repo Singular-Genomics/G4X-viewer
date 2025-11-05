@@ -5,6 +5,68 @@ import { useTranslation } from 'react-i18next';
 import { SingleMask } from '../../../../../shared/types';
 import { thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
 
+const normalizeMinMax = (values: number[]): number[] => {
+  if (values.length === 0) return values;
+
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const range = maxValue - minValue;
+
+  if (range === 0) return values;
+
+  return values.map((v) => (v - minValue) / range);
+};
+
+const normalizeZScore = (values: number[]): number[] => {
+  if (values.length === 0) return values;
+
+  const mean = values.reduce((sum, curr) => sum + curr, 0) / values.length;
+  const standardDeviation = Math.sqrt(values.reduce((sum, curr) => sum + Math.pow(curr - mean, 2), 0) / values.length);
+
+  if (standardDeviation === 0) return values;
+
+  return values.map((v) => (v - mean) / standardDeviation);
+};
+
+const applyNormalization = (
+  zMatrix: number[][],
+  method: 'min-max' | 'z-score',
+  axis: 'x' | 'y' | 'both'
+): number[][] => {
+  if (!zMatrix.length) return zMatrix;
+
+  const normalizeFunc = method === 'min-max' ? normalizeMinMax : normalizeZScore;
+  const result = zMatrix.map((row) => [...row]);
+
+  if (axis === 'both') {
+    const flatValues = result.flat();
+    const normalized = normalizeFunc(flatValues);
+    let idx = 0;
+    for (let i = 0; i < result.length; i++) {
+      for (let j = 0; j < result[i].length; j++) {
+        result[i][j] = normalized[idx++];
+      }
+    }
+  } else if (axis === 'y') {
+    // Y-axis: normalize within each ROI/cluster (column)
+    const numCols = result[0]?.length || 0;
+    for (let j = 0; j < numCols; j++) {
+      const columnValues = result.map((row) => row[j]);
+      const normalized = normalizeFunc(columnValues);
+      for (let i = 0; i < result.length; i++) {
+        result[i][j] = normalized[i];
+      }
+    }
+  } else if (axis === 'x') {
+    // X-axis: normalize within each gene/protein (row)
+    for (let i = 0; i < result.length; i++) {
+      result[i] = normalizeFunc(result[i]);
+    }
+  }
+
+  return result;
+};
+
 export function useHeatmapChartPlotDataParser() {
   const { t } = useTranslation();
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore();
@@ -16,52 +78,6 @@ export function useHeatmapChartPlotDataParser() {
 
   const getProteinValue = (cell: SingleMask, selectedValueIndex: number): number =>
     cell.proteinValues[selectedValueIndex];
-
-  const normalizeMinMax = (zMatrix: number[][]) => {
-    if (!zMatrix.length) {
-      return zMatrix;
-    }
-
-    let minValue = Infinity;
-    let maxValue = -Infinity;
-
-    // Find min and max values in the matrix
-    for (const row of zMatrix) {
-      for (const value of row) {
-        if (value < minValue) minValue = value;
-        else if (value > maxValue) maxValue = value;
-      }
-    }
-
-    for (let i = 0; i < zMatrix.length; i++) {
-      for (let j = 0; j < zMatrix[i].length; j++) {
-        zMatrix[i][j] = (zMatrix[i][j] - minValue) / (maxValue - minValue);
-      }
-    }
-
-    return zMatrix;
-  };
-
-  const normlaizeZScore = (zMatrix: number[][]) => {
-    const flattenedValues = zMatrix.flat();
-
-    if (flattenedValues.length === 0) {
-      return zMatrix;
-    }
-
-    const mean = flattenedValues.reduce((sum, curr) => sum + curr, 0) / flattenedValues.length;
-    const standardDeviation = Math.sqrt(
-      flattenedValues.reduce((sum, curr) => sum + Math.pow(curr - mean, 2)) / flattenedValues.length
-    );
-
-    for (let i = 0; i < zMatrix.length; i++) {
-      for (let j = 0; j < zMatrix[i].length; j++) {
-        zMatrix[i][j] = (zMatrix[i][j] - mean) / standardDeviation;
-      }
-    }
-
-    return zMatrix;
-  };
 
   const parseCellsByRoi = useCallback(
     ({
@@ -153,10 +169,11 @@ export function useHeatmapChartPlotDataParser() {
           colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
         }
 
+        const normalizationAxis = settings.normalizationAxis || 'both';
         if (settings.normalization === 'min-max') {
-          zMatrix = normalizeMinMax(zMatrix);
+          zMatrix = applyNormalization(zMatrix, 'min-max', normalizationAxis);
         } else if (settings.normalization === 'z-score') {
-          zMatrix = normlaizeZScore(zMatrix);
+          zMatrix = applyNormalization(zMatrix, 'z-score', normalizationAxis);
         }
 
         return [
@@ -215,7 +232,7 @@ export function useHeatmapChartPlotDataParser() {
         const sortedClusterIds = Array.from(clusterIds).sort();
         const sortedValueNames = Array.from(valueNamesSet);
 
-        const zMatrix: number[][] = [];
+        let zMatrix: number[][] = [];
         const xLabels = sortedClusterIds.map((id) => t('general.clusterEntry', { index: id }));
         const yLabels = sortedValueNames;
 
@@ -229,11 +246,17 @@ export function useHeatmapChartPlotDataParser() {
           zMatrix.push(row);
         }
 
-        // Apply colorscale settings
         let colorscale: string | [number, string][] = settings.colorscale?.value || 'Viridis';
 
         if (settings.colorscale?.reversed && Array.isArray(colorscale)) {
           colorscale = colorscale.map(([position, color]) => [1 - position, color] as [number, string]).reverse();
+        }
+
+        const normalizationAxis = settings.normalizationAxis || 'both';
+        if (settings.normalization === 'min-max') {
+          zMatrix = applyNormalization(zMatrix, 'min-max', normalizationAxis);
+        } else if (settings.normalization === 'z-score') {
+          zMatrix = applyNormalization(zMatrix, 'z-score', normalizationAxis);
         }
 
         return [

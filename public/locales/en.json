@@ -335,6 +335,7 @@
   },
   "heatmapChart": {
     "title": "Heatmap Chart",
-    "normalizationLabel": "Normalization Method"
+    "normalizationLabel": "Normalization Method",
+    "normalizationAxisLabel": "Normalization Axis"
   }
 }
