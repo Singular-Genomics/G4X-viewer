@@ -27,54 +27,64 @@ export const useFileHandler = () => {
       setProgress(e.data.progress);
     }
     if (e.data.files && e.data.completed) {
-      const configFile = e.data.files.find((f: File) => f.name.endsWith('config.json'));
-      let parsedConfigFile;
-      if (configFile) {
-        parsedConfigFile = (await parseJsonFromFile(configFile)) as ConfigFileData;
-        const { color_map, ...layerConfig } = parsedConfigFile;
-        if (!color_map) {
-          enqueueSnackbar({
-            message: t('sourceFiles.transcriptsMissingColormap'),
-            variant: 'warning'
+      try {
+        const configFile = e.data.files.find((f: File) => f.name.endsWith('config.json'));
+        let parsedConfigFile;
+        if (configFile) {
+          parsedConfigFile = (await parseJsonFromFile(configFile)) as ConfigFileData;
+          const { color_map, ...layerConfig } = parsedConfigFile;
+          if (!color_map) {
+            enqueueSnackbar({
+              message: t('sourceFiles.transcriptsMissingColormap'),
+              variant: 'warning'
+            });
+          }
+
+          setLayerConfig(layerConfig);
+          setColormapConfig(color_map);
+          useTranscriptLayerStore.setState({
+            maxVisibleLayers: layerConfig.layers
           });
         }
 
-        setLayerConfig(layerConfig);
-        setColormapConfig(color_map);
-        useTranscriptLayerStore.setState({
-          maxVisibleLayers: layerConfig.layers
-        });
-      }
+        const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
 
-      const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
+        if (polygonFeatures.length > 0 && parsedConfigFile) {
+          setDetecting(true);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'info',
+            message: t('interactiveLayer.detectingTranscripts')
+          });
 
-      if (polygonFeatures.length > 0 && parsedConfigFile) {
-        setDetecting(true);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'info',
-          message: t('interactiveLayer.detectingTranscripts')
-        });
+          setSelectedPoints([]);
+          for (const polygon of polygonFeatures) {
+            const result = await detectPointsInPolygon(polygon, e.data.files, parsedConfigFile);
 
-        setSelectedPoints([]);
-        for (const polygon of polygonFeatures) {
-          const result = await detectPointsInPolygon(polygon, e.data.files, parsedConfigFile);
+            polygon.properties = {
+              ...polygon.properties,
+              pointCount: result.pointCount,
+              geneDistribution: result.geneDistribution
+            };
 
-          polygon.properties = {
-            ...polygon.properties,
-            pointCount: result.pointCount,
-            geneDistribution: result.geneDistribution
-          };
+            addSelectedPoints({ data: result.pointsInPolygon, roiId: polygon.properties.polygonId });
+          }
 
-          addSelectedPoints({ data: result.pointsInPolygon, roiId: polygon.properties.polygonId });
+          setDetecting(false);
         }
 
-        setDetecting(false);
+        setFiles(e.data.files);
+        enqueueSnackbar({ message: t('sourceFiles.transcriptsUnpackSuccess'), variant: 'success' });
+        setLoading(false);
+      } catch (error) {
+        console.error('Error processing transcript files:', error);
+        enqueueSnackbar({
+          message: t('sourceFiles.invalidFileFormatError'),
+          variant: 'gxSnackbar',
+          titleMode: 'error'
+        });
+        setLoading(false);
       }
-
-      setFiles(e.data.files);
-      enqueueSnackbar({ message: t('sourceFiles.transcriptsUnpackSuccess'), variant: 'success' });
-      setLoading(false);
     }
   };
 

@@ -88,44 +88,54 @@ export const useFileHandler = () => {
     async (file: File) => {
       const reader = new FileReader();
       reader.onload = () => {
-        const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-        const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
-        const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+        try {
+          const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
+          const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
+          const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
-        const colormapConfig = decodedData.colormap;
-        const cellMasks = decodedData.cellMasks;
+          const colormapConfig = decodedData.colormap;
+          const cellMasks = decodedData.cellMasks;
 
-        if (!colormapConfig || !colormapConfig.length) {
+          if (!colormapConfig || !colormapConfig.length) {
+            enqueueSnackbar({
+              message: t('sourceFiles.segmentationMissingColormap'),
+              variant: 'gxSnackbar',
+              titleMode: 'warning'
+            });
+          }
+
+          if (!cellMasks || !cellMasks.length) {
+            enqueueSnackbar({
+              message: t('sourceFiles.segmentationMissingData'),
+              variant: 'error'
+            });
+          }
+
+          let areUmapAvailable = false;
+
+          if (cellMasks.length) {
+            areUmapAvailable = !!cellMasks[0].umapValues;
+          }
+
+          useCellSegmentationLayerStore.setState({
+            cellMasksData: cellMasks || [],
+            cellColormapConfig: colormapConfig.map((entry: any) => ({
+              clusterId: entry.clusterId,
+              color: entry.color
+            })),
+            segmentationMetadata: decodedData.metadata,
+            umapDataAvailable: areUmapAvailable
+          });
+          useCytometryGraphStore.getState().resetFilters();
+        } catch (error) {
+          console.error('Error decoding segmentation file:', error);
           enqueueSnackbar({
-            message: t('sourceFiles.segmentationMissingColormap'),
+            message: t('sourceFiles.invalidFileFormatError'),
             variant: 'gxSnackbar',
-            titleMode: 'warning'
+            titleMode: 'error'
           });
+          setLoading(false);
         }
-
-        if (!cellMasks || !cellMasks.length) {
-          enqueueSnackbar({
-            message: t('sourceFiles.segmentationMissingData'),
-            variant: 'error'
-          });
-        }
-
-        let areUmapAvailable = false;
-
-        if (cellMasks.length) {
-          areUmapAvailable = !!cellMasks[0].umapValues;
-        }
-
-        useCellSegmentationLayerStore.setState({
-          cellMasksData: cellMasks || [],
-          cellColormapConfig: colormapConfig.map((entry: any) => ({
-            clusterId: entry.clusterId,
-            color: entry.color
-          })),
-          segmentationMetadata: decodedData.metadata,
-          umapDataAvailable: areUmapAvailable
-        });
-        useCytometryGraphStore.getState().resetFilters();
       };
       reader.onerror = () => console.error('Something went wrong during file load!');
       reader.readAsArrayBuffer(file);

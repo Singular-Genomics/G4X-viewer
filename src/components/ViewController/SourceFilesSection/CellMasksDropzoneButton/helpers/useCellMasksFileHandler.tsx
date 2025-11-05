@@ -38,69 +38,79 @@ export const useCellMasksFileHandler = () => {
     setLoading(true);
     const reader = new FileReader();
     reader.onload = async () => {
-      const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
-      const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
-      const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
+      try {
+        const cellDataBuffer = new Uint8Array(reader.result as ArrayBuffer);
+        const protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
+        const decodedData: CellMasks = protoRoot.lookupType('CellMasks').decode(cellDataBuffer) as any;
 
-      const colormapConfig = decodedData.colormap;
-      const cellMasks = decodedData.cellMasks;
+        const colormapConfig = decodedData.colormap;
+        const cellMasks = decodedData.cellMasks;
 
-      if (!colormapConfig || !colormapConfig.length) {
-        enqueueSnackbar({
-          message: t('sourceFiles.segmentationMissingColormap'),
-          variant: 'warning'
-        });
-      }
-
-      if (!cellMasks || !cellMasks.length) {
-        enqueueSnackbar({
-          message: t('sourceFiles.segmentationMissingData'),
-          variant: 'error'
-        });
-      }
-
-      let areUmapAvailable = false;
-
-      if (cellMasks.length) {
-        areUmapAvailable = !!cellMasks[0].umapValues;
-      }
-
-      const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
-
-      if (polygonFeatures.length > 0) {
-        setDetecting(true);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'info',
-          message: t('interactiveLayer.detectingCells')
-        });
-
-        setSelectedCells([]);
-        for (const polygon of polygonFeatures) {
-          const result = await detectCellPolygonsInPolygon(polygon, cellMasks);
-
-          polygon.properties = {
-            ...polygon.properties,
-            cellPolygonCount: result.cellPolygonCount,
-            cellClusterDistribution: result.cellClusterDistribution
-          };
-
-          addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: polygon.properties.polygonId });
+        if (!colormapConfig || !colormapConfig.length) {
+          enqueueSnackbar({
+            message: t('sourceFiles.segmentationMissingColormap'),
+            variant: 'warning'
+          });
         }
 
-        setDetecting(false);
-      }
+        if (!cellMasks || !cellMasks.length) {
+          enqueueSnackbar({
+            message: t('sourceFiles.segmentationMissingData'),
+            variant: 'error'
+          });
+        }
 
-      useCellSegmentationLayerStore.setState({
-        cellMasksData: cellMasks || [],
-        cellColormapConfig: colormapConfig.map((entry: any) => ({
-          clusterId: entry.clusterId,
-          color: entry.color
-        })),
-        umapDataAvailable: areUmapAvailable,
-        segmentationMetadata: decodedData.metadata
-      });
-      useCytometryGraphStore.getState().resetFilters();
+        let areUmapAvailable = false;
+
+        if (cellMasks.length) {
+          areUmapAvailable = !!cellMasks[0].umapValues;
+        }
+
+        const polygonFeatures = usePolygonDrawingStore.getState().polygonFeatures;
+
+        if (polygonFeatures.length > 0) {
+          setDetecting(true);
+          enqueueSnackbar({
+            variant: 'gxSnackbar',
+            titleMode: 'info',
+            message: t('interactiveLayer.detectingCells')
+          });
+
+          setSelectedCells([]);
+          for (const polygon of polygonFeatures) {
+            const result = await detectCellPolygonsInPolygon(polygon, cellMasks);
+
+            polygon.properties = {
+              ...polygon.properties,
+              cellPolygonCount: result.cellPolygonCount,
+              cellClusterDistribution: result.cellClusterDistribution
+            };
+
+            addSelectedCells({ data: result.cellPolygonsInDrawnPolygon, roiId: polygon.properties.polygonId });
+          }
+
+          setDetecting(false);
+        }
+
+        useCellSegmentationLayerStore.setState({
+          cellMasksData: cellMasks || [],
+          cellColormapConfig: colormapConfig.map((entry: any) => ({
+            clusterId: entry.clusterId,
+            color: entry.color
+          })),
+          umapDataAvailable: areUmapAvailable,
+          segmentationMetadata: decodedData.metadata
+        });
+        useCytometryGraphStore.getState().resetFilters();
+      } catch (error) {
+        console.error('Error decoding segmentation file:', error);
+        enqueueSnackbar({
+          message: t('sourceFiles.invalidFileFormatError'),
+          variant: 'gxSnackbar',
+          titleMode: 'error'
+        });
+        setLoading(false);
+      }
     };
     reader.onerror = () => console.error('Something went wrong during file load!');
     reader.readAsArrayBuffer(files[0]);
