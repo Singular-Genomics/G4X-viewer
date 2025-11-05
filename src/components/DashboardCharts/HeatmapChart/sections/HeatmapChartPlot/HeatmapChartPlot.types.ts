@@ -19,3 +19,12 @@ export type HeatmapChartConfig = {
   zMin: number;
   zMax: number;
 };
+
+export type ParseCellsByRoiParams = {
+  rois: number[];
+  valueType: HeatmapChartValueType;
+  selectedValues: string[];
+  settings: HeatmapChartSettingOptions;
+  upperThreshold?: number;
+  lowerThreshold?: number;
+};
