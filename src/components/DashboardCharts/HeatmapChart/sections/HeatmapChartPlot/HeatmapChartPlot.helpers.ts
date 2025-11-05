@@ -1,10 +1,8 @@
 import { useCallback } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { HeatmapChartDataEntry } from './HeatmapChartPlot.types';
+import { HeatmapChartDataEntry, ParseCellsByRoiParams } from './HeatmapChartPlot.types';
 import { useTranslation } from 'react-i18next';
-import { HeatmapChartValueType } from '../HeatmapChartControls';
 import { SingleMask } from '../../../../../shared/types';
-import { HeatmapChartSettingOptions } from '../HeatmapChartSettings';
 import { thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
 
 export function useHeatmapChartPlotDataParser() {
@@ -66,14 +64,14 @@ export function useHeatmapChartPlotDataParser() {
   };
 
   const parseCellsByRoi = useCallback(
-    (
-      rois: number[],
-      valueType: HeatmapChartValueType,
-      selectedValues: string[],
-      settings: HeatmapChartSettingOptions,
-      upperThreshold?: number,
-      lowerThreshold?: number
-    ): HeatmapChartDataEntry[] => {
+    ({
+      rois,
+      valueType,
+      selectedValues,
+      settings,
+      upperThreshold,
+      lowerThreshold
+    }: ParseCellsByRoiParams): HeatmapChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata || !selectedValues.length) {
         return [];
       }

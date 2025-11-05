@@ -19,7 +19,15 @@ export const HeatmapChartPlot = ({
   const { parseCellsByRoi } = useHeatmapChartPlotDataParser();
 
   const heatmapData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValues, settings, threshold.upper, threshold.lower),
+    () =>
+      parseCellsByRoi({
+        rois: selectedROIs,
+        valueType: selectedValueType,
+        selectedValues,
+        settings,
+        upperThreshold: threshold.upper,
+        lowerThreshold: threshold.lower
+      }),
     [parseCellsByRoi, selectedValues, selectedROIs, selectedValueType, settings, threshold]
   );
 
