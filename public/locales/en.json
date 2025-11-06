@@ -186,6 +186,7 @@
     "sectionTitle": "Source Files",
     "segmentationFileInputLabel": "Segmentation Filename",
     "segmentationFileUploadButton": "Upload Segmentation File",
+    "invalidFileFormatError": "Invalid or deprecated file format. Please verify you're using the correct schema version.",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
     "segmentationMissingData": "Given file is missing cell segmentation masks data",
     "singleFileButtonLabel": "Single-file",
