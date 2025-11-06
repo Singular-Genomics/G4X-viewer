@@ -34,7 +34,8 @@ export const useFileHandler = () => {
         if (!isValidSchema) {
           enqueueSnackbar({
             message: t('sourceFiles.invalidFileFormatError'),
-            variant: 'error'
+            variant: 'gxSnackbar',
+            titleMode: 'error'
           });
           setLoading(false);
           return;
@@ -92,7 +93,8 @@ export const useFileHandler = () => {
         console.error('Error processing transcript files:', error);
         enqueueSnackbar({
           message: t('sourceFiles.invalidFileFormatError'),
-          variant: 'error'
+          variant: 'gxSnackbar',
+          titleMode: 'error'
         });
         setLoading(false);
       }
