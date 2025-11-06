@@ -77,31 +77,39 @@ type TileData = {
 };
 
 export const validateTranscriptFileSchema = async (files: File[]): Promise<boolean> => {
-  const firstBinFile = files.find((f: File) => f.name.endsWith('.bin'));
+  const binFiles = files.filter((f: File) => f.name.endsWith('.bin')).slice(0, 2);
 
-  if (!firstBinFile) {
+  if (binFiles.length === 0) {
     return true;
   }
 
   try {
-    const arrayBuffer = await firstBinFile.arrayBuffer();
     const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     const TileDataType = protoRoot.lookupType('TileData');
-    const decoded = TileDataType.decode(new Uint8Array(arrayBuffer)) as unknown as TileData;
 
-    if (!decoded.pointsData || decoded.pointsData.length === 0) {
-      return true;
+    for (const binFile of binFiles) {
+      const arrayBuffer = await binFile.arrayBuffer();
+      const decoded = TileDataType.decode(new Uint8Array(arrayBuffer)) as unknown as TileData;
+
+      if (!decoded.pointsData || decoded.pointsData.length === 0) {
+        continue;
+      }
+
+      const firstPoint = decoded.pointsData[0];
+      const { geneName } = firstPoint;
+
+      if (!geneName) {
+        return false;
+      }
+
+      const isValidGeneName = /^[A-Za-z0-9_\-.]+$/.test(geneName);
+
+      if (!isValidGeneName) {
+        return false;
+      }
     }
 
-    const firstPoint = decoded.pointsData[0];
-    const { geneName } = firstPoint;
-
-    if (!geneName) {
-      return false;
-    }
-
-    const isValidGeneName = /^[A-Za-z0-9_\-.]+$/.test(geneName);
-    return isValidGeneName;
+    return true;
   } catch (error) {
     console.error('Error validating transcript file schema:', error);
     return false;
