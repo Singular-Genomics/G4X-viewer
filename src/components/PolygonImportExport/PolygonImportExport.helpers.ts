@@ -210,20 +210,13 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
     const roiName = `ROI_${polygonId}`;
 
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
-    const geneCountMap: Map<string, number> = new Map();
 
-    const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
+    const header = ['gene_name', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
 
     transcriptsInPolygon.forEach((transcript) => {
       const geneName = transcript.geneName || 'unknown';
-      rows.push([
-        geneName,
-        geneCountMap.get(geneName) || 0,
-        polygonId,
-        JSON.stringify(transcript.position || []),
-        transcript.cellId || ''
-      ]);
+      rows.push([geneName, polygonId, JSON.stringify(transcript.position || []), transcript.cellId || '']);
     });
 
     const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
@@ -340,20 +333,13 @@ const generateCsvContentForSinglePolygon = (
   } else {
     const { selectedPoints } = useTranscriptLayerStore.getState();
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
-    const geneCountMap: Map<string, number> = new Map();
 
-    const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
+    const header = ['gene_name', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
 
     transcriptsInPolygon.forEach((transcript) => {
       const geneName = transcript.geneName || 'unknown';
-      rows.push([
-        geneName,
-        geneCountMap.get(geneName) || 0,
-        polygonId,
-        JSON.stringify(transcript.position || []),
-        transcript.cellId || ''
-      ]);
+      rows.push([geneName, polygonId, JSON.stringify(transcript.position || []), transcript.cellId || '']);
     });
 
     return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
