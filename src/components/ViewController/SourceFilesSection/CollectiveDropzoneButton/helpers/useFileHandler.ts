@@ -10,6 +10,7 @@ import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerSt
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../../stores/BrightfieldImagesStore';
 import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
+import { validateTranscriptFileSchema } from '../../../../../schemas/transcriptaFile.schema';
 import { getMissingFilesContent } from './helpers';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useTranslation } from 'react-i18next';
@@ -163,6 +164,20 @@ export const useFileHandler = () => {
 
         if (e.data.files && e.data.completed) {
           const extractedFiles = e.data.files;
+
+          const isValidSchema = await validateTranscriptFileSchema(extractedFiles);
+
+          if (!isValidSchema) {
+            enqueueSnackbar({
+              message: t('sourceFiles.invalidFileFormatError'),
+              variant: 'gxSnackbar',
+              titleMode: 'error'
+            });
+            setLoading(false);
+            worker.terminate();
+            return;
+          }
+
           const configFile = extractedFiles.find((f: File) => f.name.endsWith('config.json'));
 
           if (configFile) {

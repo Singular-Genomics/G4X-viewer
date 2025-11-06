@@ -9,6 +9,7 @@ import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerSt
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
+import { validateTranscriptFileSchema } from '../../../../../schemas/transcriptaFile.schema';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
 
@@ -28,6 +29,18 @@ export const useFileHandler = () => {
     }
     if (e.data.files && e.data.completed) {
       try {
+        const isValidSchema = await validateTranscriptFileSchema(e.data.files);
+
+        if (!isValidSchema) {
+          enqueueSnackbar({
+            message: t('sourceFiles.invalidFileFormatError'),
+            variant: 'gxSnackbar',
+            titleMode: 'error'
+          });
+          setLoading(false);
+          return;
+        }
+
         const configFile = e.data.files.find((f: File) => f.name.endsWith('config.json'));
         let parsedConfigFile;
         if (configFile) {
