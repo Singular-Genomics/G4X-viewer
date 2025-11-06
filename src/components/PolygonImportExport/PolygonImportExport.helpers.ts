@@ -210,7 +210,13 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
     const roiName = `ROI_${polygonId}`;
 
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    // Count occurrences of each gene
     const geneCountMap: Map<string, number> = new Map();
+    transcriptsInPolygon.forEach((transcript) => {
+      const geneName = transcript.geneName || 'unknown';
+      geneCountMap.set(geneName, (geneCountMap.get(geneName) || 0) + 1);
+    });
 
     const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
@@ -340,7 +346,13 @@ const generateCsvContentForSinglePolygon = (
   } else {
     const { selectedPoints } = useTranscriptLayerStore.getState();
     const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    // Count occurrences of each gene
     const geneCountMap: Map<string, number> = new Map();
+    transcriptsInPolygon.forEach((transcript) => {
+      const geneName = transcript.geneName || 'unknown';
+      geneCountMap.set(geneName, (geneCountMap.get(geneName) || 0) + 1);
+    });
 
     const header = ['gene_name', 'count', 'ROI', 'position', 'cellId'];
     const rows: (string | number)[][] = [header];
