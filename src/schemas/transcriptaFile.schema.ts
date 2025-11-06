@@ -1,3 +1,5 @@
+import * as protobuf from 'protobufjs';
+
 export const TranscriptFileSchema = {
   nested: {
     PointData: {
@@ -60,5 +62,48 @@ export const TranscriptFileSchema = {
         }
       }
     }
+  }
+};
+
+type PointData = {
+  position: number[];
+  geneName?: string;
+  cellId?: string;
+};
+
+type TileData = {
+  pointsData?: PointData[];
+  numberOfPoints?: number;
+};
+
+export const validateTranscriptFileSchema = async (files: File[]): Promise<boolean> => {
+  const firstBinFile = files.find((f: File) => f.name.endsWith('.bin'));
+
+  if (!firstBinFile) {
+    return true;
+  }
+
+  try {
+    const arrayBuffer = await firstBinFile.arrayBuffer();
+    const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
+    const TileDataType = protoRoot.lookupType('TileData');
+    const decoded = TileDataType.decode(new Uint8Array(arrayBuffer)) as unknown as TileData;
+
+    if (!decoded.pointsData || decoded.pointsData.length === 0) {
+      return true;
+    }
+
+    const firstPoint = decoded.pointsData[0];
+    const { geneName } = firstPoint;
+
+    if (!geneName) {
+      return false;
+    }
+
+    const isValidGeneName = /^[A-Za-z0-9_\-.]+$/.test(geneName);
+    return isValidGeneName;
+  } catch (error) {
+    console.error('Error validating transcript file schema:', error);
+    return false;
   }
 };
