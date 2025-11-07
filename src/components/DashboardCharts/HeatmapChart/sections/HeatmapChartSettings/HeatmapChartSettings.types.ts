@@ -14,6 +14,7 @@ export type HeatmapChartSettingOptions = {
   customTitle?: string;
   normalization?: HeatmapChartNormalizationOption;
   normalizationAxis?: HeatmapChartNormalizationAxisOption;
+  sortRois: boolean;
 };
 
 export type HeatmapChartNormalizationOption = 'none' | 'min-max' | 'z-score';

@@ -129,6 +129,25 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
             onClick={onReverseColorscale}
           />
         </Grid>
+        {/* Sort ROIs  */}
+        <Grid
+          size={1}
+          alignContent={'center'}
+          sx={sx.settingLabel}
+        >
+          <Typography>{t('dashboard.plotSortRoisLabel')}:</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxCheckbox
+            value={settings.sortRois}
+            onChange={() =>
+              onChangeSettings({
+                ...settings,
+                sortRois: !settings.sortRois
+              })
+            }
+          />
+        </Grid>
         {/* Normalization option */}
         <Grid
           alignContent={'center'}

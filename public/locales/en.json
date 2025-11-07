@@ -300,6 +300,7 @@
     "plotValueType": "Modality",
     "plotSwapAxisLabel": "Swap Axis",
     "plotDataModeLabel": "Data Mode",
+    "plotSortRoisLabel": "Sort ROIs",
     "availableROILabel": "Available ROIs",
     "availableGenesLabel": "Available Genes",
     "availableProteinsLabel": "Available Proteins",

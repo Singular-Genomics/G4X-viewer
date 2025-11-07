@@ -7,6 +7,7 @@ export type BarChartSettingOptions = {
   swapAxis: boolean;
   barMode: BarChartBarMode;
   customTitle?: string;
+  sortRois: boolean;
 };
 
 export type BarChartBarMode = 'group' | 'stack' | 'relative' | 'overlay';
