@@ -22,8 +22,9 @@ import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 
-export const PictureInPictureViewerAdapter = () => {
+export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -232,7 +233,10 @@ export const PictureInPictureViewerAdapter = () => {
               } as any
             }
           />
-          <PolygonDrawingMenu takeScreenshot={takeScreenshot} />
+          <PolygonDrawingMenu
+            takeScreenshot={takeScreenshot}
+            isViewerActive={isViewerActive}
+          />
           <Tooltip />
         </>
       )}

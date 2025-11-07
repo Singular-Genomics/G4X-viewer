@@ -54,7 +54,7 @@ export default function G4XViewer() {
           ref={viewerRef}
           sx={getViewStyle('viewer')}
         >
-          <ViewerView />
+          <ViewerView isViewerActive={currentView === 'viewer'} />
         </Box>
       </Box>
     </Box>
