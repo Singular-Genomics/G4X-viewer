@@ -18,8 +18,16 @@ export const BarChartPlot = ({
   const { parseCellsByRoi } = useBarChartPlotDataParser();
 
   const barPlotData = useMemo(
-    () => parseCellsByRoi(selectedROIs, selectedValueType, selectedValue, selectedHue, settings.swapAxis ? 'h' : 'v'),
-    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, selectedHue, settings.swapAxis]
+    () =>
+      parseCellsByRoi(
+        selectedROIs,
+        selectedValueType,
+        selectedValue,
+        selectedHue,
+        settings.swapAxis ? 'h' : 'v',
+        settings.sortRois
+      ),
+    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, selectedHue, settings.swapAxis, settings.sortRois]
   );
 
   useEffect(() => {

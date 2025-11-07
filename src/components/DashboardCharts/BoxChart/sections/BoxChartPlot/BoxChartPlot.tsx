@@ -25,9 +25,19 @@ export const BoxChartPlot = ({
         selectedValue,
         selectedHue,
         settings.swapAxis ? 'h' : 'v',
-        settings.dataMode
+        settings.dataMode,
+        settings.sortRois
       ),
-    [parseCellsByRoi, selectedValue, selectedROIs, selectedValueType, selectedHue, settings.swapAxis, settings.dataMode]
+    [
+      parseCellsByRoi,
+      selectedValue,
+      selectedROIs,
+      selectedValueType,
+      selectedHue,
+      settings.swapAxis,
+      settings.dataMode,
+      settings.sortRois
+    ]
   );
 
   useEffect(() => {

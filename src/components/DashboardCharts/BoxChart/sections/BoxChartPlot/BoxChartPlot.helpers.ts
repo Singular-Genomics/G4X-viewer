@@ -26,7 +26,8 @@ export function useBoxChartPlotDataParser() {
       selectedvalue: string,
       hueValue: BoxChartHueValueOptions,
       orientation: BoxChartOrientation,
-      dataMode: BoxChartDataMode
+      dataMode: BoxChartDataMode,
+      sortRois: boolean
     ): BoxChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
@@ -36,9 +37,10 @@ export function useBoxChartPlotDataParser() {
         valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames
       ).findIndex((name) => name === selectedvalue);
 
+      const orderedRois = sortRois ? [...rois].sort((a, b) => a - b) : rois;
       const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
-      const validSelection = rois
-        ? rois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+      const validSelection = orderedRois
+        ? orderedRois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
         : [];
       const parsedColormap = cellColormapConfig.reduce(
         (acc, item) => {
@@ -101,7 +103,7 @@ export function useBoxChartPlotDataParser() {
         }
 
         // Convert to plot data entries
-        return rois
+        return orderedRois
           .filter((roiId) => roiData.has(roiId.toString()))
           .map((roiId) => {
             const data = roiData.get(roiId.toString())!;

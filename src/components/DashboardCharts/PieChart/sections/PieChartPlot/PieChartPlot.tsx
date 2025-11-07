@@ -17,7 +17,7 @@ const buildHoverTemplate = (clusterIdLabel: string, countLabel: string, percentL
   return `<b>${clusterIdLabel}: %{label}</b><br>${countLabel}: %{value}<br>${percentLabel}: %{percent}<extra></extra>`;
 };
 
-export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
+export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -26,6 +26,8 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
   const [selectedCells, colorMapConfig] = useCellSegmentationLayerStore(
     useShallow((store) => [store.selectedCells, store.cellColormapConfig])
   );
+
+  const orderedRois = settings.sortRois ? [...selectedRois].sort((a, b) => a - b) : selectedRois;
 
   useEffect(() => {
     const containerEl = containerRef.current;
@@ -58,7 +60,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
       t('pieChart.hoverPercent')
     );
     const pieData: Partial<Data>[] = [];
-    const numRois = selectedRois.length;
+    const numRois = orderedRois.length;
 
     const minPieSize = 300;
     const cols = Math.max(1, Math.floor(dimensions.width / minPieSize));
@@ -70,13 +72,13 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     const actualCols = numRois < cols ? numRois : cols;
     const offset = (cols - actualCols) / (2 * cols);
 
-    let roiWithMostClusters = selectedRois[0];
+    let roiWithMostClusters = orderedRois[0];
     let maxClusterCount = 0;
 
     const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
 
     let roiIndex = 0;
-    for (const roiId of selectedRois) {
+    for (const roiId of orderedRois) {
       const selection = cellsByRoiId.get(roiId);
       if (!selection) continue;
 
@@ -132,11 +134,11 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     }
 
     return pieData;
-  }, [selectedCells, selectedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width, t]);
+  }, [selectedCells, orderedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width, t]);
 
   const layout: Partial<Layout> = useMemo(() => {
     const annotations: any[] = [];
-    const numRois = selectedRois.length;
+    const numRois = orderedRois.length;
     const minPieSize = 300;
     const cols = Math.max(1, Math.floor(dimensions.width / minPieSize));
     const rows = Math.ceil(numRois / cols);
@@ -146,7 +148,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     const actualCols = numRois < cols ? numRois : cols;
     const offset = (cols - actualCols) / (2 * cols);
 
-    selectedRois.forEach((roiId, roiIndex) => {
+    orderedRois.forEach((roiId, roiIndex) => {
       const col = roiIndex % cols;
       const row = Math.floor(roiIndex / cols);
 
@@ -188,7 +190,7 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
       },
       annotations: annotations
     };
-  }, [dimensions.width, dimensions.height, selectedRois, t]);
+  }, [dimensions.width, dimensions.height, orderedRois, t]);
 
   return (
     <Box

@@ -103,9 +103,10 @@ export function useHeatmapChartPlotDataParser() {
         return [];
       }
 
+      const orderedRois = settings.sortRois ? [...rois].sort((a, b) => a - b) : rois;
       const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
-      const validSelection = rois.length
-        ? rois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+      const validSelection = orderedRois.length
+        ? orderedRois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
         : [];
 
       if (!validSelection.length) {
@@ -149,7 +150,7 @@ export function useHeatmapChartPlotDataParser() {
         }
 
         // Build heatmap matrix: rows = proteins/genes, cols = ROIs
-        const orderedRoiIds = rois.map(String).filter((id) => roiIds.has(id));
+        const orderedRoiIds = orderedRois.map(String).filter((id) => roiIds.has(id));
         const sortedValueNames = Array.from(valueNamesSet);
 
         let zMatrix: number[][] = [];

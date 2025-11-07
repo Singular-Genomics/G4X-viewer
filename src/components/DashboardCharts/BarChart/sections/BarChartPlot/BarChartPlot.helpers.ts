@@ -24,7 +24,8 @@ export function useBarChartPlotDataParser() {
       valueType: BarChartValueType,
       selectedvalue: string,
       hueValue: BarChartHueValueOptions,
-      orientation: BarChartOrientation
+      orientation: BarChartOrientation,
+      sortRois: boolean
     ): BarChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
@@ -34,9 +35,10 @@ export function useBarChartPlotDataParser() {
         valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames
       ).findIndex((name) => name === selectedvalue);
 
+      const orderedRois = sortRois ? [...rois].sort((a, b) => a - b) : rois;
       const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
-      const validSelection = rois
-        ? rois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+      const validSelection = orderedRois
+        ? orderedRois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
         : [];
       const parsedColormap = cellColormapConfig.reduce(
         (acc, item) => {
@@ -150,7 +152,7 @@ export function useBarChartPlotDataParser() {
         }
 
         // Convert to plot data entries with mean values
-        return rois
+        return orderedRois
           .filter((roiId) => aggregatedData.has(roiId.toString()))
           .map((roiId) => {
             const clusterMap = aggregatedData.get(roiId.toString())!;

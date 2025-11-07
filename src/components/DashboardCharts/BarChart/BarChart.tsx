@@ -12,7 +12,8 @@ export const BarChart = ({ id, title, removable = true }: BarChartProps) => {
   const [selectedValueType, setSelectedValueType] = useState<BarChartValueType>('protein');
   const [settings, setSettings] = useState<BarChartSettingOptions>({
     swapAxis: false,
-    barMode: 'group'
+    barMode: 'group',
+    sortRois: false
   });
 
   return (
