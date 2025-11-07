@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
 
-export const ViewerView = ({ className }: ViewerViewProps) => {
+export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
@@ -34,7 +34,7 @@ export const ViewerView = ({ className }: ViewerViewProps) => {
         <>
           {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
             <>
-              <PictureInPictureViewerAdapter />
+              <PictureInPictureViewerAdapter isViewerActive={isViewerActive} />
               <ImageInfo />
             </>
           ) : (

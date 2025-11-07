@@ -1,5 +1,9 @@
 import { TiffPixelSource, ZarrPixelSource } from '@hms-dbmi/viv';
 
+export type PictureInPictureViewerAdapterProps = {
+  isViewerActive?: boolean;
+};
+
 export type PictureInPictureViewerConfig = {
   contrastLimits: [number, number][];
   colors: [number, number, number][];
