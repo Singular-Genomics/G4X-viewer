@@ -10,6 +10,7 @@
 - [About](#about)
 - [Technologies](#technologies)
 - [Demo](#demo)
+- [Application Views](#application-views)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
 - [Development Documentation](./docs/DEVELOPMENT.md)
@@ -29,6 +30,8 @@ G4x Viewer is built using:
 - **[Material-UI (MUI)](https://mui.com/)** – A collection of ready-to-use UI components
 - **[DeckGL](https://deck.gl/)** – A framework for large-scale data visualization
 - **[Viv](https://github.com/hms-dbmi/viv)** – A tool for visualizing image data
+- **[Plotly.js](https://plotly.com/javascript/)** – A powerful charting library for interactive data visualization
+- **[Zustand](https://github.com/pmndrs/zustand)** – A lightweight state management solution
 
 For a complete list of dependencies, please refer to the `package.json` file.
 
@@ -37,6 +40,14 @@ For a complete list of dependencies, please refer to the `package.json` file.
 Below is a preview of the application:
 
 ![Application Preview](./public/demo-screenshot.png)
+
+## Application Views
+
+G4X Viewer provides two main views for comprehensive data analysis:
+
+- **Viewer** – An interactive image viewer for spatial analysis of imaging data. Visualize multiple layers and channels, draw regions of interest (ROIs), and explore your data in detail with advanced visualization tools powered by DeckGL and Viv.
+
+- **Dashboard** – A dedicated analytics view featuring interactive charts and graphs built with Plotly.js. Analyze data from defined ROIs through various visualization types including box plots, pie charts, bar charts, and heatmaps. The flexible grid layout allows you to arrange and customize charts according to your analytical needs.
 
 ## Getting Started
 
