@@ -103,7 +103,10 @@ export function useHeatmapChartPlotDataParser() {
         return [];
       }
 
-      const validSelection = rois.length ? selectedCells.filter((sel) => rois.includes(sel.roiId)) : [];
+      const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
+      const validSelection = rois.length
+        ? rois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+        : [];
 
       if (!validSelection.length) {
         return [];
@@ -146,16 +149,16 @@ export function useHeatmapChartPlotDataParser() {
         }
 
         // Build heatmap matrix: rows = proteins/genes, cols = ROIs
-        const sortedRoiIds = Array.from(roiIds).sort((a, b) => Number(a) - Number(b));
+        const orderedRoiIds = rois.map(String).filter((id) => roiIds.has(id));
         const sortedValueNames = Array.from(valueNamesSet);
 
         let zMatrix: number[][] = [];
-        const xLabels = sortedRoiIds.map((id) => t('general.roiEntry', { index: id }));
+        const xLabels = orderedRoiIds.map((id) => t('general.roiEntry', { index: id }));
         const yLabels = sortedValueNames;
 
         for (const valueName of sortedValueNames) {
           const row: number[] = [];
-          for (const roiId of sortedRoiIds) {
+          for (const roiId of orderedRoiIds) {
             const values = dataMatrix[valueName]?.[roiId] || [];
             const meanValue = values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
             row.push(meanValue);

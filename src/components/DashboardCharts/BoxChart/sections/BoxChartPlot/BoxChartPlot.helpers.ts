@@ -36,7 +36,10 @@ export function useBoxChartPlotDataParser() {
         valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames
       ).findIndex((name) => name === selectedvalue);
 
-      const validSelection = rois ? selectedCells.filter((sel) => rois.includes(sel.roiId)) : [];
+      const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
+      const validSelection = rois
+        ? rois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+        : [];
       const parsedColormap = cellColormapConfig.reduce(
         (acc, item) => {
           acc[item.clusterId] = rgbToHex(item.color);
@@ -98,16 +101,21 @@ export function useBoxChartPlotDataParser() {
         }
 
         // Convert to plot data entries
-        return Array.from(roiData.entries()).map(([roiId, data]) => ({
-          name: t('general.roiEntry', { index: roiId }),
-          type: 'box',
-          ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
-          boxpoints: dataMode !== 'none' && dataMode,
-          marker: { color: rgbToHex(generatePolygonColor(Number(roiId) - 1)) },
-          legendgroup: t('general.roiEntry', { index: roiId }),
-          showlegend: true,
-          orientation: orientation
-        }));
+        return rois
+          .filter((roiId) => roiData.has(roiId.toString()))
+          .map((roiId) => {
+            const data = roiData.get(roiId.toString())!;
+            return {
+              name: t('general.roiEntry', { index: roiId }),
+              type: 'box',
+              ...(orientation === 'v' ? { y: data.y, x: data.x } : { x: data.y, y: data.x }),
+              boxpoints: dataMode !== 'none' && dataMode,
+              marker: { color: rgbToHex(generatePolygonColor(Number(roiId) - 1)) },
+              legendgroup: t('general.roiEntry', { index: roiId }),
+              showlegend: true,
+              orientation: orientation
+            };
+          });
       }
 
       // Without cluster-based coloring

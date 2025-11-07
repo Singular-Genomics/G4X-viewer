@@ -73,12 +73,12 @@ export const PieChartPlot = ({ selectedRois }: PieChartPlotProps) => {
     let roiWithMostClusters = selectedRois[0];
     let maxClusterCount = 0;
 
-    let roiIndex = 0;
-    for (const selection of selectedCells) {
-      const roiId = selection.roiId;
+    const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
 
-      // Skip selections that are not in the selectedRois
-      if (!selectedRois.includes(roiId)) continue;
+    let roiIndex = 0;
+    for (const roiId of selectedRois) {
+      const selection = cellsByRoiId.get(roiId);
+      if (!selection) continue;
 
       const roiCells = selection.data;
       if (!roiCells || roiCells.length === 0) continue;
