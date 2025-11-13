@@ -23,9 +23,7 @@ nav:
 
   - G4X-viewer:
     - index.md
-    - Resources: resources.md
-    - Contribute: contributing.md
-  
-  - G4X-data: https://docs.singulargenomics.com/g4x_data/
+    - features: features.md
+    - resources: resources.md
+    - contribute: contributing.md
 
-  - G4X-tutorials: https://docs.singulargenomics.com/g4x_tutorials/

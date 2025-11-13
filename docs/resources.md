@@ -8,6 +8,7 @@ The G4X Viewer is designed to be intuitive and user-friendly, but we understand 
 A step-by-step video walkthrough to utilizing the G4X Viewer to explore your G4X data outputs, from filtering and subsampling, to saving and sharing your visualizations. This video is a great starting point for new users.
 
 [![G4X Viewer Video Tutorial](./images/video_tutorial_image_with_play_icon.png)](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%202.6.2.mp4)
+[![G4X Viewer Video Tutorial](./images/video_tutorial_image_with_play_icon.png)](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%202.6.2.mp4)
 
 <br>
 
