@@ -106,6 +106,8 @@
   "segmentationSettings": {
     "cellFillLabel": "Cell Fill",
     "cellFillShow": "Show cell fill",
+    "boundaryLabel": "Cell Boundary",
+    "boundaryShow": "Show boundary",
     "cellFiltersLabel": "Cell Filters",
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphBinningError": "Failed to bin {{count}} cells",
