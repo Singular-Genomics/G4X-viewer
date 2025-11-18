@@ -39,6 +39,7 @@ export type PolygonWorkerResponse =
         pointsInPolygon: PolygonPointData[];
         pointCount: number;
         geneDistribution: Record<string, number>;
+        limitExceeded?: boolean;
       };
     }
   | {

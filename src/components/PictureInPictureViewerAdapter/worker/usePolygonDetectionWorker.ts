@@ -13,6 +13,7 @@ export type PolygonDetectionWorkerHook = {
     pointsInPolygon: PolygonPointData[];
     pointCount: number;
     geneDistribution: Record<string, number>;
+    limitExceeded?: boolean;
   }>;
   detectCellPolygonsInPolygon: (
     polygon: PolygonFeature,
@@ -41,6 +42,7 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
         pointsInPolygon: PolygonPointData[];
         pointCount: number;
         geneDistribution: Record<string, number>;
+        limitExceeded?: boolean;
       }>((resolve, reject) => {
         const worker = getWorker();
 
@@ -53,7 +55,8 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
               resolve({
                 pointsInPolygon: payload.pointsInPolygon,
                 pointCount: payload.pointCount,
-                geneDistribution: payload.geneDistribution
+                geneDistribution: payload.geneDistribution,
+                limitExceeded: payload.limitExceeded
               });
             }
           } else if (type === 'error') {

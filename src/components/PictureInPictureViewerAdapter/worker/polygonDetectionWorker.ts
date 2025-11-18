@@ -1,6 +1,7 @@
 import * as protobuf from 'protobufjs';
 import { TranscriptFileSchema } from '../../../schemas/transcriptaFile.schema';
 import { SingleMask } from '../../../shared/types';
+import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../../shared/constants';
 import type {
   PolygonPointData,
   PolygonTileData,
@@ -106,18 +107,40 @@ const detectPointsInPolygon = async (
   }
 
   const allPointArrays: any[] = [];
+  let limitExceeded = false;
 
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
 
     const batchResults = await processBatch(batch, polygon, polygonBoundingBox);
     allPointArrays.push(...batchResults);
+
+    // Calculate total points found so far
+    const currentTotal = allPointArrays.reduce((sum, arr) => sum + arr.length, 0);
+
+    // Check if we exceeded the limit
+    if (currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
+      limitExceeded = true;
+      console.warn(
+        `[ROI Detection] Point limit exceeded: ${currentTotal.toLocaleString()} points found, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
+      );
+      break;
+    }
   }
 
   // Avoid stack overflow by using concat or iterative push instead of spread operator
+  // Only add points up to the limit
+  let pointsAdded = 0;
   for (const pointArray of allPointArrays) {
     for (const point of pointArray) {
+      if (pointsAdded >= MAX_TRANSCRIPT_POINTS_LIMIT) {
+        break;
+      }
       pointsInPolygon.push(point);
+      pointsAdded++;
+    }
+    if (pointsAdded >= MAX_TRANSCRIPT_POINTS_LIMIT) {
+      break;
     }
   }
 
@@ -130,7 +153,8 @@ const detectPointsInPolygon = async (
   return {
     pointsInPolygon: pointsInPolygon,
     pointCount: pointsInPolygon.length,
-    geneDistribution: countByGeneName
+    geneDistribution: countByGeneName,
+    limitExceeded
   };
 };
 

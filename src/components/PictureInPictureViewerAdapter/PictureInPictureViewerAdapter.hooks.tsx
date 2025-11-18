@@ -400,6 +400,19 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
 
+          // If point limit was exceeded, delete the polygon and show error
+          if (result.limitExceeded) {
+            setDetecting(false);
+            closeSnackbar(loadingSnackbarId);
+            deletePolygon(newPolygonId);
+            enqueueSnackbar({
+              variant: 'gxSnackbar',
+              titleMode: 'error',
+              message: t('interactiveLayer.pointLimitExceeded')
+            });
+            return;
+          }
+
           // Update polygon properties
           newPolygon.properties = {
             ...newPolygon.properties,
@@ -518,6 +531,20 @@ export const usePolygonDrawingLayer = () => {
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
+
+          // If point limit was exceeded, revert the polygon to its previous position
+          if (result.limitExceeded) {
+            setDetecting(false);
+            closeSnackbar(loadingSnackbarId);
+            // Revert to previous polygon state
+            updatePolygon(initialFeatures[editedPolygonIndex], editedPolygonIndex);
+            enqueueSnackbar({
+              variant: 'gxSnackbar',
+              titleMode: 'error',
+              message: t('interactiveLayer.pointLimitExceeded')
+            });
+            return;
+          }
 
           // Update polygon properties
           editedPolygon.properties = {
