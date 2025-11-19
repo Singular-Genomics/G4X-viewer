@@ -28,7 +28,6 @@ export const useGeneralDetailsHandler = () => {
     try {
       const text = await file.text();
       const jsonData = JSON.parse(text);
-
       const generalDetails: GeneralDetailsType = {
         fileName: file.name,
         data: jsonData
@@ -42,7 +41,7 @@ export const useGeneralDetailsHandler = () => {
       });
     } catch (error) {
       const errorMessage = (error as Error).message;
-      if (errorMessage.includes('NaN') || errorMessage.includes('Unexpected token')) {
+      if (error instanceof SyntaxError) {
         enqueueSnackbar({
           message: t('sourceFiles.metadataInvalidJsonError'),
           variant: 'error'
