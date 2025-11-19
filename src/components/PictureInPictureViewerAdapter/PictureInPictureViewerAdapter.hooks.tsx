@@ -413,7 +413,8 @@ export const usePolygonDrawingLayer = () => {
                 totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
                 limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
                 reductionPercent: result.suggestedReductionPercent || 50
-              })
+              }),
+              persist: true
             });
             return;
           }
@@ -553,7 +554,8 @@ export const usePolygonDrawingLayer = () => {
                 totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
                 limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
                 reductionPercent: result.suggestedReductionPercent || 50
-              })
+              }),
+              persist: true
             });
             return;
           }
