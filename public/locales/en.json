@@ -232,6 +232,7 @@
     "drawingMenuEnable": "Enable Drawing (D)",
     "drawingMenuView": "View Mode (V)",
     "exportPolygons": "Export Polygons",
+    "imageLoading" : "Loading OME Tiff image",
     "importPolygons": "Import Polygons",
     "importPolygonsLabel": "Select JSON File",
     "importPolygonsTitle": "Polygon Data File",
