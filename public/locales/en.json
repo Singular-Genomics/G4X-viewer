@@ -178,6 +178,7 @@
     "imageUploadButton": "Upload Image File",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
+    "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",
     "metadataMultipleFileError": "Please upload a single details file",
     "metadataParsingError": "Error parsing JSON file: {{message}}",
     "metadataUploadButton": "Upload Metadata",

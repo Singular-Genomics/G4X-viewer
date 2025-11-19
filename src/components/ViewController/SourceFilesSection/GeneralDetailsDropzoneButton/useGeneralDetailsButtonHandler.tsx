@@ -27,6 +27,15 @@ export const useGeneralDetailsHandler = () => {
 
     try {
       const text = await file.text();
+
+      if (text.includes('NaN') || text.includes('Infinity') || text.includes('-Infinity')) {
+        enqueueSnackbar({
+          message: t('sourceFiles.metadataInvalidJsonError'),
+          variant: 'error'
+        });
+        return;
+      }
+
       const jsonData = JSON.parse(text);
 
       const generalDetails: GeneralDetailsType = {
@@ -41,10 +50,18 @@ export const useGeneralDetailsHandler = () => {
         variant: 'success'
       });
     } catch (error) {
-      enqueueSnackbar({
-        message: t('sourceFiles.metadataParsingError', { message: (error as Error).message }),
-        variant: 'error'
-      });
+      const errorMessage = (error as Error).message;
+      if (errorMessage.includes('NaN') || errorMessage.includes('Unexpected token')) {
+        enqueueSnackbar({
+          message: t('sourceFiles.metadataInvalidJsonError'),
+          variant: 'error'
+        });
+      } else {
+        enqueueSnackbar({
+          message: t('sourceFiles.metadataParsingError', { message: errorMessage }),
+          variant: 'error'
+        });
+      }
     }
   };
 
