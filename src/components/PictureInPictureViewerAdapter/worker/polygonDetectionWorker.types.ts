@@ -40,6 +40,8 @@ export type PolygonWorkerResponse =
         pointCount: number;
         geneDistribution: Record<string, number>;
         limitExceeded?: boolean;
+        totalPointsFound?: number;
+        suggestedReductionPercent?: number;
       };
     }
   | {

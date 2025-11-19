@@ -32,25 +32,51 @@ const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   }
 };
 
-const processBatch = async (batchFiles: Array<File>, polygon: PolygonFeature, polygonBoundingBox: BoundingBox) => {
+const processBatch = async (
+  batchFiles: Array<File>,
+  polygon: PolygonFeature,
+  polygonBoundingBox: BoundingBox,
+  countOnly: boolean = false
+) => {
   const batchPromises = batchFiles.map(async (file) => {
     try {
       const tileData = await loadTileData(file);
       if (tileData && Array.isArray(tileData.pointsData)) {
-        const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
-          if (!point || !point.position || point.position.length < 2) {
-            return false;
+        if (countOnly) {
+          // Fast path: only count points without creating arrays
+          let count = 0;
+          for (let i = 0; i < tileData.pointsData.length; i++) {
+            const point = tileData.pointsData[i];
+            if (point && point.position && point.position.length >= 2) {
+              if (
+                isPointInSelection(
+                  point.position as [number, number],
+                  polygon.geometry.coordinates[0],
+                  polygonBoundingBox
+                )
+              ) {
+                count++;
+              }
+            }
           }
+          return count;
+        } else {
+          // Regular path: collect points in arrays
+          const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
+            if (!point || !point.position || point.position.length < 2) {
+              return false;
+            }
 
-          return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
-        });
+            return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
+          });
 
-        return pointsFoundInTile;
+          return pointsFoundInTile;
+        }
       }
-      return [];
+      return countOnly ? 0 : [];
     } catch (error) {
       console.error(`❌ Error processing tile: ${file.name}`, error);
-      return [];
+      return countOnly ? 0 : [];
     }
   });
 
@@ -108,24 +134,40 @@ const detectPointsInPolygon = async (
 
   const allPointArrays: any[] = [];
   let limitExceeded = false;
+  let totalPointsFound = 0;
 
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i];
 
-    const batchResults = await processBatch(batch, polygon, polygonBoundingBox);
-    allPointArrays.push(...batchResults);
+    // After limit exceeded, use count-only mode for better performance
+    const batchResults = await processBatch(batch, polygon, polygonBoundingBox, limitExceeded);
 
-    // Calculate total points found so far
-    const currentTotal = allPointArrays.reduce((sum, arr) => sum + arr.length, 0);
+    // Calculate total points found in this batch
+    let batchPointCount: number;
+    if (limitExceeded) {
+      batchPointCount = (batchResults as number[]).reduce((sum, count) => sum + count, 0);
+    } else {
+      batchPointCount = (batchResults as PolygonPointData[][]).reduce((sum, arr) => sum + arr.length, 0);
+    }
+
+    const currentTotal = totalPointsFound + batchPointCount;
 
     // Check if we exceeded the limit
-    if (currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
+    if (!limitExceeded && currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
       limitExceeded = true;
       console.warn(
-        `[ROI Detection] Point limit exceeded: ${currentTotal.toLocaleString()} points found, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
+        `[ROI Detection] Point limit exceeded at batch ${i + 1}/${batches.length}: ${currentTotal.toLocaleString()} points found so far, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
       );
-      break;
     }
+
+    // Store points only if limit not exceeded (to save memory)
+    if (!limitExceeded) {
+      for (const result of batchResults as PolygonPointData[][]) {
+        allPointArrays.push(result);
+      }
+    }
+
+    totalPointsFound = currentTotal;
   }
 
   // Avoid stack overflow by using concat or iterative push instead of spread operator
@@ -150,11 +192,19 @@ const detectPointsInPolygon = async (
     countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
+  let suggestedReductionPercent: number | undefined;
+  if (limitExceeded && totalPointsFound > 0) {
+    const ratio = MAX_TRANSCRIPT_POINTS_LIMIT / totalPointsFound;
+    suggestedReductionPercent = Math.round((1 - ratio) * 100);
+  }
+
   return {
     pointsInPolygon: pointsInPolygon,
     pointCount: pointsInPolygon.length,
     geneDistribution: countByGeneName,
-    limitExceeded
+    limitExceeded,
+    totalPointsFound: limitExceeded ? totalPointsFound : undefined,
+    suggestedReductionPercent
   };
 };
 

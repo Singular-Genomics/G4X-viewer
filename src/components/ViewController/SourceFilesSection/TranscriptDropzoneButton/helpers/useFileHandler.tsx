@@ -79,7 +79,7 @@ export const useFileHandler = () => {
               enqueueSnackbar({
                 variant: 'gxSnackbar',
                 titleMode: 'warning',
-                message: t('interactiveLayer.pointLimitExceeded')
+                message: t('interactiveLayer.pointLimitExceededSimple')
               });
               continue;
             }

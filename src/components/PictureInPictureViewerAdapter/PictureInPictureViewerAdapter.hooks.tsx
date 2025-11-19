@@ -27,6 +27,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
 import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -408,7 +409,11 @@ export const usePolygonDrawingLayer = () => {
             enqueueSnackbar({
               variant: 'gxSnackbar',
               titleMode: 'error',
-              message: t('interactiveLayer.pointLimitExceeded')
+              message: t('interactiveLayer.pointLimitExceeded', {
+                totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
+                limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
+                reductionPercent: result.suggestedReductionPercent || 50
+              })
             });
             return;
           }
@@ -541,7 +546,11 @@ export const usePolygonDrawingLayer = () => {
             enqueueSnackbar({
               variant: 'gxSnackbar',
               titleMode: 'error',
-              message: t('interactiveLayer.pointLimitExceeded')
+              message: t('interactiveLayer.pointLimitExceeded', {
+                totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
+                limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
+                reductionPercent: result.suggestedReductionPercent || 50
+              })
             });
             return;
           }

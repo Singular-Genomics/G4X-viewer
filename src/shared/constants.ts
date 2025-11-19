@@ -36,4 +36,4 @@ export const SEGMENTATION_FILE_SIZE_LIMIT = 524288000; // 500 MB
 // export const TRANSCRIPT_FILEZ_SIZE_LIMIT = 1073741824; // 1 GB
 
 // Maximum number of transcript points that can be selected in ROI to prevent browser crashes
-export const MAX_TRANSCRIPT_POINTS_LIMIT = 8000000; // 8 million points
+export const MAX_TRANSCRIPT_POINTS_LIMIT = 7500000; // 7.5 million points
