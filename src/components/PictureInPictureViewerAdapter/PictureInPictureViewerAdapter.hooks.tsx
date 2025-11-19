@@ -533,6 +533,9 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
+      let totalFoundPoints = 0;
+      let totalFoundCells = 0;
+
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
@@ -563,6 +566,7 @@ export const usePolygonDrawingLayer = () => {
           };
 
           updateSelectedPoints(result.pointsInPolygon, editedPolygonIndex);
+          totalFoundPoints = result.pointCount;
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -586,6 +590,7 @@ export const usePolygonDrawingLayer = () => {
 
           // Add new cells from the updated polygon
           updateSelectedCells(result.cellPolygonsInDrawnPolygon, editedPolygonIndex);
+          totalFoundCells = result.cellPolygonCount;
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -598,6 +603,28 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
+
+      // Show success message with updated counts
+      const polygonId = editedPolygon.properties?.id || editedPolygonIndex;
+      if (!totalFoundPoints && !totalFoundCells) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'warning',
+          message: t('interactiveLayer.noDataDetected', { polygonId })
+        });
+      } else {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'success',
+          message: t('interactiveLayer.dataDetected', { polygonId }),
+          customContent: (
+            <List>
+              <ListItem>{t('interactiveLayer.transcriptsDetected', { count: totalFoundPoints })}</ListItem>
+              <ListItem>{t('interactiveLayer.cellsDetected', { count: totalFoundCells })}</ListItem>
+            </List>
+          )
+        });
+      }
     }
   };
 
