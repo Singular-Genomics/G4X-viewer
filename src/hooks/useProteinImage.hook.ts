@@ -75,7 +75,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
       useViewerStore.setState({
-        isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.imageLoading') }
+        isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.loadingImage') }
       });
       let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
