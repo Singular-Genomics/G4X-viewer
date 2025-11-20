@@ -112,7 +112,7 @@ export const useFileHandler = () => {
           enqueueSnackbar({
             message: t('sourceFiles.notReadableErrorWorkaround'),
             variant: 'gxSnackbar',
-            titleMode: 'error',
+            titleMode: 'info',
             persist: true
           });
         } else {

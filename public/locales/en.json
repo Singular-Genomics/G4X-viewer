@@ -186,7 +186,7 @@
     "metadataUploadButton": "Upload Metadata",
     "metadataUploadSuccess": "General details file loaded successfully",
     "multiFileButtonLabel": "Multi-file",
-    "notReadableErrorWarning": "In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
+    "notReadableErrorWarning": "Error loading transcript file. In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
     "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file.  You may need to quit the browser application and restart it if this issue persists.",
     "sectionTitle": "Source Files",
     "segmentationFileInputLabel": "Segmentation Filename",
