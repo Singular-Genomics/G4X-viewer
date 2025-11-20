@@ -104,7 +104,7 @@ export const useFileHandler = () => {
         const errorObj = error as Error;
         if (errorObj?.name && errorObj.name === 'NotReadableError') {
           enqueueSnackbar({
-            message: t('sourceFiles.notReadableErrorWarning') + ' ' + t('sourceFiles.notReadableErrorWorkaround'),
+            message: t('sourceFiles.notReadableErrorWarning'),
             variant: 'gxSnackbar',
             titleMode: 'error',
             persist: true
