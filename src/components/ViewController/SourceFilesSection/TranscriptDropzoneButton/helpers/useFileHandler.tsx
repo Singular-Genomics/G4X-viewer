@@ -74,6 +74,16 @@ export const useFileHandler = () => {
           for (const polygon of polygonFeatures) {
             const result = await detectPointsInPolygon(polygon, e.data.files, parsedConfigFile);
 
+            // Skip this polygon if point limit was exceeded
+            if (result.limitExceeded) {
+              enqueueSnackbar({
+                variant: 'gxSnackbar',
+                titleMode: 'warning',
+                message: t('interactiveLayer.pointLimitExceededSimple')
+              });
+              continue;
+            }
+
             polygon.properties = {
               ...polygon.properties,
               pointCount: result.pointCount,
