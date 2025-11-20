@@ -1,12 +1,16 @@
 import { Box, Theme, Typography } from '@mui/material';
 import { GxLogo } from '../../shared/components/GxLogo';
+import { useTranslation } from 'react-i18next';
 
-export const LogoBanner = () => (
-  <Box sx={sx.logoBannerContainer}>
-    <GxLogo version="light" />
-    <Typography sx={sx.logoText}>G4X Viewer</Typography>
-  </Box>
-);
+export const LogoBanner = () => {
+  const { t } = useTranslation();
+  return (
+    <Box sx={sx.logoBannerContainer}>
+      <GxLogo version="light" />
+      <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
+    </Box>
+  );
+};
 
 const sx = {
   logoBannerContainer: {

@@ -10,7 +10,6 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   contrastLimits: [[0, 65535]],
   selections: [{ z: 0, c: 0, t: 0 }],
   opacity: 1,
-  isImageLoading: false,
   isLayerVisible: true,
   availableImages: []
 };

@@ -5,11 +5,14 @@ import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { TranscriptDropzoneButtonProps } from './TranscriptDropzoneButton.types';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDropzoneButtonProps) {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const { dropzoneProps, loading, progress } = useFileHandler();
+
   const fileName = useBinaryFilesStore((store) => store.fileName);
   const source = useViewerStore((store) => store.source);
 
@@ -20,9 +23,9 @@ export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDr
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="Transcript File Name"
+        labelTitle={t('sourceFiles.transcriptsFileInputLabel')}
         labelText={fileName}
-        buttonText="Upload points file"
+        buttonText={t('sourceFiles.transcriptsFileUploadButton')}
         disabled={!source}
         {...dropzoneProps}
       />

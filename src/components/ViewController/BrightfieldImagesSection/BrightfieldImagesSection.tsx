@@ -3,9 +3,11 @@ import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStor
 import { useState } from 'react';
 import { GxSlider } from '../../../shared/components/GxSlider';
 import { BrightfieldImageSelector } from './BrightfieldImageSelector/BrightfieldImageSelector';
+import { useTranslation } from 'react-i18next';
 
 export const BrightfieldImagesSection = () => {
   const sx = styles();
+  const { t } = useTranslation();
 
   const { brightfieldImageSource, opacity, availableImages } = useBrightfieldImagesStore();
 
@@ -14,7 +16,7 @@ export const BrightfieldImagesSection = () => {
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Layer opacity</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
         <Box
           sx={{
             display: 'flex',
@@ -44,7 +46,7 @@ export const BrightfieldImagesSection = () => {
         </Box>
       </Box>
       <Box>
-        <Typography sx={sx.subsectionTitle}>Available H&E Images</Typography>
+        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.availableImage')}</Typography>
         <BrightfieldImageSelector images={availableImages} />
       </Box>
     </Box>

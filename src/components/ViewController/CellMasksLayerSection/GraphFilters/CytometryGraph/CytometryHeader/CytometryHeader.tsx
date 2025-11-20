@@ -4,10 +4,12 @@ import { GxSelect } from '../../../../../../shared/components/GxSelect';
 import { CytometryHeaderProps } from './CytometryHeader.types';
 import { useEffect, useState } from 'react';
 import { useCytometryGraphStore } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore';
+import { useTranslation } from 'react-i18next';
 
 export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [xAxisProtein, setXAxisProtein] = useState('');
   const [yAxisProtein, setYAxisProtein] = useState('');
@@ -17,34 +19,46 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
       return;
     }
 
-    const { proteinNames } = useCytometryGraphStore.getState();
+    const { proteinIndices } = useCytometryGraphStore.getState();
 
-    if (!proteinNames.xAxis || !proteinNames.yAxis) {
+    if (
+      !proteinIndices.xAxisIndex ||
+      !proteinIndices.yAxisIndex ||
+      proteinIndices.xAxisIndex < 0 ||
+      proteinIndices.xAxisIndex > availableProteinNames.length ||
+      proteinIndices.yAxisIndex < 0 ||
+      proteinIndices.yAxisIndex > availableProteinNames.length
+    ) {
       setXAxisProtein(availableProteinNames[0]);
       setYAxisProtein(availableProteinNames[1]);
       useCytometryGraphStore.setState({
-        proteinNames: {
-          xAxis: availableProteinNames[0],
-          yAxis: availableProteinNames[1]
+        proteinIndices: {
+          xAxisIndex: 0,
+          yAxisIndex: 1
         }
       });
     } else {
-      setXAxisProtein(proteinNames.xAxis);
-      setYAxisProtein(proteinNames.yAxis);
+      setXAxisProtein(availableProteinNames[proteinIndices.xAxisIndex]);
+      setYAxisProtein(availableProteinNames[proteinIndices.yAxisIndex]);
     }
   }, [availableProteinNames]);
 
   const handleProteinChange = (proteinName: string, axis: 'y' | 'x') =>
     setTimeout(() => {
-      useCytometryGraphStore
-        .getState()
-        .updateProteinNames(axis === 'x' ? { xAxis: proteinName } : { yAxis: proteinName });
+      const selectedProteinIndex = availableProteinNames.findIndex((entry) => entry === proteinName);
+      if (selectedProteinIndex !== -1) {
+        useCytometryGraphStore
+          .getState()
+          .updateProteinNames(
+            axis === 'x' ? { xAxisIndex: selectedProteinIndex } : { yAxisIndex: selectedProteinIndex }
+          );
+      }
     }, 10);
 
   return (
     <Box sx={sx.headerWrapper}>
       <Box sx={sx.selectWrapper}>
-        <Typography sx={sx.selectLabel}>X Axis Source: </Typography>
+        <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphXAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
           value={xAxisProtein}
@@ -63,7 +77,7 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
             </MenuItem>
           ))}
         </GxSelect>
-        <Typography sx={sx.selectLabel}>Y Axis Source: </Typography>
+        <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphYAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
           value={yAxisProtein}
@@ -78,7 +92,7 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
               value={proteinName}
               disabled={proteinName === xAxisProtein}
             >
-              {proteinName}
+              {proteinName.replace('_', ' ')}
             </MenuItem>
           ))}
         </GxSelect>

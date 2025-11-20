@@ -19,4 +19,6 @@ type WindowConfig = {
   minHeight?: number;
   maxWidth?: number;
   maxHeight?: number;
+  startX?: number;
+  startY?: number;
 };

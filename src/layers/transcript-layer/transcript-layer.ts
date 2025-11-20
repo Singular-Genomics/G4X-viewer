@@ -4,8 +4,9 @@ import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 
 import * as protobuf from 'protobufjs';
-import { TranscriptSchema } from './transcript-schema';
+import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
+import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 
 // ======================== DATA TILE LAYER ==================
 
@@ -67,7 +68,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       id: `sub-point-layer-${this.props.id}`,
       data: points,
       getPosition: (d) => d.position,
-      getFillColor: (d) => d.color,
+      getFillColor: (d) => (this.props.parsedColorMap[d.geneName] as [number, number, number]) || [255, 255, 255],
       getRadius: this.props.pointSize,
       radiusUnits: 'pixels',
       pickable: true
@@ -81,10 +82,12 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   protoRoot: protobuf.Root;
+  parsedColorMap: Record<string, number[]>;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(TranscriptSchema);
+    this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
+    this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
   }
 
   async loadMetadata(zoom: number, tileY: number, tileX: number) {
@@ -174,7 +177,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       tileSize: tile_size,
       maxZoom: layers,
       minZoom,
-      zoomOffset: 2,
+      zoomOffset: LAYER_ZOOM_OFFSET,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
       pickable: true,
@@ -185,7 +188,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
-          this.props.pointSize
+          this.props.pointSize,
+          this.props.colormap
         ]
       },
       renderSubLayers: ({ id, data }) =>
@@ -195,7 +199,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           pointSize: this.props.pointSize,
           showBoundries: this.props.showTilesBoundries,
           showData: this.props.showTilesData,
-          showDiscardedPoints: this.props.showDiscardedPoints
+          showDiscardedPoints: this.props.showDiscardedPoints,
+          parsedColorMap: this.parsedColorMap
         })
     });
     return [tiledLayer];

@@ -7,8 +7,10 @@ import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerSt
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from '../AdvancedViewOptions.helpers';
 import InfoIcon from '@mui/icons-material/Info';
+import { useTranslation } from 'react-i18next';
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
+  const { t } = useTranslation();
   const [sliderValuer, setSliderValue] = useState(0);
   const { layers } = useBinaryFilesStore((store) => store.layerConfig);
   const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
@@ -41,10 +43,10 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
             ...(disabled ? { color: 'rgb(128, 128, 128)' } : {})
           }}
         >
-          Percent of transcripts shown
+          {t('transcriptsSettings.subsamplingSliderLabel')}
         </Typography>
         <Tooltip
-          title="We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling"
+          title={t('transcriptsSettings.subsamplingSliderTooltip')}
           placement="top"
           arrow
           slotProps={{ popper: { sx: sx.infoTooltip } }}

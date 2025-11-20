@@ -23,20 +23,21 @@ export const ColorPalette = ({ handleColorSelect }: ColorPaletteProps) => (
 
 const sx = {
   container: {
-    width: '70px',
-    height: '40px',
+    width: '120px',
+    height: '36px',
     display: 'flex',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    flexWrap: 'wrap'
+    justifyContent: 'flex-start'
   },
   button: {
-    padding: '3px',
-    width: '16px',
-    height: '16px'
+    padding: '4px',
+    width: '28px',
+    height: '28px',
+    flex: '0 0 25%'
   },
   icon: {
-    width: '17px',
-    height: '17px'
+    width: '24px',
+    height: '24px'
   }
 };

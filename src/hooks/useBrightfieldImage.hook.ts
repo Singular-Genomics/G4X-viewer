@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { ViewerSourceType } from '../stores/ViewerStore';
+import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore';
 import { buildDefaultSelection, createLoader } from '../legacy/utils';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
+import { useTranslation } from 'react-i18next';
 
 export const useBrightfieldImage = (source: ViewerSourceType | null) => {
+  const { t } = useTranslation();
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
   const loader = useBrightfieldImagesStore.getState().getLoader();
 
@@ -16,7 +18,12 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
     async function changeLoader() {
       if (!source) return null;
 
-      useBrightfieldImagesStore.setState({ isImageLoading: true });
+      useViewerStore.setState({
+        isViewerLoading: {
+          type: VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE,
+          message: t('viewer.loadingBrightfieldImage')
+        }
+      });
 
       const { urlOrFile } = source;
 
@@ -51,16 +58,23 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
     } else {
       // Reset loader state when source is null
       useBrightfieldImagesStore.setState({
-        loader: [{ labels: [], shape: [] }],
-        isImageLoading: false
+        loader: [{ labels: [], shape: [] }]
+      });
+      useViewerStore.setState({
+        isViewerLoading: undefined
       });
     }
-  }, [source]);
+  }, [source, t]);
 
   useEffect(() => {
     if (!source || !isLoaderCreated) return;
 
-    useBrightfieldImagesStore.setState({ isImageLoading: true });
+    useViewerStore.setState({
+      isViewerLoading: {
+        type: VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE,
+        message: t('viewer.loadingBrightfieldImage')
+      }
+    });
     const newSelections = buildDefaultSelection(loader[0]);
 
     let newContrastLimits = [];
@@ -76,8 +90,10 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
 
     useBrightfieldImagesStore.setState({
       selections: newSelections,
-      contrastLimits: newContrastLimits,
-      isImageLoading: false
+      contrastLimits: newContrastLimits
     });
-  }, [loader, source, isLoaderCreated]);
+    useViewerStore.setState({
+      isViewerLoading: undefined
+    });
+  }, [loader, source, isLoaderCreated, t]);
 };

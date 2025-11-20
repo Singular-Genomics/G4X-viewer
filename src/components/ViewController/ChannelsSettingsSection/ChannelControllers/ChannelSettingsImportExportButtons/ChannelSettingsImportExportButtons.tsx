@@ -1,4 +1,4 @@
-import { Box, Button, Theme, alpha, useTheme } from '@mui/material';
+import { Box, Button, SxProps, Theme, alpha, useTheme } from '@mui/material';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
@@ -7,11 +7,13 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { PropertiesUpdateType, useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
+import { useTranslation } from 'react-i18next';
 
 export const ChannelSettingsImportExportButtons = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
 
   const [ids, selections, channelsVisible, colors, contrastLimits, channelsSettings, setPropertiesForChannel] =
     useChannelsStore(
@@ -66,7 +68,7 @@ export const ChannelSettingsImportExportButtons = () => {
       } catch (jsonError) {
         console.error('Error stringifying channel settings:', jsonError);
         enqueueSnackbar({
-          message: 'Error formatting channel settings for export',
+          message: t('channelSettings.channelFormattingError'),
           variant: 'error'
         });
         return;
@@ -101,13 +103,13 @@ export const ChannelSettingsImportExportButtons = () => {
       URL.revokeObjectURL(url);
 
       enqueueSnackbar({
-        message: 'Channel settings exported successfully',
+        message: t('channelSettings.channelExportSuccess'),
         variant: 'success'
       });
     } catch (error) {
       console.error('Error exporting channel settings:', error);
       enqueueSnackbar({
-        message: 'Error exporting channel settings',
+        message: t('channelSettings.channelExportError'),
         variant: 'error'
       });
     }
@@ -169,6 +171,7 @@ export const ChannelSettingsImportExportButtons = () => {
 
             if (importData.channels.length > ids.length) {
               const channelsToAdd = importData.channels.slice(ids.length);
+              const channelIndicesToLoad: number[] = [];
 
               channelsToAdd.forEach((channelData: any) => {
                 if (channelData.name) {
@@ -188,6 +191,7 @@ export const ChannelSettingsImportExportButtons = () => {
                         };
 
                     const numSelectionsBeforeAdd = useChannelsStore.getState().selections.length;
+                    channelIndicesToLoad.push(numSelectionsBeforeAdd);
 
                     addIsChannelLoading(true);
                     useChannelsStore.getState().addChannel({
@@ -202,27 +206,35 @@ export const ChannelSettingsImportExportButtons = () => {
                         contrastLimits: channelData.contrastLimits
                       });
                     }
-
-                    useViewerStore.setState({
-                      onViewportLoad: () => {
-                        useViewerStore.setState({ onViewportLoad: () => {} });
-                        setIsChannelLoading(numSelectionsBeforeAdd, false);
-                      }
-                    });
                   }
                 }
               });
+
+              if (channelIndicesToLoad.length > 0) {
+                let loadedCount = 0;
+                useViewerStore.setState({
+                  onViewportLoad: () => {
+                    if (loadedCount < channelIndicesToLoad.length) {
+                      setIsChannelLoading(channelIndicesToLoad[loadedCount], false);
+                      loadedCount++;
+                      if (loadedCount === channelIndicesToLoad.length) {
+                        useViewerStore.setState({ onViewportLoad: () => {} });
+                      }
+                    }
+                  }
+                });
+              }
             }
           }
 
           enqueueSnackbar({
-            message: 'Channel settings imported successfully',
+            message: t('channelSettings.channelImportSuccess'),
             variant: 'success'
           });
         } catch (error) {
           console.error('Error importing channel settings:', error);
           enqueueSnackbar({
-            message: 'Error importing channel settings',
+            message: t('channelSettings.channelImportError'),
             variant: 'error'
           });
         }
@@ -230,7 +242,7 @@ export const ChannelSettingsImportExportButtons = () => {
 
       reader.readAsText(file);
     },
-    [ids, channelOptions, setPropertiesForChannel, enqueueSnackbar]
+    [ids, channelOptions, setPropertiesForChannel, enqueueSnackbar, t]
   );
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -241,15 +253,15 @@ export const ChannelSettingsImportExportButtons = () => {
     maxFiles: 1
   });
 
-  let dynamicButtonText = 'Import';
+  let dynamicButtonText = t('general.import');
 
   if (isDragActive) {
     if (isDragAccept) {
-      dynamicButtonText = 'Drop Here';
+      dynamicButtonText = t('general.dropHere');
     } else if (isDragReject) {
-      dynamicButtonText = 'Invalid File';
+      dynamicButtonText = t('general.invalidFile');
     } else {
-      dynamicButtonText = 'Drop File';
+      dynamicButtonText = t('general.dropFile');
     }
   }
 
@@ -263,16 +275,14 @@ export const ChannelSettingsImportExportButtons = () => {
   return (
     <Box sx={sx.buttonsContainer}>
       <Button
-        variant="contained"
         startIcon={<DownloadIcon />}
         onClick={exportChannelSettings}
         sx={sx.exportButton}
         fullWidth
       >
-        Export
+        {t('general.export')}
       </Button>
       <Button
-        variant="outlined"
         startIcon={<UploadIcon />}
         sx={importButtonStyle}
         fullWidth
@@ -285,7 +295,7 @@ export const ChannelSettingsImportExportButtons = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   buttonsContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -295,23 +305,18 @@ const styles = (theme: Theme) => ({
     padding: '0'
   },
   exportButton: {
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    background: theme.palette.gx.gradients.brand(),
+    color: theme.palette.gx.primary.white,
     padding: '7px 16px',
-    flex: 1,
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.9)
-    }
+    flex: 1
   },
   importButton: {
     borderStyle: 'dashed',
-    borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
+    border: '2px solid',
+    borderColor: theme.palette.gx.accent.greenBlue,
     padding: '7px 16px',
-    flex: 1,
-    '&:hover': {
-      borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
-    }
+    flex: 1
   },
   importButtonActive: {
     borderStyle: 'solid',

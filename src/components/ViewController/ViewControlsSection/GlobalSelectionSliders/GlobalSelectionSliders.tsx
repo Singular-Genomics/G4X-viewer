@@ -6,10 +6,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { unstable_batchedUpdates } from 'react-dom';
 import { PropertiesUpdateType } from '../../../../stores/ChannelsStore/ChannelsStore.types';
 import { debounce } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 export const GlobalSelectionSliders = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [globalSelection, isChannelLoading] = useViewerStore(
     useShallow((store) => [store.globalSelection, store.isChannelLoading])
@@ -119,7 +121,7 @@ export const GlobalSelectionSliders = () => {
         })
       ) : (
         <Box>
-          <Typography textAlign="center">No global selection data</Typography>
+          <Typography textAlign="center">{t('viewSettings.globalSelectionNoData')}</Typography>
         </Box>
       )}
     </Box>

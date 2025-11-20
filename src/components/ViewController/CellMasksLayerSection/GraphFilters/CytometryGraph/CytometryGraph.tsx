@@ -7,25 +7,30 @@ import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
 import { debounce } from 'lodash';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { HeatmapRanges, ProteinNames } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { HeatmapRanges, ProteinIndices } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { CytometryHeader } from './CytometryHeader/CytometryHeader';
 import { CytometryWorker } from './helpers/cytometryWorker';
 import { GxLoader } from '../../../../../shared/components/GxLoader';
 import { GraphData, LoaderInfo } from './CytometryGraph.types';
-import { mapValuesToColors, thresholdColorMap } from './CytometryGraph.helpers';
-import { ColorscaleSlider } from './ColorscaleSlider/ColorscaleSlider';
+import { mapValuesToColors } from './CytometryGraph.helpers';
 import { SingleMask } from '../../../../../shared/types';
 import DownloadIcon from '@mui/icons-material/Download';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
+import { GxColorscaleSlider, thresholdColorMap } from '../../../../../shared/components/GxColorscaleSlider';
 
-export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinNames: ProteinNames) {
+export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMask[], proteinIndices: ProteinIndices) {
   const handleDownload = () => {
+    if (proteinIndices.xAxisIndex < 0 || proteinIndices.yAxisIndex < 0) {
+      console.error('Failed to find protein values');
+      return;
+    }
+
     const filteredCells = cellMasksData
       .filter((mask) => failedIds.includes(mask.cellId))
       .map((mask) => ({
         cellId: mask.cellId,
-        proteins: Object.fromEntries(
-          Object.entries(mask.proteins).filter(([key]) => Object.values(proteinNames).includes(key))
-        )
+        proteinValues: [mask.proteinValues[proteinIndices.xAxisIndex], mask.proteinValues[proteinIndices.yAxisIndex]]
       }));
 
     const blob = new Blob([JSON.stringify(filteredCells)], { type: 'application/json' });
@@ -43,7 +48,7 @@ export function CustomErrorMessage(failedIds: string[], cellMasksData: SingleMas
 
   return (
     <Box sx={messageSx.customErrorMessage}>
-      <Typography>Download failed cells data: </Typography>
+      <Typography>{`${i18n.t('segmentationSettings.cytometryDownloadFailedLabel')}: `}</Typography>
       <IconButton onClick={handleDownload}>
         <DownloadIcon sx={messageSx.downloadIcon} />
       </IconButton>
@@ -55,10 +60,11 @@ export const CytometryGraph = () => {
   const containerRef = useRef(null);
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
-  const { cellMasksData } = useCellSegmentationLayerStore();
-  const { proteinNames, settings } = useCytometryGraphStore();
+  const { cellMasksData, segmentationMetadata } = useCellSegmentationLayerStore();
+  const { proteinIndices, settings, updateSettings } = useCytometryGraphStore();
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const [heatmapData, setHeatmapData] = useState<GraphData>({ axisType: 'linear', graphMode: 'scattergl' });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -69,18 +75,16 @@ export const CytometryGraph = () => {
     if (cellMasksData) {
       if (!cellMasksData.length) {
         enqueueSnackbar({
-          message: 'Missing cell masks in given data set',
+          message: t('segmentationSettings.cytometryGraphMissingDataError'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
         return;
       }
 
-      const listOfProteinNames = Object.keys(cellMasksData[0].proteins);
-      if (listOfProteinNames.length < 2) {
+      if (!segmentationMetadata || segmentationMetadata.proteinNames.length < 2) {
         enqueueSnackbar({
-          message:
-            'Data set contains only a single channel data. At least to channels are required for plotting the heatmap',
+          message: t('segmentationSettings.cytometryGraphMissingChannelsError'),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
@@ -89,16 +93,22 @@ export const CytometryGraph = () => {
 
       const { ranges } = useCytometryGraphStore.getState();
 
-      setAvailableProteinNames(listOfProteinNames);
+      setAvailableProteinNames(segmentationMetadata.proteinNames);
 
       if (ranges) {
         setSelectionRange(ranges);
       }
     }
-  }, [cellMasksData, enqueueSnackbar]);
+  }, [cellMasksData, enqueueSnackbar, t, segmentationMetadata]);
 
   useEffect(() => {
-    if (!cellMasksData || !proteinNames.xAxis || !proteinNames.yAxis || !settings.binCountX || !settings.binCountY) {
+    if (
+      !cellMasksData ||
+      proteinIndices.xAxisIndex < 0 ||
+      proteinIndices.yAxisIndex < 0 ||
+      !settings.binCountX ||
+      !settings.binCountY
+    ) {
       return;
     }
 
@@ -116,8 +126,8 @@ export const CytometryGraph = () => {
           enqueueSnackbar({
             variant: 'gxSnackbar',
             titleMode: 'error',
-            message: `Failed to bin ${output.metadata.failed.length} cells`,
-            customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinNames),
+            message: t('segmentationSettings.cytometryGraphBinningError', { count: output.metadata.failed.length }),
+            customContent: CustomErrorMessage(output.metadata.failed, cellMasksData, proteinIndices),
             persist: true
           });
         }
@@ -125,22 +135,22 @@ export const CytometryGraph = () => {
         setLoader(undefined);
       } else if (output.completed && !output.success) {
         enqueueSnackbar({
-          message: output.message,
+          message: t(`segmentationSettings.cytometryGraphWorker_${output.status}`),
           variant: 'gxSnackbar',
           titleMode: 'error'
         });
       } else {
         setLoader({
           progress: output.progress,
-          message: output.message
+          message: t(`segmentationSettings.cytometryGraphWorker_${output.status}`)
         });
       }
     });
     worker.onError((error: any) => console.error(error));
     worker.postMessage({
       maskData: cellMasksData,
-      xProteinName: proteinNames.xAxis,
-      yProteinName: proteinNames.yAxis,
+      xProteinIndex: proteinIndices.xAxisIndex,
+      yProteinIndex: proteinIndices.yAxisIndex,
       binXCount: settings.binCountX,
       binYCount: settings.binCountY,
       axisType: settings.axisType,
@@ -149,15 +159,17 @@ export const CytometryGraph = () => {
     });
   }, [
     cellMasksData,
-    proteinNames,
-    proteinNames.xAxis,
-    proteinNames.yAxis,
+    proteinIndices,
+    proteinIndices.xAxisIndex,
+    proteinIndices.yAxisIndex,
     settings.binCountX,
     settings.binCountY,
     settings.axisType,
     settings.subsamplingValue,
     settings.graphMode,
-    enqueueSnackbar
+    enqueueSnackbar,
+    availableProteinNames,
+    t
   ]);
 
   useEffect(() => {
@@ -195,6 +207,26 @@ export const CytometryGraph = () => {
     }
   };
 
+  const handleThresholdChange = (newLowerThreshold: number, newUpperThreshold: number) => {
+    const currentColorscaleSettings = useCytometryGraphStore.getState().settings.colorscale;
+    updateSettings({
+      colorscale: {
+        ...currentColorscaleSettings,
+        upperThreshold: newUpperThreshold,
+        lowerThreshold: newLowerThreshold
+      }
+    });
+  };
+
+  const xProteinName =
+    proteinIndices.xAxisIndex >= 0 && proteinIndices.xAxisIndex < availableProteinNames.length
+      ? availableProteinNames[proteinIndices.xAxisIndex]
+      : '';
+  const yProteinName =
+    proteinIndices.yAxisIndex >= 0 && proteinIndices.yAxisIndex < availableProteinNames.length
+      ? availableProteinNames[proteinIndices.yAxisIndex]
+      : '';
+
   const plotData: Data[] = [
     {
       x: heatmapData.data?.x,
@@ -215,7 +247,7 @@ export const CytometryGraph = () => {
               size: settings.pointSize
             },
             text: heatmapData.data?.z ? heatmapData.data.z.map((e) => (e as number).toFixed(3)) : [],
-            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{text}<extra></extra>`
+            hovertemplate: `${xProteinName}: %{x:.2f}<br>${yProteinName}: %{y:.2f}<br>Density: %{text}<extra></extra>`
           }
         : {
             type: 'heatmap',
@@ -226,7 +258,7 @@ export const CytometryGraph = () => {
               settings.colorscale.lowerThreshold
             ),
             reversescale: settings.colorscale.reversed,
-            hovertemplate: `${proteinNames.xAxis}: %{x:.2f}<br>${proteinNames.yAxis}: %{y:.2f}<br>Density: %{z:.2f}<extra></extra>`,
+            hovertemplate: `${xProteinName}: %{x:.2f}<br>${yProteinName}: %{y:.2f}<br>Density: %{z:.2f}<extra></extra>`,
             showscale: false
           })
     }
@@ -241,7 +273,7 @@ export const CytometryGraph = () => {
     plot_bgcolor: theme.palette.gx.lightGrey[900],
     xaxis: {
       title: {
-        text: proteinNames.xAxis,
+        text: xProteinName,
         font: { size: 14 }
       },
       type: heatmapData.axisType,
@@ -254,7 +286,7 @@ export const CytometryGraph = () => {
     },
     yaxis: {
       title: {
-        text: proteinNames.yAxis,
+        text: yProteinName,
         font: { size: 14 },
         standoff: 10
       },
@@ -336,9 +368,13 @@ export const CytometryGraph = () => {
         />
       </Box>
       <Box sx={{ backgroundColor: theme.palette.gx.primary.white, paddingInline: '32px' }}>
-        <ColorscaleSlider
-          min={heatmapData.metadata?.zMin}
-          max={heatmapData.metadata?.zMax}
+        <GxColorscaleSlider
+          scaleMin={heatmapData.metadata?.zMin}
+          scaleMax={heatmapData.metadata?.zMax}
+          colorscale={settings.colorscale}
+          lowerThreshold={settings.colorscale.lowerThreshold}
+          upperThreshold={settings.colorscale.upperThreshold}
+          onThresholdChange={handleThresholdChange}
         />
       </Box>
       <GraphRangeInputs

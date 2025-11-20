@@ -1,7 +1,7 @@
 import { Box, Input, Theme, useTheme } from '@mui/material';
 import { colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
@@ -12,18 +12,27 @@ const CHANNEL_MAX = 65535;
 const CHANNEL_STEP = 1;
 const DEBOUNCE_TIME_MS = 300;
 
-export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoading }: ChannelRangeSliderProps) => {
+export const ChannelRangeSlider = ({
+  color,
+  slider,
+  handleSliderChange,
+  isLoading,
+  rangeMin,
+  rangeMax,
+  minInputValue,
+  maxInputValue,
+  setMinInputValue,
+  setMaxInputValue
+}: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [minInputValue, setMinInputValue] = useState<string>('');
-  const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   const [currentMinValue, currentMaxValue] = slider;
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
     setMaxInputValue(currentMaxValue.toString());
-  }, [currentMaxValue, currentMinValue]);
+  }, [currentMaxValue, currentMinValue, setMinInputValue, setMaxInputValue]);
 
   const colormap = useViewerStore((store) => store.colormap);
   const rgbColor = colormapToRgb(!!colormap, color);
@@ -41,7 +50,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMaxValue, handleSliderChange]
+    [currentMaxValue, handleSliderChange, setMinInputValue]
   );
 
   const handleMinInputChange = useCallback(
@@ -49,7 +58,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
       setMinInputValue(e.target.value);
       debouncedMinInputChange(e.target.value);
     },
-    [debouncedMinInputChange]
+    [debouncedMinInputChange, setMinInputValue]
   );
 
   const debouncedMaxInputChange = useMemo(
@@ -65,7 +74,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, handleSliderChange]
+    [currentMinValue, handleSliderChange, setMaxInputValue]
   );
 
   const handleMaxInputChange = useCallback(
@@ -73,7 +82,7 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
       setMaxInputValue(e.target.value);
       debouncedMaxInputChange(e.target.value);
     },
-    [debouncedMaxInputChange]
+    [debouncedMaxInputChange, setMaxInputValue]
   );
 
   return (
@@ -102,8 +111,8 @@ export const ChannelRangeSlider = ({ color, slider, handleSliderChange, isLoadin
         value={slider}
         onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
         valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-        min={CHANNEL_MIN}
-        max={CHANNEL_MAX}
+        min={Number(rangeMin)}
+        max={Number(rangeMax)}
         step={CHANNEL_STEP}
         orientation="horizontal"
         style={{ color: rgbColor }}

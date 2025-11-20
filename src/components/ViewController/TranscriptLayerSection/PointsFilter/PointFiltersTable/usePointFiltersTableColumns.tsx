@@ -1,9 +1,14 @@
 import { GetApplyQuickFilterFn, GridColDef } from '@mui/x-data-grid';
-import LensIcon from '@mui/icons-material/Lens';
-import { Tooltip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
+import { GxFilterTableColorCell } from '../../../../../shared/components/GxFilterTable/GxFilterTableColorCell/GxFilterTableColorCell';
+import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
 
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
+  const { t } = useTranslation();
+  const { colorMapConfig, setColormapConfig } = useBinaryFilesStore();
+
   const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
     if (!(value as string).startsWith('[')) {
       return null;
@@ -13,10 +18,15 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
     return (cellValue) => parsedValue.every((value) => (cellValue as Array<number>).includes(value));
   };
 
+  const handleColorMapUpdate = (color: number[], geneName: string) => {
+    const updatedConfig = colorMapConfig.map((entry) => (entry.gene_name === geneName ? { ...entry, color } : entry));
+    setColormapConfig(updatedConfig);
+  };
+
   return [
     {
       field: 'gene_name',
-      headerName: 'Gene Name',
+      headerName: t('transcript.geneName'),
       headerAlign: 'center',
       filterable: true,
       flex: 1,
@@ -25,14 +35,16 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
     {
       field: 'color',
       headerAlign: 'center',
-      headerName: 'Color',
+      headerName: t('transcript.color'),
       filterable: false,
       flex: 1,
       getApplyQuickFilterFn: geneColorQuickFilter,
       renderCell: (params) => (
-        <Tooltip title={`RGB: ${params.row.color.join(' ')}`}>
-          <LensIcon style={{ color: `rgb(${params.row.color})` }} />
-        </Tooltip>
+        <GxFilterTableColorCell
+          currentColor={params.row.color}
+          currnetValueName={params.row.gene_name}
+          handleColorUpdate={handleColorMapUpdate}
+        />
       )
     }
   ];

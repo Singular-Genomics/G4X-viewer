@@ -2,22 +2,19 @@ import { useShallow } from 'zustand/react/shallow';
 import { Box, FormControlLabel } from '@mui/material';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
+import { useTranslation } from 'react-i18next';
 
 export const TranscriptLayerToggle = () => {
-  const [isTranscriptLayerOn, showTilesBoundries, toggleTranscriptLayer, toggleTileBoundries] = useTranscriptLayerStore(
-    useShallow((store) => [
-      store.isTranscriptLayerOn,
-      store.showTilesBoundries,
-      store.toggleTranscriptLayer,
-      store.toggleTileBoundries
-    ])
+  const { t } = useTranslation();
+  const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
   );
 
   return (
     <>
       <Box>
         <FormControlLabel
-          label="Transcript Layer"
+          label={t('viewSettings.transcriptLayer')}
           control={
             <GxCheckbox
               onChange={toggleTranscriptLayer}
@@ -26,7 +23,7 @@ export const TranscriptLayerToggle = () => {
             />
           }
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           label="Show Tile Boundaries"
           control={
             <GxCheckbox
@@ -35,7 +32,7 @@ export const TranscriptLayerToggle = () => {
               checked={showTilesBoundries}
             />
           }
-        />
+        /> */}
       </Box>
     </>
   );

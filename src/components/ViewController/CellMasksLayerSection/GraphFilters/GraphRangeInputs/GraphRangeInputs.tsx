@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { GxInput } from '../../../../../shared/components/GxInput';
 import { Box, Button, Theme, useTheme } from '@mui/material';
 import { GraphRangeInputsProps, InputConfig, InputErrors, InputFieldType, InputRange } from './GraphRangeInputs.types';
+import { useTranslation } from 'react-i18next';
 
 const INPUT_FIELDS: InputConfig[] = [
   {
@@ -49,6 +50,7 @@ export function GraphRangeInputs({
   onClear,
   onConfirm
 }: GraphRangeInputsProps) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -137,7 +139,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.clearButton}
       >
-        Clear
+        {t('general.clear')}
       </Button>
       <Button
         onClick={onConfirm}
@@ -145,7 +147,7 @@ export function GraphRangeInputs({
         disabled={!isValidRange}
         sx={sx.confirmButton}
       >
-        Confirm
+        {t('general.apply')}
       </Button>
     </Box>
   );
@@ -165,10 +167,9 @@ const styles = (theme: Theme) => ({
     paddingInline: '8px'
   },
   clearButton: {
-    fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.accent.greenBlue,
-    border: '1px solid',
+    border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
     background: theme.palette.gx.primary.white,
     '&.Mui-disabled': {
@@ -177,13 +178,11 @@ const styles = (theme: Theme) => ({
     }
   },
   confirmButton: {
-    fontWeight: 700,
     height: '100%',
     color: theme.palette.gx.primary.white,
     background: theme.palette.gx.gradients.brand(),
     '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[300],
-      color: theme.palette.gx.primary.black
+      background: theme.palette.gx.mediumGrey[300]
     }
   }
 });

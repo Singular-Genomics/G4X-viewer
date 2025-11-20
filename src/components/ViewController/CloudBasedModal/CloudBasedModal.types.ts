@@ -4,7 +4,7 @@ export type CloudBasedModalProps = {
   onSubmit: (url: string) => void;
   url: string;
   onUrlChange: (url: string) => void;
-  title?: string;
-  placeholder?: string;
-  label?: string;
+  title: string;
+  placeholder: string;
+  label: string;
 };

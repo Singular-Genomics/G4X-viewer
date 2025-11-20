@@ -7,6 +7,8 @@ import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
 export const ChannelController = ({
   color,
@@ -23,8 +25,14 @@ export const ChannelController = ({
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
+  const [currentMinValue, currentMaxValue] = slider;
+  const [rangeMin, setRangeMin] = useState(currentMinValue.toString());
+  const [rangeMax, setRangeMax] = useState(currentMaxValue.toString());
+  const [minInputValue, setMinInputValue] = useState<string>('');
+  const [maxInputValue, setMaxInputValue] = useState<string>('');
 
   return (
     <Grid
@@ -44,6 +52,7 @@ export const ChannelController = ({
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
           sx={sx.channelSelect}
+          disabled={isLoading}
         >
           {channelOptions.map((opt) => (
             <MenuItem
@@ -57,11 +66,19 @@ export const ChannelController = ({
         </GxSelect>
         <Box>
           <ChannelOptions
+            slider={slider}
             handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
+            rangeMin={rangeMin}
+            rangeMax={rangeMax}
+            setRangeMin={setRangeMin}
+            setRangeMax={setRangeMax}
+            setMinInputValue={setMinInputValue}
+            setMaxInputValue={setMaxInputValue}
+            handleSliderChange={handleSliderChange}
           />
           <Tooltip
-            title="Remove channel"
+            title={t('channelSettings.removeChannel')}
             arrow
           >
             <IconButton
@@ -83,6 +100,12 @@ export const ChannelController = ({
         slider={slider}
         handleSliderChange={handleSliderChange}
         isLoading={isLoading}
+        rangeMin={rangeMin}
+        rangeMax={rangeMax}
+        minInputValue={minInputValue}
+        maxInputValue={maxInputValue}
+        setMinInputValue={setMinInputValue}
+        setMaxInputValue={setMaxInputValue}
       />
     </Grid>
   );

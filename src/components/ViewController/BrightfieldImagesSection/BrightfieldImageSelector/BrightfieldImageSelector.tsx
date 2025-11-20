@@ -7,10 +7,12 @@ import { BrightfieldImageSelectorProps } from './BrightfieldImageSelector.types'
 import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
+import { useTranslation } from 'react-i18next';
 
 export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
   const [activeImageName, setActiveImageName] = useState<string>('');
@@ -63,7 +65,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(filename)) {
       enqueueSnackbar({
-        message: 'Invalid input file name. Only .ome.tiff and .tif extensions allowed',
+        message: t('brightfieldImages.invalidFileError'),
         variant: 'error'
       });
       return;
@@ -78,7 +80,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: 'Image with same name already has been loaded',
+        message: t('brightfieldImages.duplicateImageError'),
         variant: 'error'
       });
       return;
@@ -89,7 +91,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
     setCloudImageUrl('');
 
     enqueueSnackbar({
-      message: `Successfully loaded H&E image from URL: ${filename}`,
+      message: t('brightfieldImages.imageCloudUploadSuccess', { file: filename }),
       variant: 'success'
     });
   };
@@ -101,7 +103,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         value={activeImageName}
       >
         {!images.length ? (
-          <Typography sx={sx.imageSelectorEmptyText}>No H&E images have been loaded</Typography>
+          <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noImages')}</Typography>
         ) : (
           images.map((entry, index) => {
             const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
@@ -128,7 +130,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           {...dropzoneProps.getRootProps()}
         >
           <input {...dropzoneProps.getInputProps()} />
-          Add H&E Image
+          {t('brightfieldImages.addImage')}
         </Button>
         <Button
           variant="outlined"
@@ -138,7 +140,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           onClick={handleCloudUploadClick}
           startIcon={<CloudUploadIcon />}
         >
-          Cloud Upload
+          {t('general.cloudUpload')}
         </Button>
       </Box>
 
@@ -148,9 +150,9 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         onSubmit={handleCloudSubmit}
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
-        title="Cloud Upload"
-        placeholder="Enter URL to .ome.tiff or .tif file"
-        label="H&E Image URL"
+        title={t('general.cloudUpload')}
+        placeholder={t('brightfieldImages.imageCloudUploadDescription')}
+        label={t('brightfieldImages.imageCloudUploadLabel')}
       />
     </Box>
   );

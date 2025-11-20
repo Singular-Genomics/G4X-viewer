@@ -5,8 +5,8 @@ import { SingleMask } from '../../../../../../shared/types';
 
 export type CytometryWorkerInput = {
   maskData: SingleMask[];
-  xProteinName: string;
-  yProteinName: string;
+  xProteinIndex: number;
+  yProteinIndex: number;
   binXCount: number;
   binYCount: number;
   axisType: AxisTypes;
@@ -18,10 +18,22 @@ export type CytometryWorkerOutput = {
   progress?: number;
   completed?: boolean;
   success?: boolean;
-  message?: string;
+  status?: string;
   data?: CytometryWorkerHeatmapData | CytometryWorkerScatterData;
   metadata?: CytometryWorkerMetadata;
 };
+
+export enum CytometryWorkerStatus {
+  BINING = 'biningData',
+  PROCESSING = 'processingData',
+  COMPLETE = 'complete',
+  NORMALIZING = 'normalizing',
+  NO_MASK = 'missingMask',
+  NO_PROTEIN = 'missingProtein',
+  INVALID = 'invalidValue',
+  MODE_LINEAR = 'modeLinear',
+  MODE_LOG = 'modeLog'
+}
 
 export type CytometryWorkerScatterData = {
   x: Datum[];

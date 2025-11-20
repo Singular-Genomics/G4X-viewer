@@ -9,8 +9,10 @@ import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
+import { useTranslation } from 'react-i18next';
 
 export default function ImageDropzoneButton() {
+  const { t } = useTranslation();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [cloudImageUrl, setCloudImageUrl] = useState('');
 
@@ -35,7 +37,7 @@ export default function ImageDropzoneButton() {
 
     if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(filename)) {
       enqueueSnackbar({
-        message: 'Invalid input file name. Only .ome.tiff and .zarr extensions allowed',
+        message: t('sourceFiles.imageInvalidFile'),
         variant: 'error'
       });
       return;
@@ -55,7 +57,7 @@ export default function ImageDropzoneButton() {
     setIsPopupOpen(false);
 
     enqueueSnackbar({
-      message: `Successfully loaded image from URL: ${filename}`,
+      message: t('sourceFiles.imageSuccess', { filename: filename }),
       variant: 'success'
     });
   };
@@ -63,9 +65,9 @@ export default function ImageDropzoneButton() {
   return (
     <Box>
       <GxDropzoneButton
-        labelTitle="Image File Name"
+        labelTitle={t('sourceFiles.imageInputLabel')}
         labelText={imageName}
-        buttonText="Upload image file"
+        buttonText={t('sourceFiles.imageUploadButton')}
         onCloudUploadClick={handleCloudUploadClick}
         isCloudUploaded={!!cloudImageUrl}
         {...dropzoneProps}
@@ -77,9 +79,9 @@ export default function ImageDropzoneButton() {
         onSubmit={handleSubmit}
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
-        title="Cloud Upload"
-        placeholder="Enter URL to .ome.tiff or .zarr file"
-        label="Image URL"
+        title={t('general.cloudUpload')}
+        placeholder={t('sourceFiles.imageInputPlaceholder')}
+        label={t('general.imageURL')}
       />
     </Box>
   );
