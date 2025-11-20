@@ -91,9 +91,7 @@ G4x Viewer is licensed under the [MIT License](LICENSE). Please review the licen
 
 ## Contact
 
-For questions, support, or collaboration inquiries, please contact:
-
-- **Project Lead:** Kenneth Gouin III - [kennethg@singulargenomics.com](mailto:kennethg@singulargenomics.com)
+For questions, support, or collaboration inquiries, please contact [care@singulargenomics.com](mailto:care@singulargenomics.com).
 
 ## Acknowledgments
 
