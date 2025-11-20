@@ -101,11 +101,27 @@ export const useFileHandler = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error processing transcript files:', error);
-        enqueueSnackbar({
-          message: t('sourceFiles.invalidFileFormatError'),
-          variant: 'gxSnackbar',
-          titleMode: 'error'
-        });
+        const errorObj = error as Error;
+        if (errorObj?.name && errorObj.name === 'NotReadableError') {
+          enqueueSnackbar({
+            message: t('sourceFiles.notReadableErrorWarning'),
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            persist: true
+          });
+          enqueueSnackbar({
+            message: t('sourceFiles.notReadableErrorWorkaround'),
+            variant: 'gxSnackbar',
+            titleMode: 'error',
+            persist: true
+          });
+        } else {
+          enqueueSnackbar({
+            message: t('sourceFiles.invalidFileFormatError'),
+            variant: 'gxSnackbar',
+            titleMode: 'error'
+          });
+        }
         setLoading(false);
       }
     }
