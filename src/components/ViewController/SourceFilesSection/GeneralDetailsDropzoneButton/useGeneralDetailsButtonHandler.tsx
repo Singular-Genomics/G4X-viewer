@@ -27,15 +27,6 @@ export const useGeneralDetailsHandler = () => {
 
     try {
       const text = await file.text();
-
-      if (text.includes('NaN') || text.includes('Infinity') || text.includes('-Infinity')) {
-        enqueueSnackbar({
-          message: t('sourceFiles.metadataInvalidJsonError'),
-          variant: 'error'
-        });
-        return;
-      }
-
       const jsonData = JSON.parse(text);
 
       const generalDetails: GeneralDetailsType = {
