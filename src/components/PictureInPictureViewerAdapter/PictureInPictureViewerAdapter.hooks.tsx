@@ -27,6 +27,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
 import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -400,6 +401,24 @@ export const usePolygonDrawingLayer = () => {
         try {
           const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
 
+          // If point limit was exceeded, delete the polygon and show error
+          if (result.limitExceeded) {
+            setDetecting(false);
+            closeSnackbar(loadingSnackbarId);
+            deletePolygon(newPolygonId);
+            enqueueSnackbar({
+              variant: 'gxSnackbar',
+              titleMode: 'error',
+              message: t('interactiveLayer.pointLimitExceeded', {
+                totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
+                limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
+                reductionPercent: result.suggestedReductionPercent || 50
+              }),
+              persist: true
+            });
+            return;
+          }
+
           // Update polygon properties
           newPolygon.properties = {
             ...newPolygon.properties,
@@ -515,9 +534,31 @@ export const usePolygonDrawingLayer = () => {
         autoHideDuration: 10000
       });
 
+      let totalFoundPoints = 0;
+      let totalFoundCells = 0;
+
       if (files.length > 0) {
         try {
           const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
+
+          // If point limit was exceeded, revert the polygon to its previous position
+          if (result.limitExceeded) {
+            setDetecting(false);
+            closeSnackbar(loadingSnackbarId);
+            // Revert to previous polygon state
+            updatePolygon(initialFeatures[editedPolygonIndex], editedPolygonIndex);
+            enqueueSnackbar({
+              variant: 'gxSnackbar',
+              titleMode: 'error',
+              message: t('interactiveLayer.pointLimitExceeded', {
+                totalPoints: result.totalPointsFound?.toLocaleString() || 'Unknown',
+                limit: MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString(),
+                reductionPercent: result.suggestedReductionPercent || 50
+              }),
+              persist: true
+            });
+            return;
+          }
 
           // Update polygon properties
           editedPolygon.properties = {
@@ -527,6 +568,7 @@ export const usePolygonDrawingLayer = () => {
           };
 
           updateSelectedPoints(result.pointsInPolygon, editedPolygonIndex);
+          totalFoundPoints = result.pointCount;
         } catch (error) {
           console.error('Error detecting points in polygon:', error);
           enqueueSnackbar({
@@ -550,6 +592,7 @@ export const usePolygonDrawingLayer = () => {
 
           // Add new cells from the updated polygon
           updateSelectedCells(result.cellPolygonsInDrawnPolygon, editedPolygonIndex);
+          totalFoundCells = result.cellPolygonCount;
         } catch (error) {
           console.error('Error detecting cell polygons in polygon:', error);
           enqueueSnackbar({
@@ -562,6 +605,28 @@ export const usePolygonDrawingLayer = () => {
 
       setDetecting(false);
       closeSnackbar(loadingSnackbarId);
+
+      // Show success message with updated counts
+      const polygonId = editedPolygon.properties?.id || editedPolygonIndex;
+      if (!totalFoundPoints && !totalFoundCells) {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'warning',
+          message: t('interactiveLayer.noDataDetected', { polygonId })
+        });
+      } else {
+        enqueueSnackbar({
+          variant: 'gxSnackbar',
+          titleMode: 'success',
+          message: t('interactiveLayer.dataDetected', { polygonId }),
+          customContent: (
+            <List>
+              <ListItem>{t('interactiveLayer.transcriptsDetected', { count: totalFoundPoints })}</ListItem>
+              <ListItem>{t('interactiveLayer.cellsDetected', { count: totalFoundCells })}</ListItem>
+            </List>
+          )
+        });
+      }
     }
   };
 
