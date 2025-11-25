@@ -60,6 +60,25 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
             }
           />
         </Grid>
+        {/* Sort ROIs  */}
+        <Grid
+          size={1}
+          alignContent={'center'}
+          sx={sx.settingLabel}
+        >
+          <Typography>{t('dashboard.plotSortRoisLabel')}:</Typography>
+        </Grid>
+        <Grid size={1}>
+          <GxCheckbox
+            value={settings.sortRois}
+            onChange={() =>
+              onChangeSettings({
+                ...settings,
+                sortRois: !settings.sortRois
+              })
+            }
+          />
+        </Grid>
         {/* Box point type  */}
         <Grid
           size={1}

@@ -28,7 +28,6 @@ export const useGeneralDetailsHandler = () => {
     try {
       const text = await file.text();
       const jsonData = JSON.parse(text);
-
       const generalDetails: GeneralDetailsType = {
         fileName: file.name,
         data: jsonData
@@ -41,10 +40,18 @@ export const useGeneralDetailsHandler = () => {
         variant: 'success'
       });
     } catch (error) {
-      enqueueSnackbar({
-        message: t('sourceFiles.metadataParsingError', { message: (error as Error).message }),
-        variant: 'error'
-      });
+      const errorMessage = (error as Error).message;
+      if (error instanceof SyntaxError) {
+        enqueueSnackbar({
+          message: t('sourceFiles.metadataInvalidJsonError'),
+          variant: 'error'
+        });
+      } else {
+        enqueueSnackbar({
+          message: t('sourceFiles.metadataParsingError', { message: errorMessage }),
+          variant: 'error'
+        });
+      }
     }
   };
 

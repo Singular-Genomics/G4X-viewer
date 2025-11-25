@@ -24,7 +24,8 @@ export function useBarChartPlotDataParser() {
       valueType: BarChartValueType,
       selectedvalue: string,
       hueValue: BarChartHueValueOptions,
-      orientation: BarChartOrientation
+      orientation: BarChartOrientation,
+      sortRois: boolean
     ): BarChartDataEntry[] => {
       if (!selectedCells.length || !segmentationMetadata) {
         return [];
@@ -34,7 +35,11 @@ export function useBarChartPlotDataParser() {
         valueType === 'gene' ? segmentationMetadata.geneNames : segmentationMetadata.proteinNames
       ).findIndex((name) => name === selectedvalue);
 
-      const validSelection = rois ? selectedCells.filter((sel) => rois.includes(sel.roiId)) : [];
+      const orderedRois = sortRois ? [...rois].sort((a, b) => a - b) : rois;
+      const cellsByRoiId = new Map(selectedCells.map((sel) => [sel.roiId, sel]));
+      const validSelection = orderedRois
+        ? orderedRois.map((roiId) => cellsByRoiId.get(roiId)).filter((sel) => sel !== undefined)
+        : [];
       const parsedColormap = cellColormapConfig.reduce(
         (acc, item) => {
           acc[item.clusterId] = rgbToHex(item.color);
@@ -147,34 +152,37 @@ export function useBarChartPlotDataParser() {
         }
 
         // Convert to plot data entries with mean values
-        return Array.from(aggregatedData.entries()).map(([roiId, clusterMap]) => {
-          const x: string[] = [];
-          const y: number[] = [];
-          const counts: number[] = [];
+        return orderedRois
+          .filter((roiId) => aggregatedData.has(roiId.toString()))
+          .map((roiId) => {
+            const clusterMap = aggregatedData.get(roiId.toString())!;
+            const x: string[] = [];
+            const y: number[] = [];
+            const counts: number[] = [];
 
-          for (const [clusterLabel, values] of clusterMap.entries()) {
-            x.push(clusterLabel);
-            y.push(values.reduce((sum, val) => sum + val, 0) / values.length);
-            counts.push(values.length);
-          }
+            for (const [clusterLabel, values] of clusterMap.entries()) {
+              x.push(clusterLabel);
+              y.push(values.reduce((sum, val) => sum + val, 0) / values.length);
+              counts.push(values.length);
+            }
 
-          const hovertemplate =
-            orientation === 'v'
-              ? `<b>ROI:</b> ${roiId}<br><b>Cluster:</b> %{x}<br><b>Mean Value:</b> %{y:.2f}<br><b>Count:</b> %{customdata}<extra></extra>`
-              : `<b>ROI:</b> ${roiId}<br><b>Cluster:</b> %{y}<br><b>Mean Value:</b> %{x:.2f}<br><b>Count:</b> %{customdata}<extra></extra>`;
+            const hovertemplate =
+              orientation === 'v'
+                ? `<b>ROI:</b> ${roiId}<br><b>Cluster:</b> %{x}<br><b>Mean Value:</b> %{y:.2f}<br><b>Count:</b> %{customdata}<extra></extra>`
+                : `<b>ROI:</b> ${roiId}<br><b>Cluster:</b> %{y}<br><b>Mean Value:</b> %{x:.2f}<br><b>Count:</b> %{customdata}<extra></extra>`;
 
-          return {
-            name: t('general.roiEntry', { index: roiId }),
-            type: 'bar',
-            ...(orientation === 'v' ? { x, y } : { x: y, y: x }),
-            customdata: counts,
-            hovertemplate,
-            marker: { color: rgbToHex(generatePolygonColor(Number(roiId) - 1)) },
-            legendgroup: t('general.roiEntry', { index: roiId }),
-            showlegend: true,
-            orientation: orientation
-          };
-        });
+            return {
+              name: t('general.roiEntry', { index: roiId }),
+              type: 'bar',
+              ...(orientation === 'v' ? { x, y } : { x: y, y: x }),
+              customdata: counts,
+              hovertemplate,
+              marker: { color: rgbToHex(generatePolygonColor(Number(roiId) - 1)) },
+              legendgroup: t('general.roiEntry', { index: roiId }),
+              showlegend: true,
+              orientation: orientation
+            };
+          });
       }
 
       // Without hue - aggregate by ROI

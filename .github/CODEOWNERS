@@ -1,4 +1,4 @@
-/.github/CODEOWNERS	@gouinK @rileygibbs
-*	@rileygibbs @matzduniuk @gouinK
-/.github/workflows/ @gouinK @rileygibbs
-/.github/workflows/* @gouinK @rileygibbs
+/.github/CODEOWNERS	@floRaths @rileygibbs
+*	@rileygibbs @matzduniuk @floRaths
+/.github/workflows/ @floRaths @rileygibbs
+/.github/workflows/* @floRaths @rileygibbs

@@ -19,7 +19,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { GxModal } from '../../shared/components/GxModal';
 import { useTranslation } from 'react-i18next';
 
-export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) => {
+export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDrawingMenuProps) => {
   const { t } = useTranslation();
   const [
     isPolygonDrawingEnabled,
@@ -90,6 +90,10 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
   // Keyboard shortcuts handler
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
+      if (!isViewerActive) {
+        return;
+      }
+
       // Don't trigger shortcuts if user is typing in an input field
       if (
         event.target instanceof HTMLInputElement ||
@@ -153,6 +157,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot }: PolygonDrawingMenuProps) 
       }
     },
     [
+      isViewerActive,
       hasAnyData,
       isPolygonDrawingEnabled,
       isDetecting,

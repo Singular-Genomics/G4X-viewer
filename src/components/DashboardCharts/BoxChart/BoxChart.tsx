@@ -17,7 +17,8 @@ export const BoxChart = ({ id, title, removable = true }: BoxChartProps) => {
   const [selectedValueType, setSelectedValueType] = useState<BoxChartValueType>('protein');
   const [settings, setSettings] = useState<BoxChartSettingOptions>({
     swapAxis: false,
-    dataMode: 'suspectedoutliers'
+    dataMode: 'suspectedoutliers',
+    sortRois: false
   });
 
   return (
