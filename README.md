@@ -53,7 +53,7 @@ G4X Viewer provides two main views for comprehensive data analysis:
 
 ### Prerequisites
 
-- **Node.js** (version 16 or higher)
+- **Node.js** (version 20.19 or higher)
 - **npm**
 
 ### Installation

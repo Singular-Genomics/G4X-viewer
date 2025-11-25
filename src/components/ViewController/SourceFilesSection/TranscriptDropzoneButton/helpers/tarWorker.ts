@@ -29,11 +29,11 @@ onmessage = async (e) => {
   try {
     await pipe(source, extract(), async function (source) {
       for await (const entry of source) {
-        const chunks = [];
+        const chunks: Uint8Array[] = [];
         for await (const chunk of entry.body) {
           chunks.push(chunk);
         }
-        const blob = new Blob(chunks, { type: 'application/octet-stream' });
+        const blob = new Blob(chunks as BlobPart[], { type: 'application/octet-stream' });
         entries.push(new File([blob], entry.header.name));
       }
       postMessage({ success: true, files: entries, completed: true });
