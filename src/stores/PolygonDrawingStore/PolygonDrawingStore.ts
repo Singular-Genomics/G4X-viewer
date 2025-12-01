@@ -128,12 +128,12 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false, polygonNotes: {} });
   },
   exportPolygonsWithCells: (includeGenes) => {
-    const { polygonFeatures } = get();
-    exportPolygonsWithCells(polygonFeatures, includeGenes);
+    const { polygonFeatures, polygonNotes } = get();
+    exportPolygonsWithCells(polygonFeatures, includeGenes, polygonNotes);
   },
   exportPolygonsWithTranscripts: () => {
-    const { polygonFeatures } = get();
-    exportPolygonsWithTranscripts(polygonFeatures);
+    const { polygonFeatures, polygonNotes } = get();
+    exportPolygonsWithTranscripts(polygonFeatures, polygonNotes);
   },
   importPolygons: (importedFeatures: any) => {
     set({
