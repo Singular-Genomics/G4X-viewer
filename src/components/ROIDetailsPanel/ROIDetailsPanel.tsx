@@ -1,10 +1,14 @@
-import { Box, MenuItem, Select, TextField, Theme, useTheme } from '@mui/material';
+import { Box, MenuItem, Select, TextField, Theme, useTheme, Typography } from '@mui/material';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxInfoBox } from '../../shared/components/GxInfoBox';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const ROIDetailsPanel = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
   const [
@@ -25,11 +29,30 @@ export const ROIDetailsPanel = () => {
     ])
   );
 
+  const selectedPoints = useTranscriptLayerStore((store) => store.selectedPoints);
+  const selectedCells = useCellSegmentationLayerStore((store) => store.selectedCells);
+
   const roiIds = polygonFeatures.map((feature) => feature.properties?.polygonId).filter((id) => id !== undefined);
 
   // Use store's selectedROIId if set (from double-click), otherwise use first ROI
   const selectedRoiId =
     storeSelectedROIId && roiIds.includes(storeSelectedROIId) ? storeSelectedROIId : (roiIds[0] ?? '');
+
+  const transcriptCountMap = useMemo(() => {
+    const map = new Map<number, number>();
+    selectedPoints.forEach((selection) => {
+      map.set(selection.roiId, selection.data.length);
+    });
+    return map;
+  }, [selectedPoints]);
+
+  const cellCountMap = useMemo(() => {
+    const map = new Map<number, number>();
+    selectedCells.forEach((selection) => {
+      map.set(selection.roiId, selection.data.length);
+    });
+    return map;
+  }, [selectedCells]);
 
   useEffect(() => {
     // Reset store's selectedROIId when ROIs change and current selection becomes invalid
@@ -54,9 +77,12 @@ export const ROIDetailsPanel = () => {
 
   const currentNote = selectedRoiId !== '' ? polygonNotes[selectedRoiId] || '' : '';
 
+  const transcriptCount = selectedRoiId !== '' ? (transcriptCountMap.get(selectedRoiId) ?? 0) : 0;
+  const cellCount = selectedRoiId !== '' ? (cellCountMap.get(selectedRoiId) ?? 0) : 0;
+
   return (
     <GxInfoBox
-      title="ROI Details"
+      title={t('roiDetails.title')}
       tag={roiIds.length}
       expanded={isROIDetailsPanelExpanded}
       onExpandedChange={setROIDetailsPanelExpanded}
@@ -97,12 +123,22 @@ export const ROIDetailsPanel = () => {
               </MenuItem>
             ))}
           </Select>
+          <Box sx={sx.statsContainer}>
+            <Box sx={sx.statItem}>
+              <Typography sx={sx.statLabel}>{t('roiDetails.transcripts')}:</Typography>
+              <Typography sx={sx.statValue}>{transcriptCount.toLocaleString()}</Typography>
+            </Box>
+            <Box sx={sx.statItem}>
+              <Typography sx={sx.statLabel}>{t('roiDetails.cells')}:</Typography>
+              <Typography sx={sx.statValue}>{cellCount.toLocaleString()}</Typography>
+            </Box>
+          </Box>
           <TextField
             multiline
             rows={4}
             value={currentNote}
             onChange={(e) => handleNoteChange(e.target.value)}
-            placeholder="Add note..."
+            placeholder={t('roiDetails.addNote')}
             size="small"
             sx={sx.textField}
           />
@@ -133,6 +169,28 @@ const styles = (theme: Theme) => ({
     '& .MuiSvgIcon-root': {
       color: theme.palette.gx.lightGrey[900]
     }
+  },
+  statsContainer: {
+    display: 'flex',
+    gap: 2,
+    padding: '8px 12px',
+    backgroundColor: theme.palette.gx.darkGrey[300],
+    borderRadius: '4px'
+  },
+  statItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 0.5
+  },
+  statLabel: {
+    fontSize: '12px',
+    color: theme.palette.gx.mediumGrey[500],
+    fontWeight: 500
+  },
+  statValue: {
+    fontSize: '13px',
+    color: theme.palette.gx.lightGrey[900],
+    fontWeight: 600
   },
   textField: {
     fontSize: '13px',
