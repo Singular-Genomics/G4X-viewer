@@ -8,7 +8,7 @@ export const usePolygonsFileImport = () => {
   const { detectCellPolygonsInPolygon, detectPointsInPolygon } = usePolygonDetectionWorker();
   const { addSelectedPoints } = useTranscriptLayerStore();
   const { addSelectedCells } = useCellSegmentationLayerStore();
-  const { setPolygons } = usePolygonDrawingStore();
+  const { setPolygons, setPolygonNote } = usePolygonDrawingStore();
 
   const importPolygons = async (file: File) => {
     const content = await new Promise<string>((resolve, reject) => {
@@ -30,23 +30,36 @@ export const usePolygonsFileImport = () => {
       throw new Error('Invalid file format. No ROI data found. Expected ROI format with ROI_ prefixed keys.');
     }
 
-    // Extract coordinates and polygonId from ROI structure
+    // Extract coordinates, polygonId, and notes from ROI structure
     const polygonsWithData = Object.values(importedData).map((roi: any) => ({
       coordinates: roi.coordinates,
-      polygonId: roi.polygonId
+      polygonId: roi.polygonId,
+      notes: roi.notes || ''
     }));
 
-    const importedPolygons: PolygonFeature[] = polygonsWithData.map((polygonData, i: number) => ({
-      type: 'Feature' as const,
-      geometry: { type: 'Polygon' as const, coordinates: [polygonData.coordinates] },
-      properties: {
-        id: i,
-        polygonId: polygonData.polygonId || i + 1 // Use original ID if available, otherwise sequential
-      }
-    }));
+    const importedPolygons: PolygonFeature[] = polygonsWithData.map((polygonData, i: number) => {
+      const assignedPolygonId = polygonData.polygonId || i + 1;
+      return {
+        type: 'Feature' as const,
+        geometry: { type: 'Polygon' as const, coordinates: [polygonData.coordinates] },
+        properties: {
+          id: i,
+          polygonId: assignedPolygonId
+        }
+      };
+    });
 
     // Add polygons to the interactive layer store
     setPolygons(importedPolygons);
+
+    // Import notes for each polygon
+    importedPolygons.forEach((polygon, i) => {
+      const note = polygonsWithData[i].notes;
+      const polygonId = polygon.properties?.polygonId;
+      if (note && polygonId) {
+        setPolygonNote(polygonId, note);
+      }
+    });
 
     // Run detection for transcripts
     const { files: transcriptFiles, layerConfig } = useBinaryFilesStore.getState();

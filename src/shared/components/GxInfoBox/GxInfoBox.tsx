@@ -3,14 +3,29 @@ import { Box, Button, Collapse, Typography, Theme, useTheme } from '@mui/materia
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GxInfoBoxProps } from './GxInfoBox.types';
 
-export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxInfoBoxProps) => {
-  const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
+export const GxInfoBox = ({
+  title,
+  tag,
+  content,
+  defaultExpanded = false,
+  expanded: controlledExpanded,
+  onExpandedChange
+}: GxInfoBoxProps) => {
+  const [internalExpanded, setInternalExpanded] = useState<boolean>(defaultExpanded);
+
+  // Use controlled state if provided, otherwise use internal state
+  const isControlled = controlledExpanded !== undefined;
+  const expanded = isControlled ? controlledExpanded : internalExpanded;
 
   const theme = useTheme();
   const sx = styles(theme);
 
   const handleToggleExpand = () => {
-    setExpanded((prev) => !prev);
+    const newExpanded = !expanded;
+    if (!isControlled) {
+      setInternalExpanded(newExpanded);
+    }
+    onExpandedChange?.(newExpanded);
   };
 
   return (
