@@ -1,0 +1,23 @@
+[package]
+name = "g4x-viewer"
+version = "3.0.0"
+description = "G4X Viewer - Advanced imaging data visualization"
+authors = ["Singular Genomics"]
+edition = "2021"
+
+[lib]
+name = "g4x_viewer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-fs = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[target."cfg(not(any(target_os = \"android\", target_os = \"ios\")))".dependencies]
+tauri-plugin-cli = "2"

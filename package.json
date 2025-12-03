@@ -12,7 +12,12 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build --target universal-apple-darwin",
+    "tauri:build:desktop": "tauri build --target universal-apple-darwin && cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg ~/Desktop/",
+    "tauri:icon": "tauri icon"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
@@ -63,6 +68,8 @@
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
+    "@tauri-apps/api": "^2.9.1",
+    "@tauri-apps/cli": "^2.9.5",
     "@types/plotly.js": "^2.35.2",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
