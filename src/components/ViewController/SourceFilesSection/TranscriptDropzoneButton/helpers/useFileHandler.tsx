@@ -8,7 +8,7 @@ import { parseJsonFromFile } from '../../../../../utils/utils';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { validateTranscriptFileSchema } from '../../../../../schemas/transcriptaFile.schema';
 
 type WorkerType = typeof ZipWorker | typeof TarWorker;
@@ -33,7 +33,20 @@ export const useFileHandler = () => {
 
         if (!isValidSchema) {
           enqueueSnackbar({
-            message: t('sourceFiles.invalidFileFormatError'),
+            message: (
+              <Trans
+                i18nKey="sourceFiles.invalidFileFormatError"
+                components={{
+                  1: (
+                    <a
+                      href="https://docs.singulargenomics.com/G4X-helpers/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  )
+                }}
+              />
+            ),
             variant: 'gxSnackbar',
             titleMode: 'error'
           });
@@ -117,7 +130,20 @@ export const useFileHandler = () => {
           });
         } else {
           enqueueSnackbar({
-            message: t('sourceFiles.invalidFileFormatError'),
+            message: (
+              <Trans
+                i18nKey="sourceFiles.invalidFileFormatError"
+                components={{
+                  1: (
+                    <a
+                      href="https://docs.singulargenomics.com/G4X-helpers/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  )
+                }}
+              />
+            ),
             variant: 'gxSnackbar',
             titleMode: 'error'
           });
