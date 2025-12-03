@@ -114,6 +114,7 @@ const styles = (theme: Theme) => ({
     '& a': {
       color: theme.palette.gx.primary.white,
       textDecoration: 'underline',
+      transition: 'opacity 150ms ease',
       '&:hover': {
         opacity: 0.8
       }
