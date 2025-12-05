@@ -135,7 +135,7 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     left: '-30px',
     top: '100px',
-    zIndex: 101
+    zIndex: 1
   },
   collapseIconButton: {
     backgroundColor: theme.palette.gx.lightGrey[100],
@@ -152,7 +152,7 @@ const styles = (theme: Theme) => ({
     position: 'fixed',
     right: 0,
     top: '170px',
-    zIndex: 100
+    zIndex: 1
   },
   expandIconButton: {
     backgroundColor: theme.palette.gx.lightGrey[100],
