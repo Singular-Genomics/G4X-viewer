@@ -2,6 +2,7 @@ import { Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
+import { NAVIGATION_HEIGHT } from '../../../components/Navigation/Navigation';
 
 export const GxWindow = ({ children, title, boundries, onClose, config }: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
@@ -55,8 +56,8 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         newXPos = windowContainer.width - windowSize.width;
       }
 
-      if (newYPos < windowContainer.y) {
-        newYPos = windowSize.y;
+      if (newYPos < windowContainer.y + NAVIGATION_HEIGHT) {
+        newYPos = windowContainer.y + NAVIGATION_HEIGHT;
       } else if (newYPos + windowSize.height > windowContainer.height) {
         newYPos = windowContainer.height - windowSize.height;
       }

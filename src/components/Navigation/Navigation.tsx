@@ -4,6 +4,8 @@ import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
 
+export const NAVIGATION_HEIGHT = 70;
+
 export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -63,7 +65,7 @@ const styles = (theme: Theme) => ({
     left: 0,
     right: 0,
     zIndex: 50,
-    height: '70px',
+    height: `${NAVIGATION_HEIGHT}px`,
     background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
     display: 'flex',
     alignItems: 'center',
