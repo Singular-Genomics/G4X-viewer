@@ -45,6 +45,7 @@ const INPUT_FIELDS: InputConfig[] = [
 
 export function GraphRangeInputs({
   rangeSource,
+  savedRange,
   inputPrecission,
   onUpdateRange,
   onClear,
@@ -120,6 +121,19 @@ export function GraphRangeInputs({
 
   const isValidRange = rangeInput.xStart && rangeInput.xEnd && rangeInput.yStart && rangeInput.yEnd;
 
+  const hasChanges = useCallback(() => {
+    if (!rangeSource || !savedRange) return true;
+
+    return (
+      rangeSource.xStart !== savedRange.xStart ||
+      rangeSource.xEnd !== savedRange.xEnd ||
+      rangeSource.yStart !== savedRange.yStart ||
+      rangeSource.yEnd !== savedRange.yEnd
+    );
+  }, [rangeSource, savedRange]);
+
+  const isApplyDisabled = !isValidRange || !hasChanges();
+
   return (
     <Box sx={sx.inputWrapper}>
       {INPUT_FIELDS.map(({ field, label }) => (
@@ -144,7 +158,7 @@ export function GraphRangeInputs({
       <Button
         onClick={onConfirm}
         fullWidth
-        disabled={!isValidRange}
+        disabled={isApplyDisabled}
         sx={sx.confirmButton}
       >
         {t('general.apply')}

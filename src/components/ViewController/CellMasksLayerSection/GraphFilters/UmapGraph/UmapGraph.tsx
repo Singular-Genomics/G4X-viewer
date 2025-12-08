@@ -24,7 +24,7 @@ export const UmapGraph = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
-  const { settings } = useUmapGraphStore();
+  const { settings, ranges: savedRanges } = useUmapGraphStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [selectionRange, setSelectionRange] = useState<UmapRange | undefined>(undefined);
   const [plotData, setPlotData] = useState<UmapClusterPoint[]>([{ x: [], y: [], clusterId: '' }]);
@@ -180,6 +180,7 @@ export const UmapGraph = () => {
       </Box>
       <GraphRangeInputs
         rangeSource={selectionRange}
+        savedRange={savedRanges}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
         onClear={handleClearSelection}
         onConfirm={() => useUmapGraphStore.setState({ ranges: selectionRange })}
