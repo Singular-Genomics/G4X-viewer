@@ -146,7 +146,8 @@ export const useFileHandler = () => {
               />
             ),
             variant: 'gxSnackbar',
-            titleMode: 'error'
+            titleMode: 'error',
+            autoHideDuration: 4200
           });
           setLoading(false);
         }
@@ -197,7 +198,8 @@ export const useFileHandler = () => {
                 />
               ),
               variant: 'gxSnackbar',
-              titleMode: 'error'
+              titleMode: 'error',
+              autoHideDuration: 4200
             });
             setLoading(false);
             worker.terminate();

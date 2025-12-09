@@ -48,7 +48,8 @@ export const useFileHandler = () => {
               />
             ),
             variant: 'gxSnackbar',
-            titleMode: 'error'
+            titleMode: 'error',
+            autoHideDuration: 4200
           });
           setLoading(false);
           return;
@@ -145,7 +146,8 @@ export const useFileHandler = () => {
               />
             ),
             variant: 'gxSnackbar',
-            titleMode: 'error'
+            titleMode: 'error',
+            autoHideDuration: 4200
           });
         }
         setLoading(false);

@@ -120,7 +120,8 @@ export const useCellMasksFileHandler = () => {
             />
           ),
           variant: 'gxSnackbar',
-          titleMode: 'error'
+          titleMode: 'error',
+          autoHideDuration: 4200
         });
         setLoading(false);
       }
