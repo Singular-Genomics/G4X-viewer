@@ -111,6 +111,13 @@ export const useCellMasksFileHandler = () => {
               components={{
                 1: (
                   <a
+                    href="https://g4x-viewer.legacy.singulargenomics.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+                2: (
+                  <a
                     href="https://docs.singulargenomics.com/G4X-helpers/"
                     target="_blank"
                     rel="noopener noreferrer"
