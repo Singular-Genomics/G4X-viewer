@@ -47,8 +47,8 @@
     "notistack": "^3.0.1",
     "plotly.js": "^3.0.1",
     "protobufjs": "^7.2.6",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
     "react-dropzone": "^14.3.8",
     "react-plotly.js": "^2.6.0",
     "zustand": "^4.5.2"
