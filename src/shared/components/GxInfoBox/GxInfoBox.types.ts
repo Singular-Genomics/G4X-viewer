@@ -5,4 +5,5 @@ export type GxInfoBoxProps = {
   defaultExpanded?: boolean;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
+  expandedWidth?: number;
 };

@@ -9,7 +9,8 @@ export const GxInfoBox = ({
   content,
   defaultExpanded = false,
   expanded: controlledExpanded,
-  onExpandedChange
+  onExpandedChange,
+  expandedWidth
 }: GxInfoBoxProps) => {
   const [internalExpanded, setInternalExpanded] = useState<boolean>(defaultExpanded);
 
@@ -29,10 +30,24 @@ export const GxInfoBox = ({
   };
 
   return (
-    <Box sx={sx.container}>
+    <Box
+      sx={{
+        ...sx.container,
+        ...(expandedWidth
+          ? {
+              width: expanded ? '400px' : '200px',
+              maxWidth: expanded ? 'none' : '400px'
+            }
+          : {
+              width: 'auto',
+              maxWidth: 'fit-content'
+            })
+      }}
+    >
       <Button
         onClick={handleToggleExpand}
         sx={sx.headerButton}
+        disableTouchRipple
       >
         <Box sx={sx.headerContent}>
           <Typography
@@ -60,7 +75,6 @@ export const GxInfoBox = ({
           }}
         />
       </Button>
-
       <Collapse
         in={expanded}
         timeout="auto"
@@ -74,9 +88,6 @@ export const GxInfoBox = ({
 const styles = (theme: Theme) => ({
   // TODO: Review background contrast during design refactor
   container: {
-    width: 'auto',
-    minWidth: 'fit-content',
-    maxWidth: 400,
     backgroundColor: theme.palette.gx.darkGrey[100],
     borderRadius: 2,
     overflow: 'visible',

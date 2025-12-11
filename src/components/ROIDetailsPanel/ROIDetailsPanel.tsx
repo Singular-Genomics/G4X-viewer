@@ -86,6 +86,7 @@ export const ROIDetailsPanel = () => {
       tag={roiIds.length}
       expanded={isROIDetailsPanelExpanded}
       onExpandedChange={setROIDetailsPanelExpanded}
+      expandedWidth={400}
       content={
         <Box sx={sx.content}>
           <Select
