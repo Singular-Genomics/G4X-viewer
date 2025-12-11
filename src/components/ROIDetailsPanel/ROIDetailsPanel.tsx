@@ -32,11 +32,12 @@ export const ROIDetailsPanel = () => {
   const selectedPoints = useTranscriptLayerStore((store) => store.selectedPoints);
   const selectedCells = useCellSegmentationLayerStore((store) => store.selectedCells);
 
-  const roiIds = polygonFeatures.map((feature) => feature.properties?.polygonId).filter((id) => id !== undefined);
+  const roiIds: number[] = polygonFeatures
+    .map((feature) => feature.properties?.polygonId)
+    .filter((id) => id !== undefined);
 
   // Use store's selectedROIId if set (from double-click), otherwise use first ROI
-  const selectedRoiId =
-    storeSelectedROIId && roiIds.includes(storeSelectedROIId) ? storeSelectedROIId : (roiIds[0] ?? '');
+  const selectedRoiId = storeSelectedROIId && roiIds.includes(storeSelectedROIId) ? storeSelectedROIId : '';
 
   const transcriptCountMap = useMemo(() => {
     const map = new Map<number, number>();
@@ -80,12 +81,17 @@ export const ROIDetailsPanel = () => {
   const transcriptCount = selectedRoiId !== '' ? (transcriptCountMap.get(selectedRoiId) ?? 0) : 0;
   const cellCount = selectedRoiId !== '' ? (cellCountMap.get(selectedRoiId) ?? 0) : 0;
 
+  const handleExpanedChange = (currentState: boolean) => {
+    usePolygonDrawingStore.setState({ selectedROIId: currentState ? (roiIds[0] ?? undefined) : undefined });
+    setROIDetailsPanelExpanded(currentState);
+  };
+
   return (
     <GxInfoBox
       title={t('roiDetails.title')}
       tag={roiIds.length}
       expanded={isROIDetailsPanelExpanded}
-      onExpandedChange={setROIDetailsPanelExpanded}
+      onExpandedChange={handleExpanedChange}
       expandedWidth={400}
       content={
         <Box sx={sx.content}>
