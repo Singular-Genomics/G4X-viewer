@@ -1,4 +1,4 @@
-import { Box, MenuItem, Select, TextField, Theme, useTheme, Typography } from '@mui/material';
+import { Box, MenuItem, Select, TextField, Theme, useTheme, Typography, darken } from '@mui/material';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -203,7 +203,21 @@ const styles = (theme: Theme) => ({
     fontSize: '13px',
     '& .MuiInputBase-input': {
       fontSize: '13px',
-      color: theme.palette.gx.lightGrey[900]
+      color: theme.palette.gx.lightGrey[900],
+      '&::-webkit-scrollbar': {
+        width: '8px'
+      },
+      '&::-webkit-scrollbar-track': {
+        background: theme.palette.gx.lightGrey[700],
+        borderRadius: '10px'
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: darken(theme.palette.gx.accent.greenBlue, 0.1),
+        borderRadius: '10px',
+        '&:hover': {
+          background: theme.palette.gx.accent.greenBlue
+        }
+      }
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
