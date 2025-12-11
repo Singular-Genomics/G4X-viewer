@@ -3,21 +3,51 @@ import { Box, Button, Collapse, Typography, Theme, useTheme } from '@mui/materia
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GxInfoBoxProps } from './GxInfoBox.types';
 
-export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxInfoBoxProps) => {
-  const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
+export const GxInfoBox = ({
+  title,
+  tag,
+  content,
+  defaultExpanded = false,
+  expanded: controlledExpanded,
+  onExpandedChange,
+  expandedWidth
+}: GxInfoBoxProps) => {
+  const [internalExpanded, setInternalExpanded] = useState<boolean>(defaultExpanded);
+
+  // Use controlled state if provided, otherwise use internal state
+  const isControlled = controlledExpanded !== undefined;
+  const expanded = isControlled ? controlledExpanded : internalExpanded;
 
   const theme = useTheme();
   const sx = styles(theme);
 
   const handleToggleExpand = () => {
-    setExpanded((prev) => !prev);
+    const newExpanded = !expanded;
+    if (!isControlled) {
+      setInternalExpanded(newExpanded);
+    }
+    onExpandedChange?.(newExpanded);
   };
 
   return (
-    <Box sx={sx.container}>
+    <Box
+      sx={{
+        ...sx.container,
+        ...(expandedWidth
+          ? {
+              width: expanded ? '400px' : '200px',
+              maxWidth: expanded ? 'none' : '400px'
+            }
+          : {
+              width: 'auto',
+              maxWidth: 'fit-content'
+            })
+      }}
+    >
       <Button
         onClick={handleToggleExpand}
         sx={sx.headerButton}
+        disableTouchRipple
       >
         <Box sx={sx.headerContent}>
           <Typography
@@ -45,7 +75,6 @@ export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxIn
           }}
         />
       </Button>
-
       <Collapse
         in={expanded}
         timeout="auto"
@@ -59,9 +88,6 @@ export const GxInfoBox = ({ title, tag, content, defaultExpanded = false }: GxIn
 const styles = (theme: Theme) => ({
   // TODO: Review background contrast during design refactor
   container: {
-    width: 'auto',
-    minWidth: 'fit-content',
-    maxWidth: 400,
     backgroundColor: theme.palette.gx.darkGrey[100],
     borderRadius: 2,
     overflow: 'visible',
