@@ -282,7 +282,8 @@ export const usePolygonDrawingLayer = () => {
     setDetecting,
     isViewMode,
     isDeleteMode,
-    polygonOpacity
+    polygonOpacity,
+    selectedROIId
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -296,7 +297,8 @@ export const usePolygonDrawingLayer = () => {
       store.setDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.polygonOpacity
+      store.polygonOpacity,
+      store.selectedROIId
     ])
   );
 
@@ -680,12 +682,12 @@ export const usePolygonDrawingLayer = () => {
     pickable: !isDetecting,
     autoHighlight: isDeleteMode,
     getFillColor: (feature: any) => {
-      const alphaFill = isViewMode ? 50 : 100;
-      return getPolygonColor(feature, alphaFill, 0).fill;
+      return getPolygonColor(feature, isViewMode ? 50 : 100, 0).fill;
     },
     getLineColor: (feature: any) => {
-      const alphaLine = isViewMode ? 150 : 200;
-      return getPolygonColor(feature, 0, alphaLine).line;
+      return feature.properties.polygonId === selectedROIId
+        ? [255, 255, 255, 255]
+        : getPolygonColor(feature, 0, isViewMode ? 150 : 200).line;
     },
     highlightColor: isDeleteMode ? [255, 0, 0, 120] : undefined,
     lineWidthMinPixels: 2,
