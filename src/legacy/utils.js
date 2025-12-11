@@ -223,7 +223,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
     if (e instanceof UnsupportedBrowserError) {
       handleLoaderError(e.message);
     } else {
-      console.error(e); // eslint-disable-line
+      console.error(e);
       handleLoaderError(null);
     }
     return { data: null };

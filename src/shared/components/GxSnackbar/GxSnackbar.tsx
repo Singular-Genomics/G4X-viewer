@@ -49,7 +49,7 @@ export const GxSnackbar = forwardRef<HTMLDivElement, GxSnackbarProps>(
             }}
           >
             {modalIcon}
-            {message}
+            <span>{message}</span>
             <Box sx={sx.iconButtonsWrapper}>
               {customContent && (
                 <IconButton
@@ -110,7 +110,15 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    background: 'transparent'
+    background: 'transparent',
+    '& a': {
+      color: theme.palette.gx.primary.white,
+      textDecoration: 'underline',
+      transition: 'opacity 150ms ease',
+      '&:hover': {
+        opacity: 0.8
+      }
+    }
   },
   iconButtonsWrapper: {
     marginLeft: '8px'

@@ -2,20 +2,30 @@
 INHERIT: docs/_core/core.mkdocs.yml
 
 # region Site
-site_name: G4X-viewer
 site_url: https://docs.singulargenomics.com/G4X-viewer/
 site_description: Singular Genomics G4X-viewer documentation site
 
 repo_name: G4X-viewer
 repo_url: https://github.com/Singular-Genomics/G4X-viewer
 
-exclude_docs: |
-  _core/_partials/**
-  _core/README.md
+theme:
+  features:
+    - navigation.tabs
+    - navigation.expand
+    - navigation.indexes
+
 
 # region Nav
 nav:
+  - Docs Home: https://docs.singulargenomics.com
+
+  - G4X-helpers: https://docs.singulargenomics.com/G4X-helpers/
+
   - G4X-viewer:
     - index.md
-    - resources: resources.md
-    - contribute: contributing.md
+    - Resources: resources.md
+    - Contribute: contributing.md
+  
+  - G4X-data: https://docs.singulargenomics.com/g4x_data/
+
+  - G4X-tutorials: https://docs.singulargenomics.com/g4x_tutorials/

@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack';
 import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.schema';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { usePolygonDrawingStore } from '../../../../../stores/PolygonDrawingStore';
 import { usePolygonDetectionWorker } from '../../../../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 import { SEGMENTATION_FILE_SIZE_LIMIT } from '../../../../../shared/constants';
@@ -105,9 +105,30 @@ export const useCellMasksFileHandler = () => {
       } catch (error) {
         console.error('Error decoding segmentation file:', error);
         enqueueSnackbar({
-          message: t('sourceFiles.invalidFileFormatError'),
+          message: (
+            <Trans
+              i18nKey="sourceFiles.invalidFileFormatError"
+              components={{
+                1: (
+                  <a
+                    href="https://g4x-viewer.legacy.singulargenomics.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                ),
+                2: (
+                  <a
+                    href="https://docs.singulargenomics.com/G4X-helpers/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                )
+              }}
+            />
+          ),
           variant: 'gxSnackbar',
-          titleMode: 'error'
+          titleMode: 'error',
+          autoHideDuration: 4200
         });
         setLoading(false);
       }
