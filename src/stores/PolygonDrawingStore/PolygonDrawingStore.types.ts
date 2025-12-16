@@ -39,6 +39,9 @@ export type PolygonDrawingStoreValues = {
   isDeleteMode: boolean;
   polygonOpacity: number;
   showROINumbers: boolean;
+  polygonNotes: Record<number, string>;
+  selectedROIId: number | null;
+  isROIDetailsPanelExpanded: boolean;
 };
 
 export type PolygonDrawingStoreMethods = {
@@ -58,4 +61,7 @@ export type PolygonDrawingStoreMethods = {
   exportPolygonsWithTranscripts: () => void;
   setDetecting: (detecting: boolean) => void;
   setPolygonOpacity: (opacity: number) => void;
+  setPolygonNote: (polygonId: number, note: string) => void;
+  selectROIForDetails: (polygonId: number) => void;
+  setROIDetailsPanelExpanded: (expanded: boolean) => void;
 };

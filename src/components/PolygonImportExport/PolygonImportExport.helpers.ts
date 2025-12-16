@@ -2,6 +2,7 @@ import JSZip from 'jszip';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useViewerStore } from '../../stores/ViewerStore';
+import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 import { TarFileEntry, ExportDataType, InternalDataType } from './PolygonImportExport.types';
 
@@ -227,8 +228,9 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
 export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
   const { selectedCells } = useCellSegmentationLayerStore.getState();
   const { selectedPoints } = useTranscriptLayerStore.getState();
+  const { polygonNotes } = usePolygonDrawingStore.getState();
 
-  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts'];
+  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts', 'notes'];
   const rows: (string | number)[][] = [header];
 
   polygonFeatures.forEach((feature) => {
@@ -265,7 +267,9 @@ export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
         ? Math.round((cellStatistics.totalGenes / cellStatistics.totalCells) * 100) / 100
         : 0;
 
-    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, cellStatistics.totalCells, totalTranscripts]);
+    const note = polygonNotes[polygonId] || '';
+
+    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, cellStatistics.totalCells, totalTranscripts, note]);
   });
 
   const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
@@ -349,8 +353,9 @@ const generateCsvContentForSinglePolygon = (
 const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string => {
   const { selectedCells } = useCellSegmentationLayerStore.getState();
   const { selectedPoints } = useTranscriptLayerStore.getState();
+  const { polygonNotes } = usePolygonDrawingStore.getState();
 
-  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts'];
+  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts', 'notes'];
   const rows: (string | number)[][] = [header];
 
   polygonFeatures.forEach((feature) => {
@@ -377,7 +382,9 @@ const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string =
         ? Math.round((cellStatistics.totalGenes / cellStatistics.totalCells) * 100) / 100
         : 0;
 
-    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, cellStatistics.totalCells, totalTranscripts]);
+    const note = polygonNotes[polygonId] || '';
+
+    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, cellStatistics.totalCells, totalTranscripts, note]);
   });
 
   return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
