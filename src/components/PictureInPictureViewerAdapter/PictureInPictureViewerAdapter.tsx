@@ -23,7 +23,7 @@ import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
-import { makeBoundingBox } from '../ScaleBar/utils';
+import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -118,44 +118,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loader, containerSize.width, containerSize.height]);
 
-  const drawScaleBarOnCanvas = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    const physicalSize = loader[0]?.meta?.physicalSizes?.x;
-    if (!viewState || !physicalSize) return;
-
-    const boundingBox = makeBoundingBox(viewState);
-    const barLength = (boundingBox[2][0] - boundingBox[0][0]) * 0.05;
-    const barWidthInPixels = barLength * Math.pow(2, viewState.zoom);
-    const text = `${parseFloat((barLength * (physicalSize.size || 1)).toPrecision(5)).toFixed(1)} ${physicalSize.unit || 'μm'}`;
-
-    // Style constants
-    const [padding, borderRadius, barHeight, fontSize, spacing] = [10, 12, 4, 16, 6];
-
-    ctx.font = `${fontSize}px Roboto, sans-serif`;
-    const boxWidth = Math.max(barWidthInPixels, ctx.measureText(text).width) + padding * 2;
-    const boxHeight = barHeight + fontSize + spacing + padding * 2;
-    const x = canvas.width - 55 - boxWidth;
-    const y = canvas.height - 50 - boxHeight;
-
-    // Draw background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.beginPath();
-    ctx.roundRect(x, y, boxWidth, boxHeight, borderRadius);
-    ctx.fill();
-
-    // Draw scale bar with end caps
-    const barX = x + (boxWidth - barWidthInPixels) / 2;
-    const barY = y + padding;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(barX, barY, barWidthInPixels, barHeight);
-    ctx.fillRect(barX, barY - 2, 2, barHeight + 4);
-    ctx.fillRect(barX + barWidthInPixels - 2, barY - 2, 2, barHeight + 4);
-
-    // Draw text
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillText(text, x + boxWidth / 2, y + padding + barHeight + spacing + fontSize);
-  };
-
   const takeScreenshot = () => {
     try {
       const deck = deckGLRef.current?.deck;
@@ -171,7 +133,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       tempCanvas.height = deck.canvas.height;
       ctx.drawImage(deck.canvas, 0, 0);
 
-      drawScaleBarOnCanvas(ctx, deck.canvas);
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
 
       const link = document.createElement('a');
       link.href = tempCanvas.toDataURL('image/png');
