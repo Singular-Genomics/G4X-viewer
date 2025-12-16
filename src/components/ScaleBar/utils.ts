@@ -1,3 +1,5 @@
+import type { ViewState } from '../PictureInPictureViewer/PictureInPictureViewer.types';
+
 const PADDING = 10;
 const BORDER_RADIUS = 12;
 const BAR_LINE_WIDTH = 2;
@@ -5,7 +7,7 @@ const CAP_HEIGHT = 8;
 const FONT_SIZE = 16;
 const SPACING = 6;
 
-export function makeBoundingBox(viewState: any) {
+export function makeBoundingBox(viewState: ViewState) {
   const { target, zoom, width, height } = viewState;
   const scale = Math.pow(2, zoom);
   const worldWidth = width / scale;
@@ -33,7 +35,7 @@ export function range(length: number): number[] {
 export function drawScaleBarOnCanvas(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
-  viewState: any,
+  viewState: ViewState,
   loader: any[]
 ) {
   const physicalSize = loader[0]?.meta?.physicalSizes?.x;
