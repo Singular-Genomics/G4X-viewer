@@ -38,6 +38,9 @@ export const CellsFilterTable = () => {
 
   const handleApplyClick = () => {
     setCellNameFilter(activeFilters);
+    if (!isCellNameFilterOn && activeFilters.length > 0) {
+      useCellSegmentationLayerStore.getState().toggleCellNameFilter();
+    }
   };
 
   const haveFiltersChanges =
@@ -52,7 +55,7 @@ export const CellsFilterTable = () => {
       onApplyClick={handleApplyClick}
       onSetFilter={(filters) => setActiveFilters(filters)}
       clearDisabled={!isCellNameFilterOn || activeFilters.length === 0}
-      applyDisabled={!isCellNameFilterOn || activeFilters.length === 0 || !haveFiltersChanges}
+      applyDisabled={activeFilters.length === 0 || !haveFiltersChanges}
     />
   );
 };
