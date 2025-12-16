@@ -16,7 +16,7 @@ A step-by-step video walkthrough to utilizing the G4X Viewer to explore your G4X
 
 A slide deck to walk you through the core functions of the G4X Viewer, including how to load your data, navigate interfaces, and a set of helpful tips and tricks to make sure you know exactly how to get the most out of the G4X Viewer.
 
-[![G4X Viewer Introductary Slides](./images/g4x_slides_image.png)](https://singulargenomics.atlassian.net/wiki/x/P4BDyw)
+[![G4X Viewer Introductary Slides](./images/g4x_slides_image.png)](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%20Training.pdf)
 
 <br>
 
