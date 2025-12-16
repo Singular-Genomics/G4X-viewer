@@ -3,97 +3,68 @@ import { Language, LinkedIn, GitHub, X, Email, MenuBook } from '@mui/icons-mater
 import { useTranslation } from 'react-i18next';
 import { socialLinks } from '../../config/socialLinks';
 
+type SocialsIconEntry = {
+  title: string;
+  link: string;
+  icon: React.ReactNode;
+};
+
 export const SocialIcons = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const sx = styles(theme);
 
+  const socialsData: SocialsIconEntry[] = [
+    {
+      title: t('socialLinks.website'),
+      link: socialLinks.website,
+      icon: <Language sx={sx.icon} />
+    },
+    {
+      title: t('socialLinks.linkedin'),
+      link: socialLinks.linkedin,
+      icon: <LinkedIn sx={sx.icon} />
+    },
+    {
+      title: t('socialLinks.x'),
+      link: socialLinks.x,
+      icon: <X sx={sx.icon} />
+    },
+    {
+      title: t('socialLinks.github'),
+      link: socialLinks.github,
+      icon: <GitHub sx={sx.icon} />
+    },
+    {
+      title: t('socialLinks.email'),
+      link: socialLinks.email,
+      icon: <Email sx={sx.icon} />
+    },
+    {
+      title: t('socialLinks.documentation'),
+      link: socialLinks.docs,
+      icon: <MenuBook sx={sx.icon} />
+    }
+  ];
+
   return (
     <Box sx={sx.socialIconsContainer}>
-      <Tooltip
-        title={t('socialLinks.website')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.website}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.website')}
+      {socialsData.map((entry) => (
+        <Tooltip
+          title={entry.title}
+          arrow
         >
-          <Language sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={t('socialLinks.linkedin')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.linkedin')}
-        >
-          <LinkedIn sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={t('socialLinks.x')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.x}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.x')}
-        >
-          <X sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={t('socialLinks.github')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.github')}
-        >
-          <GitHub sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={t('socialLinks.email')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.email}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.email')}
-        >
-          <Email sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip
-        title={t('socialLinks.documentation')}
-        arrow
-      >
-        <IconButton
-          sx={sx.iconButton}
-          href={socialLinks.docs}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t('socialLinks.documentation')}
-        >
-          <MenuBook sx={sx.icon} />
-        </IconButton>
-      </Tooltip>
+          <IconButton
+            sx={sx.iconButton}
+            href={socialLinks.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={entry.title}
+          >
+            {entry.icon}
+          </IconButton>
+        </Tooltip>
+      ))}
     </Box>
   );
 };
