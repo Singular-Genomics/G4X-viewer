@@ -132,7 +132,7 @@ export const ROIDetailsPanel = () => {
           </Select>
           <Box sx={sx.statsContainer}>
             <Box sx={sx.statItem}>
-              <Typography sx={sx.statLabel}>{t('roiDetails.transcripts')}:</Typography>
+              <Typography sx={sx.statLabel}>{t('general.transcripts')}:</Typography>
               <Typography sx={sx.statValue}>{transcriptCount.toLocaleString()}</Typography>
             </Box>
             <Box sx={sx.statItem}>
