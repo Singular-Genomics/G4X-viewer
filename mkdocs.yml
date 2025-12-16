@@ -17,7 +17,8 @@ exclude_docs: |
 nav:
   - G4X-viewer:
     - index.md
-    - features: features.md
+    - usage: usage.md
+    - analysis: analysis.md
     - resources: resources.md
     - contribute: contributing.md
 
