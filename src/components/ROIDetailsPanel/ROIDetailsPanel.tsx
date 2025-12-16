@@ -102,22 +102,7 @@ export const ROIDetailsPanel = () => {
             sx={sx.select}
             MenuProps={{
               PaperProps: {
-                sx: {
-                  backgroundColor: theme.palette.gx.darkGrey[300],
-                  '& .MuiMenuItem-root': {
-                    color: theme.palette.gx.lightGrey[900],
-                    fontSize: '13px',
-                    '&:hover': {
-                      backgroundColor: theme.palette.gx.darkGrey[500]
-                    },
-                    '&.Mui-selected': {
-                      backgroundColor: theme.palette.gx.darkGrey[700],
-                      '&:hover': {
-                        backgroundColor: theme.palette.gx.darkGrey[500]
-                      }
-                    }
-                  }
-                }
+                sx: sx.selectMenu
               }
             }}
           >
@@ -175,6 +160,22 @@ const styles = (theme: Theme) => ({
     },
     '& .MuiSvgIcon-root': {
       color: theme.palette.gx.lightGrey[900]
+    }
+  },
+  selectMenu: {
+    backgroundColor: theme.palette.gx.darkGrey[300],
+    '& .MuiMenuItem-root': {
+      color: theme.palette.gx.lightGrey[900],
+      fontSize: '13px',
+      '&:hover': {
+        backgroundColor: theme.palette.gx.darkGrey[500]
+      },
+      '&.Mui-selected': {
+        backgroundColor: theme.palette.gx.darkGrey[700],
+        '&:hover': {
+          backgroundColor: theme.palette.gx.darkGrey[500]
+        }
+      }
     }
   },
   statsContainer: {
