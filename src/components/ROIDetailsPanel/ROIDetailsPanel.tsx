@@ -81,7 +81,7 @@ export const ROIDetailsPanel = () => {
   const transcriptCount = selectedRoiId !== '' ? (transcriptCountMap.get(selectedRoiId) ?? 0) : 0;
   const cellCount = selectedRoiId !== '' ? (cellCountMap.get(selectedRoiId) ?? 0) : 0;
 
-  const handleExpanedChange = (currentState: boolean) => {
+  const handleExpandChange = (currentState: boolean) => {
     usePolygonDrawingStore.setState({ selectedROIId: currentState ? (roiIds[0] ?? undefined) : undefined });
     setROIDetailsPanelExpanded(currentState);
   };
@@ -91,7 +91,7 @@ export const ROIDetailsPanel = () => {
       title={t('roiDetails.title')}
       tag={roiIds.length}
       expanded={isROIDetailsPanelExpanded}
-      onExpandedChange={handleExpanedChange}
+      onExpandedChange={handleExpandChange}
       expandedWidth={400}
       content={
         <Box sx={sx.content}>
