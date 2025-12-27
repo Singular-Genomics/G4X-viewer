@@ -1,9 +1,10 @@
 import { GetApplyQuickFilterFn, GridColDef } from '@mui/x-data-grid';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { CellsFilterTableRowEntry } from './CellsFilterTable.types';
 import { GxFilterTableColorCell } from '../../../../../shared/components/GxFilterTable/GxFilterTableColorCell';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const useCellsFilterTableColumns = (): GridColDef<CellsFilterTableRowEntry>[] => {
   const { t } = useTranslation();
@@ -32,6 +33,12 @@ export const useCellsFilterTableColumns = (): GridColDef<CellsFilterTableRowEntr
       headerAlign: 'center',
       filterable: true,
       flex: 1,
+      renderHeader: () => (
+        <Box sx={sx.headerWithTooltip}>
+          <Typography>{t('segmentation.clusterId')}</Typography>
+          <InfoTooltip title={t('tooltips.segmentationSettings.clusterIdColumn')} />
+        </Box>
+      ),
       renderCell: (params) => <Typography>{params.row.clusterId}</Typography>
     },
     {
@@ -50,4 +57,12 @@ export const useCellsFilterTableColumns = (): GridColDef<CellsFilterTableRowEntr
       )
     }
   ];
+};
+
+const sx = {
+  headerWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
+  }
 };

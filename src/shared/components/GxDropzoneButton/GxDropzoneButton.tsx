@@ -1,4 +1,15 @@
-import { Box, Button, TextField, Theme, alpha, useTheme, IconButton, Typography, SxProps } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Theme,
+  alpha,
+  useTheme,
+  IconButton,
+  Typography,
+  SxProps,
+  Tooltip
+} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +26,8 @@ export const GxDropzoneButton = ({
   isCloudUploaded,
   isDragActive,
   isDragAccept,
-  isDragReject
+  isDragReject,
+  tooltipText
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -66,17 +78,39 @@ export const GxDropzoneButton = ({
           }
         }}
       />
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={buttonStyle}
-        size="small"
-        disabled={disabled}
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        {dynamicButtonText}
-      </Button>
+      {tooltipText ? (
+        <Tooltip
+          title={tooltipText}
+          arrow
+          placement="top"
+          enterDelay={800}
+          leaveDelay={50}
+        >
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={buttonStyle}
+            size="small"
+            disabled={disabled}
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {dynamicButtonText}
+          </Button>
+        </Tooltip>
+      ) : (
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={buttonStyle}
+          size="small"
+          disabled={disabled}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {dynamicButtonText}
+        </Button>
+      )}
       {helperText && <Typography sx={sx.dropzoneHelperMessage}>{helperText}</Typography>}
     </Box>
   );

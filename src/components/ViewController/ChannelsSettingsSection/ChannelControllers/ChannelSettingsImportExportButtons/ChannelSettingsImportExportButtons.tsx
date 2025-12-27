@@ -1,4 +1,4 @@
-import { Box, Button, SxProps, Theme, alpha, useTheme } from '@mui/material';
+import { Box, Button, SxProps, Theme, Tooltip, alpha, useTheme } from '@mui/material';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
@@ -274,23 +274,39 @@ export const ChannelSettingsImportExportButtons = () => {
 
   return (
     <Box sx={sx.buttonsContainer}>
-      <Button
-        startIcon={<DownloadIcon />}
-        onClick={exportChannelSettings}
-        sx={sx.exportButton}
-        fullWidth
+      <Tooltip
+        title={t('tooltips.channelSettings.export')}
+        arrow
+        placement="top"
+        enterDelay={500}
+        leaveDelay={50}
       >
-        {t('general.export')}
-      </Button>
-      <Button
-        startIcon={<UploadIcon />}
-        sx={importButtonStyle}
-        fullWidth
-        {...getRootProps()}
+        <Button
+          startIcon={<DownloadIcon />}
+          onClick={exportChannelSettings}
+          sx={sx.exportButton}
+          fullWidth
+        >
+          {t('general.export')}
+        </Button>
+      </Tooltip>
+      <Tooltip
+        title={t('tooltips.channelSettings.import')}
+        arrow
+        placement="top"
+        enterDelay={500}
+        leaveDelay={50}
       >
-        <input {...getInputProps()} />
-        {dynamicButtonText}
-      </Button>
+        <Button
+          startIcon={<UploadIcon />}
+          sx={importButtonStyle}
+          fullWidth
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {dynamicButtonText}
+        </Button>
+      </Tooltip>
     </Box>
   );
 };

@@ -6,6 +6,8 @@ import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
+import { InfoTooltip } from '../../../../../InfoTooltip';
+import { useTranslation } from 'react-i18next';
 
 const CHANNEL_MIN = 0;
 const CHANNEL_MAX = 65535;
@@ -26,6 +28,7 @@ export const ChannelRangeSlider = ({
 }: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [currentMinValue, currentMaxValue] = slider;
 
@@ -86,15 +89,7 @@ export const ChannelRangeSlider = ({
   );
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '24px',
-        paddingRight: '16px'
-      }}
-    >
+    <Box sx={sx.sliderContainer}>
       <Input
         id="channel_min"
         type="number"
@@ -128,11 +123,18 @@ export const ChannelRangeSlider = ({
           step: CHANNEL_STEP
         }}
       />
+      <InfoTooltip title={t('tooltips.channelSettings.minMaxDisplay')} />
     </Box>
   );
 };
 
 const styles = (theme: Theme) => ({
+  sliderContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '24px'
+  },
   textField: {
     marginBottom: '8px',
     minWidth: '60px',
