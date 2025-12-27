@@ -1,5 +1,6 @@
 export type GxWindowProps = {
   title?: string;
+  titleTooltip?: string;
   boundries?: Boundries;
   config?: WindowConfig;
   onClose: () => void;

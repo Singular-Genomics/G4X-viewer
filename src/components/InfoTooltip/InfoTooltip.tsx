@@ -8,6 +8,8 @@ export const InfoTooltip = ({ title, size = 'small' }: InfoTooltipProps) => {
       title={title}
       arrow
       placement="top"
+      enterDelay={250}
+      leaveDelay={50}
     >
       <IconButton
         size={size}
