@@ -1,8 +1,12 @@
 import { Box, Theme, useTheme } from '@mui/material';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { Navigation, NavigationView } from './Navigation';
+import { GxLoader } from '../shared/components/GxLoader/GxLoader';
 import { ViewerView } from '../views/ViewerView';
-import { DashboardView } from '../views/DashboardView';
+
+const DashboardView = lazy(() =>
+  import('../views/DashboardView').then((module) => ({ default: module.DashboardView }))
+);
 
 export default function G4XViewer() {
   const theme = useTheme();
@@ -48,7 +52,9 @@ export default function G4XViewer() {
           ref={dashboardRef}
           sx={getViewStyle('dashboard')}
         >
-          <DashboardView />
+          <Suspense fallback={<GxLoader />}>
+            <DashboardView />
+          </Suspense>
         </Box>
         <Box
           ref={viewerRef}
