@@ -363,7 +363,8 @@
       "clusterIdColumn": "Explain nan and -1 categories"
     },
     "sourceFiles": {
-      "imageUploadButton": "Image Upload Button"
+      "imageUploadButton": "Image Upload Button",
+      "cloudUploadButton": "Upload image from URL"
     },
     "flowCytometry": {
       "title": "Flow Cytometry Title"

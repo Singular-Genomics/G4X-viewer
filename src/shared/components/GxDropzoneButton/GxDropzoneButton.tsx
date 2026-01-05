@@ -27,7 +27,8 @@ export const GxDropzoneButton = ({
   isDragActive,
   isDragAccept,
   isDragReject,
-  tooltipText
+  tooltipText,
+  cloudUploadTooltipText
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -65,16 +66,37 @@ export const GxDropzoneButton = ({
         slotProps={{
           htmlInput: { readOnly: true },
           input: {
-            endAdornment: onCloudUploadClick && (
-              <IconButton
-                onClick={onCloudUploadClick}
-                size="small"
-                sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
-                disabled={disabled}
-              >
-                <CloudUploadIcon />
-              </IconButton>
-            )
+            endAdornment:
+              onCloudUploadClick &&
+              (cloudUploadTooltipText ? (
+                <Tooltip
+                  title={cloudUploadTooltipText}
+                  arrow
+                  placement="top"
+                  enterDelay={800}
+                  leaveDelay={50}
+                >
+                  <span>
+                    <IconButton
+                      onClick={onCloudUploadClick}
+                      size="small"
+                      sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                      disabled={disabled}
+                    >
+                      <CloudUploadIcon />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ) : (
+                <IconButton
+                  onClick={onCloudUploadClick}
+                  size="small"
+                  sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                  disabled={disabled}
+                >
+                  <CloudUploadIcon />
+                </IconButton>
+              ))
           }
         }}
       />
