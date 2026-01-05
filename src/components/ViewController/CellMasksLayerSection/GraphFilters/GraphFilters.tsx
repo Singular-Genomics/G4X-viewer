@@ -49,6 +49,7 @@ export const GraphFilters = () => {
       {isWindowVisible && (
         <GxWindow
           title={selectedGraph?.replace('_', ' ')}
+          titleTooltip={(selectedGraph === 'flow_cytometry' && t('tooltips.flowCytometry.title')) || undefined}
           config={{
             startWidth: 800,
             startHeight: 400,

@@ -5,6 +5,7 @@ import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
+import { InfoTooltip } from '../../../InfoTooltip';
 
 export const LensToggle = () => {
   const theme = useTheme();
@@ -19,16 +20,19 @@ export const LensToggle = () => {
 
   return (
     <Box>
-      <FormControlLabel
-        label={t('channelSettings.lens')}
-        control={
-          <GxCheckbox
-            onChange={toggleLens}
-            checked={isLensOn}
-            disableTouchRipple
-          />
-        }
-      />
+      <Box sx={sx.labelWithTooltip}>
+        <FormControlLabel
+          label={t('channelSettings.lens')}
+          control={
+            <GxCheckbox
+              onChange={toggleLens}
+              checked={isLensOn}
+              disableTouchRipple
+            />
+          }
+        />
+        <InfoTooltip title={t('tooltips.channelSettings.lens')} />
+      </Box>
       <Collapse
         in={isLensOn}
         sx={sx.subSectionWrapper}
@@ -58,6 +62,10 @@ export const LensToggle = () => {
 };
 
 const styles = (theme: Theme) => ({
+  labelWithTooltip: {
+    display: 'flex',
+    alignItems: 'center'
+  },
   subSectionWrapper: {
     marginLeft: '32px',
     borderLeft: `5px solid ${theme.palette.gx.mediumGrey[100]}`,

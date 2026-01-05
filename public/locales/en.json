@@ -345,5 +345,29 @@
     "title": "Heatmap Chart",
     "normalizationLabel": "Normalization Method",
     "normalizationAxisLabel": "Normalization Axis"
+  },
+  "tooltips": {
+    "viewSettings": {
+      "tControl": "T Control",
+      "zControl": "Z Control"
+    },
+    "channelSettings": {
+      "lens": "Lens",
+      "export": "Export",
+      "import": "Import",
+      "currentPixelIntensity": "Current Pixel Intensity",
+      "minMaxDisplay": "Min/Max Display",
+      "proteomicsColormap": "Proteomics Colormap"
+    },
+    "segmentationSettings": {
+      "clusterIdColumn": "Explain nan and -1 categories"
+    },
+    "sourceFiles": {
+      "imageUploadButton": "Image Upload Button",
+      "cloudUploadButton": "Upload image from URL"
+    },
+    "flowCytometry": {
+      "title": "Flow Cytometry Title"
+    }
   }
 }

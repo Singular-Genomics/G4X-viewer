@@ -13,4 +13,6 @@ export type GxDropzoneButtonProps = {
   isDragActive?: boolean;
   isDragAccept?: boolean;
   isDragReject?: boolean;
+  tooltipText?: string;
+  cloudUploadTooltipText?: string;
 };
