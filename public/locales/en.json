@@ -187,6 +187,8 @@
     "metadataUploadButton": "Upload Metadata",
     "metadataUploadSuccess": "General details file loaded successfully",
     "multiFileButtonLabel": "Multi-file",
+    "singleFileButtonLabel": "Single-file",
+    "zarrFileButtonLabel": "Zarr-file",
     "notReadableErrorWarning": "Error loading transcript file. In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
     "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file.  You may need to quit the browser application and restart it if this issue persists.",
     "sectionTitle": "Source Files",
@@ -195,7 +197,6 @@
     "invalidFileFormatError": "Invalid or deprecated file format. For data from software versions older than 25.11.0, please use the <1>legacy viewer</1> or migrate your files using <2>g4x-helpers</2>.",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
     "segmentationMissingData": "Given file is missing cell segmentation masks data",
-    "singleFileButtonLabel": "Single-file",
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
@@ -203,7 +204,11 @@
     "transcriptsUnpackSuccess": "Successfully unpacked",
     "transcriptsUnsupportedError": "File type not supported",
     "uploadedFileSizeHelper": "Max: {{size}}",
-    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
+    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}",
+    "zarrInputLabel": "Zarr File Name",
+    "zarrInputPlaceholder": "Enter URL to .zarr file",
+    "zarrInvalidFile": "Invalid input file name. Only .zarr extension allowed",
+    "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}"
   },
   "transcript": {
     "cellId": "Cell ID",

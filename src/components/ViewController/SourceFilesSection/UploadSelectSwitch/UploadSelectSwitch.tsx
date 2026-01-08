@@ -1,6 +1,7 @@
 import { Theme, ToggleButton, ToggleButtonGroup, Typography, useTheme } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import FolderZipIcon from '@mui/icons-material/FolderZip';
 import { UploadSelectSwitchProps, UPLOAD_MODES } from './UploadSelectSwitch.types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,13 @@ export function UploadSelectSwitch({ uploadMode, onUploadModeChange, disabled }:
       >
         <UploadFileIcon />
         <Typography sx={sx.toggleButtonLabel}>{t('sourceFiles.singleFileButtonLabel')}</Typography>
+      </ToggleButton>
+      <ToggleButton
+        sx={sx.toggleButton}
+        value={UPLOAD_MODES.ZARR_FILE}
+      >
+        <FolderZipIcon />
+        <Typography sx={sx.toggleButtonLabel}>{t('sourceFiles.zarrFileButtonLabel')}</Typography>
       </ToggleButton>
     </ToggleButtonGroup>
   );

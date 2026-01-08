@@ -8,6 +8,7 @@ import { UploadSelectSwitch } from './UploadSelectSwitch/UploadSelectSwitch';
 import { UploadMode, UPLOAD_MODES } from './UploadSelectSwitch/UploadSelectSwitch.types';
 import { GxModal } from '../../../shared/components/GxModal';
 import GeneralDetailsDropzoneButton from './GeneralDetailsDropzoneButton/GeneralDetailsDropzoneButton';
+import ZarrCloudUploadButton from './ZarrCloudUploadButton/ZarrCloudUploadButton';
 import { useTranslation } from 'react-i18next';
 
 const DONT_SHOW_FLAG = 'disableSingleFileUploadWarning_DSA';
@@ -51,6 +52,12 @@ export const SourceFilesSection = () => {
           return (
             <Box>
               <CollectiveDropzoneButton setLockSwitch={handleLockSwitch} />
+            </Box>
+          );
+        case UPLOAD_MODES.ZARR_FILE:
+          return (
+            <Box>
+              <ZarrCloudUploadButton />
             </Box>
           );
         default:
