@@ -9,6 +9,7 @@ import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesS
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { ZarrDataSet } from '../../../../utils/ZarrDataSet';
 
 export default function ZarrCloudUploadButton() {
   const theme = useTheme();
@@ -29,11 +30,9 @@ export default function ZarrCloudUploadButton() {
   };
 
   const handleSubmit = (cloudImageUrl: string) => {
-    // Extract the zarr directory name from URL
-    const urlParts = cloudImageUrl.split('/');
-    const zarrDirIndex = urlParts.findIndex((part) => part.endsWith('.zarr'));
+    const zarrDataSet = new ZarrDataSet(cloudImageUrl);
 
-    if (zarrDirIndex === -1) {
+    if (!zarrDataSet.isValid()) {
       enqueueSnackbar({
         message: t('sourceFiles.zarrInvalidFile'),
         variant: 'error'
@@ -41,9 +40,8 @@ export default function ZarrCloudUploadButton() {
       return;
     }
 
-    const zarrDir = urlParts[zarrDirIndex];
-    // Construct the path to the images directory within the zarr structure
-    const zarrImagesUrl = cloudImageUrl.includes('/images') ? cloudImageUrl : `${cloudImageUrl}/images`;
+    const zarrDir = zarrDataSet.getZarrDirectoryName();
+    const zarrImagesUrl = zarrDataSet.getImagesPath();
 
     const newSource = {
       urlOrFile: zarrImagesUrl,
