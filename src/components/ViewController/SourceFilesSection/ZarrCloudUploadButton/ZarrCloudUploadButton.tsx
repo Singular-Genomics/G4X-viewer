@@ -29,7 +29,7 @@ export default function ZarrCloudUploadButton() {
     setIsPopupOpen(false);
   };
 
-  const handleSubmit = (cloudImageUrl: string) => {
+  const handleSubmit = async (cloudImageUrl: string) => {
     const zarrDataSet = new ZarrDataSet(cloudImageUrl);
 
     if (!zarrDataSet.isValid()) {
@@ -53,6 +53,19 @@ export default function ZarrCloudUploadButton() {
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
+
+    // Load metadata from Zarr
+    const metadata = await zarrDataSet.fetchRunMetadata();
+    if (metadata) {
+      useViewerStore.getState().setGeneralDetails({
+        fileName: 'run_metadata.json',
+        data: metadata
+      });
+    }
+
+    // Load H&E image from Zarr
+    const hAndEUrl = zarrDataSet.getHAndEPath();
+    useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
 
     setCloudImageUrl(cloudImageUrl);
     setIsPopupOpen(false);

@@ -1,10 +1,12 @@
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
  *
- * Structure: /{cells,images,transcripts}
+ * Structure: /{cells,images,transcripts,h_and_e,run_metadata.json}
  * - images: /images/p{level}
+ * - h_and_e: /h_and_e/p{level}
  * - cells: /cells/{area,cell_id,cluster_id,polygon_offsets,polygon_vertices_xy,protein_values,total_counts,total_genes}
  * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
+ * - run_metadata.json: /run_metadata.json
  */
 export class ZarrDataSet {
   private zarrURL: string;
@@ -104,12 +106,36 @@ export class ZarrDataSet {
     return `${this.getTranscriptTile(z, y, x)}/position`;
   }
 
-  // ==================== TODO: Future Implementation ====================
+  // ==================== H&E (Hematoxylin and Eosin) ====================
 
-  // TODO: Fetch and parse Zarr metadata
-  public async getMetadata(): Promise<any> {
-    throw new Error('Not implemented: getMetadata');
+  public getHAndEPath(): string {
+    return `${this.zarrURL}/h_and_e`;
   }
+
+  public getHAndEPyramidLevel(level: number): string {
+    return `${this.getHAndEPath()}/p${level}`;
+  }
+
+  // ==================== METADATA ====================
+
+  public getRunMetadataPath(): string {
+    return `${this.zarrURL}/run_metadata.json`;
+  }
+
+  public async fetchRunMetadata(): Promise<Record<string, any> | null> {
+    try {
+      const response = await fetch(this.getRunMetadataPath());
+      if (!response.ok) {
+        return null;
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch run_metadata.json:', error);
+      return null;
+    }
+  }
+
+  // ==================== TODO: Future Implementation ====================
 
   // TODO: Determine available pyramid levels
   public async getAvailablePyramidLevels(): Promise<number[]> {
