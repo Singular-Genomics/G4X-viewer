@@ -13,7 +13,8 @@ const DEFAULT_BINARY_FILE_STORE_VALUES: BinaryFilesStoreValues = {
   fileName: '',
   collectiveFileName: '',
   layerConfig: defaultLayerConfig,
-  colorMapConfig: []
+  colorMapConfig: [],
+  zarrUrl: null
 };
 
 export const useBinaryFilesStore = create<BinaryFilesStore>((set) => ({
@@ -25,5 +26,6 @@ export const useBinaryFilesStore = create<BinaryFilesStore>((set) => ({
   colorMapConfig: [],
   setLayerConfig: (layerConfig) => set({ layerConfig }),
   setColormapConfig: (colorMapConfig) => set({ colorMapConfig }),
+  setZarrUrl: (zarrUrl) => set({ zarrUrl }),
   reset: () => set({ ...DEFAULT_BINARY_FILE_STORE_VALUES })
 }));

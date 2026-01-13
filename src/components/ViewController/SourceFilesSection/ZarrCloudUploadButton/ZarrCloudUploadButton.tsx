@@ -43,16 +43,26 @@ export default function ZarrCloudUploadButton() {
     const zarrDir = zarrDataSet.getZarrDirectoryName();
     const zarrImagesUrl = zarrDataSet.getImagesPath();
 
+    useBinaryFilesStore.getState().reset();
+    useTranscriptLayerStore.getState().reset();
+    useCellSegmentationLayerStore.getState().reset();
+    useBrightfieldImagesStore.getState().reset();
+
+    // Set Zarr URL for transcript loading
+    useBinaryFilesStore.getState().setZarrUrl(cloudImageUrl);
+    useBinaryFilesStore.getState().setFileName(zarrDir);
+
+    const layerConfig = await zarrDataSet.detectLayerConfig();
+    if (layerConfig) {
+      useBinaryFilesStore.getState().setLayerConfig(layerConfig);
+    }
+
     const newSource = {
       urlOrFile: zarrImagesUrl,
       description: zarrDir
     };
 
     useViewerStore.setState({ source: newSource });
-    useBinaryFilesStore.getState().reset();
-    useTranscriptLayerStore.getState().reset();
-    useCellSegmentationLayerStore.getState().reset();
-    useBrightfieldImagesStore.getState().reset();
 
     // Load metadata from Zarr
     const metadata = await zarrDataSet.fetchRunMetadata();

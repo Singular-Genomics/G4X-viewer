@@ -54,6 +54,7 @@
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "notistack": "^3.0.2",
+    "numcodecs": "^0.3.2",
     "plotly.js": "^3.3.0",
     "protobufjs": "^7.5.4",
     "react": "^19.2.1",

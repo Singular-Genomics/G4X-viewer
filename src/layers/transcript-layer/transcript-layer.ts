@@ -7,6 +7,7 @@ import * as protobuf from 'protobufjs';
 import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
+import { ZarrTranscriptLoader } from './zarr-transcript-loader';
 
 // ======================== DATA TILE LAYER ==================
 
@@ -83,14 +84,26 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   protoRoot: protobuf.Root;
   parsedColorMap: Record<string, number[]>;
+  zarrLoader: ZarrTranscriptLoader | null;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
+    this.zarrLoader = props.zarrUrl ? new ZarrTranscriptLoader(props.zarrUrl) : null;
   }
 
-  async loadMetadata(zoom: number, tileY: number, tileX: number) {
+  async loadMetadata(zoom: number, tileX: number, tileY: number) {
+    // If Zarr loader is available, use it
+    if (this.zarrLoader) {
+      const zarrData = await this.zarrLoader.loadTileData(zoom, tileX, tileY);
+      if (zarrData) {
+        return zarrData;
+      }
+      return { pointsData: [], numberOfPoints: 0 };
+    }
+
+    // Otherwise, use protobuf file loading (legacy)
     const suffix = `/${zoom}/${tileX}/${tileY}.bin`;
     const file = this.props.files.find((f: File) => f.name.endsWith(suffix));
 
@@ -173,10 +186,10 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     }
 
     const tiledLayer = new TileLayer({
-      id: 'tiled_layer',
+      id: `tiled_layer_${tile_size}_${layer_width}_${layer_height}_${layers}`,
       tileSize: tile_size,
       maxZoom: layers,
-      minZoom,
+      minZoom: minZoom,
       zoomOffset: LAYER_ZOOM_OFFSET,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
@@ -185,11 +198,13 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       updateTriggers: {
         getTileData: [
           this.props.files,
+          this.props.zarrUrl,
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
           this.props.pointSize,
-          this.props.colormap
+          this.props.colormap,
+          this.props.config
         ]
       },
       renderSubLayers: ({ id, data }) =>
