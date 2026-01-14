@@ -72,7 +72,6 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
             variant: 'error',
             autoHideDuration: 5000
           });
-          // Restore the last valid source
           useViewerStore.setState({
             source: lastValidSourceRef.current,
             isViewerLoading: undefined,
@@ -83,7 +82,6 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       }
 
       if (nextLoader) {
-        // Store this source as the last valid one after successful validation
         lastValidSourceRef.current = source;
 
         unstable_batchedUpdates(() => {
