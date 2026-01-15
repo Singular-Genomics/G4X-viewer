@@ -1,5 +1,13 @@
 import { Blosc } from 'numcodecs';
 
+/**
+ * Structure: /{cells,images,transcripts,h_and_e,run_metadata.json}
+ * - images: /images/p{level}
+ * - h_and_e: /h_and_e/p{level}
+ * - cells: /cells/{area,cell_id,cluster_id,polygon_offsets,polygon_vertices_xy,protein_values,total_counts,total_genes}
+ * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
+ * - run_metadata.json: /run_metadata.json
+ */
 export class ZarrDataSet {
   private zarrURL: string;
 
