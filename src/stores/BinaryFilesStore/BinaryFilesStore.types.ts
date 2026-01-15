@@ -6,7 +6,7 @@ export type BinaryFilesStoreValues = {
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
   collectiveFileName: string;
-  zarrUrl: string | null; // URL to Zarr dataset for transcripts
+  zarrUrl: string | null;
 };
 
 export type BinaryFilesStoreMethods = {

@@ -9,11 +9,8 @@ import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 import { ZarrTranscriptLoader } from './zarr-transcript-loader';
 
-// ======================== DATA TILE LAYER ==================
-
 class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
   renderLayers() {
-    // @ BOUNDING BOX LAYER @
     const boundingBoxLayer = new PolygonLayer({
       id: `sub-polygon-layer-${this.props.id}`,
       data: this.props.layerData,
@@ -26,7 +23,6 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showBoundries
     });
 
-    // @ INFO TEXT LAYER
     const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
 
     const textLayer = new TextLayer({
@@ -51,7 +47,6 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showData
     });
 
-    // @ POINTS LAYERS
     const discardedPointsLayer = new ScatterplotLayer({
       id: `sub-discarded-point-layer-${this.props.id}`,
       data: outlierPoints,
@@ -132,7 +127,6 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   }
 
   renderLayers() {
-    // ========================= TILED LAYER =====================
     const getTileData = async ({ index, bbox }: getTileDataProps) => {
       if (index || bbox) {
         const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;

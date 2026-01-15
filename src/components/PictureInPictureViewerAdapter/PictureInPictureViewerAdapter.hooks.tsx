@@ -90,7 +90,6 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  // Render layer if either files or zarrUrl is available
   if (!files.length && !zarrUrl) {
     return undefined;
   }

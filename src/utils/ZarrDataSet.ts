@@ -1,15 +1,5 @@
 import { Blosc } from 'numcodecs';
 
-/**
- * ZarrDataSet - manages Zarr structure URL formatting
- *
- * Structure: /{cells,images,transcripts,h_and_e,run_metadata.json}
- * - images: /images/p{level}
- * - h_and_e: /h_and_e/p{level}
- * - cells: /cells/{area,cell_id,cluster_id,polygon_offsets,polygon_vertices_xy,protein_values,total_counts,total_genes}
- * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
- * - run_metadata.json: /run_metadata.json
- */
 export class ZarrDataSet {
   private zarrURL: string;
 
@@ -31,8 +21,6 @@ export class ZarrDataSet {
     return zarrDir || '';
   }
 
-  // ==================== IMAGES ====================
-
   public getImagesPath(): string {
     return `${this.zarrURL}/images`;
   }
@@ -40,8 +28,6 @@ export class ZarrDataSet {
   public getImagePyramidLevel(level: number): string {
     return `${this.getImagesPath()}/p${level}`;
   }
-
-  // ==================== CELLS ====================
 
   public getCellsPath(): string {
     return `${this.zarrURL}/cells`;
@@ -79,8 +65,6 @@ export class ZarrDataSet {
     return `${this.getCellsPath()}/total_genes`;
   }
 
-  // ==================== TRANSCRIPTS ====================
-
   public getTranscriptsPath(): string {
     return `${this.zarrURL}/transcripts`;
   }
@@ -108,8 +92,6 @@ export class ZarrDataSet {
     return `${this.getTranscriptTile(z, y, x)}/position`;
   }
 
-  // ==================== H&E (Hematoxylin and Eosin) ====================
-
   public getHAndEPath(): string {
     return `${this.zarrURL}/h_and_e`;
   }
@@ -117,8 +99,6 @@ export class ZarrDataSet {
   public getHAndEPyramidLevel(level: number): string {
     return `${this.getHAndEPath()}/p${level}`;
   }
-
-  // ==================== METADATA ====================
 
   public getRunMetadataPath(): string {
     return `${this.zarrURL}/run_metadata.json`;
@@ -178,46 +158,34 @@ export class ZarrDataSet {
     return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  // ==================== TODO: Future Implementation ====================
-
-  // TODO: Fetch actual Zarr array data with chunking and decompression
   public async fetchArrayData(_path: string): Promise<any> {
     throw new Error('Not implemented: fetchArrayData');
   }
 
-  // TODO: Get cells data for a specific region/ROI
   public async getCellsInRegion(_bounds: { minX: number; minY: number; maxX: number; maxY: number }): Promise<any> {
     throw new Error('Not implemented: getCellsInRegion');
   }
 
-  // Fetch transcript tile data (cell_id, gene_name, position) from Zarr - pure fetch implementation
   public async getTranscriptTileData(z: number, y: number, x: number): Promise<any> {
     try {
-      // Construct paths
       const zStr = `p${z}`;
       const yStr = `y${String(y).padStart(2, '0')}`;
       const xStr = `x${String(x).padStart(2, '0')}`;
       const basePath = `${this.zarrURL}/transcripts/tiles/${zStr}/${yStr}/${xStr}`;
 
-      // Check if tile exists first to avoid console errors for missing tiles
-      // Use a HEAD request or quick metadata check
       const cellIdMetaResp = await fetch(`${basePath}/cell_id/.zarray`);
       if (!cellIdMetaResp.ok) {
-        // Tile doesn't exist - return empty data silently
         return { pointsData: [], numberOfPoints: 0 };
       }
 
       const cellIdMeta = await cellIdMetaResp.json();
       const numberOfPoints = cellIdMeta.shape[0];
 
-      // Fetch metadata for gene_name to check if chunk 1.0 exists
       const geneNameMetaResp = await fetch(`${basePath}/gene_name/.zarray`);
       const geneNameMeta = geneNameMetaResp.ok ? await geneNameMetaResp.json() : null;
 
-      // Calculate if we need chunk 1.0 based on chunk size
       const needsChunk1 = geneNameMeta && numberOfPoints > geneNameMeta.chunks[0];
 
-      // Fetch all required chunks in parallel (skip gene_name/1.0 if not needed)
       const fetchPromises = [
         fetch(`${basePath}/cell_id/0.0`),
         fetch(`${basePath}/gene_name/0.0`),
@@ -231,13 +199,11 @@ export class ZarrDataSet {
       const responses = await Promise.all(fetchPromises);
       const [cellIdResponse, geneNameChunk0Response, positionResponse, geneNameChunk1Response] = responses;
 
-      // Check if required chunks exist
       if (!cellIdResponse.ok || !geneNameChunk0Response.ok || !positionResponse.ok) {
         console.warn(`Missing required chunks for tile [z:${z}, y:${y}, x:${x}]`);
         return { pointsData: [], numberOfPoints: 0 };
       }
 
-      // Fetch array buffers for required chunks
       const fetchBufferPromises = [
         cellIdResponse.arrayBuffer(),
         geneNameChunk0Response.arrayBuffer(),
@@ -251,17 +217,14 @@ export class ZarrDataSet {
       const buffers = await Promise.all(fetchBufferPromises);
       const [cellIdCompressed, geneNameChunk0Compressed, positionCompressed, geneNameChunk1Compressed] = buffers;
 
-      // Decompress using blosc
       const blosc = Blosc.fromConfig({ id: 'blosc' });
 
-      // Decompress required chunks
       const decompressPromises = [
         blosc.decode(new Uint8Array(cellIdCompressed)),
         blosc.decode(new Uint8Array(geneNameChunk0Compressed)),
         blosc.decode(new Uint8Array(positionCompressed))
       ];
 
-      // Add chunk 1.0 decompression if it was fetched
       if (geneNameChunk1Compressed) {
         decompressPromises.push(blosc.decode(new Uint8Array(geneNameChunk1Compressed)));
       }
@@ -269,7 +232,6 @@ export class ZarrDataSet {
       const decompressedBuffers = await Promise.all(decompressPromises);
       const [cellIdBuffer, geneNameChunk0Buffer, positionBuffer, geneNameChunk1Buffer] = decompressedBuffers;
 
-      // Concatenate gene_name chunks into single buffer
       const geneNameBuffer = geneNameChunk1Buffer
         ? (() => {
             const buffer = new Uint8Array(geneNameChunk0Buffer.byteLength + geneNameChunk1Buffer.byteLength);
@@ -279,11 +241,8 @@ export class ZarrDataSet {
           })()
         : new Uint8Array(geneNameChunk0Buffer.buffer);
 
-      // Parse cell_id (int32 little-endian, shape [N, 1])
       const cellIdView = new Int32Array(cellIdBuffer.buffer);
 
-      // Parse gene_name (Unicode strings <U10 = UCS-4/UTF-32, 4 bytes per char, 10 chars each)
-      // Since TextDecoder doesn't support utf-32le in browsers, decode manually
       const bytesPerChar = 4;
       const charsPerString = 10;
       const bytesPerString = bytesPerChar * charsPerString;
@@ -293,7 +252,6 @@ export class ZarrDataSet {
         const byteOffset = i * bytesPerString;
         let geneName = '';
 
-        // Read UTF-32LE manually: 4 bytes per character, little-endian
         for (let c = 0; c < charsPerString; c++) {
           const charOffset = byteOffset + c * 4;
           const codePoint =
@@ -302,7 +260,6 @@ export class ZarrDataSet {
             (geneNameBuffer[charOffset + 2] << 16) |
             (geneNameBuffer[charOffset + 3] << 24);
 
-          // Stop at null terminator
           if (codePoint === 0) break;
           geneName += String.fromCodePoint(codePoint);
         }
@@ -310,7 +267,6 @@ export class ZarrDataSet {
         geneNames.push(geneName.trim());
       }
 
-      // Parse position (int32 little-endian, shape [N, 2])
       const positionView = new Int32Array(positionBuffer.buffer);
 
       const pointsData = [];

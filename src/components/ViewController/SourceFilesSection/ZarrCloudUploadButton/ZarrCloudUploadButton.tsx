@@ -48,7 +48,6 @@ export default function ZarrCloudUploadButton() {
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
 
-    // Set Zarr URL for transcript loading
     useBinaryFilesStore.getState().setZarrUrl(cloudImageUrl);
     useBinaryFilesStore.getState().setFileName(zarrDir);
 
@@ -64,7 +63,6 @@ export default function ZarrCloudUploadButton() {
 
     useViewerStore.setState({ source: newSource });
 
-    // Load metadata from Zarr
     const metadata = await zarrDataSet.fetchRunMetadata();
     if (metadata) {
       useViewerStore.getState().setGeneralDetails({
@@ -73,7 +71,6 @@ export default function ZarrCloudUploadButton() {
       });
     }
 
-    // Load H&E image from Zarr
     const hAndEUrl = zarrDataSet.getHAndEPath();
     useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
 
