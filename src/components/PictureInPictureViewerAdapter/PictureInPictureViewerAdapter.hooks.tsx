@@ -234,10 +234,11 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useBrightfieldImageLayer = () => {
-  const [selections, contrastLimits, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
+  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
     useShallow((store) => [
       store.selections,
       store.contrastLimits,
+      store.colors,
       store.opacity,
       store.isLayerVisible,
       store.getLoader
@@ -257,6 +258,7 @@ export const useBrightfieldImageLayer = () => {
     channelsVisible: [true, true, true],
     selections: selections as any,
     contrastLimits: contrastLimits as any,
+    colors: colors as any,
     loader: loader as any,
     dtype: dtype,
     opacity: isLayerVisible ? opacity : 0,

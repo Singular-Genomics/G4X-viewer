@@ -77,16 +77,15 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
     });
     const newSelections = buildDefaultSelection(loader[0]);
 
-    let newContrastLimits = [];
-    if (isInterleaved(loader[0].shape)) {
-      newContrastLimits = [[0, 255]];
-    } else {
-      newContrastLimits = [
-        [0, 255],
-        [0, 255],
-        [0, 255]
-      ];
-    }
+    const { dtype } = loader[0];
+    const maxValue = dtype === 'uint16' || dtype === '<u2' ? 65535 : 255;
+    const newContrastLimits = isInterleaved(loader[0].shape)
+      ? [[0, maxValue]]
+      : [
+          [0, maxValue],
+          [0, maxValue],
+          [0, maxValue]
+        ];
 
     useBrightfieldImagesStore.setState({
       selections: newSelections,

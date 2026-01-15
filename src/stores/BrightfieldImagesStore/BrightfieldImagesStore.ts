@@ -8,6 +8,11 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   loader: [{ labels: [], shape: [] }],
   image: 0,
   contrastLimits: [[0, 65535]],
+  colors: [
+    [255, 0, 0],
+    [0, 255, 0],
+    [0, 0, 255]
+  ],
   selections: [{ z: 0, c: 0, t: 0 }],
   opacity: 1,
   isLayerVisible: true,
