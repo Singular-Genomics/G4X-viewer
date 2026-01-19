@@ -152,6 +152,13 @@ export class ZarrDataSet {
     throw new Error('Not implemented: fetchArrayData');
   }
 
+  // ==================== CELLS DATA ====================
+
+  public async fetchCellsData(): Promise<import('./ZarrCellsLoader').ZarrCellsData> {
+    const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
+    return loadCellsFromZarr(this.zarrURL);
+  }
+
   // TODO: Get cells data for a specific region/ROI
   public async getCellsInRegion(_bounds: { minX: number; minY: number; maxX: number; maxY: number }): Promise<any> {
     throw new Error('Not implemented: getCellsInRegion');

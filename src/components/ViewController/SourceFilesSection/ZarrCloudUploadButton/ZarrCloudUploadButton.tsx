@@ -54,7 +54,6 @@ export default function ZarrCloudUploadButton() {
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
 
-    // Load metadata from Zarr
     const metadata = await zarrDataSet.fetchRunMetadata();
     if (metadata) {
       useViewerStore.getState().setGeneralDetails({
@@ -63,9 +62,43 @@ export default function ZarrCloudUploadButton() {
       });
     }
 
-    // Load H&E image from Zarr
     const hAndEUrl = zarrDataSet.getHAndEPath();
     useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
+
+    try {
+      const cellsData = await zarrDataSet.fetchCellsData();
+
+      let proteinNames: string[] = [];
+      if (metadata) {
+        const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
+        proteinNames = await extractProteinNamesFromMetadata(metadata);
+      }
+
+      useCellSegmentationLayerStore.setState({
+        cellMasksData: cellsData.cellMasks,
+        cellColormapConfig: cellsData.colormap,
+        fileName: zarrDir,
+        umapDataAvailable: false, // Not available in Zarr /cells
+        segmentationMetadata: {
+          ...cellsData.metadata,
+          proteinNames
+        }
+      });
+
+      enqueueSnackbar({
+        message: t('sourceFiles.segmentationSuccess', {
+          count: cellsData.cellMasks.length,
+          filename: zarrDir
+        }),
+        variant: 'success'
+      });
+    } catch (error) {
+      console.error('Failed to load cell segmentation from Zarr:', error);
+      enqueueSnackbar({
+        message: t('sourceFiles.segmentationLoadError'),
+        variant: 'warning'
+      });
+    }
 
     setCloudImageUrl(cloudImageUrl);
     setIsPopupOpen(false);

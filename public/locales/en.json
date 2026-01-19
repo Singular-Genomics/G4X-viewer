@@ -197,6 +197,8 @@
     "invalidFileFormatError": "Invalid or deprecated file format. For data from software versions older than 25.11.0, please use the <1>legacy viewer</1> or migrate your files using <2>g4x-helpers</2>.",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
     "segmentationMissingData": "Given file is missing cell segmentation masks data",
+    "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
+    "segmentationLoadError": "Failed to load cell segmentation data from Zarr file",
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
