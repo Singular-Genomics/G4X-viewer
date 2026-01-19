@@ -1,4 +1,4 @@
-import { Blosc } from 'numcodecs';
+import { open, FetchStore, get } from 'zarrita';
 
 /**
  * Structure: /{cells,images,transcripts,h_and_e,run_metadata.json}
@@ -166,14 +166,6 @@ export class ZarrDataSet {
     return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  public async fetchArrayData(_path: string): Promise<any> {
-    throw new Error('Not implemented: fetchArrayData');
-  }
-
-  public async getCellsInRegion(_bounds: { minX: number; minY: number; maxX: number; maxY: number }): Promise<any> {
-    throw new Error('Not implemented: getCellsInRegion');
-  }
-
   public async getTranscriptTileData(z: number, y: number, x: number): Promise<any> {
     try {
       const zStr = `p${z}`;
@@ -181,110 +173,34 @@ export class ZarrDataSet {
       const xStr = `x${String(x).padStart(2, '0')}`;
       const basePath = `${this.zarrURL}/transcripts/tiles/${zStr}/${yStr}/${xStr}`;
 
-      const cellIdMetaResp = await fetch(`${basePath}/cell_id/.zarray`);
-      if (!cellIdMetaResp.ok) {
+      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
+        open(new FetchStore(`${basePath}/cell_id`), { kind: 'array' }).catch(() => null),
+        open(new FetchStore(`${basePath}/gene_name`), { kind: 'array' }).catch(() => null),
+        open(new FetchStore(`${basePath}/position`), { kind: 'array' }).catch(() => null)
+      ]);
+
+      if (!cellIdArray || !geneNameArray || !positionArray) {
         return { pointsData: [], numberOfPoints: 0 };
       }
 
-      const cellIdMeta = await cellIdMetaResp.json();
-      const numberOfPoints = cellIdMeta.shape[0];
+      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
+        get(cellIdArray),
+        get(geneNameArray),
+        get(positionArray)
+      ]);
 
-      const geneNameMetaResp = await fetch(`${basePath}/gene_name/.zarray`);
-      const geneNameMeta = geneNameMetaResp.ok ? await geneNameMetaResp.json() : null;
-
-      const needsChunk1 = geneNameMeta && numberOfPoints > geneNameMeta.chunks[0];
-
-      const fetchPromises = [
-        fetch(`${basePath}/cell_id/0.0`),
-        fetch(`${basePath}/gene_name/0.0`),
-        fetch(`${basePath}/position/0.0`)
-      ];
-
-      if (needsChunk1) {
-        fetchPromises.push(fetch(`${basePath}/gene_name/1.0`));
-      }
-
-      const responses = await Promise.all(fetchPromises);
-      const [cellIdResponse, geneNameChunk0Response, positionResponse, geneNameChunk1Response] = responses;
-
-      if (!cellIdResponse.ok || !geneNameChunk0Response.ok || !positionResponse.ok) {
-        console.warn(`Missing required chunks for tile [z:${z}, y:${y}, x:${x}]`);
-        return { pointsData: [], numberOfPoints: 0 };
-      }
-
-      const fetchBufferPromises = [
-        cellIdResponse.arrayBuffer(),
-        geneNameChunk0Response.arrayBuffer(),
-        positionResponse.arrayBuffer()
-      ];
-
-      if (needsChunk1 && geneNameChunk1Response?.ok) {
-        fetchBufferPromises.push(geneNameChunk1Response.arrayBuffer());
-      }
-
-      const buffers = await Promise.all(fetchBufferPromises);
-      const [cellIdCompressed, geneNameChunk0Compressed, positionCompressed, geneNameChunk1Compressed] = buffers;
-
-      const blosc = Blosc.fromConfig({ id: 'blosc' });
-
-      const decompressPromises = [
-        blosc.decode(new Uint8Array(cellIdCompressed)),
-        blosc.decode(new Uint8Array(geneNameChunk0Compressed)),
-        blosc.decode(new Uint8Array(positionCompressed))
-      ];
-
-      if (geneNameChunk1Compressed) {
-        decompressPromises.push(blosc.decode(new Uint8Array(geneNameChunk1Compressed)));
-      }
-
-      const decompressedBuffers = await Promise.all(decompressPromises);
-      const [cellIdBuffer, geneNameChunk0Buffer, positionBuffer, geneNameChunk1Buffer] = decompressedBuffers;
-
-      const geneNameBuffer = geneNameChunk1Buffer
-        ? (() => {
-            const buffer = new Uint8Array(geneNameChunk0Buffer.byteLength + geneNameChunk1Buffer.byteLength);
-            buffer.set(new Uint8Array(geneNameChunk0Buffer.buffer), 0);
-            buffer.set(new Uint8Array(geneNameChunk1Buffer.buffer), geneNameChunk0Buffer.byteLength);
-            return buffer;
-          })()
-        : new Uint8Array(geneNameChunk0Buffer.buffer);
-
-      const cellIdView = new Int32Array(cellIdBuffer.buffer);
-
-      const bytesPerChar = 4;
-      const charsPerString = 10;
-      const bytesPerString = bytesPerChar * charsPerString;
-      const geneNames: string[] = [];
-
-      for (let i = 0; i < numberOfPoints; i++) {
-        const byteOffset = i * bytesPerString;
-        let geneName = '';
-
-        for (let c = 0; c < charsPerString; c++) {
-          const charOffset = byteOffset + c * 4;
-          const codePoint =
-            geneNameBuffer[charOffset] |
-            (geneNameBuffer[charOffset + 1] << 8) |
-            (geneNameBuffer[charOffset + 2] << 16) |
-            (geneNameBuffer[charOffset + 3] << 24);
-
-          if (codePoint === 0) break;
-          geneName += String.fromCodePoint(codePoint);
-        }
-
-        geneNames.push(geneName.trim());
-      }
-
-      const positionView = new Int32Array(positionBuffer.buffer);
+      const cellIds = cellIdChunk.data as Int32Array;
+      const geneNames = geneNameChunk.data as any;
+      const positions = positionChunk.data as Int32Array;
+      const numberOfPoints = cellIds.length;
 
       const pointsData = [];
       for (let i = 0; i < numberOfPoints; i++) {
-        const y = positionView[i * 2];
-        const x = positionView[i * 2 + 1];
+        const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
         pointsData.push({
-          cellId: String(cellIdView[i]),
-          geneName: geneNames[i],
-          position: [x, y]
+          cellId: String(cellIds[i]),
+          geneName: geneName,
+          position: [positions[i * 2 + 1], positions[i * 2]]
         });
       }
 
