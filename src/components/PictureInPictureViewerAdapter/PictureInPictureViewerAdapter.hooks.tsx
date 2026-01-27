@@ -62,8 +62,8 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
-    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  const [files, layerConfig, colorMapConfig, zarrUrl] = useBinaryFilesStore(
+    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig, store.zarrUrl])
   );
 
   const [
@@ -90,15 +90,16 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!files.length) {
+  if (!files.length && !zarrUrl) {
     return undefined;
   }
 
   const metadataLayer = new TranscriptLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
     files,
+    zarrUrl,
     config: layerConfig,
-    visible: !!files.length && isTranscriptLayerOn,
+    visible: (!!files.length || !!zarrUrl) && isTranscriptLayerOn,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,

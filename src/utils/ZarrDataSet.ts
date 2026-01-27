@@ -1,3 +1,5 @@
+import { open, FetchStore, get } from 'zarrita';
+
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
  *
@@ -29,8 +31,6 @@ export class ZarrDataSet {
     return zarrDir || '';
   }
 
-  // ==================== IMAGES ====================
-
   public getImagesPath(): string {
     return `${this.zarrURL}/images`;
   }
@@ -42,8 +42,6 @@ export class ZarrDataSet {
   public getMultiplexPyramidLevel(level: number): string {
     return `${this.getMultiplexPath()}/${level}`;
   }
-
-  // ==================== CELLS ====================
 
   public getCellsPath(): string {
     return `${this.zarrURL}/cells`;
@@ -81,8 +79,6 @@ export class ZarrDataSet {
     return `${this.getCellsPath()}/total_genes`;
   }
 
-  // ==================== TRANSCRIPTS ====================
-
   public getTranscriptsPath(): string {
     return `${this.zarrURL}/transcripts`;
   }
@@ -110,8 +106,6 @@ export class ZarrDataSet {
     return `${this.getTranscriptTile(z, y, x)}/position`;
   }
 
-  // ==================== H&E (Hematoxylin and Eosin) ====================
-
   public getHAndEPath(): string {
     return `${this.zarrURL}/images/h_and_e`;
   }
@@ -119,8 +113,6 @@ export class ZarrDataSet {
   public getHAndEPyramidLevel(level: number): string {
     return `${this.getHAndEPath()}/${level}`;
   }
-
-  // ==================== METADATA ====================
 
   public getRunMetadataPath(): string {
     return `${this.zarrURL}/.zattrs`;
@@ -141,37 +133,101 @@ export class ZarrDataSet {
     }
   }
 
-  // ==================== TODO: Future Implementation ====================
+  public async detectLayerConfig(): Promise<{
+    layer_width: number;
+    layer_height: number;
+    layers: number;
+    tile_size: number;
+  } | null> {
+    try {
+      const response = await fetch(`${this.zarrURL}/images/0/.zarray`);
+      if (!response.ok) return null;
 
-  // TODO: Determine available pyramid levels
-  public async getAvailablePyramidLevels(): Promise<number[]> {
-    throw new Error('Not implemented: getAvailablePyramidLevels');
+      const metadata = await response.json();
+      const shape = metadata.shape;
+      const chunks = metadata.chunks;
+
+      const pyramidLevels = await this.detectPyramidLevels();
+
+      return {
+        layer_width: shape[shape.length - 1],
+        layer_height: shape[shape.length - 2],
+        layers: pyramidLevels.length > 0 ? pyramidLevels.length - 1 : 4,
+        tile_size: chunks[chunks.length - 1]
+      };
+    } catch (error) {
+      console.error('Failed to auto-detect layer config:', error);
+      return null;
+    }
   }
 
-  // TODO: Get transcript tile bounds/extent for a pyramid level
-  public async getTranscriptTileBounds(_z: number): Promise<{ maxX: number; maxY: number }> {
-    throw new Error('Not implemented: getTranscriptTileBounds');
+  private async detectPyramidLevels(): Promise<number[]> {
+    const levels: number[] = [];
+    for (let level = 0; level <= 10; level++) {
+      const response = await fetch(`${this.zarrURL}/images/${level}/.zarray`, { method: 'HEAD' });
+      if (response.ok) {
+        levels.push(level);
+      } else {
+        break;
+      }
+    }
+    return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  // TODO: Fetch actual Zarr array data with chunking and decompression
-  public async fetchArrayData(_path: string): Promise<any> {
-    throw new Error('Not implemented: fetchArrayData');
-  }
+  public async getTranscriptTileData(z: number, y: number, x: number): Promise<any> {
+    try {
+      const zStr = `p${z}`;
+      const yStr = `y${String(y).padStart(2, '0')}`;
+      const xStr = `x${String(x).padStart(2, '0')}`;
+      const basePath = `${this.zarrURL}/transcripts/tiles/${zStr}/${yStr}/${xStr}`;
 
-  // ==================== CELLS DATA ====================
+      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
+        open(new FetchStore(`${basePath}/cell_id`), { kind: 'array' }).catch(() => null),
+        open(new FetchStore(`${basePath}/gene_name`), { kind: 'array' }).catch(() => null),
+        open(new FetchStore(`${basePath}/position`), { kind: 'array' }).catch(() => null)
+      ]);
+
+      if (!cellIdArray || !geneNameArray || !positionArray) {
+        return { pointsData: [], numberOfPoints: 0 };
+      }
+
+      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
+        get(cellIdArray),
+        get(geneNameArray),
+        get(positionArray)
+      ]);
+
+      const cellIds = cellIdChunk.data as Int32Array;
+      const geneNames = geneNameChunk.data as any;
+      const positions = positionChunk.data as Int32Array;
+      const numberOfPoints = cellIds.length;
+
+      const pointsData = [];
+      for (let i = 0; i < numberOfPoints; i++) {
+        const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
+        pointsData.push({
+          cellId: String(cellIds[i]),
+          geneName: geneName,
+          position: [positions[i * 2 + 1], positions[i * 2]]
+        });
+      }
+
+      return {
+        pointsData,
+        numberOfPoints
+      };
+    } catch (error) {
+      console.error(`Failed to fetch transcript tile data [z:${z}, y:${y}, x:${x}]:`, error);
+      return null;
+    }
+  }
 
   public async fetchCellsData(): Promise<import('./ZarrCellsLoader').ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
     return loadCellsFromZarr(this.zarrURL);
   }
 
-  // TODO: Get cells data for a specific region/ROI
   public async getCellsInRegion(_bounds: { minX: number; minY: number; maxX: number; maxY: number }): Promise<any> {
     throw new Error('Not implemented: getCellsInRegion');
-  }
-
-  // TODO: Get transcript tile data (cell_id, gene_name, position)
-  public async getTranscriptTileData(_z: number, _y: number, _x: number): Promise<any> {
-    throw new Error('Not implemented: getTranscriptTileData');
   }
 }

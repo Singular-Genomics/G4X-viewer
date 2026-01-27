@@ -25,6 +25,7 @@ export type LayerDataItem = {
 export type TranscriptLayerProps = CompositeLayerProps & {
   protoRoot?: protobuf.Root;
   files: File[];
+  zarrUrl?: string | null;
   config: LayerConfig;
   geneFilters: GeneNameFilterType | 'all';
   pointSize: number;

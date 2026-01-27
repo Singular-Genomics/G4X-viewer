@@ -6,6 +6,7 @@ export type BinaryFilesStoreValues = {
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
   collectiveFileName: string;
+  zarrUrl: string | null;
 };
 
 export type BinaryFilesStoreMethods = {
@@ -14,6 +15,7 @@ export type BinaryFilesStoreMethods = {
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setCollectiveFileName: (name: string) => void;
+  setZarrUrl: (zarrUrl: string | null) => void;
   reset: () => void;
 };
 
