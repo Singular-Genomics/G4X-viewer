@@ -1,12 +1,12 @@
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
  *
- * Structure: /{cells,images,transcripts,h_and_e,run_metadata.json}
- * - images: /images/p{level}
- * - h_and_e: /h_and_e/p{level}
+ * Structure: /{cells,images,transcripts,misc}
+ * - images/multiplex: /images/multiplex/{level}
+ * - images/h_and_e: /images/h_and_e/{level}
  * - cells: /cells/{area,cell_id,cluster_id,polygon_offsets,polygon_vertices_xy,protein_values,total_counts,total_genes}
  * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
- * - run_metadata.json: /run_metadata.json
+ * - run_metadata: stored in .zattrs at root level
  */
 export class ZarrDataSet {
   private zarrURL: string;
@@ -35,8 +35,12 @@ export class ZarrDataSet {
     return `${this.zarrURL}/images`;
   }
 
-  public getImagePyramidLevel(level: number): string {
-    return `${this.getImagesPath()}/p${level}`;
+  public getMultiplexPath(): string {
+    return `${this.zarrURL}/images/multiplex`;
+  }
+
+  public getMultiplexPyramidLevel(level: number): string {
+    return `${this.getMultiplexPath()}/${level}`;
   }
 
   // ==================== CELLS ====================
@@ -109,11 +113,11 @@ export class ZarrDataSet {
   // ==================== H&E (Hematoxylin and Eosin) ====================
 
   public getHAndEPath(): string {
-    return `${this.zarrURL}/h_and_e`;
+    return `${this.zarrURL}/images/h_and_e`;
   }
 
   public getHAndEPyramidLevel(level: number): string {
-    return `${this.getHAndEPath()}/p${level}`;
+    return `${this.getHAndEPath()}/${level}`;
   }
 
   // ==================== METADATA ====================

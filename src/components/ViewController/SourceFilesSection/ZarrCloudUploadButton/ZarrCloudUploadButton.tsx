@@ -41,10 +41,10 @@ export default function ZarrCloudUploadButton() {
     }
 
     const zarrDir = zarrDataSet.getZarrDirectoryName();
-    const zarrImagesUrl = zarrDataSet.getImagesPath();
+    const zarrMultiplexUrl = zarrDataSet.getMultiplexPath();
 
     const newSource = {
-      urlOrFile: zarrImagesUrl,
+      urlOrFile: zarrMultiplexUrl,
       description: zarrDir
     };
 
