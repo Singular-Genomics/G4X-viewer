@@ -19,7 +19,10 @@ const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isViewMode: false,
   isDeleteMode: false,
   polygonOpacity: 0.5,
-  showROINumbers: true
+  showROINumbers: true,
+  polygonNotes: {},
+  selectedROIId: null,
+  isROIDetailsPanelExpanded: false
 };
 
 export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => ({
@@ -75,20 +78,24 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     return newPolygonId;
   },
   deletePolygon: (polygonId) => {
-    const { polygonFeatures } = get();
+    const { polygonFeatures, polygonNotes } = get();
     const updatedFeatures = polygonFeatures.filter((entry) => entry.properties?.polygonId !== polygonId);
+    const updatedNotes = { ...polygonNotes };
+    delete updatedNotes[polygonId];
     if (updatedFeatures.length === 0) {
       set({
         polygonFeatures: updatedFeatures,
         selectedFeatureIndex: null,
         isDeleteMode: false,
         mode: new DrawPolygonMode(),
-        isViewMode: false
+        isViewMode: false,
+        polygonNotes: updatedNotes
       });
     } else {
       set({
         polygonFeatures: updatedFeatures,
-        selectedFeatureIndex: null
+        selectedFeatureIndex: null,
+        polygonNotes: updatedNotes
       });
     }
   },
@@ -118,15 +125,15 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
   clearPolygons: () => {
     useTranscriptLayerStore.getState().setSelectedPoints([]);
     useCellSegmentationLayerStore.getState().setSelectedCells([]);
-    set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false });
+    set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false, polygonNotes: {} });
   },
   exportPolygonsWithCells: (includeGenes) => {
-    const { polygonFeatures } = get();
-    exportPolygonsWithCells(polygonFeatures, includeGenes);
+    const { polygonFeatures, polygonNotes } = get();
+    exportPolygonsWithCells(polygonFeatures, includeGenes, polygonNotes);
   },
   exportPolygonsWithTranscripts: () => {
-    const { polygonFeatures } = get();
-    exportPolygonsWithTranscripts(polygonFeatures);
+    const { polygonFeatures, polygonNotes } = get();
+    exportPolygonsWithTranscripts(polygonFeatures, polygonNotes);
   },
   importPolygons: (importedFeatures: any) => {
     set({
@@ -135,5 +142,26 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     });
   },
 
-  setPolygonOpacity: (opacity: number) => set({ polygonOpacity: opacity })
+  setPolygonOpacity: (opacity: number) => set({ polygonOpacity: opacity }),
+
+  setPolygonNote: (polygonId: number, note: string) => {
+    const { polygonNotes } = get();
+    set({
+      polygonNotes: {
+        ...polygonNotes,
+        [polygonId]: note
+      }
+    });
+  },
+
+  selectROIForDetails: (polygonId: number) => {
+    set({
+      selectedROIId: polygonId,
+      isROIDetailsPanelExpanded: true
+    });
+  },
+
+  setROIDetailsPanelExpanded: (expanded: boolean) => {
+    set({ isROIDetailsPanelExpanded: expanded });
+  }
 }));

@@ -23,6 +23,7 @@ import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
+import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -119,31 +120,24 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
 
   const takeScreenshot = () => {
     try {
-      if (!deckGLRef.current?.deck) {
-        throw new Error('DeckGL reference is not available');
-      }
+      const deck = deckGLRef.current?.deck;
+      if (!deck?.canvas) throw new Error('DeckGL reference is not available');
 
-      const deck = deckGLRef.current.deck;
-      const fileName = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
+      deck.redraw?.(true);
 
-      // Force an immediate redraw to ensure the scene is rendered
-      if (typeof deck.redraw === 'function') {
-        // Use synchronous redraw
-        deck.redraw(true);
-      }
+      const tempCanvas = document.createElement('canvas');
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
 
-      const canvas = deck.canvas;
-      if (!canvas) {
-        throw new Error('Canvas not available');
-      }
+      tempCanvas.width = deck.canvas.width;
+      tempCanvas.height = deck.canvas.height;
+      ctx.drawImage(deck.canvas, 0, 0);
 
-      // Get the data URL right away
-      const result = canvas.toDataURL('image/png');
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
 
-      // Create and trigger download
       const link = document.createElement('a');
-      link.href = result;
-      link.download = `${fileName}.png`;
+      link.href = tempCanvas.toDataURL('image/png');
+      link.download = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
