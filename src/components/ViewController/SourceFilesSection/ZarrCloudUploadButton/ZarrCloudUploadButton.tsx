@@ -56,6 +56,15 @@ export default function ZarrCloudUploadButton() {
       useBinaryFilesStore.getState().setLayerConfig(layerConfig);
     }
 
+    const transcriptColors = await zarrDataSet.fetchTranscriptColors();
+    if (transcriptColors) {
+      const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
+        gene_name,
+        color
+      }));
+      useBinaryFilesStore.getState().setColormapConfig(colorMapEntries);
+    }
+
     const newSource = {
       urlOrFile: zarrMultiplexUrl,
       description: zarrDir

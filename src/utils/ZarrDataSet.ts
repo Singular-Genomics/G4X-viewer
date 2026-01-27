@@ -1,4 +1,11 @@
 import { open, FetchStore, get } from 'zarrita';
+import {
+  ZarrLayerConfig,
+  ZarrGeneColors,
+  ZarrTileCoordinates,
+  ZarrTranscriptTileData,
+  ZarrTranscriptPoint
+} from './ZarrDataSet.types';
 
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
@@ -10,7 +17,7 @@ import { open, FetchStore, get } from 'zarrita';
  * - cells/polygons: /cells/polygons/{polygon_offsets,polygon_vertices_xy}
  * - cells/protein: /cells/protein/{protein_names,protein_values}
  * - cells/genes: /cells/genes/{data,gene_names,indices,indptr}
- * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
+ * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
  * - run_metadata: stored in .zattrs at root level
  */
 export class ZarrDataSet {
@@ -56,13 +63,50 @@ export class ZarrDataSet {
     }
   }
 
-  public async detectLayerConfig(): Promise<{
-    layer_width: number;
-    layer_height: number;
-    layers: number;
-    tile_size: number;
-  } | null> {
+  public async fetchTranscriptLayerConfig(): Promise<ZarrLayerConfig | null> {
     try {
+      const response = await fetch(`${this.zarrURL}/transcripts/.zattrs`);
+      if (!response.ok) {
+        return null;
+      }
+      const zattrs = await response.json();
+      const layerConfig = zattrs.layer_config;
+      if (!layerConfig) {
+        return null;
+      }
+      return {
+        layer_width: layerConfig.layer_width,
+        layer_height: layerConfig.layer_height,
+        layers: layerConfig.layers,
+        tile_size: layerConfig.tile_size
+      };
+    } catch (error) {
+      console.error('Failed to fetch transcript layer config:', error);
+      return null;
+    }
+  }
+
+  public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
+    try {
+      const response = await fetch(`${this.zarrURL}/transcripts/.zattrs`);
+      if (!response.ok) {
+        return null;
+      }
+      const zattrs = await response.json();
+      return zattrs.gene_colors || null;
+    } catch (error) {
+      console.error('Failed to fetch transcript colors:', error);
+      return null;
+    }
+  }
+
+  public async detectLayerConfig(): Promise<ZarrLayerConfig | null> {
+    try {
+      const transcriptConfig = await this.fetchTranscriptLayerConfig();
+      if (transcriptConfig) {
+        return transcriptConfig;
+      }
+
       const response = await fetch(`${this.zarrURL}/images/multiplex/0/.zarray`);
       if (!response.ok) return null;
 
@@ -97,12 +141,16 @@ export class ZarrDataSet {
     return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  public async getTranscriptTileData(z: number, y: number, x: number): Promise<any> {
+  public async getTranscriptTileData({ z, y, x }: ZarrTileCoordinates): Promise<ZarrTranscriptTileData | null> {
     try {
-      const zStr = `p${z}`;
+      const transcriptConfig = await this.fetchTranscriptLayerConfig();
+      const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
+      const invertedZ = maxZoom - z;
+
+      const zStr = `p${invertedZ}`;
       const yStr = `y${String(y).padStart(2, '0')}`;
       const xStr = `x${String(x).padStart(2, '0')}`;
-      const basePath = `${this.zarrURL}/transcripts/tiles/${zStr}/${yStr}/${xStr}`;
+      const basePath = `${this.zarrURL}/transcripts/${zStr}/${yStr}/${xStr}`;
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
         open(new FetchStore(`${basePath}/cell_id`), { kind: 'array' }).catch(() => null),
@@ -125,13 +173,13 @@ export class ZarrDataSet {
       const positions = positionChunk.data as Int32Array;
       const numberOfPoints = cellIds.length;
 
-      const pointsData = [];
+      const pointsData: ZarrTranscriptPoint[] = [];
       for (let i = 0; i < numberOfPoints; i++) {
         const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
         pointsData.push({
           cellId: String(cellIds[i]),
           geneName: geneName,
-          position: [positions[i * 2 + 1], positions[i * 2]]
+          position: [positions[i * 2], positions[i * 2 + 1]]
         });
       }
 
