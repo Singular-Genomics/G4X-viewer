@@ -6,7 +6,10 @@ import { open, FetchStore, get } from 'zarrita';
  * Structure: /{cells,images,transcripts,misc}
  * - images/multiplex: /images/multiplex/{level}
  * - images/h_and_e: /images/h_and_e/{level}
- * - cells: /cells/{area,cell_id,cluster_id,polygon_offsets,polygon_vertices_xy,protein_values,total_counts,total_genes}
+ * - cells/metadata: /cells/metadata/{area,cell_id,cluster_id,total_counts,total_genes,umap}
+ * - cells/polygons: /cells/polygons/{polygon_offsets,polygon_vertices_xy}
+ * - cells/protein: /cells/protein/{protein_names,protein_values}
+ * - cells/genes: /cells/genes/{data,gene_names,indices,indptr}
  * - transcripts: /transcripts/tiles/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
  * - run_metadata: stored in .zattrs at root level
  */
@@ -31,101 +34,21 @@ export class ZarrDataSet {
     return zarrDir || '';
   }
 
-  public getImagesPath(): string {
-    return `${this.zarrURL}/images`;
-  }
-
   public getMultiplexPath(): string {
     return `${this.zarrURL}/images/multiplex`;
-  }
-
-  public getMultiplexPyramidLevel(level: number): string {
-    return `${this.getMultiplexPath()}/${level}`;
-  }
-
-  public getCellsPath(): string {
-    return `${this.zarrURL}/cells`;
-  }
-
-  public getCellsAreaPath(): string {
-    return `${this.getCellsPath()}/area`;
-  }
-
-  public getCellsIdPath(): string {
-    return `${this.getCellsPath()}/cell_id`;
-  }
-
-  public getCellsClusterIdPath(): string {
-    return `${this.getCellsPath()}/cluster_id`;
-  }
-
-  public getCellsPolygonOffsetsPath(): string {
-    return `${this.getCellsPath()}/polygon_offsets`;
-  }
-
-  public getCellsPolygonVerticesPath(): string {
-    return `${this.getCellsPath()}/polygon_vertices_xy`;
-  }
-
-  public getCellsProteinValuesPath(): string {
-    return `${this.getCellsPath()}/protein_values`;
-  }
-
-  public getCellsTotalCountsPath(): string {
-    return `${this.getCellsPath()}/total_counts`;
-  }
-
-  public getCellsTotalGenesPath(): string {
-    return `${this.getCellsPath()}/total_genes`;
-  }
-
-  public getTranscriptsPath(): string {
-    return `${this.zarrURL}/transcripts`;
-  }
-
-  public getTranscriptsTilesPath(): string {
-    return `${this.getTranscriptsPath()}/tiles`;
-  }
-
-  public getTranscriptTile(z: number, y: number, x: number): string {
-    const zStr = `p${z}`;
-    const yStr = `y${String(y).padStart(2, '0')}`;
-    const xStr = `x${String(x).padStart(2, '0')}`;
-    return `${this.getTranscriptsTilesPath()}/${zStr}/${yStr}/${xStr}`;
-  }
-
-  public getTranscriptTileCellId(z: number, y: number, x: number): string {
-    return `${this.getTranscriptTile(z, y, x)}/cell_id`;
-  }
-
-  public getTranscriptTileGeneName(z: number, y: number, x: number): string {
-    return `${this.getTranscriptTile(z, y, x)}/gene_name`;
-  }
-
-  public getTranscriptTilePosition(z: number, y: number, x: number): string {
-    return `${this.getTranscriptTile(z, y, x)}/position`;
   }
 
   public getHAndEPath(): string {
     return `${this.zarrURL}/images/h_and_e`;
   }
 
-  public getHAndEPyramidLevel(level: number): string {
-    return `${this.getHAndEPath()}/${level}`;
-  }
-
-  public getRunMetadataPath(): string {
-    return `${this.zarrURL}/.zattrs`;
-  }
-
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await fetch(this.getRunMetadataPath());
+      const response = await fetch(`${this.zarrURL}/.zattrs`);
       if (!response.ok) {
         return null;
       }
       const zattrs = await response.json();
-      // Extract run_metadata from .zattrs
       return zattrs.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
@@ -140,7 +63,7 @@ export class ZarrDataSet {
     tile_size: number;
   } | null> {
     try {
-      const response = await fetch(`${this.zarrURL}/images/0/.zarray`);
+      const response = await fetch(`${this.zarrURL}/images/multiplex/0/.zarray`);
       if (!response.ok) return null;
 
       const metadata = await response.json();
@@ -164,7 +87,7 @@ export class ZarrDataSet {
   private async detectPyramidLevels(): Promise<number[]> {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
-      const response = await fetch(`${this.zarrURL}/images/${level}/.zarray`, { method: 'HEAD' });
+      const response = await fetch(`${this.zarrURL}/images/multiplex/${level}/.zarray`, { method: 'HEAD' });
       if (response.ok) {
         levels.push(level);
       } else {
@@ -225,9 +148,5 @@ export class ZarrDataSet {
   public async fetchCellsData(): Promise<import('./ZarrCellsLoader').ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
     return loadCellsFromZarr(this.zarrURL);
-  }
-
-  public async getCellsInRegion(_bounds: { minX: number; minY: number; maxX: number; maxY: number }): Promise<any> {
-    throw new Error('Not implemented: getCellsInRegion');
   }
 }

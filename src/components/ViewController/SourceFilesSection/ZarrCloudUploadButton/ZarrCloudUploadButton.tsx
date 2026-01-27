@@ -77,17 +77,23 @@ export default function ZarrCloudUploadButton() {
     try {
       const cellsData = await zarrDataSet.fetchCellsData();
 
-      let proteinNames: string[] = [];
-      if (metadata) {
+      // Use protein names from Zarr, fallback to metadata if needed
+      let proteinNames = cellsData.metadata.proteinNames;
+      if (proteinNames.length === 0 && metadata) {
         const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
         proteinNames = await extractProteinNamesFromMetadata(metadata);
       }
+
+      // Check if UMAP data is available
+      const hasUmapData = cellsData.cellMasks.some(
+        (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
+      );
 
       useCellSegmentationLayerStore.setState({
         cellMasksData: cellsData.cellMasks,
         cellColormapConfig: cellsData.colormap,
         fileName: zarrDir,
-        umapDataAvailable: false, // Not available in Zarr /cells
+        umapDataAvailable: hasUmapData,
         segmentationMetadata: {
           ...cellsData.metadata,
           proteinNames
