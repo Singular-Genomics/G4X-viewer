@@ -123,7 +123,7 @@ export class ZarrDataSet {
   // ==================== METADATA ====================
 
   public getRunMetadataPath(): string {
-    return `${this.zarrURL}/run_metadata.json`;
+    return `${this.zarrURL}/.zattrs`;
   }
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
@@ -132,9 +132,11 @@ export class ZarrDataSet {
       if (!response.ok) {
         return null;
       }
-      return await response.json();
+      const zattrs = await response.json();
+      // Extract run_metadata from .zattrs
+      return zattrs.run_metadata || null;
     } catch (error) {
-      console.error('Failed to fetch run_metadata.json:', error);
+      console.error('Failed to fetch run metadata from .zattrs:', error);
       return null;
     }
   }

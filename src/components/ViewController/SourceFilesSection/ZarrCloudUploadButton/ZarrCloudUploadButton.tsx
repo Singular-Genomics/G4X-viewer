@@ -57,7 +57,7 @@ export default function ZarrCloudUploadButton() {
     const metadata = await zarrDataSet.fetchRunMetadata();
     if (metadata) {
       useViewerStore.getState().setGeneralDetails({
-        fileName: 'run_metadata.json',
+        fileName: '.zattrs',
         data: metadata
       });
     }
