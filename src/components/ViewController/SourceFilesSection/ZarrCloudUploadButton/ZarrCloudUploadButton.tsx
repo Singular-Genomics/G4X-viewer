@@ -43,6 +43,9 @@ export default function ZarrCloudUploadButton() {
     const zarrDir = zarrDataSet.getZarrDirectoryName();
     const zarrMultiplexUrl = zarrDataSet.getMultiplexPath();
 
+    setCloudImageUrl(cloudImageUrl);
+    setIsPopupOpen(false);
+
     useBinaryFilesStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
@@ -123,9 +126,6 @@ export default function ZarrCloudUploadButton() {
         variant: 'warning'
       });
     }
-
-    setCloudImageUrl(cloudImageUrl);
-    setIsPopupOpen(false);
 
     enqueueSnackbar({
       message: t('sourceFiles.zarrSuccess', { filename: zarrDir }),
