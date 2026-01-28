@@ -357,19 +357,19 @@
       "zControl": "Z Control"
     },
     "channelSettings": {
-      "lens": "Lens",
-      "export": "Export",
-      "import": "Import",
-      "currentPixelIntensity": "Current Pixel Intensity",
-      "minMaxDisplay": "Min/Max Display",
+      "lens": "A lens to highlight a specific protein channel in color, displaying all other active channels in grayscale.",
+      "export": "Export the current protein settings as a JSON file.",
+      "import": "Import protein channel settings from a JSON file.",
+      "currentPixelIntensity": "Intensity value of the specific protein channel at the location of your cursor.",
+      "minMaxDisplay": "All pixels above/below these values will display as zero.",
       "proteomicsColormap": "Proteomics Colormap"
     },
     "segmentationSettings": {
-      "clusterIdColumn": "Explain nan and -1 categories"
+      "clusterIdColumn": "A cluster assignment of nan or -1 indicates that a cell was filtered before clustering."
     },
     "sourceFiles": {
-      "imageUploadButton": "Image Upload Button",
-      "cloudUploadButton": "Upload image from URL"
+      "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
+      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section."
     },
     "flowCytometry": {
       "title": "Flow Cytometry Title"
