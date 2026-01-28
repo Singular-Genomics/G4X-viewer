@@ -14,6 +14,7 @@ export type CellsExportData = Record<
     coordinates: [number, number][];
     cells: Omit<SingleMask, 'nonzeroGeneIndices' | 'nonzeroGeneValues' | 'proteinValues'>[];
     polygonId: number;
+    notes?: string;
   }
 >;
 
@@ -23,6 +24,7 @@ export type TranscriptsExportData = Record<
     coordinates: [number, number][];
     transcripts: PointData[];
     polygonId: number;
+    notes?: string;
   }
 >;
 

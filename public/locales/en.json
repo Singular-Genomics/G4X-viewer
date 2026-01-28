@@ -294,6 +294,11 @@
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
   },
+  "roiDetails": {
+    "title": "ROI Details",
+    "cells": "Cells",
+    "addNote": "Add note..."
+  },
   "navigation": {
     "viewer": "Viewer",
     "dashboard": "Dashboard"
@@ -369,5 +374,13 @@
     "flowCytometry": {
       "title": "Flow Cytometry Title"
     }
+  },
+  "socialLinks": {
+    "website": "Website",
+    "linkedin": "LinkedIn",
+    "x": "X (Twitter)",
+    "github": "GitHub",
+    "email": "Email",
+    "documentation": "Documentation"
   }
 }
