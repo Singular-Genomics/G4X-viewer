@@ -1,4 +1,5 @@
 import { open, FetchStore, get } from 'zarrita';
+import axios from 'axios';
 import {
   ZarrLayerConfig,
   ZarrGeneColors,
@@ -51,12 +52,8 @@ export class ZarrDataSet {
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await fetch(`${this.zarrURL}/.zattrs`);
-      if (!response.ok) {
-        return null;
-      }
-      const zattrs = await response.json();
-      return zattrs.run_metadata || null;
+      const response = await axios.get(`${this.zarrURL}/.zattrs`);
+      return response.data.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
       return null;
@@ -65,12 +62,8 @@ export class ZarrDataSet {
 
   public async fetchTranscriptLayerConfig(): Promise<ZarrLayerConfig | null> {
     try {
-      const response = await fetch(`${this.zarrURL}/transcripts/.zattrs`);
-      if (!response.ok) {
-        return null;
-      }
-      const zattrs = await response.json();
-      const layerConfig = zattrs.layer_config;
+      const response = await axios.get(`${this.zarrURL}/transcripts/.zattrs`);
+      const layerConfig = response.data.layer_config;
       if (!layerConfig) {
         return null;
       }
@@ -88,12 +81,8 @@ export class ZarrDataSet {
 
   public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
     try {
-      const response = await fetch(`${this.zarrURL}/transcripts/.zattrs`);
-      if (!response.ok) {
-        return null;
-      }
-      const zattrs = await response.json();
-      return zattrs.gene_colors || null;
+      const response = await axios.get(`${this.zarrURL}/transcripts/.zattrs`);
+      return response.data.gene_colors || null;
     } catch (error) {
       console.error('Failed to fetch transcript colors:', error);
       return null;
@@ -107,10 +96,8 @@ export class ZarrDataSet {
         return transcriptConfig;
       }
 
-      const response = await fetch(`${this.zarrURL}/images/multiplex/0/.zarray`);
-      if (!response.ok) return null;
-
-      const metadata = await response.json();
+      const response = await axios.get(`${this.zarrURL}/images/multiplex/0/.zarray`);
+      const metadata = response.data;
       const shape = metadata.shape;
       const chunks = metadata.chunks;
 
@@ -131,10 +118,10 @@ export class ZarrDataSet {
   private async detectPyramidLevels(): Promise<number[]> {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
-      const response = await fetch(`${this.zarrURL}/images/multiplex/${level}/.zarray`, { method: 'HEAD' });
-      if (response.ok) {
+      try {
+        await axios.head(`${this.zarrURL}/images/multiplex/${level}/.zarray`);
         levels.push(level);
-      } else {
+      } catch {
         break;
       }
     }

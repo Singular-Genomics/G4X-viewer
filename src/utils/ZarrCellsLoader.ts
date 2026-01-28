@@ -1,4 +1,5 @@
 import { open, FetchStore, get } from 'zarrita';
+import axios from 'axios';
 import { SingleMask, SegmentationMetadata, ColormapEntry } from '../shared/types';
 
 export interface ZarrCellsData {
@@ -178,13 +179,8 @@ export async function loadCellsFromZarr(zarrBaseUrl: string): Promise<ZarrCellsD
 
 async function loadColormapFromZarr(zarrBaseUrl: string, clusterIds: string[]): Promise<ColormapEntry[]> {
   try {
-    const response = await fetch(`${zarrBaseUrl}/cells/metadata/.zattrs`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch .zattrs: ${response.status} ${response.statusText}`);
-    }
-
-    const attrs = await response.json();
-    const clusterIdColors = attrs.clusterID_colors;
+    const response = await axios.get(`${zarrBaseUrl}/cells/metadata/.zattrs`);
+    const clusterIdColors = response.data.clusterID_colors;
 
     if (!clusterIdColors) {
       throw new Error('clusterID_colors not found in .zattrs');

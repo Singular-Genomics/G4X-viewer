@@ -1,5 +1,6 @@
 import { fromBlob, fromUrl } from 'geotiff';
 import { loadOmeTiff, loadBioformatsZarr, loadOmeZarr, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
+import axios from 'axios';
 
 export const GLOBAL_SLIDER_DIMENSION_FIELDS = /** @type {const} */ (['z', 't']);
 
@@ -135,8 +136,12 @@ async function fetchSingleFileOmeTiffOffsets(url) {
     return undefined;
   }
   const offsetsUrl = url.replace(/ome\.tif(f?)/gi, 'offsets.json');
-  const res = await fetch(offsetsUrl);
-  return res.status === 200 ? await res.json() : undefined;
+  try {
+    const res = await axios.get(offsetsUrl);
+    return res.data;
+  } catch (error) {
+    return undefined;
+  }
 }
 
 /**
