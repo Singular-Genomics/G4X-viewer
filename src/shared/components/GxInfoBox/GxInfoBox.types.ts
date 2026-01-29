@@ -3,4 +3,7 @@ export type GxInfoBoxProps = {
   tag?: number | string;
   content: React.ReactNode;
   defaultExpanded?: boolean;
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
+  expandedWidth?: number;
 };
