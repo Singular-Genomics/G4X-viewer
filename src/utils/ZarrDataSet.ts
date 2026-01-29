@@ -23,6 +23,7 @@ import {
  */
 export class ZarrDataSet {
   private zarrURL: string;
+  private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
 
   constructor(zarrUrl: string) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
@@ -60,33 +61,28 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchTranscriptLayerConfig(): Promise<ZarrLayerConfig | null> {
+  private async fetchTranscriptAttrs(): Promise<{ layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors }> {
+    if (this.transcriptAttrs) {
+      return this.transcriptAttrs;
+    }
     try {
       const response = await axios.get(`${this.zarrURL}/transcripts/.zattrs`);
-      const layerConfig = response.data.layer_config;
-      if (!layerConfig) {
-        return null;
-      }
-      return {
-        layer_width: layerConfig.layer_width,
-        layer_height: layerConfig.layer_height,
-        layers: layerConfig.layers,
-        tile_size: layerConfig.tile_size
-      };
+      this.transcriptAttrs = response.data;
+      return response.data;
     } catch (error) {
-      console.error('Failed to fetch transcript layer config:', error);
-      return null;
+      console.error('Failed to fetch transcript .zattrs:', error);
+      return {};
     }
   }
 
+  public async fetchTranscriptLayerConfig(): Promise<ZarrLayerConfig | null> {
+    const attrs = await this.fetchTranscriptAttrs();
+    return attrs.layer_config || null;
+  }
+
   public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
-    try {
-      const response = await axios.get(`${this.zarrURL}/transcripts/.zattrs`);
-      return response.data.gene_colors || null;
-    } catch (error) {
-      console.error('Failed to fetch transcript colors:', error);
-      return null;
-    }
+    const attrs = await this.fetchTranscriptAttrs();
+    return attrs.gene_colors || null;
   }
 
   public async detectLayerConfig(): Promise<ZarrLayerConfig | null> {
