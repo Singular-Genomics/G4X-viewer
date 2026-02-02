@@ -131,8 +131,10 @@ export class ZarrDataSet {
       const invertedZ = maxZoom - z;
 
       const zStr = `p${invertedZ}`;
-      const yStr = `y${String(y).padStart(2, '0')}`;
-      const xStr = `x${String(x).padStart(2, '0')}`;
+      // Zarr uses swapped axes: y folder = X axis, x folder = Y axis,
+      // TODO: swap again after this is fixed in the zarr files
+      const yStr = `y${String(x).padStart(2, '0')}`;
+      const xStr = `x${String(y).padStart(2, '0')}`;
       const basePath = `${this.zarrURL}/transcripts/${zStr}/${yStr}/${xStr}`;
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
