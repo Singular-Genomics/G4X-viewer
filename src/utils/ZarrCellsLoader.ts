@@ -1,12 +1,7 @@
 import { open, FetchStore, get } from 'zarrita';
 import axios from 'axios';
 import { SingleMask, SegmentationMetadata, ColormapEntry } from '../shared/types';
-
-export interface ZarrCellsData {
-  cellMasks: SingleMask[];
-  colormap: ColormapEntry[];
-  metadata: SegmentationMetadata;
-}
+import { ZarrCellsData } from './ZarrDataSet.types';
 
 export async function loadCellsFromZarr(zarrBaseUrl: string): Promise<ZarrCellsData> {
   const cellsPath = `${zarrBaseUrl}/cells`;

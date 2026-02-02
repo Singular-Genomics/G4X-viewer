@@ -1,3 +1,5 @@
+import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
+
 export type ZarrLayerConfig = {
   layer_width: number;
   layer_height: number;
@@ -22,4 +24,10 @@ export type ZarrTranscriptPoint = {
   cellId: string;
   geneName: string;
   position: [number, number];
+};
+
+export type ZarrCellsData = {
+  cellMasks: SingleMask[];
+  colormap: ColormapEntry[];
+  metadata: SegmentationMetadata;
 };

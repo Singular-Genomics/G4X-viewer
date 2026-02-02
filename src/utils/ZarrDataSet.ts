@@ -1,11 +1,12 @@
 import { open, FetchStore, get } from 'zarrita';
 import axios from 'axios';
-import {
+import type {
   ZarrLayerConfig,
   ZarrGeneColors,
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
-  ZarrTranscriptPoint
+  ZarrTranscriptPoint,
+  ZarrCellsData
 } from './ZarrDataSet.types';
 
 /**
@@ -178,7 +179,7 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchCellsData(): Promise<import('./ZarrCellsLoader').ZarrCellsData> {
+  public async fetchCellsData(): Promise<ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
     return loadCellsFromZarr(this.zarrURL);
   }
