@@ -22,6 +22,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
   const metadataFiles = useBinaryFilesStore((store) => store.files);
+  const zarrUrl = useBinaryFilesStore((store) => store.zarrUrl);
   const cellMasksFiles = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const metadata = useMetadata();
 
@@ -71,7 +72,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('transcriptsSettings.sectionTitle')}
-                disabled={!imageLoaded || !metadataFiles.length}
+                disabled={!imageLoaded || (!metadataFiles.length && !zarrUrl)}
                 unmountOnExit={false}
               >
                 <TranscriptLayerSection />
