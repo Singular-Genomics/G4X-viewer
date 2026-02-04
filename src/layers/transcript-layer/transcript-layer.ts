@@ -25,6 +25,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
 
     const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
 
+    // @ INFO TEXT LAYER
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
       data: [
@@ -47,6 +48,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showData
     });
 
+    // @ POINTS LAYERS
     const discardedPointsLayer = new ScatterplotLayer({
       id: `sub-discarded-point-layer-${this.props.id}`,
       data: outlierPoints,
