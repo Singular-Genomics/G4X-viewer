@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next';
 import type { SliderThresholdProps } from './SliderThreshold.types';
 import { useMemo, ChangeEvent } from 'react';
 import { debounce } from 'lodash';
-const CHANNEL_MIN = 0;
-const CHANNEL_MAX = 65535;
-const CHANNEL_STEP = 1;
+import { CHANNEL_MIN, CHANNEL_MAX, CHANNEL_STEP } from '../../ChannelController/ChannelController.helpers';
+
 const DEBOUNCE_TIME_MS = 300;
 
 export const SliderThreshold = ({

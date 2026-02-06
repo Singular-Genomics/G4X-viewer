@@ -1,5 +1,5 @@
 import { Box, Input, Theme, useTheme } from '@mui/material';
-import { colormapToRgb } from '../ChannelController.helpers';
+import { CHANNEL_MAX, CHANNEL_MIN, CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
@@ -7,9 +7,6 @@ import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
 
-const CHANNEL_MIN = 0;
-const CHANNEL_MAX = 65535;
-const CHANNEL_STEP = 1;
 const DEBOUNCE_TIME_MS = 300;
 
 export const ChannelRangeSlider = ({
@@ -17,8 +14,8 @@ export const ChannelRangeSlider = ({
   slider,
   handleSliderChange,
   isLoading,
-  rangeMin,
-  rangeMax,
+  visibleMin,
+  visibleMax,
   minInputValue,
   maxInputValue,
   setMinInputValue,
@@ -86,15 +83,7 @@ export const ChannelRangeSlider = ({
   );
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '24px',
-        paddingRight: '16px'
-      }}
-    >
+    <Box sx={sx.sliderContainer}>
       <Input
         id="channel_min"
         type="number"
@@ -111,8 +100,8 @@ export const ChannelRangeSlider = ({
         value={slider}
         onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
         valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-        min={Number(rangeMin)}
-        max={Number(rangeMax)}
+        min={visibleMin}
+        max={visibleMax}
         step={CHANNEL_STEP}
         orientation="horizontal"
         style={{ color: rgbColor }}
@@ -133,6 +122,13 @@ export const ChannelRangeSlider = ({
 };
 
 const styles = (theme: Theme) => ({
+  sliderContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '20px',
+    paddingRight: '16px'
+  },
   textField: {
     marginBottom: '8px',
     minWidth: '60px',

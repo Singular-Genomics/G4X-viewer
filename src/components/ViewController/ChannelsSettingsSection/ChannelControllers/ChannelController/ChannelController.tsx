@@ -1,8 +1,10 @@
-import { getPixelValueDisplay } from './ChannelController.helpers';
-import { ChannelControllerProps } from './ChannelController.types';
+import { CHANNEL_MAX, CHANNEL_MIN, calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
+import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
 import { Box, Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
@@ -29,10 +31,34 @@ export const ChannelController = ({
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
   const [currentMinValue, currentMaxValue] = slider;
-  const [rangeMin, setRangeMin] = useState(currentMinValue.toString());
-  const [rangeMax, setRangeMax] = useState(currentMaxValue.toString());
-  const [minInputValue, setMinInputValue] = useState<string>('');
-  const [maxInputValue, setMaxInputValue] = useState<string>('');
+  const [sliderRangeMode, setSliderRangeMode] = useState<SliderRangeMode>('expanded');
+  const [rangeMin, setRangeMin] = useState(CHANNEL_MIN.toString());
+  const [rangeMax, setRangeMax] = useState(CHANNEL_MAX.toString());
+  const [minInputValue, setMinInputValue] = useState<string>(currentMinValue.toString());
+  const [maxInputValue, setMaxInputValue] = useState<string>(currentMaxValue.toString());
+
+  const [expandedInit] = useState(() =>
+    calculateExpandedRange(currentMinValue, currentMaxValue, Number(rangeMin), Number(rangeMax))
+  );
+  const [visibleMin, setVisibleMin] = useState(expandedInit[0]);
+  const [visibleMax, setVisibleMax] = useState(expandedInit[1]);
+
+  const handleModeToggle = () => {
+    setSliderRangeMode((prev) => {
+      const newMode = prev === 'expanded' ? 'contract' : 'expanded';
+      const rMin = Number(rangeMin);
+      const rMax = Number(rangeMax);
+      if (newMode === 'contract') {
+        setVisibleMin(rMin);
+        setVisibleMax(rMax);
+      } else {
+        const [eMin, eMax] = calculateExpandedRange(currentMinValue, currentMaxValue, rMin, rMax);
+        setVisibleMin(eMin);
+        setVisibleMax(eMax);
+      }
+      return newMode;
+    });
+  };
 
   return (
     <Grid
@@ -95,18 +121,37 @@ export const ChannelController = ({
       <Box sx={sx.valueWrapper}>
         <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
       </Box>
-      <ChannelRangeSlider
-        color={color}
-        slider={slider}
-        handleSliderChange={handleSliderChange}
-        isLoading={isLoading}
-        rangeMin={rangeMin}
-        rangeMax={rangeMax}
-        minInputValue={minInputValue}
-        maxInputValue={maxInputValue}
-        setMinInputValue={setMinInputValue}
-        setMaxInputValue={setMaxInputValue}
-      />
+      <Box sx={sx.sliderRow}>
+        <Tooltip
+          title={t(
+            sliderRangeMode === 'expanded'
+              ? 'channelSettings.sliderRangeModeExpanded'
+              : 'channelSettings.sliderRangeModeContract'
+          )}
+          arrow
+        >
+          <IconButton
+            size="small"
+            onClick={handleModeToggle}
+            disabled={isLoading}
+            sx={sx.modeToggleButton}
+          >
+            {sliderRangeMode === 'expanded' ? <UnfoldMoreIcon fontSize="small" /> : <UnfoldLessIcon fontSize="small" />}
+          </IconButton>
+        </Tooltip>
+        <ChannelRangeSlider
+          color={color}
+          slider={slider}
+          handleSliderChange={handleSliderChange}
+          isLoading={isLoading}
+          visibleMin={visibleMin}
+          visibleMax={visibleMax}
+          minInputValue={minInputValue}
+          maxInputValue={maxInputValue}
+          setMinInputValue={setMinInputValue}
+          setMaxInputValue={setMaxInputValue}
+        />
+      </Box>
     </Grid>
   );
 };
@@ -134,6 +179,16 @@ const styles = (theme: Theme) => ({
   },
   channelSelect: {
     flexGrow: 1
+  },
+  sliderRow: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  modeToggleButton: {
+    '&:hover': {
+      color: theme.palette.gx.accent.greenBlue,
+      backgroundColor: 'unset'
+    }
   },
   textField: {
     marginBottom: '8px',
