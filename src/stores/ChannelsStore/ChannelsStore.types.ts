@@ -12,6 +12,7 @@ export type ChannelsStoreValues = {
   image: number;
   loader: any; // <- This is quite complicated
   domains: number[][];
+  channelSelectionMode: 'multiselect' | 'radio';
 };
 
 export type ChannelsStoreMethods = {
@@ -20,6 +21,7 @@ export type ChannelsStoreMethods = {
   removeChannel: (channel: number) => void;
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;
   getLoader: () => any;
+  setChannelSelectionMode: (mode: 'multiselect' | 'radio') => void;
 };
 
 export type PropertiesUpdateType = {

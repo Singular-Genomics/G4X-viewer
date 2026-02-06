@@ -27,6 +27,7 @@
     "overview": "Overview",
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
+    "singleChannelMode": "Single Channel Mode",
     "sliderRangeMinLabel":"Slider Min",
     "sliderRangeMaxLabel":"Slider Max"
   },

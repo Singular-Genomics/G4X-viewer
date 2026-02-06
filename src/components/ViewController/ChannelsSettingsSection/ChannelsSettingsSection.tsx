@@ -7,6 +7,7 @@ import { AddChannel } from './ChannelControllers/AddChannel';
 import { ColormapSelector } from './ColormapSelector';
 import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
+import { ChannelSelectionModeToggle } from './ChannelSelectionModeToggle';
 
 export const ChannelsSettingsSection = () => {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export const ChannelsSettingsSection = () => {
       <Box sx={sx.togglesWrapper}>
         <OverviewToggle />
         {!colormap && shape[labels.indexOf('c')] > 1 && <LensToggle />}
+        {!colormap && shape[labels.indexOf('c')] > 1 && <ChannelSelectionModeToggle />}
       </Box>
       <Box>
         <Typography sx={sx.controlsTitle}>{t('channelSettings.channelControls')}</Typography>

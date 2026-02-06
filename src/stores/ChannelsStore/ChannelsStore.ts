@@ -19,7 +19,8 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   ids: [''],
   image: 0,
   loader: [{ labels: [], shape: [] }],
-  channelsSettings: {}
+  channelsSettings: {},
+  channelSelectionMode: 'multiselect'
 };
 
 export const useChannelsStore = create<ChannelsStore>((set, get) => ({
@@ -27,7 +28,14 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
   toggleIsOn: (index) =>
     set((store) => {
       const channelsVisible = [...store.channelsVisible];
-      channelsVisible[index] = !channelsVisible[index];
+
+      if (store.channelSelectionMode === 'radio') {
+        channelsVisible.fill(false);
+        channelsVisible[index] = true;
+      } else {
+        channelsVisible[index] = !channelsVisible[index];
+      }
+
       return { ...store, channelsVisible };
     }),
   setPropertiesForChannel: (channel, newProperties) =>
@@ -69,5 +77,21 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
   getLoader: () => {
     const { loader, image } = get();
     return Array.isArray(loader[0]) ? loader[image] : loader;
-  }
+  },
+  setChannelSelectionMode: (mode) =>
+    set((store) => {
+      const newState = { ...store, channelSelectionMode: mode };
+
+      if (mode === 'radio') {
+        const firstVisibleIndex = store.channelsVisible.findIndex((visible) => visible);
+        if (firstVisibleIndex !== -1) {
+          const channelsVisible = [...store.channelsVisible];
+          channelsVisible.fill(false);
+          channelsVisible[firstVisibleIndex] = true;
+          newState.channelsVisible = channelsVisible;
+        }
+      }
+
+      return newState;
+    })
 }));
