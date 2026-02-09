@@ -214,6 +214,8 @@
     "loadingImage": "Loading Image",
     "loadingBrightfieldImage": "Loading Brightfield Image",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
+    "imageLoadError": "Failed to load image. Please check the file format and try again.",
+    "brightfieldImageLoadError": "Failed to load brightfield image. Please check the file format and try again.",
     "noImageInfo": "Please upload an image file to view",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",

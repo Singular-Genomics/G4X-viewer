@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { BrightfieldImagesStore, BrightfieldImagesStoreValues } from './BrightfieldImagesStore.types';
+import { MAX_UINT16_VALUE } from '../../shared/constants';
 
 export const MAX_NUMBER_OF_IMAGES = 10;
 
@@ -7,7 +8,7 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   brightfieldImageSource: null,
   loader: [{ labels: [], shape: [] }],
   image: 0,
-  contrastLimits: [[0, 65535]],
+  contrastLimits: [[0, MAX_UINT16_VALUE]],
   colors: [
     [255, 0, 0],
     [0, 255, 0],

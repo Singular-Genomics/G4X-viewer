@@ -140,7 +140,10 @@ async function fetchSingleFileOmeTiffOffsets(url) {
     const res = await axios.get(offsetsUrl);
     return res.data;
   } catch (error) {
-    return undefined;
+    if (error.response?.status === 404) {
+      return undefined;
+    }
+    throw error;
   }
 }
 
@@ -152,8 +155,6 @@ async function fetchSingleFileOmeTiffOffsets(url) {
  * @param {*} handleLoaderError
  */
 export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
-  // If the loader fails to load, handle the error (show an error snackbar)
-  // Otherwise load.
   try {
     // OME-TIFF
     if (isOmeTiff(urlOrFile)) {

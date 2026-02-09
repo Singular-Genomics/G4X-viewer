@@ -26,69 +26,83 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
     async function changeLoader() {
       if (!source) return null;
 
-      // Should we use sth different than setState
-      useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({
-        isViewerLoading: {
-          type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
-          message: t('viewer.loadingImage')
-        }
-      });
+      try {
+        // Should we use sth different than setState
+        useViewerStore.setState({ isChannelLoading: [true] });
+        useViewerStore.setState({
+          isViewerLoading: {
+            type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
+            message: t('viewer.loadingImage')
+          }
+        });
 
-      const { urlOrFile } = source;
+        const { urlOrFile } = source;
 
-      // --------------------- LEGACY LOADER ----------------------
-      const newLoader = await createLoader(
-        urlOrFile,
-        () => {},
-        () => {}
-      );
-      // ----------------------------------------------------------
+        // --------------------- LEGACY LOADER ----------------------
+        const newLoader = await createLoader(
+          urlOrFile,
+          () => {},
+          () => {}
+        );
+        // ----------------------------------------------------------
 
-      let nextMeta: any;
-      let nextLoader: any;
+        let nextMeta: any;
+        let nextLoader: any;
 
-      if (Array.isArray(newLoader)) {
-        if (newLoader.length > 1) {
-          nextMeta = newLoader.map((l) => l.metadata);
-          nextLoader = newLoader.map((l) => l.data);
+        if (Array.isArray(newLoader)) {
+          if (newLoader.length > 1) {
+            nextMeta = newLoader.map((l) => l.metadata);
+            nextLoader = newLoader.map((l) => l.data);
+          } else {
+            nextMeta = newLoader[0].metadata;
+            nextLoader = newLoader[0].data;
+          }
         } else {
-          nextMeta = newLoader[0].metadata;
-          nextLoader = newLoader[0].data;
+          nextMeta = newLoader.metadata;
+          nextLoader = newLoader.data;
         }
-      } else {
-        nextMeta = newLoader.metadata;
-        nextLoader = newLoader.data;
-      }
 
-      // Validate that HE images (isRgb with single channel) are not allowed
-      if (nextMeta && nextLoader) {
-        const isRgb = guessRgb(nextMeta);
-        const numChannels = nextMeta.Pixels?.Channels?.length || 0;
+        // Validate that HE images (isRgb with single channel) are not allowed
+        if (nextMeta && nextLoader) {
+          const isRgb = guessRgb(nextMeta);
+          const numChannels = nextMeta.Pixels?.Channels?.length || 0;
 
-        if (isRgb && numChannels === 1) {
-          enqueueSnackbar({
-            message: t('sourceFiles.heImageNotSupported'),
-            variant: 'error',
-            autoHideDuration: 5000
-          });
-          useViewerStore.setState({
-            source: lastValidSourceRef.current,
-            isViewerLoading: undefined,
-            isChannelLoading: [false]
-          });
-          return;
+          if (isRgb && numChannels === 1) {
+            enqueueSnackbar({
+              message: t('sourceFiles.heImageNotSupported'),
+              variant: 'error',
+              autoHideDuration: 5000
+            });
+            useViewerStore.setState({
+              source: lastValidSourceRef.current,
+              isViewerLoading: undefined,
+              isChannelLoading: [false]
+            });
+            return;
+          }
         }
-      }
 
-      if (nextLoader) {
-        lastValidSourceRef.current = source;
+        if (nextLoader) {
+          lastValidSourceRef.current = source;
 
-        unstable_batchedUpdates(() => {
-          useChannelsStore.setState({ loader: nextLoader });
-          useViewerStore.setState({
-            metadata: nextMeta
+          unstable_batchedUpdates(() => {
+            useChannelsStore.setState({ loader: nextLoader });
+            useViewerStore.setState({
+              metadata: nextMeta
+            });
           });
+        }
+      } catch (error) {
+        console.error('Failed to load image:', error);
+        enqueueSnackbar({
+          message: t('viewer.imageLoadError'),
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        useViewerStore.setState({
+          source: lastValidSourceRef.current,
+          isViewerLoading: undefined,
+          isChannelLoading: [false]
         });
       }
     }
