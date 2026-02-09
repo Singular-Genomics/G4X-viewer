@@ -91,8 +91,15 @@ export default function ZarrCloudUploadButton() {
 
       let proteinNames = cellsData.metadata.proteinNames;
       if (proteinNames.length === 0 && metadata) {
-        const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
-        proteinNames = await extractProteinNamesFromMetadata(metadata);
+        try {
+          const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
+          proteinNames = extractProteinNamesFromMetadata(metadata);
+        } catch (error) {
+          enqueueSnackbar({
+            message: t('sourceFiles.proteinNamesExtractionError'),
+            variant: 'warning'
+          });
+        }
       }
 
       const hasUmapData = cellsData.cellMasks.some(
@@ -117,8 +124,7 @@ export default function ZarrCloudUploadButton() {
         }),
         variant: 'success'
       });
-    } catch (error) {
-      console.error('Failed to load cell segmentation from Zarr:', error);
+    } catch {
       enqueueSnackbar({
         message: t('sourceFiles.segmentationLoadError'),
         variant: 'warning'

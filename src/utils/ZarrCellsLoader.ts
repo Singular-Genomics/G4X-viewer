@@ -167,7 +167,6 @@ export async function loadCellsFromZarr(zarrBaseUrl: string): Promise<ZarrCellsD
 
     return { cellMasks, colormap, metadata };
   } catch (error) {
-    console.error('Error loading cells from Zarr:', error);
     throw new Error(`Failed to load cells from Zarr: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
@@ -184,7 +183,6 @@ async function loadColormapFromZarr(zarrBaseUrl: string, clusterIds: string[]): 
     return clusterIds.map((clusterId) => {
       const color = clusterIdColors[clusterId] || clusterIdColors['-1'];
       if (!color) {
-        console.warn(`No color found for cluster ${clusterId}, using gray`);
         return {
           clusterId,
           color: [128, 128, 128] as [number, number, number]
@@ -196,27 +194,21 @@ async function loadColormapFromZarr(zarrBaseUrl: string, clusterIds: string[]): 
       };
     });
   } catch (error) {
-    console.error('Failed to load colormap from Zarr:', error);
     throw new Error(`Colormap must be provided in ${zarrBaseUrl}/cells/metadata/.zattrs`);
   }
 }
 
-export async function extractProteinNamesFromMetadata(metadata: Record<string, any>): Promise<string[]> {
-  try {
-    const proteinPanel = metadata?.run_metadata?.protein_panel;
-    if (!proteinPanel || !Array.isArray(proteinPanel)) {
-      return [];
-    }
-
-    return proteinPanel.map((entry: string) => {
-      if (entry.includes('/')) {
-        const filename = entry.split('/').pop() || entry;
-        return filename.replace('.csv', '');
-      }
-      return entry;
-    });
-  } catch (error) {
-    console.error('Error extracting protein names:', error);
+export function extractProteinNamesFromMetadata(metadata: Record<string, any>): string[] {
+  const proteinPanel = metadata?.run_metadata?.protein_panel;
+  if (!proteinPanel || !Array.isArray(proteinPanel)) {
     return [];
   }
+
+  return proteinPanel.map((entry: string) => {
+    if (entry.includes('/')) {
+      const filename = entry.split('/').pop() || entry;
+      return filename.replace('.csv', '');
+    }
+    return entry;
+  });
 }

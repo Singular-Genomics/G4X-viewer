@@ -170,6 +170,7 @@
     "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file.  You may need to quit the browser application and restart it if this issue persists.",
     "sectionTitle": "Source Files",
     "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
+    "proteinNamesExtractionError": "Failed to extract protein names from metadata",
     "segmentationLoadError": "Failed to load cell segmentation data from Zarr file",
     "zarrInputLabel": "Zarr File Name",
     "zarrInputPlaceholder": "Enter URL to .zarr file",
