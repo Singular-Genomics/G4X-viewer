@@ -1,4 +1,4 @@
-import { Box, TextField, Theme, useTheme, Button, alpha, SxProps } from '@mui/material';
+import { Box, TextField, Theme, useTheme, Button, alpha, SxProps, List, ListItem, ListItemText } from '@mui/material';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
@@ -27,6 +27,32 @@ export default function ZarrCloudUploadButton() {
 
   const handleClose = () => {
     setIsPopupOpen(false);
+  };
+
+  const displayConsolidatedMessages = (messages: string[], variant: 'success' | 'warning', summaryKey: string) => {
+    if (messages.length === 0) return;
+
+    if (messages.length === 1) {
+      enqueueSnackbar({
+        message: messages[0],
+        variant
+      });
+    } else {
+      enqueueSnackbar({
+        message: t(summaryKey),
+        variant: 'gxSnackbar',
+        titleMode: variant,
+        customContent: (
+          <List dense>
+            {messages.map((msg, index) => (
+              <ListItem key={index}>
+                <ListItemText primary={msg} />
+              </ListItem>
+            ))}
+          </List>
+        )
+      });
+    }
   };
 
   const handleSubmit = async (cloudImageUrl: string) => {
@@ -86,6 +112,9 @@ export default function ZarrCloudUploadButton() {
     const hAndEUrl = zarrDataSet.getHAndEPath();
     useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
 
+    const successMessages: string[] = [];
+    const warningMessages: string[] = [];
+
     try {
       const cellsData = await zarrDataSet.fetchCellsData();
 
@@ -95,10 +124,7 @@ export default function ZarrCloudUploadButton() {
           const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
           proteinNames = extractProteinNamesFromMetadata(metadata);
         } catch (error) {
-          enqueueSnackbar({
-            message: t('sourceFiles.proteinNamesExtractionError'),
-            variant: 'warning'
-          });
+          warningMessages.push(t('sourceFiles.proteinNamesExtractionError'));
         }
       }
 
@@ -117,24 +143,20 @@ export default function ZarrCloudUploadButton() {
         }
       });
 
-      enqueueSnackbar({
-        message: t('sourceFiles.segmentationSuccess', {
+      successMessages.push(
+        t('sourceFiles.segmentationSuccess', {
           count: cellsData.cellMasks.length,
           filename: zarrDir
-        }),
-        variant: 'success'
-      });
+        })
+      );
     } catch {
-      enqueueSnackbar({
-        message: t('sourceFiles.segmentationLoadError'),
-        variant: 'warning'
-      });
+      warningMessages.push(t('sourceFiles.segmentationLoadError'));
     }
 
-    enqueueSnackbar({
-      message: t('sourceFiles.zarrSuccess', { filename: zarrDir }),
-      variant: 'success'
-    });
+    successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));
+
+    displayConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    displayConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
   };
 
   return (

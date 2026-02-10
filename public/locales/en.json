@@ -175,7 +175,9 @@
     "zarrInputLabel": "Zarr File Name",
     "zarrInputPlaceholder": "Enter URL to .zarr file",
     "zarrInvalidFile": "Invalid input file name. Only .zarr extension allowed",
-    "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}"
+    "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}",
+    "zarrLoadComplete": "Zarr file loaded successfully",
+    "zarrLoadWarnings": "Zarr file loaded with warnings"
   },
   "transcript": {
     "cellId": "Cell ID",
