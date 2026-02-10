@@ -10,7 +10,7 @@ import type {
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
 import { BoundingBox, PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
+import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 import {
   getPolygonBoundingBox,
   isPointInSelection,

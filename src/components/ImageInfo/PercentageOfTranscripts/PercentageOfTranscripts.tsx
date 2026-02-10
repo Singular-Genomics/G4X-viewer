@@ -1,5 +1,5 @@
 import { useShallow } from 'zustand/react/shallow';
-import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../stores/TranscriptLayerStore';
 import { LAYER_ZOOM_OFFSET } from '../../../shared/constants';
 import { Theme, Typography, useTheme } from '@mui/material';
@@ -12,12 +12,12 @@ export const PercentageOfTranscripts = () => {
   const sx = styles(theme);
   const { t } = useTranslation();
   const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const [transcriptFiles, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [zarrUrl, layerConfig] = useZarrDataStore(useShallow((store) => [store.zarrUrl, store.layerConfig]));
   const [maxVisibleLayers, overrideLayers] = useTranscriptLayerStore(
     useShallow((store) => [store.maxVisibleLayers, store.overrideLayers])
   );
 
-  const showPercentageOfTranscripts = transcriptFiles.length > 0;
+  const showPercentageOfTranscripts = !!zarrUrl;
 
   const zoomBrakePoints = overrideLayers
     ? Array.from(

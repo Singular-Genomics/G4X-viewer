@@ -3,8 +3,6 @@ import { CompositeLayer, PickingInfo } from '@deck.gl/core';
 import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 
-import * as protobuf from 'protobufjs';
-import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 import { ZarrTranscriptLoader } from './zarr-transcript-loader';
@@ -79,13 +77,11 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
 SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
-  protoRoot: protobuf.Root;
   parsedColorMap: Record<string, number[]>;
   zarrLoader: ZarrTranscriptLoader | null;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
     this.zarrLoader = props.zarrUrl ? new ZarrTranscriptLoader(props.zarrUrl) : null;
   }
@@ -100,28 +96,9 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       return { pointsData: [], numberOfPoints: 0 };
     }
 
-    // Otherwise, use protobuf file loading (legacy)
-    const suffix = `/${zoom}/${tileX}/${tileY}.bin`;
-    const file = this.props.files.find((f: File) => f.name.endsWith(suffix));
-
-    if (!file) return Promise.resolve([]);
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const arrayBuffer = reader.result as ArrayBuffer;
-          const data = this.protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer));
-          resolve(data);
-        } catch (error) {
-          reject([]);
-        }
-      };
-      reader.onerror = () => {
-        reject([]);
-      };
-      reader.readAsArrayBuffer(file);
-    });
+    // Legacy path - kept for ROI detection.
+    // TODO: remove when ROI transcript detection is migrated to Zarr
+    return { pointsData: [], numberOfPoints: 0 };
   }
 
   getPickingInfo({ info }: { info: PickingInfo }) {

@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { GlobalSelectionSliders } from './GlobalSelectionSliders';
 import { CellMaskLayerToggle } from './CellMaskLayerToggle';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../stores/ZarrDataStore';
 import { TranscriptLayerToggle } from './TranscriptLayerToggle';
 import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
 import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
@@ -15,13 +15,13 @@ import { useTranslation } from 'react-i18next';
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
   const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
-  const files = useBinaryFilesStore((store) => store.files);
+  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
   const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
 
   const areLayersAvailable = useMemo(
-    () => files.length || cellsData || brightfieldImageSource,
-    [files, cellsData, brightfieldImageSource]
+    () => zarrUrl || cellsData || brightfieldImageSource,
+    [zarrUrl, cellsData, brightfieldImageSource]
   );
 
   return (
@@ -40,7 +40,7 @@ export const ViewControlsSection = () => {
           {!areLayersAvailable && (
             <Typography sx={sx.placeholderMessage}>{t('viewSettings.noActiveLayers')}</Typography>
           )}
-          {!!files.length && <TranscriptLayerToggle />}
+          {!!zarrUrl && <TranscriptLayerToggle />}
           {!!cellsData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
           {!!polygonFeatures.length && <PolygonLayerToggle />}

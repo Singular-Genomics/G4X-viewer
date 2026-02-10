@@ -2,7 +2,7 @@ import { Box, TextField, Theme, useTheme, Button, alpha, SxProps } from '@mui/ma
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
@@ -46,17 +46,17 @@ export default function ZarrCloudUploadButton() {
     setCloudImageUrl(cloudImageUrl);
     setIsPopupOpen(false);
 
-    useBinaryFilesStore.getState().reset();
+    useZarrDataStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
 
-    useBinaryFilesStore.getState().setZarrUrl(cloudImageUrl);
-    useBinaryFilesStore.getState().setFileName(zarrDir);
+    useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
+    useZarrDataStore.getState().setFileName(zarrDir);
 
     const layerConfig = await zarrDataSet.detectLayerConfig();
     if (layerConfig) {
-      useBinaryFilesStore.getState().setLayerConfig(layerConfig);
+      useZarrDataStore.getState().setLayerConfig(layerConfig);
     }
 
     const transcriptColors = await zarrDataSet.fetchTranscriptColors();
@@ -65,7 +65,7 @@ export default function ZarrCloudUploadButton() {
         gene_name,
         color
       }));
-      useBinaryFilesStore.getState().setColormapConfig(colorMapEntries);
+      useZarrDataStore.getState().setColormapConfig(colorMapEntries);
     }
 
     const newSource = {

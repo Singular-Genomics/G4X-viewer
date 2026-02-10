@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow';
 import { DETAIL_VIEW_ID, MultiscaleImageLayer } from '@hms-dbmi/viv';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -62,7 +62,7 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig, colorMapConfig, zarrUrl] = useBinaryFilesStore(
+  const [files, layerConfig, colorMapConfig, zarrUrl] = useZarrDataStore(
     useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig, store.zarrUrl])
   );
 
@@ -305,7 +305,7 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [files, layerConfig] = useZarrDataStore(useShallow((store) => [store.files, store.layerConfig]));
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,

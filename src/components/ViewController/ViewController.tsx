@@ -9,7 +9,7 @@ import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSecti
 import { SourceFilesSection } from './SourceFilesSection/SourceFilesSection';
 import { ViewControlsSection } from './ViewControlsSection/ViewControlsSection';
 import { TranscriptLayerSection } from './TranscriptLayerSection/TranscriptLayerSection';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
@@ -21,8 +21,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const { t } = useTranslation();
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
-  const metadataFiles = useBinaryFilesStore((store) => store.files);
-  const zarrUrl = useBinaryFilesStore((store) => store.zarrUrl);
+  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
   const cellMasksFiles = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const metadata = useMetadata();
 
@@ -72,7 +71,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('transcriptsSettings.sectionTitle')}
-                disabled={!imageLoaded || (!metadataFiles.length && !zarrUrl)}
+                disabled={!imageLoaded || !zarrUrl}
                 unmountOnExit={false}
               >
                 <TranscriptLayerSection />

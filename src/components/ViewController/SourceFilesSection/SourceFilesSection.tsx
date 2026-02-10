@@ -5,7 +5,6 @@ export const SourceFilesSection = () => {
   return (
     <Box sx={sx.sourceFilesSectionContainer}>
       <ZarrCloudUploadButton />
-      {/* <ImageDropzoneButton /> */}
     </Box>
   );
 };

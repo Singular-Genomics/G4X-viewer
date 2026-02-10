@@ -1,5 +1,5 @@
 import { PickingInfo } from '@deck.gl/core';
-import { ColorMapEntry, LayerConfig } from '../../stores/BinaryFilesStore';
+import { ColorMapEntry, LayerConfig } from '../../stores/ZarrDataStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import { PointData } from '../../shared/types';
 
@@ -23,7 +23,6 @@ export type LayerDataItem = {
 };
 
 export type TranscriptLayerProps = CompositeLayerProps & {
-  protoRoot?: protobuf.Root;
   files: File[];
   zarrUrl?: string | null;
   config: LayerConfig;
