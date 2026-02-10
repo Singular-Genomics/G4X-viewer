@@ -1,4 +1,4 @@
-import { Box, TextField, Theme, useTheme, Button, alpha, SxProps, List, ListItem, ListItemText } from '@mui/material';
+import { Box, TextField, Theme, useTheme, Button, alpha, SxProps } from '@mui/material';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
@@ -10,6 +10,7 @@ import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ZarrDataSet } from '../../../../utils/ZarrDataSet';
+import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackbar.hook.tsx';
 
 export default function ZarrCloudUploadButton() {
   const theme = useTheme();
@@ -20,6 +21,7 @@ export default function ZarrCloudUploadButton() {
 
   const imageName = useViewerStore((store) => store.source?.description);
   const { enqueueSnackbar } = useSnackbar();
+  const { showConsolidatedMessages } = useConsolidatedSnackbar();
 
   const handleCloudUploadClick = () => {
     setIsPopupOpen(true);
@@ -27,32 +29,6 @@ export default function ZarrCloudUploadButton() {
 
   const handleClose = () => {
     setIsPopupOpen(false);
-  };
-
-  const displayConsolidatedMessages = (messages: string[], variant: 'success' | 'warning', summaryKey: string) => {
-    if (messages.length === 0) return;
-
-    if (messages.length === 1) {
-      enqueueSnackbar({
-        message: messages[0],
-        variant
-      });
-    } else {
-      enqueueSnackbar({
-        message: t(summaryKey),
-        variant: 'gxSnackbar',
-        titleMode: variant,
-        customContent: (
-          <List dense>
-            {messages.map((msg, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={msg} />
-              </ListItem>
-            ))}
-          </List>
-        )
-      });
-    }
   };
 
   const handleSubmit = async (cloudImageUrl: string) => {
@@ -155,8 +131,8 @@ export default function ZarrCloudUploadButton() {
 
     successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));
 
-    displayConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
-    displayConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
+    showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
   };
 
   return (
