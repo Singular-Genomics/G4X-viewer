@@ -21,7 +21,7 @@
     "channelImportError": "Error importing channel settings",
     "channelImportSuccess": "Channel settings imported successfully",
     "channelOptionsTooltip": "Channel options",
-    "colormapSelect": "Proteomics Colormap",
+    "colormapSelect": "Proteomics Color Mode",
     "highlightedChannel": "Highlighted Channel",
     "lens": "Lens",
     "overview": "Overview",
@@ -362,7 +362,7 @@
       "import": "Import protein channel settings from a JSON file.",
       "currentPixelIntensity": "Intensity value of the specific protein channel at the location of your cursor.",
       "minMaxDisplay": "All pixels above/below these values will display as zero.",
-      "proteomicsColormap": "Proteomics Colormap"
+      "proteomicsColormap": "Choose a color mapping mode: Additive Blend ('None') for mixed overlapping signals, or Colormaps (Any other preset) for predefined intensity gradients."
     },
     "segmentationSettings": {
       "clusterIdColumn": "A cluster assignment of nan or -1 indicates that a cell was filtered before clustering."
@@ -372,7 +372,7 @@
       "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section."
     },
     "flowCytometry": {
-      "title": "Flow Cytometry Title"
+      "title": "Select cell populations based on protein signal intensity by gating regions of a scatterplot."
     }
   },
   "socialLinks": {
