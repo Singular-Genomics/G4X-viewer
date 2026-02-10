@@ -70,6 +70,8 @@ export default function ImageDropzoneButton() {
         buttonText={t('sourceFiles.imageUploadButton')}
         onCloudUploadClick={handleCloudUploadClick}
         isCloudUploaded={!!cloudImageUrl}
+        tooltipText={t('tooltips.sourceFiles.imageUploadButton')}
+        cloudUploadTooltipText={t('tooltips.sourceFiles.cloudUploadButton')}
         {...dropzoneProps}
       />
 
