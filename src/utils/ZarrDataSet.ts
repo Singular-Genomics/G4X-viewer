@@ -52,6 +52,14 @@ export class ZarrDataSet {
     return `${this.zarrURL}/images/h_and_e`;
   }
 
+  public getCellsBasePath(): string {
+    return `${this.zarrURL}/cells`;
+  }
+
+  public getTranscriptsBasePath(): string {
+    return `${this.zarrURL}/transcripts`;
+  }
+
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
       const response = await axios.get(`${this.zarrURL}/.zattrs`);
@@ -181,6 +189,6 @@ export class ZarrDataSet {
 
   public async fetchCellsData(): Promise<ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
-    return loadCellsFromZarr(this.zarrURL);
+    return loadCellsFromZarr(this);
   }
 }
