@@ -8,6 +8,7 @@ import type {
   ZarrTranscriptPoint,
   ZarrCellsData
 } from './ZarrDataSet.types';
+import { createZarrPaths } from './ZarrPaths';
 
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
@@ -24,10 +25,12 @@ import type {
  */
 export class ZarrDataSet {
   private zarrURL: string;
+  private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
 
   constructor(zarrUrl: string) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
+    this.paths = createZarrPaths(this.zarrURL);
   }
 
   public getBaseURL(): string {
@@ -45,24 +48,24 @@ export class ZarrDataSet {
   }
 
   public getMultiplexPath(): string {
-    return `${this.zarrURL}/images/multiplex`;
+    return this.paths.images.multiplex();
   }
 
   public getHAndEPath(): string {
-    return `${this.zarrURL}/images/h_and_e`;
+    return this.paths.images.h_and_e();
   }
 
   public getCellsBasePath(): string {
-    return `${this.zarrURL}/cells`;
+    return this.paths.cells.base();
   }
 
   public getTranscriptsBasePath(): string {
-    return `${this.zarrURL}/transcripts`;
+    return this.paths.transcripts.base();
   }
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await axios.get(`${this.zarrURL}/.zattrs`);
+      const response = await axios.get(this.paths.attrs.root());
       return response.data.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
@@ -75,7 +78,7 @@ export class ZarrDataSet {
       return this.transcriptAttrs;
     }
     try {
-      const response = await axios.get(`${this.zarrURL}/transcripts/.zattrs`);
+      const response = await axios.get(this.paths.attrs.transcripts());
       this.transcriptAttrs = response.data;
       return response.data;
     } catch (error) {
@@ -101,7 +104,7 @@ export class ZarrDataSet {
         return transcriptConfig;
       }
 
-      const response = await axios.get(`${this.zarrURL}/images/multiplex/0/.zarray`);
+      const response = await axios.get(this.paths.attrs.multiplexLevel(0));
       const metadata = response.data;
       const shape = metadata.shape;
       const chunks = metadata.chunks;
@@ -124,7 +127,7 @@ export class ZarrDataSet {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
       try {
-        await axios.head(`${this.zarrURL}/images/multiplex/${level}/.zarray`);
+        await axios.head(this.paths.attrs.multiplexLevel(level));
         levels.push(level);
       } catch {
         break;
@@ -139,17 +142,20 @@ export class ZarrDataSet {
       const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
       const invertedZ = maxZoom - z;
 
-      const zStr = `p${invertedZ}`;
       // Zarr uses swapped axes: y folder = X axis, x folder = Y axis,
       // TODO: swap again after this is fixed in the zarr files
-      const yStr = `y${String(x).padStart(2, '0')}`;
-      const xStr = `x${String(y).padStart(2, '0')}`;
-      const basePath = `${this.zarrURL}/transcripts/${zStr}/${yStr}/${xStr}`;
+      const tileParams = { z: invertedZ, y: x, x: y };
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new FetchStore(`${basePath}/cell_id`), { kind: 'array' }).catch(() => null),
-        open(new FetchStore(`${basePath}/gene_name`), { kind: 'array' }).catch(() => null),
-        open(new FetchStore(`${basePath}/position`), { kind: 'array' }).catch(() => null)
+        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
+          kind: 'array'
+        }).catch(() => null),
+        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
+          kind: 'array'
+        }).catch(() => null),
+        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
+          kind: 'array'
+        }).catch(() => null)
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
