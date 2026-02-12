@@ -141,10 +141,7 @@ export class ZarrDataSet {
       const transcriptConfig = await this.fetchTranscriptLayerConfig();
       const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
       const invertedZ = maxZoom - z;
-
-      // Zarr uses swapped axes: y folder = X axis, x folder = Y axis,
-      // TODO: swap again after this is fixed in the zarr files
-      const tileParams = { z: invertedZ, y: x, x: y };
+      const tileParams = { z: invertedZ, y, x };
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
         open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
