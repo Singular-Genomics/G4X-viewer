@@ -34,6 +34,9 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
       root: () => `${base}/.zattrs`,
       transcripts: () => `${base}/transcripts/.zattrs`,
       multiplexLevel: (level) => `${base}/images/multiplex/${level}/.zarray`
+    },
+    misc: {
+      summary: () => `${base}/misc/summary.html`
     }
   };
 };

@@ -194,4 +194,16 @@ export class ZarrDataSet {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
     return loadCellsFromZarr(this);
   }
+
+  public async fetchSummaryHtml(): Promise<string | null> {
+    try {
+      const response = await axios.get(this.paths.misc.summary(), {
+        responseType: 'text'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch summary.html:', error);
+      return null;
+    }
+  }
 }
