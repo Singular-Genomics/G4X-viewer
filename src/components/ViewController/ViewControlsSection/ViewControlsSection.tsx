@@ -1,28 +1,13 @@
 import { Box, Typography } from '@mui/material';
 import { GlobalSelectionSliders } from './GlobalSelectionSliders';
-import { CellMaskLayerToggle } from './CellMaskLayerToggle';
-import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useBinaryFilesStore } from '../../../stores/BinaryFilesStore';
-import { TranscriptLayerToggle } from './TranscriptLayerToggle';
-import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
-import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
 import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
-import { useMemo } from 'react';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
-  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
-  const files = useBinaryFilesStore((store) => store.files);
-  const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
-
-  const areLayersAvailable = useMemo(
-    () => files.length || cellsData || brightfieldImageSource,
-    [files, cellsData, brightfieldImageSource]
-  );
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -34,18 +19,14 @@ export const ViewControlsSection = () => {
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
         <ZoomInput />
       </Box>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('viewSettings.layerToggles')}</Typography>
-        <Box sx={sx.togglesSubSection}>
-          {!areLayersAvailable && (
-            <Typography sx={sx.placeholderMessage}>{t('viewSettings.noActiveLayers')}</Typography>
-          )}
-          {!!files.length && <TranscriptLayerToggle />}
-          {!!cellsData && <CellMaskLayerToggle />}
-          {!!brightfieldImageSource && <BrightfieldLayerToggle />}
-          {!!polygonFeatures.length && <PolygonLayerToggle />}
+      {!!polygonFeatures.length && (
+        <Box>
+          <Typography sx={sx.subsectionTitle}>{t('viewSettings.layerToggles')}</Typography>
+          <Box sx={sx.togglesSubSection}>
+            <PolygonLayerToggle />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };
@@ -66,8 +47,5 @@ const sx = {
     flexDirection: 'column',
     gap: '8px',
     paddingLeft: '8px'
-  },
-  placeholderMessage: {
-    textAlign: 'center'
   }
 };

@@ -9,7 +9,8 @@ export const GxCollapsibleSection = ({
   defultState = 'collapsed',
   unmountOnExit = true,
   customStyles,
-  disabled
+  disabled,
+  headerAction
 }: React.PropsWithChildren<GxCollapsibleSectionProps>) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState<boolean>(defultState === 'open');
@@ -52,6 +53,15 @@ export const GxCollapsibleSection = ({
         disabled={disabled}
         onClick={handleIconClick}
       >
+        {headerAction && (
+          <Box
+            sx={sx.headerAction}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {headerAction}
+          </Box>
+        )}
         <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>{sectionTitle}</Typography>
         <ExpandMoreIcon
           style={{
@@ -112,6 +122,11 @@ const sx = {
   sectionTitle: {
     fontWeight: 700,
     textWrap: 'nowrap'
+  },
+  headerAction: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingRight: '4px'
   },
   collapseIcon: {
     marginLeft: 'auto'
