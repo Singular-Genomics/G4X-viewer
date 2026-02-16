@@ -25,6 +25,7 @@ export default function TranscriptDropzoneButton({ setLockSwitch }: TranscriptDr
       <GxDropzoneButton
         labelTitle={t('sourceFiles.transcriptsFileInputLabel')}
         labelText={fileName}
+        placeholderText={t('sourceFiles.transcriptsPlaceholder')}
         buttonText={t('sourceFiles.transcriptsFileUploadButton')}
         disabled={!source}
         {...dropzoneProps}
