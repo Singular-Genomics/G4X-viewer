@@ -1,4 +1,4 @@
-import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
+import { Box, Theme, Typography, alpha, useMediaQuery, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
 import { PictureInPictureViewerAdapter } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter';
 import { ViewController } from '../../components/ViewController';
@@ -16,6 +16,7 @@ import { ViewerViewProps } from './ViewerView.types';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const { t } = useTranslation();
 
@@ -58,7 +59,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
           <DetailsPopup />
         </>
       </Box>
-      <ViewController imageLoaded={!!source} />
+      {isDesktop && <ViewController imageLoaded={!!source} />}
       <ActiveFiltersPanel />
     </Box>
   );
@@ -73,6 +74,8 @@ const styles = (theme: Theme) => ({
   },
   viewerWrapper: {
     width: '100%',
+    flex: 1,
+    minWidth: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -86,7 +89,9 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     gap: '16px',
     padding: '32px',
-    borderRadius: '32px'
+    borderRadius: '32px',
+    maxWidth: '100vw',
+    boxSizing: 'border-box'
   },
   loadingText: {
     fontSize: '30px',

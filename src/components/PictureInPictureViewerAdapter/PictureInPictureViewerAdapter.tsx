@@ -3,7 +3,7 @@ import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
@@ -26,6 +26,8 @@ import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdap
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -227,10 +229,12 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               } as any
             }
           />
-          <PolygonDrawingMenu
-            takeScreenshot={takeScreenshot}
-            isViewerActive={isViewerActive}
-          />
+          {isDesktop && (
+            <PolygonDrawingMenu
+              takeScreenshot={takeScreenshot}
+              isViewerActive={isViewerActive}
+            />
+          )}
           <Tooltip />
         </>
       )}

@@ -4,7 +4,8 @@ import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
 
-export const NAVIGATION_HEIGHT = 70;
+export const NAVIGATION_HEIGHT_MOBILE = 58;
+export const NAVIGATION_HEIGHT_DESKTOP = 70;
 
 export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const theme = useTheme();
@@ -65,23 +66,34 @@ const styles = (theme: Theme) => ({
     left: 0,
     right: 0,
     zIndex: 50,
-    height: `${NAVIGATION_HEIGHT}px`,
+    height: `${NAVIGATION_HEIGHT_MOBILE}px`,
     background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingInline: '24px',
-    pointerEvents: 'none'
+    justifyContent: 'flex-start',
+    paddingInline: '12px',
+    pointerEvents: 'none',
+    [theme.breakpoints.up('md')]: {
+      height: `${NAVIGATION_HEIGHT_DESKTOP}px`,
+      justifyContent: 'space-between',
+      paddingInline: '24px'
+    }
   },
   leftSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '50px'
+    gap: 0,
+    [theme.breakpoints.up('md')]: {
+      gap: '50px'
+    }
   },
   rightSection: {
-    display: 'flex',
+    display: 'none',
     alignItems: 'center',
-    pointerEvents: 'auto'
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
+    }
   },
   logoSection: {
     display: 'flex',
@@ -107,9 +119,12 @@ const styles = (theme: Theme) => ({
     alignSelf: 'flex-end'
   },
   tabsSection: {
-    display: 'flex',
+    display: 'none',
     alignItems: 'center',
-    pointerEvents: 'auto'
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
+    }
   },
   tabs: {
     minHeight: '48px',

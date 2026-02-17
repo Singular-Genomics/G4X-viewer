@@ -64,7 +64,7 @@ export default function G4XViewer() {
 const styles = (theme: Theme) => ({
   mainContainer: {
     background: `linear-gradient(0deg, ${theme.palette.gx.darkGrey[500]}, ${theme.palette.gx.darkGrey[100]})`,
-    minHeight: '100vh',
+    minHeight: '100dvh',
     width: '100vw',
     display: 'flex',
     flexDirection: 'column',
