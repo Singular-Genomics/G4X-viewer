@@ -13,6 +13,7 @@ import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
+import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -22,6 +23,8 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+
+  useCloudImageLoader();
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);

@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { GxDropzoneButton } from '../../../../shared/components/GxDropzoneButton';
 import { useImageHandler } from './helpers/useImageHandler';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
@@ -10,14 +10,14 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
+import { IMAGE_URL_PARAM } from '../../../../hooks/useCloudImageLoader.hook';
 
-const IMAGE_URL_PARAM = 'imageUrl';
+const getInitialCloudImageUrl = () => new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || '';
 
 export default function ImageDropzoneButton() {
   const { t } = useTranslation();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [cloudImageUrl, setCloudImageUrl] = useState('');
-  const hasLoadedFromUrl = useRef(false);
+  const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
 
   const handleDropzoneUpload = () => {
     setCloudImageUrl('');
@@ -38,7 +38,7 @@ export default function ImageDropzoneButton() {
     setIsPopupOpen(false);
   };
 
-  const handleSubmit = (cloudImageUrl: string, clearUrlParam = true) => {
+  const handleSubmit = (cloudImageUrl: string) => {
     const filename = cloudImageUrl.split('/').pop() || cloudImageUrl;
 
     if (!/^.+\.(ome\.tiff|tif|zarr)$/.test(filename)) {
@@ -62,31 +62,15 @@ export default function ImageDropzoneButton() {
 
     setIsPopupOpen(false);
 
-    if (clearUrlParam) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete(IMAGE_URL_PARAM);
-      window.history.replaceState({}, '', url);
-    }
+    const url = new URL(window.location.href);
+    url.searchParams.delete(IMAGE_URL_PARAM);
+    window.history.replaceState({}, '', url);
 
     enqueueSnackbar({
       message: t('sourceFiles.imageSuccess', { filename: filename }),
       variant: 'success'
     });
   };
-
-  useEffect(() => {
-    if (hasLoadedFromUrl.current) return;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageUrl = urlParams.get(IMAGE_URL_PARAM);
-
-    if (imageUrl) {
-      hasLoadedFromUrl.current = true;
-      handleSubmit(imageUrl, false);
-      setCloudImageUrl(imageUrl);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Box>
