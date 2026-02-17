@@ -150,6 +150,13 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     '& .MuiInputBase-input': {
       cursor: 'auto'
     },
+    '& .MuiInputBase-input::placeholder': {
+      opacity: 0.4,
+      fontStyle: 'italic'
+    },
+    '& .Mui-disabled .MuiInputBase-input::placeholder': {
+      opacity: 0.55
+    },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
       borderColor: theme.palette.gx.accent.greenBlue
