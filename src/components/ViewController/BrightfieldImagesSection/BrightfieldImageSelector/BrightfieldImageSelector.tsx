@@ -15,7 +15,8 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [activeImageName, setActiveImageName] = useState<string>('');
+  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
+  const activeImageName = brightfieldImageSource?.description ?? '';
   const [isCloudModalOpen, setIsCloudModalOpen] = useState<boolean>(false);
   const [cloudImageUrl, setCloudImageUrl] = useState<string>('');
 
@@ -26,7 +27,6 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const handleImageRemove = useCallback(
     (imageName: string) => {
       if (imageName === activeImageName) {
-        setActiveImageName('');
         setActiveImage(null);
       }
 
@@ -41,11 +41,9 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         typeof selectedImage === 'string' ? selectedImage.split('/').pop() || selectedImage : selectedImage.name;
 
       if (imageName === activeImageName) {
-        setActiveImageName('');
         setActiveImage(null);
         return;
       }
-      setActiveImageName(imageName);
       setActiveImage(selectedImage);
     },
     [activeImageName, setActiveImage]

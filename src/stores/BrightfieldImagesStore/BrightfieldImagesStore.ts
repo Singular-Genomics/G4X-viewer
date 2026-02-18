@@ -47,35 +47,16 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
   },
   setAvailableImages: (files: (File | string)[]) => set({ availableImages: files }),
   addNewFile: (file: File | string) =>
-    set((state) => {
-      const newImagesList = state.availableImages;
-      newImagesList.push(file);
-      return {
-        ...state,
-        availableImages: newImagesList
-      };
-    }),
+    set((state) => ({
+      availableImages: [...state.availableImages, file]
+    })),
   removeFileByName: (fileName: string) =>
-    set((state) => {
-      const newImagesList = state.availableImages;
-      const index = newImagesList.findIndex((entry) => {
+    set((state) => ({
+      availableImages: state.availableImages.filter((entry) => {
         if (typeof entry === 'string') {
-          return entry.split('/').pop() === fileName || entry === fileName;
+          return entry.split('/').pop() !== fileName && entry !== fileName;
         }
-        return entry.name === fileName;
-      });
-
-      if (index !== -1) {
-        if (newImagesList.length === 1) {
-          newImagesList.pop();
-        } else {
-          newImagesList.splice(index, 1);
-        }
-      }
-
-      return {
-        ...state,
-        availableImages: newImagesList
-      };
-    })
+        return entry.name !== fileName;
+      })
+    }))
 }));
