@@ -19,6 +19,7 @@ export const GxDropzoneButton = ({
   getInputProps,
   labelTitle,
   labelText,
+  placeholderText,
   helperText,
   buttonText,
   disabled = false,
@@ -60,10 +61,12 @@ export const GxDropzoneButton = ({
         label={labelTitle}
         size="small"
         fullWidth
-        value={labelText || ' '}
+        value={labelText || ''}
+        placeholder={placeholderText}
         sx={sx.textField}
         disabled={disabled}
         slotProps={{
+          inputLabel: { shrink: true },
           htmlInput: { readOnly: true },
           input: {
             endAdornment:
@@ -146,6 +149,13 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiInputBase-input': {
       cursor: 'auto'
+    },
+    '& .MuiInputBase-input::placeholder': {
+      opacity: 0.4,
+      fontStyle: 'italic'
+    },
+    '& .Mui-disabled .MuiInputBase-input::placeholder': {
+      opacity: 0.55
     },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
