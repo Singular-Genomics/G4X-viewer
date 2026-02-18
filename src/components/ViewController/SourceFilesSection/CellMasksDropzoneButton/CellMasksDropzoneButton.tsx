@@ -25,6 +25,7 @@ export const CellMasksDropzoneButton = ({ setLockSwitch }: CellMasksDropzoneButt
       <GxDropzoneButton
         labelTitle={t('sourceFiles.segmentationFileInputLabel')}
         labelText={fileName}
+        placeholderText={t('sourceFiles.segmentationPlaceholder')}
         buttonText={t('sourceFiles.segmentationFileUploadButton')}
         disabled={!source}
         helperText={t('sourceFiles.uploadedFileSizeHelper', { size: humanFileSize(SEGMENTATION_FILE_SIZE_LIMIT, 0) })}

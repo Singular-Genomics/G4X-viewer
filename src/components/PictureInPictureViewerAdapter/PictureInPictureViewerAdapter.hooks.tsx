@@ -282,7 +282,8 @@ export const usePolygonDrawingLayer = () => {
     setDetecting,
     isViewMode,
     isDeleteMode,
-    polygonOpacity
+    polygonOpacity,
+    selectedROIId
   ] = usePolygonDrawingStore(
     useShallow((store) => [
       store.isPolygonDrawingEnabled,
@@ -296,7 +297,8 @@ export const usePolygonDrawingLayer = () => {
       store.setDetecting,
       store.isViewMode,
       store.isDeleteMode,
-      store.polygonOpacity
+      store.polygonOpacity,
+      store.selectedROIId
     ])
   );
 
@@ -324,6 +326,8 @@ export const usePolygonDrawingLayer = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const polygonFeaturesBeforeEdit = useRef<PolygonFeature[]>([]);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastClickedPolygonRef = useRef<number | null>(null);
 
   const getPolygonColor = (
     feature: any,
@@ -630,14 +634,41 @@ export const usePolygonDrawingLayer = () => {
     }
   };
 
-  const onPolygonClickForDeletion = (info: any) => {
+  const onPolygonClick = (info: any) => {
+    // Handle delete mode
     if (isDeleteMode && info.index !== undefined && info.index >= 0) {
-      const deltedPolygonId = info.object.properties.polygonId;
-      deletePolygon(deltedPolygonId);
-      deleteSelectedCells(deltedPolygonId);
-      deleteSelectedPoints(deltedPolygonId);
-      return true; // Prevent further event propagation
+      const deletedPolygonId = info.object.properties.polygonId;
+      deletePolygon(deletedPolygonId);
+      deleteSelectedCells(deletedPolygonId);
+      deleteSelectedPoints(deletedPolygonId);
+      return true;
     }
+
+    // Handle double-click for ROI details in view mode
+    if (isViewMode && info.index !== undefined && info.index >= 0 && info.object?.properties?.polygonId) {
+      const polygonId = info.object.properties.polygonId;
+
+      // Check if this is a double-click
+      if (lastClickedPolygonRef.current === polygonId && clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+        clickTimeoutRef.current = null;
+        lastClickedPolygonRef.current = null;
+        usePolygonDrawingStore.getState().selectROIForDetails(polygonId);
+        return true;
+      }
+
+      lastClickedPolygonRef.current = polygonId;
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+      }
+      clickTimeoutRef.current = setTimeout(() => {
+        lastClickedPolygonRef.current = null;
+        clickTimeoutRef.current = null;
+      }, 300); // 300ms window for double-click
+
+      return true;
+    }
+
     return false;
   };
 
@@ -647,16 +678,16 @@ export const usePolygonDrawingLayer = () => {
     mode: isDetecting ? new ViewMode() : isViewMode || isDeleteMode ? new ViewMode() : mode,
     selectedFeatureIndexes: isViewMode || isDeleteMode || isDetecting ? [] : polygonFeatures.map((_, index) => index),
     onEdit: isViewMode || isDeleteMode || isDetecting ? undefined : onEdit,
-    onClick: isDeleteMode ? onPolygonClickForDeletion : undefined,
-    pickable: !isDetecting && (!isViewMode || isDeleteMode),
+    onClick: isDeleteMode || isViewMode ? onPolygonClick : undefined,
+    pickable: !isDetecting,
     autoHighlight: isDeleteMode,
     getFillColor: (feature: any) => {
-      const alphaFill = isViewMode ? 50 : 100;
-      return getPolygonColor(feature, alphaFill, 0).fill;
+      return getPolygonColor(feature, isViewMode ? 50 : 100, 0).fill;
     },
     getLineColor: (feature: any) => {
-      const alphaLine = isViewMode ? 150 : 200;
-      return getPolygonColor(feature, 0, alphaLine).line;
+      return feature.properties.polygonId === selectedROIId
+        ? [255, 255, 255, 255]
+        : getPolygonColor(feature, 0, isViewMode ? 150 : 200).line;
     },
     highlightColor: isDeleteMode ? [255, 0, 0, 120] : undefined,
     lineWidthMinPixels: 2,

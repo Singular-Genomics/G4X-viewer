@@ -5,6 +5,7 @@ export type GxDropzoneButtonProps = {
   getInputProps: <T extends DropzoneInputProps>(props?: T | undefined) => T;
   labelTitle: string;
   labelText?: string;
+  placeholderText?: string;
   helperText?: string;
   buttonText: string;
   disabled?: boolean;
@@ -13,4 +14,6 @@ export type GxDropzoneButtonProps = {
   isDragActive?: boolean;
   isDragAccept?: boolean;
   isDragReject?: boolean;
+  tooltipText?: string;
+  cloudUploadTooltipText?: string;
 };
