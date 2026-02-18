@@ -26,10 +26,7 @@ export const ViewControlsSection = () => {
 
   return (
     <Box sx={sx.sectionContainer}>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('viewSettings.globalSelection')}</Typography>
-        <GlobalSelectionSliders />
-      </Box>
+      <GlobalSelectionSliders />
       <Box>
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
         <ZoomInput />
