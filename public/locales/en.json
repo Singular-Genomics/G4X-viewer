@@ -107,7 +107,6 @@
   },
   "segmentationSettings": {
     "cellFillLabel": "Cell Fill",
-    "cellFillShow": "Show cell fill",
     "cellFiltersLabel": "Cell Filters",
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphBinningError": "Failed to bin {{count}} cells",

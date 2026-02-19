@@ -1,10 +1,8 @@
-import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from '@mui/material';
+import { Box, Grid, Input, Theme, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
-import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { GxSlider } from '../../../../shared/components/GxSlider';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -13,27 +11,14 @@ const FILL_OPACITY_STEP = 1;
 export const CellMasksFillSettings = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
-
-  const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.toggleCellFill, store.setCellFillOpacity])
+  const [isCellFillOn, cellFillOpacity, setCellFillOpacity] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.setCellFillOpacity])
   );
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
 
   return (
     <Box sx={sx.strokeSettingsContainer}>
-      <FormControlLabel
-        label={t('segmentationSettings.cellFillShow')}
-        sx={sx.toggleSwitch}
-        control={
-          <GxSwitch
-            disableTouchRipple
-            onChange={toggleCellFill}
-            checked={isCellFillOn}
-          />
-        }
-      />
       <Grid
         container
         direction="row"
@@ -89,9 +74,6 @@ const styles = (theme: Theme) => ({
     flexDirection: 'column',
     gap: '8px',
     marginBottom: '8px'
-  },
-  toggleSwitch: {
-    paddingLeft: '8px'
   },
   sliderInputContainer: {
     paddingLeft: '8px'
