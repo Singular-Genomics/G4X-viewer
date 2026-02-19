@@ -1,4 +1,15 @@
-import { Box, Button, TextField, Theme, alpha, useTheme, IconButton, Typography, SxProps } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Theme,
+  alpha,
+  useTheme,
+  IconButton,
+  Typography,
+  SxProps,
+  Tooltip
+} from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +19,7 @@ export const GxDropzoneButton = ({
   getInputProps,
   labelTitle,
   labelText,
+  placeholderText,
   helperText,
   buttonText,
   disabled = false,
@@ -15,7 +27,9 @@ export const GxDropzoneButton = ({
   isCloudUploaded,
   isDragActive,
   isDragAccept,
-  isDragReject
+  isDragReject,
+  tooltipText,
+  cloudUploadTooltipText
 }: GxDropzoneButtonProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -47,36 +61,81 @@ export const GxDropzoneButton = ({
         label={labelTitle}
         size="small"
         fullWidth
-        value={labelText || ' '}
+        value={labelText || ''}
+        placeholder={placeholderText}
         sx={sx.textField}
         disabled={disabled}
         slotProps={{
+          inputLabel: { shrink: true },
           htmlInput: { readOnly: true },
           input: {
-            endAdornment: onCloudUploadClick && (
-              <IconButton
-                onClick={onCloudUploadClick}
-                size="small"
-                sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
-                disabled={disabled}
-              >
-                <CloudUploadIcon />
-              </IconButton>
-            )
+            endAdornment:
+              onCloudUploadClick &&
+              (cloudUploadTooltipText ? (
+                <Tooltip
+                  title={cloudUploadTooltipText}
+                  arrow
+                  placement="top"
+                  enterDelay={800}
+                  leaveDelay={50}
+                >
+                  <span>
+                    <IconButton
+                      onClick={onCloudUploadClick}
+                      size="small"
+                      sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                      disabled={disabled}
+                    >
+                      <CloudUploadIcon />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ) : (
+                <IconButton
+                  onClick={onCloudUploadClick}
+                  size="small"
+                  sx={isCloudUploaded ? sx.cloudUploadIconActive : sx.cloudUploadIcon}
+                  disabled={disabled}
+                >
+                  <CloudUploadIcon />
+                </IconButton>
+              ))
           }
         }}
       />
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={buttonStyle}
-        size="small"
-        disabled={disabled}
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        {dynamicButtonText}
-      </Button>
+      {tooltipText ? (
+        <Tooltip
+          title={tooltipText}
+          arrow
+          placement="top"
+          enterDelay={800}
+          leaveDelay={50}
+        >
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={buttonStyle}
+            size="small"
+            disabled={disabled}
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {dynamicButtonText}
+          </Button>
+        </Tooltip>
+      ) : (
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={buttonStyle}
+          size="small"
+          disabled={disabled}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {dynamicButtonText}
+        </Button>
+      )}
       {helperText && <Typography sx={sx.dropzoneHelperMessage}>{helperText}</Typography>}
     </Box>
   );
@@ -90,6 +149,13 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiInputBase-input': {
       cursor: 'auto'
+    },
+    '& .MuiInputBase-input::placeholder': {
+      opacity: 0.4,
+      fontStyle: 'italic'
+    },
+    '& .Mui-disabled .MuiInputBase-input::placeholder': {
+      opacity: 0.55
     },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
