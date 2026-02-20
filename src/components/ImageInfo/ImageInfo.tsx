@@ -39,28 +39,18 @@ export const ImageInfo = () => {
 const styles = (theme: Theme) => ({
   footerWrapper: {
     position: 'absolute',
-    right: 8,
-    bottom: 8,
+    right: 55,
+    bottom: 6,
     display: 'none',
-    gap: '6px',
+    gap: '8px',
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    padding: '4px 8px 6px',
+    padding: '8px 14px 10px',
     borderRadius: '10px',
     [theme.breakpoints.up('md')]: {
-      display: 'flex',
-      right: 55,
-      bottom: 6,
-      gap: '8px',
-      padding: '8px 14px 10px'
+      display: 'flex'
     }
   },
   footerText: {
-    color: theme.palette.gx.primary.white,
-    fontSize: '12px',
-    lineHeight: '14px',
-    [theme.breakpoints.up('md')]: {
-      fontSize: '14px',
-      lineHeight: '16px'
-    }
+    color: theme.palette.gx.primary.white
   }
 });
