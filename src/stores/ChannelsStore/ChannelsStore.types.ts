@@ -16,6 +16,7 @@ export type ChannelsStoreValues = {
 
 export type ChannelsStoreMethods = {
   toggleIsOn: (index: number) => void;
+  setAllChannelsVisible: (visible: boolean) => void;
   setPropertiesForChannel: (channel: number, newProperties: Partial<PropertiesUpdateType>) => void;
   removeChannel: (channel: number) => void;
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;

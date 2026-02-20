@@ -256,6 +256,7 @@
     "layerToggles": "Layer Toggles",
     "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
+    "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",

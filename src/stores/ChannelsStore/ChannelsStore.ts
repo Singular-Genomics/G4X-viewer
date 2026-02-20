@@ -30,6 +30,11 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       channelsVisible[index] = !channelsVisible[index];
       return { ...store, channelsVisible };
     }),
+  setAllChannelsVisible: (visible) =>
+    set((store) => ({
+      ...store,
+      channelsVisible: store.channelsVisible.map(() => visible)
+    })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((store) => {
       const entries = Object.entries(newProperties);

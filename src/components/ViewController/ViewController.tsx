@@ -19,6 +19,7 @@ import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
+import { useChannelsStore } from '../../stores/ChannelsStore';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -36,6 +37,10 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
+  const [channelsVisible, setAllChannelsVisible] = useChannelsStore(
+    useShallow((store) => [store.channelsVisible, store.setAllChannelsVisible])
+  );
+  const areAllChannelsHidden = channelsVisible.every((v) => !v);
   const metadata = useMetadata();
 
   useEffect(() => {
@@ -73,6 +78,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <GxCollapsibleSection
                 sectionTitle={t('channelSettings.sectionTitle')}
                 disabled={!imageLoaded || isRgb}
+                headerAction={
+                  <GxCheckbox
+                    checked={!areAllChannelsHidden}
+                    onChange={() => setAllChannelsVisible(areAllChannelsHidden)}
+                    disabled={!imageLoaded || !!isRgb}
+                    disableTouchRipple
+                    sx={sx.headerCheckbox}
+                  />
+                }
               >
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
