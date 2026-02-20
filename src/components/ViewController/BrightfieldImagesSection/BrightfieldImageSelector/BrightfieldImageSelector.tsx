@@ -20,20 +20,9 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const [isCloudModalOpen, setIsCloudModalOpen] = useState<boolean>(false);
   const [cloudImageUrl, setCloudImageUrl] = useState<string>('');
 
-  const { setActiveImage, removeFileByName, addNewFile, availableImages } = useBrightfieldImagesStore();
+  const { setActiveImage, addNewFile, availableImages } = useBrightfieldImagesStore();
 
   const { dropzoneProps } = useBrightfieldImageHandler();
-
-  const handleImageRemove = useCallback(
-    (imageName: string) => {
-      if (imageName === activeImageName) {
-        setActiveImage(null);
-      }
-
-      removeFileByName(imageName);
-    },
-    [setActiveImage, removeFileByName, activeImageName]
-  );
 
   const handleImageSelect = useCallback(
     (selectedImage: File | string) => {
@@ -113,7 +102,6 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
                 isActive={entryName === activeImageName}
                 entryType={typeof entry === 'string' ? 'cloud-upload' : 'local-file'}
                 onSelectImage={handleImageSelect}
-                onRemoveImage={handleImageRemove}
               />
             );
           })
