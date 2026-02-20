@@ -4,6 +4,7 @@ import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
+import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
@@ -27,6 +28,9 @@ export const ViewControlsSection = () => {
           </Box>
         </Box>
       )}
+      <Box sx={sx.togglesSubSection}>
+        <OverviewToggle />
+      </Box>
     </Box>
   );
 };
