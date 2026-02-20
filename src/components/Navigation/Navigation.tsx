@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
@@ -51,6 +51,22 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             />
           </Tabs>
         </Box>
+      </Box>
+      <Box sx={sx.mobilePreviewBadge}>
+        <Tooltip
+          title={t('navigation.mobilePreviewTooltip')}
+          placement="bottom-end"
+          arrow
+          enterTouchDelay={0}
+          leaveTouchDelay={6000}
+        >
+          <Box
+            component="span"
+            sx={sx.mobilePreviewInner}
+          >
+            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
+          </Box>
+        </Tooltip>
       </Box>
       <Box sx={sx.rightSection}>
         <SocialIcons />
@@ -160,5 +176,28 @@ const styles = (theme: Theme) => ({
   },
   tabIndicator: {
     display: 'none'
+  },
+  mobilePreviewBadge: {
+    display: 'flex',
+    marginLeft: 'auto',
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'none'
+    }
+  },
+  mobilePreviewInner: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '5px 10px',
+    background: 'rgba(255, 255, 255, 0.08)',
+    borderRadius: '4px',
+    border: `1px solid rgba(255, 255, 255, 0.12)`,
+    cursor: 'pointer'
+  },
+  mobilePreviewText: {
+    fontSize: '11px',
+    fontWeight: 600,
+    color: theme.palette.gx.lightGrey[500],
+    lineHeight: 1
   }
 });

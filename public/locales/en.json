@@ -303,7 +303,9 @@
   },
   "navigation": {
     "viewer": "Viewer",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "mobilePreview": "Mobile preview",
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
