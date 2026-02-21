@@ -1,0 +1,66 @@
+:root {
+  /* greyscale */
+  --sg-black: #000000;
+  --sg-white: #FFFFFF;
+
+  --sg-grey-dark: #1E1E1E;
+  --sg-grey-dark-100: #212426;
+  --sg-grey-dark-300: #2E3337;
+  --sg-grey-dark-500: #3F4447;
+  --sg-grey-dark-700: #515558;
+  --sg-grey-dark-900: #626668;
+
+  --sg-grey-medium: #CCCCCC;
+  --sg-grey-medium-100: #7D7F81;
+  --sg-grey-medium-300: #8E9092;
+  --sg-grey-medium-500: #A0A1A2;
+  --sg-grey-medium-700: #B2B2B3;
+  --sg-grey-medium-900: #C3C3C4;
+
+  --sg-grey-light: #F2F2F2;
+  --sg-grey-light-100: #D0D0D0;
+  --sg-grey-light-300: #D7D7D7;
+  --sg-grey-light-500: #DFDFDF;
+  --sg-grey-light-700: #E7E7E7;
+  --sg-grey-light-900: #EEEEEE;
+
+  --sg-grey-extra-light: #F8F8F8;
+
+  --sg-blue-200:  #182F3E;
+  --sg-blue-400:  #123F5D;
+  --sg-blue-600:  #0C507D;
+  --sg-blue-800:  #06609C;
+
+  --sg-blgrn-200: #007EB7;
+  --sg-blgrn-400: #008BB2;
+  --sg-blgrn-600: #0097AE;
+  --sg-blgrn-800: #00B1A4;
+
+  --sg-green-200: #184137;
+  --sg-green-400: #12644F;
+  --sg-green-600: #0C8668;
+  --sg-green-800: #06A980;
+
+  --sg-blue:      #0071BC;
+  --sg-green:     #00CC99;
+  --sg-purple:    #A661FF;
+  --sg-magenta:   #DA54A4;
+  --sg-red:       #F45959;
+  --sg-red_drk:   #CB4A4A;
+  --sg-orange:    #F28622;
+  --sg-yellow:    #FFB800;
+
+  --sg-blgrn-dark: hsla(172, 35%, 25%, 1);
+}
+
+/* --- 2. semantic aliases that point at sg-tokens --- */
+:root {
+  /* accent colours */
+  --acc_green: var(--sg-green-800);
+  --acc_blue: var(--sg-blgrn-600);
+  --acc_yellow: var(--sg-yellow);
+  --acc_orange: var(--sg-orange);
+  --acc_purple: var(--sg-purple);
+  --acc_red: var(--sg-red);
+  --acc_magenta: var(--sg-magenta);
+}

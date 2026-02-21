@@ -1,0 +1,147 @@
+# region Site
+site_name: Singular Genomics Docs
+site_author: Singular Genomics
+
+# region Theme
+theme:
+  name: material
+  custom_dir: docs/_core/overrides
+  logo: _core/assets/sg_logo_text.svg
+  favicon: _core/assets/favicon.ico
+
+  font:
+    text: Roboto
+    code: Fira Code
+
+  icon:
+    repo: fontawesome/brands/github
+
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+      # tip: octicons/squirrel-16
+
+  features:
+    - navigation.tabs
+    
+    - navigation.footer
+    - navigation.top # back to top button, appears when scrolling up
+    - navigation.indexes # turns the section titles into index pages
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    
+    - navigation.expand
+    
+    # - navigation.sections
+    # - navigation.path <- commented out since its rather inconsistent
+    # - navigation.tracking
+
+    - content.tabs.link # tabs with same name are linked across pages
+    - content.tooltips
+    - content.code.copy
+    # - content.code.annotate <- does not seem to work
+    # - content.code.select <- does not seem to work
+
+    - toc.follow # seems to be default enabled by default
+
+    - search.suggest
+    - search.highlight # highlight search terms in results
+    - search.share
+
+  palette:
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to light mode
+
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+
+
+  
+
+# region Extensions
+markdown_extensions:
+  - meta
+  - attr_list
+  - md_in_html
+  - admonition
+
+  - pymdownx.blocks.caption
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+
+  - pymdownx.snippets:
+      check_paths: true
+      base_path:
+        - docs
+        - .
+
+  - pymdownx.details
+
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true
+      pygments_lang_class: true
+      pygments_style: monokai
+
+  - toc:
+      title: On this page
+      anchorlink: true
+      toc_depth: 3
+
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+
+# region Extras
+extra:
+  homepage: https://docs.singulargenomics.com
+  social:
+    - icon: /fontawesome/regular/envelope
+      name: support
+      link: mailto:care@singulargenomics.com
+
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/SingularGenomic
+
+    - icon: fontawesome/solid/earth-americas
+      link: https://www.singulargenomics.com/
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+
+
+# Path settings
+# NOTE these paths are set for the child-repos. they need to be adjusted in the core-repo mkdocs.yml
+exclude_docs: |
+  _core/_partials/**
+  _core/README.md
+  _partials/**
+
+extra_css:
+  - _core/stylesheets/sg_colors.css
+  - _core/stylesheets/extra.css
+  - _core/stylesheets/navbar.css
