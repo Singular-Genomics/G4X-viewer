@@ -56,7 +56,7 @@ export const SocialIcons = () => {
         >
           <IconButton
             sx={sx.iconButton}
-            href={socialLinks.website}
+            href={entry.link}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={entry.title}
