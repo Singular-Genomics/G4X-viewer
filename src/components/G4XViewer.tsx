@@ -62,7 +62,7 @@ export default function G4XViewer() {
 
 const styles = () => ({
   mainContainer: {
-    background: 'rgb(38, 40, 42)',
+    background: '#1a1a1a',
     minHeight: '100dvh',
     width: '100vw',
     display: 'flex',
