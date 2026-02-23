@@ -86,7 +86,11 @@ const styles = (theme: Theme) => ({
   logoSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '10px',
+    '& img': {
+      width: '36px',
+      height: '36px'
+    }
   },
   logoTextWrapper: {
     display: 'flex',
