@@ -63,6 +63,20 @@ export class ZarrDataSet {
     return this.paths.transcripts.base();
   }
 
+  public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {
+    try {
+      const response = await axios.get(this.paths.attrs.images());
+      const axes = response.data?.axes;
+      if (axes?.pixel_per_um) {
+        return { unit: axes.unit ?? 'μm', pixel_per_um: axes.pixel_per_um };
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to fetch image axes metadata from .zattrs:', error);
+      return null;
+    }
+  }
+
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
       const response = await axios.get(this.paths.attrs.root());

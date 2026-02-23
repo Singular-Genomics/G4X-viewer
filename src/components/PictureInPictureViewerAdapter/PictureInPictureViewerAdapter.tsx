@@ -54,17 +54,19 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
   );
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
-    useShallow((store) => [
-      store.colormap,
-      store.isLensOn,
-      store.isOverviewOn,
-      store.lensSelection,
-      store.onViewportLoad,
-      store.viewState,
-      store.isViewerLoading
-    ])
-  );
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading, physicalSize] =
+    useViewerStore(
+      useShallow((store) => [
+        store.colormap,
+        store.isLensOn,
+        store.isOverviewOn,
+        store.lensSelection,
+        store.onViewportLoad,
+        store.viewState,
+        store.isViewerLoading,
+        store.physicalSize
+      ])
+    );
 
   const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
 
@@ -133,7 +135,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       tempCanvas.height = deck.canvas.height;
       ctx.drawImage(deck.canvas, 0, 0);
 
-      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, physicalSize);
 
       const link = document.createElement('a');
       link.href = tempCanvas.toDataURL('image/png');

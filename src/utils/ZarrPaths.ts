@@ -33,7 +33,8 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
     attrs: {
       root: () => `${base}/.zattrs`,
       transcripts: () => `${base}/transcripts/.zattrs`,
-      multiplexLevel: (level) => `${base}/images/multiplex/${level}/.zarray`
+      multiplexLevel: (level) => `${base}/images/multiplex/${level}/.zarray`,
+      images: () => `${base}/images/.zattrs`
     },
     misc: {
       summary: () => `${base}/misc/summary.html`

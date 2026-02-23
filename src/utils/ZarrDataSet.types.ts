@@ -69,6 +69,7 @@ export type ZarrPathsAttrs = {
   root: () => string;
   transcripts: () => string;
   multiplexLevel: (level: number) => string;
+  images: () => string;
 };
 
 export type ZarrPathsMisc = {

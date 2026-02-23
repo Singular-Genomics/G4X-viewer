@@ -22,6 +22,7 @@ export type ViewerStoreValues = {
   viewportWidth: number;
   viewportHeight: number;
   viewState?: any;
+  physicalSize: { size: number; unit: string } | null;
 };
 
 export type ViewerStoreMethods = {
