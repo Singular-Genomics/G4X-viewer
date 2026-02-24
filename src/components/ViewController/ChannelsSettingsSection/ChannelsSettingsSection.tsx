@@ -8,6 +8,7 @@ import { ColormapSelector } from './ColormapSelector';
 import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
 import { ChannelSelectionModeToggle } from './ChannelSelectionModeToggle';
+import { InfoTooltip } from '../../InfoTooltip';
 
 export const ChannelsSettingsSection = () => {
   const { t } = useTranslation();
@@ -18,7 +19,10 @@ export const ChannelsSettingsSection = () => {
   return (
     <Box>
       <Box>
-        <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
+        <Box sx={sx.titleWithTooltip}>
+          <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
+          <InfoTooltip title={t('tooltips.channelSettings.proteomicsColormap')} />
+        </Box>
         <ColormapSelector />
       </Box>
       <Box sx={sx.togglesWrapper}>
@@ -27,7 +31,7 @@ export const ChannelsSettingsSection = () => {
         {!colormap && shape[labels.indexOf('c')] > 1 && <ChannelSelectionModeToggle />}
       </Box>
       <Box>
-        <Typography sx={sx.controlsTitle}>{t('channelSettings.channelControls')}</Typography>
+        <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
         <ChannelControllers />
         <AddChannel />
       </Box>
@@ -40,7 +44,16 @@ const sx = {
     padding: '8px'
   },
   controlsTitle: {
+    fontWeight: 700
+  },
+  controlsTitleStandalone: {
     fontWeight: 700,
+    paddingLeft: '8px',
+    marginBottom: '8px'
+  },
+  titleWithTooltip: {
+    display: 'flex',
+    alignItems: 'center',
     paddingLeft: '8px',
     marginBottom: '8px'
   }

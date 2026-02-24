@@ -6,6 +6,8 @@ import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
 import { truncateDecimalNumber } from '../../../../../../legacy/utils';
+import { InfoTooltip } from '../../../../../InfoTooltip';
+import { useTranslation } from 'react-i18next';
 
 const DEBOUNCE_TIME_MS = 300;
 
@@ -23,6 +25,7 @@ export const ChannelRangeSlider = ({
 }: ChannelRangeSliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const [currentMinValue, currentMaxValue] = slider;
 
@@ -117,6 +120,7 @@ export const ChannelRangeSlider = ({
           step: CHANNEL_STEP
         }}
       />
+      <InfoTooltip title={t('tooltips.channelSettings.minMaxDisplay')} />
     </Box>
   );
 };

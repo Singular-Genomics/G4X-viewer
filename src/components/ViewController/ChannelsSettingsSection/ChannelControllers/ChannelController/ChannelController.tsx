@@ -11,6 +11,7 @@ import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const ChannelController = ({
   color,
@@ -118,8 +119,11 @@ export const ChannelController = ({
           </Tooltip>
         </Box>
       </Box>
-      <Box sx={sx.valueWrapper}>
-        <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+      <Box sx={sx.pixelIntensityContainer}>
+        <Box sx={sx.valueWrapper}>
+          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+        </Box>
+        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
       </Box>
       <Box sx={sx.sliderRow}>
         <Tooltip
@@ -167,11 +171,16 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center'
   },
+  pixelIntensityContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
   valueWrapper: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '4px auto 0 0',
+    margin: '2px 0 0 0',
     padding: '4px 0',
     borderRadius: '8px',
     background: theme.palette.gx.primary.white,

@@ -3,8 +3,16 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
 import { NAVIGATION_HEIGHT } from '../../../components/Navigation/Navigation';
+import { InfoTooltip } from '../../../components/InfoTooltip';
 
-export const GxWindow = ({ children, title, boundries, onClose, config }: React.PropsWithChildren<GxWindowProps>) => {
+export const GxWindow = ({
+  children,
+  title,
+  titleTooltip,
+  boundries,
+  onClose,
+  config
+}: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
   const sx = styles(theme);
 
@@ -98,7 +106,12 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         onMouseDown={handleMouseDown}
       />
       <Box sx={sx.windowHeader}>
-        {title && <Typography sx={sx.windowTitle}>{title}</Typography>}
+        {title && (
+          <Box sx={sx.titleContainer}>
+            <Typography sx={sx.windowTitle}>{title}</Typography>
+            {titleTooltip && <InfoTooltip title={titleTooltip} />}
+          </Box>
+        )}
         <IconButton
           onClick={onClose}
           disableTouchRipple
@@ -155,6 +168,11 @@ const styles = (theme: Theme) => ({
     borderTop: '1px solid',
     borderBottom: '1px solid',
     borderColor: theme.palette.gx.primary.black
+  },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
   windowTitle: {
     fontWeight: 700,
