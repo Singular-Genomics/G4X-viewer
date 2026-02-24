@@ -1,4 +1,5 @@
 import { Box, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
@@ -189,9 +190,9 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     padding: '5px 10px',
-    background: 'rgba(255, 255, 255, 0.08)',
+    background: alpha(theme.palette.gx.primary.white, 0.08),
     borderRadius: '4px',
-    border: `1px solid rgba(255, 255, 255, 0.12)`,
+    border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.12)}`,
     cursor: 'pointer'
   },
   mobilePreviewText: {
