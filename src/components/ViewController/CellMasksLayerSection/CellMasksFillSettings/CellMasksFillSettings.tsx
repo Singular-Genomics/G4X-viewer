@@ -11,8 +11,8 @@ const FILL_OPACITY_STEP = 1;
 export const CellMasksFillSettings = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const [isCellFillOn, cellFillOpacity, setCellFillOpacity] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.setCellFillOpacity])
+  const [cellFillOpacity, setCellFillOpacity] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.cellFillOpacity, store.setCellFillOpacity])
   );
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
@@ -36,10 +36,7 @@ export const CellMasksFillSettings = () => {
               max: MAX_FILL_OPACITY.toString(),
               min: MIN_FILL_OPACITY.toString()
             }}
-            sx={{
-              ...sx.textFieldBase,
-              ...(isCellFillOn && sx.textFieldEnabled)
-            }}
+            sx={sx.textFieldBase}
             disabled
           />
         </Grid>
@@ -60,7 +57,6 @@ export const CellMasksFillSettings = () => {
             step={0.1}
             min={MIN_FILL_OPACITY}
             max={MAX_FILL_OPACITY}
-            disabled={!isCellFillOn}
           />
         </Grid>
       </Grid>
@@ -68,7 +64,7 @@ export const CellMasksFillSettings = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (_theme: Theme) => ({
   strokeSettingsContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -88,16 +84,6 @@ const styles = (theme: Theme) => ({
     },
     '& .MuiInputBase-input': {
       textAlign: 'center'
-    }
-  },
-  textFieldEnabled: {
-    '& .MuiInputBase-input': {
-      textAlign: 'center',
-      WebkitTextFillColor: theme.palette.gx.primary.black
-    },
-    '&.MuiInputBase-root::before': {
-      borderColor: `${theme.palette.gx.primary.black}`,
-      borderBottomStyle: 'solid'
     }
   }
 });
