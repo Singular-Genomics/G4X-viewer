@@ -3,6 +3,7 @@ import { useChannelsStore } from '../../../../stores/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
+import { ChannelSelectionMode } from '../../../../stores/ChannelsStore/ChannelsStore.types';
 
 export const ChannelSelectionModeToggle = () => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ export const ChannelSelectionModeToggle = () => {
   );
 
   const handleToggle = () => {
-    const newMode = channelSelectionMode === 'multiselect' ? 'radio' : 'multiselect';
+    const newMode: ChannelSelectionMode = channelSelectionMode === 'multiselect' ? 'radio' : 'multiselect';
     setChannelSelectionMode(newMode);
   };
 

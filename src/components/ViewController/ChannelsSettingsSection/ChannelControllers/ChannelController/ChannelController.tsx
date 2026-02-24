@@ -185,6 +185,7 @@ const styles = (theme: Theme) => ({
     alignItems: 'center'
   },
   modeToggleButton: {
+    transform: 'rotate(90deg)',
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: 'unset'

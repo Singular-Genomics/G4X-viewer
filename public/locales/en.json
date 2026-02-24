@@ -30,8 +30,8 @@
     "singleChannelMode": "Single Channel Mode",
     "sliderRangeMinLabel":"Slider Min",
     "sliderRangeMaxLabel":"Slider Max",
-    "sliderRangeModeExpanded": "Expanded range",
-    "sliderRangeModeContract": "Contract range"
+    "sliderRangeModeExpanded": "Expanded Range",
+    "sliderRangeModeContract": "Contract Range"
   },
   "general": {
     "apply": "Apply",
