@@ -4,7 +4,7 @@ import ImageDropzoneButton from './ImageDropzoneButton/ImageDropzoneButton';
 import { CellMasksDropzoneButton } from './CellMasksDropzoneButton';
 import { useCallback, useState } from 'react';
 import CollectiveDropzoneButton from './CollectiveDropzoneButton/CollectiveDropzoneButton';
-import { UploadSelectSwitch } from './UploadSelectSwitch/UploadSelectSwitch';
+
 import { UploadMode, UPLOAD_MODES } from './UploadSelectSwitch/UploadSelectSwitch.types';
 import { GxModal } from '../../../shared/components/GxModal';
 import GeneralDetailsDropzoneButton from './GeneralDetailsDropzoneButton/GeneralDetailsDropzoneButton';
@@ -14,7 +14,7 @@ const DONT_SHOW_FLAG = 'disableSingleFileUploadWarning_DSA';
 
 export const SourceFilesSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSwitchLocked, setIsSwitchLocked] = useState(false);
+  const [_isSwitchLocked, setIsSwitchLocked] = useState(false);
   const [uploadMode, setUploadMode] = useState<UploadMode>(UPLOAD_MODES.MULTI_FILE);
   const { t } = useTranslation();
 
@@ -24,16 +24,6 @@ export const SourceFilesSection = () => {
   }, []);
 
   const handleLockSwitch = useCallback((lockState: boolean) => setIsSwitchLocked(lockState), []);
-
-  const handleModeChange = useCallback((uploadMode: UploadMode) => {
-    const disableModal = localStorage.getItem(DONT_SHOW_FLAG);
-
-    if (!disableModal && uploadMode === UPLOAD_MODES.SINGLE_FILE) {
-      setIsModalOpen(true);
-      return;
-    }
-    setUploadMode(uploadMode);
-  }, []);
 
   const getUploadComponents = useCallback(
     (uploadMode: UploadMode) => {
@@ -62,14 +52,7 @@ export const SourceFilesSection = () => {
 
   return (
     <>
-      <Box>
-        <UploadSelectSwitch
-          uploadMode={uploadMode}
-          onUploadModeChange={handleModeChange}
-          disabled={isSwitchLocked}
-        />
-        {getUploadComponents(uploadMode)}
-      </Box>
+      <Box>{getUploadComponents(uploadMode)}</Box>
       <GxModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

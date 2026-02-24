@@ -15,6 +15,7 @@ export default function GeneralDetailsDropzoneButton() {
       <GxDropzoneButton
         labelTitle={t('sourceFiles.metadataInputLabel')}
         labelText={detailsName}
+        placeholderText={t('sourceFiles.metadataPlaceholder')}
         buttonText={t('sourceFiles.metadataUploadButton')}
         disabled={isDisabled}
         {...dropzoneProps}
