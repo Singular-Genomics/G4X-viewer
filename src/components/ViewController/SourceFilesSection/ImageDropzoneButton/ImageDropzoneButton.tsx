@@ -67,9 +67,12 @@ export default function ImageDropzoneButton() {
       <GxDropzoneButton
         labelTitle={t('sourceFiles.imageInputLabel')}
         labelText={imageName}
+        placeholderText={t('sourceFiles.imagePlaceholder')}
         buttonText={t('sourceFiles.imageUploadButton')}
         onCloudUploadClick={handleCloudUploadClick}
         isCloudUploaded={!!cloudImageUrl}
+        tooltipText={t('tooltips.sourceFiles.imageUploadButton')}
+        cloudUploadTooltipText={t('tooltips.sourceFiles.cloudUploadButton')}
         {...dropzoneProps}
       />
 
