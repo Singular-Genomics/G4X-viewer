@@ -16,7 +16,8 @@ export const GxModal = ({
   children,
   colorVariant = 'singular',
   iconVariant = 'info',
-  dontShowFlag
+  dontShowFlag,
+  hideCancel = false
 }: GxModalProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -68,12 +69,14 @@ export const GxModal = ({
                 Confirm
               </Button>
             )}
-            <Button
-              sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
+            {!hideCancel && (
+              <Button
+                sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+            )}
           </Box>
 
           {dontShowFlag && (
@@ -96,7 +99,8 @@ const styles = (theme: Theme, size: string) => {
   // Base styles for all sizes
   const baseStyles = {
     modalContainer: {
-      width: 'fit-content',
+      width: { xs: '90vw', md: 'fit-content' },
+      maxWidth: { xs: '500px', md: 'none' },
       position: 'absolute',
       top: '50%',
       left: '50%',

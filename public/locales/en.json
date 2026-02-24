@@ -245,6 +245,7 @@
     "loadingBrightfieldImage": "Loading Brightfield Image",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "noImageInfo": "Please upload an image file to view",
+    "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",
     "processingPolygonImport": "Processing polygon import...",
