@@ -203,6 +203,10 @@
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
     "transcriptsUnsupportedError": "File type not supported",
+    "imagePlaceholder": "{sample}_multiplex.ome.tiff / {sample}.ome.tiff",
+    "transcriptsPlaceholder": "{sample}_transcripts.tar / {sample}.tar",
+    "segmentationPlaceholder": "{sample}_segmentation.bin / {sample}.bin",
+    "metadataPlaceholder": "{sample}_run_metadata.json",
     "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
