@@ -37,10 +37,9 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
-  const [channelsVisible, setAllChannelsVisible] = useChannelsStore(
-    useShallow((store) => [store.channelsVisible, store.setAllChannelsVisible])
+  const [isChannelLayerVisible, toggleChannelLayerVisibility] = useChannelsStore(
+    useShallow((store) => [store.isLayerVisible, store.toggleLayerVisibility])
   );
-  const areAllChannelsHidden = channelsVisible.every((v) => !v);
   const metadata = useMetadata();
 
   useEffect(() => {
@@ -80,8 +79,8 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 disabled={!imageLoaded || isRgb}
                 headerAction={
                   <GxCheckbox
-                    checked={!areAllChannelsHidden}
-                    onChange={() => setAllChannelsVisible(areAllChannelsHidden)}
+                    checked={isChannelLayerVisible}
+                    onChange={toggleChannelLayerVisibility}
                     disabled={!imageLoaded || !!isRgb}
                     disableTouchRipple
                     sx={sx.headerCheckbox}

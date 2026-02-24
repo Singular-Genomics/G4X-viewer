@@ -188,6 +188,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
+        isLayerVisible: true,
         channelsSettings
       });
       useViewerStore.setState({

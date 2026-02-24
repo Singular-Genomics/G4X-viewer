@@ -292,6 +292,7 @@
     "title": "Hidden Layers",
     "transcriptLayer": "Transcript Layer",
     "segmentationLayer": "Segmentation Layer", 
+    "channelsLayer": "Channels Layer",
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
   },
