@@ -131,7 +131,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '20px',
-    paddingRight: '16px'
+    padding: '0 2px'
   },
   textField: {
     marginBottom: '8px',
