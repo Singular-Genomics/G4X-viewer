@@ -4,7 +4,13 @@ import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        plugins: ['babel-plugin-react-compiler']
+      }
+    })
+  ],
   resolve: {
     alias: {
       'buffer/': 'buffer/'
