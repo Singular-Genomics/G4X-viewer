@@ -767,7 +767,7 @@ export const usePolygonTextLayer = () => {
     getText: (d: any) => d.text,
     getColor: [255, 255, 255, Math.round(polygonOpacity * 255)],
     getSize: 18,
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     fontWeight: 'bold',
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center',
