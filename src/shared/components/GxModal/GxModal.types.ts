@@ -2,7 +2,7 @@ import React from 'react';
 
 export type GxModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onContinue?: () => void;
   title: string;
   children: React.ReactNode;

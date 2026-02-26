@@ -22,7 +22,6 @@ export const MobileWelcomeModal = () => {
   return (
     <GxModal
       isOpen={isOpen}
-      onClose={handleClose}
       onContinue={handleClose}
       title={t('navigation.mobilePreview')}
       colorVariant="singular"
