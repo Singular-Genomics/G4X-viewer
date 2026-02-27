@@ -59,7 +59,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       store.isLayerVisible
     ])
   );
-  const visibleChannels = isLayerVisible ? channelsVisible : channelsVisible.map(() => false);
+  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
   const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
