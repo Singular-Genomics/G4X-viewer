@@ -20,7 +20,10 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
     <Box sx={sx.navigationContainer}>
       <Box sx={sx.leftSection}>
         <Box sx={sx.logoSection}>
-          <GxLogo version="light" />
+          <GxLogo
+            version="light"
+            size={36}
+          />
           <Box sx={sx.logoTextWrapper}>
             <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
             <Typography sx={sx.versionText}>{app_version}</Typography>
@@ -86,7 +89,7 @@ const styles = (theme: Theme) => ({
   logoSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '10px'
   },
   logoTextWrapper: {
     display: 'flex',
