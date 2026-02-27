@@ -4,6 +4,9 @@ import pkg from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    allowedHosts: ["rg-server"],
+  },
   plugins: [react()],
   optimizeDeps: {
     include: ["it-tar", "it-pipe"],

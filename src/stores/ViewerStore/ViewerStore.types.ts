@@ -54,7 +54,7 @@ export type ViewerLoadingStatus = {
 export type ViewerSourceType = {
   description: string;
   isDemoImage?: boolean;
-  urlOrFile: string | File | File[];
+  urlOrFile: string | File | File[] | FileSystemDirectoryHandle;
 };
 
 export type ViewerHoverCoordinates = {

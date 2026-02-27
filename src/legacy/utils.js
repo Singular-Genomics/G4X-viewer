@@ -151,12 +151,25 @@ async function fetchSingleFileOmeTiffOffsets(url) {
 /**
  * Given an image source, creates a PixelSource[] and returns XML-meta
  *
- * @param {string | File | File[]} urlOrFile
+ * @param {string | File | File[] | FileSystemDirectoryHandle} urlOrFile
  * @param {} handleOffsetsNotFound
  * @param {*} handleLoaderError
  */
 export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
   try {
+    // Local OME-NGFF directory — either via FileSystemDirectoryHandle or pre-built store
+    if (urlOrFile && urlOrFile.__localZarrStore) {
+      const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
+      return await loadLocalOmeZarr(urlOrFile, 'images/multiplex');
+    }
+    if (typeof FileSystemDirectoryHandle !== 'undefined' && urlOrFile instanceof FileSystemDirectoryHandle) {
+      const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
+      const { LocalFileStore } = await import('../loaders/LocalFileStore');
+      const { LRUCacheStore } = await import('../loaders/LRUCacheStore');
+      const store = new LRUCacheStore(new LocalFileStore(urlOrFile));
+      return await loadLocalOmeZarr(store, 'images/multiplex');
+    }
+
     // OME-TIFF
     if (isOmeTiff(urlOrFile)) {
       if (urlOrFile instanceof File) {

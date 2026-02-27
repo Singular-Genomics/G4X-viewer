@@ -1,10 +1,12 @@
 import { Box } from '@mui/material';
 import ZarrCloudUploadButton from './ZarrCloudUploadButton/ZarrCloudUploadButton';
+import { LocalFolderButton } from './LocalFolderButton';
 
 export const SourceFilesSection = () => {
   return (
     <Box sx={sx.sourceFilesSectionContainer}>
       <ZarrCloudUploadButton />
+      <LocalFolderButton />
     </Box>
   );
 };

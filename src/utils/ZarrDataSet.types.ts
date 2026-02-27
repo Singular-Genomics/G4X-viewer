@@ -1,5 +1,8 @@
 import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
 
+export type ZarritaReadableStore = { get(key: string): Promise<Uint8Array | undefined> };
+export type ZarritaStoreFactory = (subpath: string) => ZarritaReadableStore;
+
 export type ZarrLayerConfig = {
   layer_width: number;
   layer_height: number;

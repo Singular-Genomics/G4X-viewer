@@ -1,3 +1,5 @@
+import type { ZarritaStoreFactory } from '../../utils/ZarrDataSet.types';
+
 export type ZarrDataStore = ZarrDataStoreValues & ZarrDataStoreMethods;
 
 export type ZarrDataStoreValues = {
@@ -7,6 +9,7 @@ export type ZarrDataStoreValues = {
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
   hasTranscriptsData: boolean;
+  zarrStoreFactory: ZarritaStoreFactory | undefined;
 };
 
 export type ZarrDataStoreMethods = {
@@ -16,6 +19,7 @@ export type ZarrDataStoreMethods = {
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;
   setHasTranscriptsData: (hasTranscriptsData: boolean) => void;
+  setZarrStoreFactory: (factory: ZarritaStoreFactory | undefined) => void;
   reset: () => void;
 };
 

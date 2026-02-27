@@ -6,7 +6,8 @@ import type {
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
-  ZarrCellsData
+  ZarrCellsData,
+  ZarritaStoreFactory
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
 
@@ -27,6 +28,7 @@ export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
+  private storeFactory: ZarritaStoreFactory;
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
@@ -37,9 +39,14 @@ export class ZarrDataSet {
     }
   }
 
-  constructor(zarrUrl: string) {
+  constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
+    this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
+  }
+
+  public getStoreFactory(): ZarritaStoreFactory {
+    return this.storeFactory;
   }
 
   public getBaseURL(): string {
@@ -109,6 +116,14 @@ export class ZarrDataSet {
       return this.transcriptAttrs;
     }
     try {
+      const store = this.storeFactory('transcripts');
+      const data = await store.get('/.zattrs');
+      if (data) {
+        const decoded = JSON.parse(new TextDecoder().decode(data));
+        this.transcriptAttrs = decoded;
+        return decoded;
+      }
+      // Fallback to axios for HTTP stores that may not support .zattrs via get()
       const response = await axios.get(this.paths.attrs.transcripts());
       this.transcriptAttrs = response.data;
       return response.data;
@@ -172,18 +187,16 @@ export class ZarrDataSet {
       const transcriptConfig = await this.fetchTranscriptLayerConfig();
       const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
       const invertedZ = maxZoom - z;
-      const tileParams = { z: invertedZ, y, x };
+
+      const zStr = `p${invertedZ}`;
+      const yStr = `y${String(y).padStart(2, '0')}`;
+      const xStr = `x${String(x).padStart(2, '0')}`;
+      const tilePath = (field: string) => `transcripts/${zStr}/${yStr}/${xStr}/${field}`;
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
-          kind: 'array'
-        }).catch(() => null)
+        open(this.storeFactory(tilePath('cell_id')) as any, { kind: 'array' }).catch(() => null),
+        open(this.storeFactory(tilePath('gene_name')) as any, { kind: 'array' }).catch(() => null),
+        open(this.storeFactory(tilePath('position')) as any, { kind: 'array' }).catch(() => null)
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
@@ -223,7 +236,7 @@ export class ZarrDataSet {
 
   public async fetchCellsData(): Promise<ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
-    return loadCellsFromZarr(this);
+    return loadCellsFromZarr(this.storeFactory);
   }
 
   public async fetchSummaryHtml(): Promise<string | null> {

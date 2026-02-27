@@ -1,13 +1,10 @@
-import { open, FetchStore, get } from 'zarrita';
+import { open, get } from 'zarrita';
 import { SingleMask, SegmentationMetadata, ColormapEntry } from '../shared/types';
-import { ZarrCellsData } from './ZarrDataSet.types';
-import { ZarrDataSet } from './ZarrDataSet';
-import { createZarrPaths } from './ZarrPaths';
+import { ZarrCellsData, ZarritaStoreFactory } from './ZarrDataSet.types';
 
-export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrCellsData> {
+export async function loadCellsFromZarr(storeFactory: ZarritaStoreFactory): Promise<ZarrCellsData> {
   try {
-    const paths = createZarrPaths(zarrDataSet.getBaseURL());
-    const cellsGroup = await open(new FetchStore(paths.cells.base()), { kind: 'group' });
+    const cellsGroup = await open(storeFactory('cells') as any, { kind: 'group' });
 
     const [metadataGroup, polygonsGroup, proteinGroup, genesGroup] = await Promise.all([
       open(cellsGroup.resolve('metadata'), { kind: 'group' }),
