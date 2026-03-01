@@ -45,10 +45,6 @@ export class ZarrDataSet {
     this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
   }
 
-  public getStoreFactory(): ZarritaStoreFactory {
-    return this.storeFactory;
-  }
-
   public getBaseURL(): string {
     return this.zarrURL;
   }
@@ -69,14 +65,6 @@ export class ZarrDataSet {
 
   public getHAndEPath(): string {
     return this.paths.images.h_and_e();
-  }
-
-  public getCellsBasePath(): string {
-    return this.paths.cells.base();
-  }
-
-  public getTranscriptsBasePath(): string {
-    return this.paths.transcripts.base();
   }
 
   public async hasTranscriptsData(): Promise<boolean> {
