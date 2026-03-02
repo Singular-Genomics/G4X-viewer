@@ -12,12 +12,10 @@ export const PercentageOfTranscripts = () => {
   const sx = styles(theme);
   const { t } = useTranslation();
   const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const [zarrUrl, layerConfig] = useZarrDataStore(useShallow((store) => [store.zarrUrl, store.layerConfig]));
+  const layerConfig = useZarrDataStore(useShallow((store) => store.layerConfig));
   const [maxVisibleLayers, overrideLayers] = useTranscriptLayerStore(
     useShallow((store) => [store.maxVisibleLayers, store.overrideLayers])
   );
-
-  const showPercentageOfTranscripts = !!zarrUrl;
 
   const zoomBrakePoints = overrideLayers
     ? Array.from(
@@ -56,13 +54,7 @@ export const PercentageOfTranscripts = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentZoom, viewState?.zoom, layerConfig]);
 
-  return (
-    <>
-      {showPercentageOfTranscripts && (
-        <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTranscripts}`}</Typography>
-      )}
-    </>
-  );
+  return <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTranscripts}`}</Typography>;
 };
 
 const styles = (theme: Theme) => ({

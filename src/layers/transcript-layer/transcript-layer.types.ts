@@ -23,7 +23,7 @@ export type LayerDataItem = {
 };
 
 export type TranscriptLayerProps = CompositeLayerProps & {
-  files: File[];
+  files?: File[];
   zarrUrl?: string | null;
   config: LayerConfig;
   geneFilters: GeneNameFilterType | 'all';
