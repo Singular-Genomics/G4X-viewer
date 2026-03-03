@@ -2,6 +2,7 @@ import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 import { ScaleBar } from '../ScaleBar';
+import { MobileChannelLegend } from '../MobileChannelLegend';
 import { PercentageOfTranscripts } from './PercentageOfTranscripts';
 import { HoverInfo } from './HoverInfo/HoverInfo';
 import { useShallow } from 'zustand/react/shallow';
@@ -31,6 +32,7 @@ export const ImageInfo = () => {
             <Typography sx={sx.footerText}>{`${t('general.shape')}: ${level.shape.join(', ')}`}</Typography>
             {hasTranscriptsData && <PercentageOfTranscripts />}
           </Box>
+          <MobileChannelLegend />
           <ScaleBar />
         </>
       )}
@@ -43,11 +45,14 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     right: 55,
     bottom: 6,
-    display: 'flex',
+    display: 'none',
     gap: '8px',
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
     padding: '8px 14px 10px',
-    borderRadius: '10px'
+    borderRadius: '10px',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
+    }
   },
   footerText: {
     color: theme.palette.gx.primary.white

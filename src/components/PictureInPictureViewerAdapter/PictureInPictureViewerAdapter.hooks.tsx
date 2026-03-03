@@ -123,7 +123,6 @@ export const useCellSegmentationLayer = () => {
   const [
     cellMasksData,
     isCellLayerOn,
-    isCellFillOn,
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
@@ -133,7 +132,6 @@ export const useCellSegmentationLayer = () => {
     useShallow((store) => [
       store.cellMasksData,
       store.isCellLayerOn,
-      store.isCellFillOn,
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
@@ -217,7 +215,7 @@ export const useCellSegmentationLayer = () => {
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     visible: !!cellMasksData && isCellLayerOn,
-    showCellFill: isCellFillOn,
+    showCellFill: true,
     showDiscardedPoints: showFilteredCells,
     cellFillOpacity,
     cellsData: filteredCells.unselectedCellsData,

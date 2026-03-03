@@ -6,6 +6,7 @@ export type ChannelsStoreValues = {
   contrastLimits: [number, number][];
   colors: [number, number, number][];
   channelsVisible: boolean[];
+  isLayerVisible: boolean;
   channelsSettings: ChannelsSettings;
   selections: SelectionsType[];
   ids: string[];
@@ -16,6 +17,7 @@ export type ChannelsStoreValues = {
 
 export type ChannelsStoreMethods = {
   toggleIsOn: (index: number) => void;
+  toggleLayerVisibility: () => void;
   setPropertiesForChannel: (channel: number, newProperties: Partial<PropertiesUpdateType>) => void;
   removeChannel: (channel: number) => void;
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;

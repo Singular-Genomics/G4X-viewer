@@ -1,9 +1,9 @@
 import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
-import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
+import { DEFAULT_OVERVIEW, DEFAULT_OVERVIEW_MOBILE, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
@@ -27,6 +27,8 @@ import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { TranscriptTilesLoadingBar } from '../TranscriptTilesLoadingBar';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -51,9 +53,16 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     [containerSize]
   );
 
-  const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
-    useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
+  const [colors, contrastLimits, channelsVisible, selections, isLayerVisible] = useChannelsStore(
+    useShallow((store) => [
+      store.colors,
+      store.contrastLimits,
+      store.channelsVisible,
+      store.selections,
+      store.isLayerVisible
+    ])
   );
+  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
   const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading, physicalSize] =
     useViewerStore(
@@ -186,10 +195,10 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
             colors={colors}
-            channelsVisible={channelsVisible}
+            channelsVisible={visibleChannels}
             loader={loader}
             selections={selections}
-            overview={DEFAULT_OVERVIEW}
+            overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
             overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
@@ -230,10 +239,12 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               } as any
             }
           />
-          <PolygonDrawingMenu
-            takeScreenshot={takeScreenshot}
-            isViewerActive={isViewerActive}
-          />
+          {isDesktop && (
+            <PolygonDrawingMenu
+              takeScreenshot={takeScreenshot}
+              isViewerActive={isViewerActive}
+            />
+          )}
           <TranscriptTilesLoadingBar />
           <Tooltip />
         </>

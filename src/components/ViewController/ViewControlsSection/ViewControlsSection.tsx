@@ -11,6 +11,7 @@ import { ZoomInput } from './ZoomInput';
 import { useMemo } from 'react';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
+import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
@@ -21,10 +22,9 @@ export const ViewControlsSection = () => {
   const hasSegmentationData = !!cellsData?.length;
 
   const areLayersAvailable = useMemo(
-    () => hasTranscriptsData || hasSegmentationData || brightfieldImageSource,
-    [hasTranscriptsData, hasSegmentationData, brightfieldImageSource]
+    () => hasTranscriptsData || hasSegmentationData || !!brightfieldImageSource || !!polygonFeatures.length,
+    [hasTranscriptsData, hasSegmentationData, brightfieldImageSource, polygonFeatures.length]
   );
-
   return (
     <Box sx={sx.sectionContainer}>
       <GlobalSelectionSliders />
@@ -43,6 +43,9 @@ export const ViewControlsSection = () => {
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
           {!!polygonFeatures.length && <PolygonLayerToggle />}
         </Box>
+      </Box>
+      <Box sx={sx.togglesSubSection}>
+        <OverviewToggle />
       </Box>
     </Box>
   );

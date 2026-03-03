@@ -15,6 +15,11 @@ import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
 import { useTranslation } from 'react-i18next';
+import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { GxCheckbox } from '../../shared/components/GxCheckbox';
+import { useShallow } from 'zustand/react/shallow';
+import { useChannelsStore } from '../../stores/ChannelsStore';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -23,6 +28,18 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isControllerOn, setIsControllerOn] = useState(true);
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellMasksFiles = useCellSegmentationLayerStore((store) => store.cellMasksData);
+  const [isCellLayerOn, toggleCellLayer] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.toggleCellLayer])
+  );
+  const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
+  );
+  const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
+    useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
+  );
+  const [isChannelLayerVisible, toggleChannelLayerVisibility] = useChannelsStore(
+    useShallow((store) => [store.isLayerVisible, store.toggleLayerVisibility])
+  );
   const metadata = useMetadata();
   const hasSegmentationData = !!cellMasksFiles?.length;
 
@@ -61,12 +78,30 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <GxCollapsibleSection
                 sectionTitle={t('channelSettings.sectionTitle')}
                 disabled={!imageLoaded || isRgb}
+                headerAction={
+                  <GxCheckbox
+                    checked={isChannelLayerVisible}
+                    onChange={toggleChannelLayerVisibility}
+                    disabled={!imageLoaded || !!isRgb}
+                    disableTouchRipple
+                    sx={sx.headerCheckbox}
+                  />
+                }
               >
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('brightfieldImages.sectionTitle')}
                 disabled={!imageLoaded}
+                headerAction={
+                  <GxCheckbox
+                    checked={isBrightfieldLayerVisible}
+                    onChange={toggleBrightfieldLayer}
+                    disabled={!imageLoaded}
+                    disableTouchRipple
+                    sx={sx.headerCheckbox}
+                  />
+                }
               >
                 <BrightfieldImagesSection />
               </GxCollapsibleSection>
@@ -74,6 +109,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle={t('transcriptsSettings.sectionTitle')}
                 disabled={!imageLoaded || !hasTranscriptsData}
                 unmountOnExit={false}
+                headerAction={
+                  <GxCheckbox
+                    checked={isTranscriptLayerOn}
+                    onChange={toggleTranscriptLayer}
+                    disabled={!imageLoaded || !hasTranscriptsData}
+                    disableTouchRipple
+                    sx={sx.headerCheckbox}
+                  />
+                }
               >
                 <TranscriptLayerSection />
               </GxCollapsibleSection>
@@ -81,6 +125,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 sectionTitle={t('segmentationSettings.sectionTitle')}
                 disabled={!imageLoaded || !hasSegmentationData}
                 unmountOnExit={false}
+                headerAction={
+                  <GxCheckbox
+                    checked={isCellLayerOn}
+                    onChange={toggleCellLayer}
+                    disabled={!imageLoaded || !cellMasksFiles?.length}
+                    disableTouchRipple
+                    sx={sx.headerCheckbox}
+                  />
+                }
               >
                 <CellMasksLayerSection />
               </GxCollapsibleSection>
@@ -164,6 +217,15 @@ const styles = (theme: Theme) => ({
     padding: '12px 4px',
     '&:hover': {
       backgroundColor: theme.palette.gx.lightGrey[300]
+    }
+  },
+  headerCheckbox: {
+    padding: '0 8px 0 0',
+    '&, &.Mui-checked': {
+      color: theme.palette.gx.primary.black
+    },
+    '&.Mui-disabled': {
+      opacity: 0.26
     }
   }
 });
