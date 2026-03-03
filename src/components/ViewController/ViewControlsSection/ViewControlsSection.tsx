@@ -15,13 +15,14 @@ import { useTranslation } from 'react-i18next';
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
   const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
-  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
+  const hasSegmentationData = !!cellsData?.length;
 
   const areLayersAvailable = useMemo(
-    () => zarrUrl || cellsData || brightfieldImageSource,
-    [zarrUrl, cellsData, brightfieldImageSource]
+    () => hasTranscriptsData || hasSegmentationData || brightfieldImageSource,
+    [hasTranscriptsData, hasSegmentationData, brightfieldImageSource]
   );
 
   return (
@@ -37,8 +38,8 @@ export const ViewControlsSection = () => {
           {!areLayersAvailable && (
             <Typography sx={sx.placeholderMessage}>{t('viewSettings.noActiveLayers')}</Typography>
           )}
-          {!!zarrUrl && <TranscriptLayerToggle />}
-          {!!cellsData && <CellMaskLayerToggle />}
+          {hasTranscriptsData && <TranscriptLayerToggle />}
+          {hasSegmentationData && <CellMaskLayerToggle />}
           {!!brightfieldImageSource && <BrightfieldLayerToggle />}
           {!!polygonFeatures.length && <PolygonLayerToggle />}
         </Box>

@@ -21,9 +21,10 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const { t } = useTranslation();
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
-  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellMasksFiles = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const metadata = useMetadata();
+  const hasSegmentationData = !!cellMasksFiles?.length;
 
   useEffect(() => {
     window.dispatchEvent(new Event('onControllerToggle'));
@@ -71,14 +72,14 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('transcriptsSettings.sectionTitle')}
-                disabled={!imageLoaded || !zarrUrl}
+                disabled={!imageLoaded || !hasTranscriptsData}
                 unmountOnExit={false}
               >
                 <TranscriptLayerSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('segmentationSettings.sectionTitle')}
-                disabled={!imageLoaded || !cellMasksFiles?.length}
+                disabled={!imageLoaded || !hasSegmentationData}
                 unmountOnExit={false}
               >
                 <CellMasksLayerSection />

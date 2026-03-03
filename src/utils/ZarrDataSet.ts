@@ -28,6 +28,15 @@ export class ZarrDataSet {
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
 
+  private async hasZarrNode(path: string): Promise<boolean> {
+    try {
+      await axios.head(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   constructor(zarrUrl: string) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
@@ -61,6 +70,14 @@ export class ZarrDataSet {
 
   public getTranscriptsBasePath(): string {
     return this.paths.transcripts.base();
+  }
+
+  public async hasTranscriptsData(): Promise<boolean> {
+    return this.hasZarrNode(this.paths.attrs.transcripts());
+  }
+
+  public async hasSegmentationData(): Promise<boolean> {
+    return this.hasZarrNode(`${this.paths.cells.base()}/.zgroup`);
   }
 
   public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {

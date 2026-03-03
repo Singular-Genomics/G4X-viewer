@@ -6,12 +6,14 @@ import { PercentageOfTranscripts } from './PercentageOfTranscripts';
 import { HoverInfo } from './HoverInfo/HoverInfo';
 import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 
 export const ImageInfo = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
   const pyramidResolution = useViewerStore(useShallow((store) => store.pyramidResolution));
+  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
 
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
@@ -27,7 +29,7 @@ export const ImageInfo = () => {
               sx={sx.footerText}
             >{`${t('general.layers')}: ${pyramidResolution + 1}/${loader.length}`}</Typography>
             <Typography sx={sx.footerText}>{`${t('general.shape')}: ${level.shape.join(', ')}`}</Typography>
-            <PercentageOfTranscripts />
+            {hasTranscriptsData && <PercentageOfTranscripts />}
           </Box>
           <ScaleBar />
         </>

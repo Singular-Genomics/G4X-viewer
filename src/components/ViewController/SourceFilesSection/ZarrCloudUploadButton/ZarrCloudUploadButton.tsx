@@ -57,18 +57,32 @@ export default function ZarrCloudUploadButton() {
     useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
     useZarrDataStore.getState().setFileName(zarrDir);
 
-    const layerConfig = await zarrDataSet.detectLayerConfig();
-    if (layerConfig) {
-      useZarrDataStore.getState().setLayerConfig(layerConfig);
-    }
+    const successMessages: string[] = [];
+    const warningMessages: string[] = [];
 
-    const transcriptColors = await zarrDataSet.fetchTranscriptColors();
-    if (transcriptColors) {
-      const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
-        gene_name,
-        color
-      }));
-      useZarrDataStore.getState().setColormapConfig(colorMapEntries);
+    const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
+      zarrDataSet.hasTranscriptsData(),
+      zarrDataSet.hasSegmentationData()
+    ]);
+
+    useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+
+    if (hasTranscriptsData) {
+      const layerConfig = await zarrDataSet.detectLayerConfig();
+      if (layerConfig) {
+        useZarrDataStore.getState().setLayerConfig(layerConfig);
+      }
+
+      const transcriptColors = await zarrDataSet.fetchTranscriptColors();
+      if (transcriptColors) {
+        const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
+          gene_name,
+          color
+        }));
+        useZarrDataStore.getState().setColormapConfig(colorMapEntries);
+      }
+    } else {
+      warningMessages.push(t('sourceFiles.transcriptsLoadError'));
     }
 
     const newSource = {
@@ -96,45 +110,46 @@ export default function ZarrCloudUploadButton() {
       });
     }
 
-    const successMessages: string[] = [];
-    const warningMessages: string[] = [];
+    if (hasSegmentationData) {
+      try {
+        const cellsData = await zarrDataSet.fetchCellsData();
 
-    try {
-      const cellsData = await zarrDataSet.fetchCellsData();
-
-      let proteinNames = cellsData.metadata.proteinNames;
-      if (proteinNames.length === 0 && metadata) {
-        try {
-          const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
-          proteinNames = extractProteinNamesFromMetadata(metadata);
-        } catch (error) {
-          warningMessages.push(t('sourceFiles.proteinNamesExtractionError'));
+        let proteinNames = cellsData.metadata.proteinNames;
+        if (proteinNames.length === 0 && metadata) {
+          try {
+            const { extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
+            proteinNames = extractProteinNamesFromMetadata(metadata);
+          } catch (error) {
+            warningMessages.push(t('sourceFiles.proteinNamesExtractionError'));
+          }
         }
+
+        const hasUmapData = cellsData.cellMasks.some(
+          (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
+        );
+
+        useCellSegmentationLayerStore.setState({
+          cellMasksData: cellsData.cellMasks,
+          cellColormapConfig: cellsData.colormap,
+          fileName: zarrDir,
+          umapDataAvailable: hasUmapData,
+          segmentationMetadata: {
+            ...cellsData.metadata,
+            proteinNames
+          }
+        });
+
+        successMessages.push(
+          t('sourceFiles.segmentationSuccess', {
+            count: cellsData.cellMasks.length,
+            filename: zarrDir
+          })
+        );
+      } catch {
+        warningMessages.push(t('sourceFiles.segmentationLoadError'));
       }
-
-      const hasUmapData = cellsData.cellMasks.some(
-        (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
-      );
-
-      useCellSegmentationLayerStore.setState({
-        cellMasksData: cellsData.cellMasks,
-        cellColormapConfig: cellsData.colormap,
-        fileName: zarrDir,
-        umapDataAvailable: hasUmapData,
-        segmentationMetadata: {
-          ...cellsData.metadata,
-          proteinNames
-        }
-      });
-
-      successMessages.push(
-        t('sourceFiles.segmentationSuccess', {
-          count: cellsData.cellMasks.length,
-          filename: zarrDir
-        })
-      );
-    } catch {
-      warningMessages.push(t('sourceFiles.segmentationLoadError'));
+    } else {
+      warningMessages.push(t('sourceFiles.segmentationMissingData'));
     }
 
     successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));

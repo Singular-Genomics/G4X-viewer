@@ -57,7 +57,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     ])
   );
 
-  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -66,9 +66,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
   const sx = styles(theme);
 
   // Check if any data is loaded
-  const hasTranscriptData = !!zarrUrl;
   const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
-  const hasAnyData = hasTranscriptData || hasCellMaskData;
+  const hasAnyData = hasTranscriptsData || hasCellMaskData;
 
   const handleClearPolygons = useCallback(() => {
     if (polygonFeatures.length > 1) {

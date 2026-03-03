@@ -189,6 +189,7 @@
     "singleFileButtonLabel": "Single-file",
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
+    "transcriptsLoadError": "Given file is missing transcript data",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",

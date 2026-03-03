@@ -6,6 +6,7 @@ export type ZarrDataStoreValues = {
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
+  hasTranscriptsData: boolean;
 };
 
 export type ZarrDataStoreMethods = {
@@ -14,6 +15,7 @@ export type ZarrDataStoreMethods = {
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;
+  setHasTranscriptsData: (hasTranscriptsData: boolean) => void;
   reset: () => void;
 };
 
