@@ -107,7 +107,6 @@
   },
   "segmentationSettings": {
     "cellFillLabel": "Cell Fill",
-    "cellFillShow": "Show cell fill",
     "cellFiltersLabel": "Cell Filters",
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphBinningError": "Failed to bin {{count}} cells",
@@ -263,6 +262,7 @@
     "layerToggles": "Layer Toggles",
     "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
+    "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
@@ -298,6 +298,7 @@
     "title": "Hidden Layers",
     "transcriptLayer": "Transcript Layer",
     "segmentationLayer": "Segmentation Layer", 
+    "channelsLayer": "Channels Layer",
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
   },

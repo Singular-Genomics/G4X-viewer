@@ -52,9 +52,16 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     [containerSize]
   );
 
-  const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
-    useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
+  const [colors, contrastLimits, channelsVisible, selections, isLayerVisible] = useChannelsStore(
+    useShallow((store) => [
+      store.colors,
+      store.contrastLimits,
+      store.channelsVisible,
+      store.selections,
+      store.isLayerVisible
+    ])
   );
+  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
   const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
@@ -185,7 +192,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
             colors={colors}
-            channelsVisible={channelsVisible}
+            channelsVisible={visibleChannels}
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
