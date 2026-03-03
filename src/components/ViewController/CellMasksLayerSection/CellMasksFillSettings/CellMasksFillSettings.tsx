@@ -1,10 +1,8 @@
-import { Box, FormControlLabel, Grid, Input, Theme, useTheme } from '@mui/material';
+import { Box, Grid, Input, Theme, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
-import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { GxSlider } from '../../../../shared/components/GxSlider';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -13,27 +11,14 @@ const FILL_OPACITY_STEP = 1;
 export const CellMasksFillSettings = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
-
-  const [isCellFillOn, cellFillOpacity, toggleCellFill, setCellFillOpacity] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellFillOn, store.cellFillOpacity, store.toggleCellFill, store.setCellFillOpacity])
+  const [cellFillOpacity, setCellFillOpacity] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.cellFillOpacity, store.setCellFillOpacity])
   );
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
 
   return (
     <Box sx={sx.strokeSettingsContainer}>
-      <FormControlLabel
-        label={t('segmentationSettings.cellFillShow')}
-        sx={sx.toggleSwitch}
-        control={
-          <GxSwitch
-            disableTouchRipple
-            onChange={toggleCellFill}
-            checked={isCellFillOn}
-          />
-        }
-      />
       <Grid
         container
         direction="row"
@@ -51,10 +36,7 @@ export const CellMasksFillSettings = () => {
               max: MAX_FILL_OPACITY.toString(),
               min: MIN_FILL_OPACITY.toString()
             }}
-            sx={{
-              ...sx.textFieldBase,
-              ...(isCellFillOn && sx.textFieldEnabled)
-            }}
+            sx={sx.textFieldBase}
             disabled
           />
         </Grid>
@@ -75,7 +57,6 @@ export const CellMasksFillSettings = () => {
             step={0.1}
             min={MIN_FILL_OPACITY}
             max={MAX_FILL_OPACITY}
-            disabled={!isCellFillOn}
           />
         </Grid>
       </Grid>
@@ -83,15 +64,12 @@ export const CellMasksFillSettings = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (_theme: Theme) => ({
   strokeSettingsContainer: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
     marginBottom: '8px'
-  },
-  toggleSwitch: {
-    paddingLeft: '8px'
   },
   sliderInputContainer: {
     paddingLeft: '8px'
@@ -106,16 +84,6 @@ const styles = (theme: Theme) => ({
     },
     '& .MuiInputBase-input': {
       textAlign: 'center'
-    }
-  },
-  textFieldEnabled: {
-    '& .MuiInputBase-input': {
-      textAlign: 'center',
-      WebkitTextFillColor: theme.palette.gx.primary.black
-    },
-    '&.MuiInputBase-root::before': {
-      borderColor: `${theme.palette.gx.primary.black}`,
-      borderBottomStyle: 'solid'
     }
   }
 });

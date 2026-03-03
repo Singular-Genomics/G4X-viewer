@@ -1,10 +1,12 @@
-import { Box, Tab, Tabs, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
 
-export const NAVIGATION_HEIGHT = 70;
+export const NAVIGATION_HEIGHT_MOBILE = 58;
+export const NAVIGATION_HEIGHT_DESKTOP = 70;
 
 export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const theme = useTheme();
@@ -20,7 +22,10 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
     <Box sx={sx.navigationContainer}>
       <Box sx={sx.leftSection}>
         <Box sx={sx.logoSection}>
-          <GxLogo version="light" />
+          <GxLogo
+            version="light"
+            size={36}
+          />
           <Box sx={sx.logoTextWrapper}>
             <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
             <Typography sx={sx.versionText}>{app_version}</Typography>
@@ -51,6 +56,22 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
           </Tabs>
         </Box>
       </Box>
+      <Box sx={sx.mobilePreviewBadge}>
+        <Tooltip
+          title={t('navigation.mobilePreviewTooltip')}
+          placement="bottom-end"
+          arrow
+          enterTouchDelay={0}
+          leaveTouchDelay={6000}
+        >
+          <Box
+            component="span"
+            sx={sx.mobilePreviewInner}
+          >
+            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
+          </Box>
+        </Tooltip>
+      </Box>
       <Box sx={sx.rightSection}>
         <SocialIcons />
       </Box>
@@ -65,28 +86,39 @@ const styles = (theme: Theme) => ({
     left: 0,
     right: 0,
     zIndex: 50,
-    height: `${NAVIGATION_HEIGHT}px`,
+    height: `${NAVIGATION_HEIGHT_MOBILE}px`,
     background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingInline: '24px',
-    pointerEvents: 'none'
+    justifyContent: 'flex-start',
+    paddingInline: '12px',
+    pointerEvents: 'none',
+    [theme.breakpoints.up('md')]: {
+      height: `${NAVIGATION_HEIGHT_DESKTOP}px`,
+      justifyContent: 'space-between',
+      paddingInline: '24px'
+    }
   },
   leftSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '50px'
+    gap: 0,
+    [theme.breakpoints.up('md')]: {
+      gap: '50px'
+    }
   },
   rightSection: {
-    display: 'flex',
+    display: 'none',
     alignItems: 'center',
-    pointerEvents: 'auto'
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
+    }
   },
   logoSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '10px'
   },
   logoTextWrapper: {
     display: 'flex',
@@ -107,9 +139,12 @@ const styles = (theme: Theme) => ({
     alignSelf: 'flex-end'
   },
   tabsSection: {
-    display: 'flex',
+    display: 'none',
     alignItems: 'center',
-    pointerEvents: 'auto'
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
+    }
   },
   tabs: {
     minHeight: '48px',
@@ -145,5 +180,28 @@ const styles = (theme: Theme) => ({
   },
   tabIndicator: {
     display: 'none'
+  },
+  mobilePreviewBadge: {
+    display: 'flex',
+    marginLeft: 'auto',
+    pointerEvents: 'auto',
+    [theme.breakpoints.up('md')]: {
+      display: 'none'
+    }
+  },
+  mobilePreviewInner: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '5px 10px',
+    background: alpha(theme.palette.gx.primary.white, 0.08),
+    borderRadius: '4px',
+    border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.12)}`,
+    cursor: 'pointer'
+  },
+  mobilePreviewText: {
+    fontSize: '11px',
+    fontWeight: 600,
+    color: theme.palette.gx.lightGrey[500],
+    lineHeight: 1
   }
 });

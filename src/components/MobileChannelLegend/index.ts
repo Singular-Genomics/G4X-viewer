@@ -1,0 +1,1 @@
+export { MobileChannelLegend } from './MobileChannelLegend';
