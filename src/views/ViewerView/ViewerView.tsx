@@ -14,8 +14,8 @@ import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
-import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
+import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -61,8 +61,8 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          <DetailsPopup />
-          <SummaryButton />
+          {isDesktop && <DetailsPopup />}
+          {isDesktop && <SummaryButton />}
         </>
       </Box>
       {isDesktop && <ViewController imageLoaded={!!source} />}
