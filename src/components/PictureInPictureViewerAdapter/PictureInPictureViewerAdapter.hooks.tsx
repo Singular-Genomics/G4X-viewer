@@ -107,6 +107,7 @@ export const useTranscriptLayer = () => {
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
     colormap: colorMapConfig,
+    onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },

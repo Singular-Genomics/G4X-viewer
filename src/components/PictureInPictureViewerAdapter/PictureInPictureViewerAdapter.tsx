@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
+import { TranscriptTilesLoadingBar } from '../TranscriptTilesLoadingBar';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -233,6 +234,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
             takeScreenshot={takeScreenshot}
             isViewerActive={isViewerActive}
           />
+          <TranscriptTilesLoadingBar />
           <Tooltip />
         </>
       )}

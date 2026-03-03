@@ -3,6 +3,7 @@ import { ViewerStore, ViewerStoreValues, GeneralDetailsType } from './ViewerStor
 
 const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isChannelLoading: [],
+  isTranscriptTilesLoading: false,
   isViewerLoading: undefined,
   isOverviewOn: true,
   isLensOn: false,
@@ -46,5 +47,6 @@ export const useViewerStore = create<ViewerStore>((set) => ({
       newIsChannelLoading.splice(index, 1);
       return { ...state, isChannelLoading: newIsChannelLoading };
     }),
+  setIsTranscriptTilesLoading: (isTranscriptTilesLoading: boolean) => set({ isTranscriptTilesLoading }),
   setGeneralDetails: (details: GeneralDetailsType) => set({ generalDetails: details })
 }));

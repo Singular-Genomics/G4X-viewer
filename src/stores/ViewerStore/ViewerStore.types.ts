@@ -5,6 +5,7 @@ export type ViewerStore = ViewerStoreValues & ViewerStoreMethods;
 
 export type ViewerStoreValues = {
   isChannelLoading: boolean[];
+  isTranscriptTilesLoading: boolean;
   isViewerLoading?: ViewerLoadingStatus;
   isOverviewOn: boolean;
   isLensOn: boolean;
@@ -33,6 +34,7 @@ export type ViewerStoreMethods = {
   setIsChannelLoading: (index: number, val: boolean) => void;
   addIsChannelLoading: (val: boolean) => void;
   removeIsChannelLoading: (index: number) => void;
+  setIsTranscriptTilesLoading: (isTranscriptTilesLoading: boolean) => void;
   setGeneralDetails: (details: GeneralDetailsType) => void;
 };
 

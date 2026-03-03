@@ -35,6 +35,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   maxVisibleLayers: number;
   colormap: ColorMapEntry[];
   onHover?: (pikingInfo: PickingInfo) => void;
+  onLoadingStateChange?: (isLoading: boolean) => void;
 };
 
 export type getTileDataProps = {

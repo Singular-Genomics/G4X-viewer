@@ -52,7 +52,7 @@ export default function ZarrCloudUploadButton() {
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
-    useViewerStore.setState({ physicalSize: null });
+    useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false });
 
     useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
     useZarrDataStore.getState().setFileName(zarrDir);

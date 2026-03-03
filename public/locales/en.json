@@ -238,6 +238,7 @@
     "importPolygonsTitle": "Polygon Data File",
     "loadingImage": "Loading Image",
     "loadingBrightfieldImage": "Loading Brightfield Image",
+    "loadingTranscripts": "Loading transcripts...",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "imageLoadError": "Failed to load image. Please check the file format and try again.",
     "brightfieldImageLoadError": "Failed to load brightfield image. Please check the file format and try again.",

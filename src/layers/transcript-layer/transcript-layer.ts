@@ -79,11 +79,23 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   parsedColorMap: Record<string, number[]>;
   zarrLoader: ZarrTranscriptLoader | null;
+  tileLoadCounter: number;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
     this.zarrLoader = props.zarrUrl ? new ZarrTranscriptLoader(props.zarrUrl) : null;
+    this.tileLoadCounter = 0;
+  }
+
+  updateLoadingState(delta: number) {
+    const nextCounter = Math.max(this.tileLoadCounter + delta, 0);
+    const hadPendingLoads = this.tileLoadCounter > 0;
+    const hasPendingLoads = nextCounter > 0;
+    this.tileLoadCounter = nextCounter;
+    if (hadPendingLoads !== hasPendingLoads) {
+      this.props.onLoadingStateChange?.(hasPendingLoads);
+    }
   }
 
   async loadMetadata(zoom: number, tileX: number, tileY: number) {
@@ -108,45 +120,50 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   renderLayers() {
     const getTileData = async ({ index, bbox }: getTileDataProps) => {
       if (index || bbox) {
-        const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;
+        this.updateLoadingState(1);
+        try {
+          const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;
 
-        let pointsData = [];
-        let outlierPointsData = [];
+          let pointsData = [];
+          let outlierPointsData = [];
 
-        if (this.props.geneFilters === 'all') {
-          pointsData = metadata.pointsData;
-        } else {
-          [pointsData, outlierPointsData] = partition(metadata.pointsData, (data) =>
-            this.props.geneFilters.includes(data.geneName)
-          );
-        }
-
-        return [
-          {
-            index,
-            textPosition: { x: bbox.top, y: bbox.left },
-            boundingBox: [
-              bbox.left,
-              bbox.top,
-              0,
-              bbox.right,
-              bbox.top,
-              0,
-              bbox.right,
-              bbox.bottom,
-              0,
-              bbox.left,
-              bbox.bottom,
-              0
-            ],
-            points: pointsData,
-            outlierPoints: outlierPointsData,
-            tileData: {
-              width: bbox.right - bbox.left,
-              height: bbox.bottom - bbox.top
-            }
+          if (this.props.geneFilters === 'all') {
+            pointsData = metadata.pointsData;
+          } else {
+            [pointsData, outlierPointsData] = partition(metadata.pointsData, (data) =>
+              this.props.geneFilters.includes(data.geneName)
+            );
           }
-        ];
+
+          return [
+            {
+              index,
+              textPosition: { x: bbox.top, y: bbox.left },
+              boundingBox: [
+                bbox.left,
+                bbox.top,
+                0,
+                bbox.right,
+                bbox.top,
+                0,
+                bbox.right,
+                bbox.bottom,
+                0,
+                bbox.left,
+                bbox.bottom,
+                0
+              ],
+              points: pointsData,
+              outlierPoints: outlierPointsData,
+              tileData: {
+                width: bbox.right - bbox.left,
+                height: bbox.bottom - bbox.top
+              }
+            }
+          ];
+        } finally {
+          this.updateLoadingState(-1);
+        }
       }
       return [];
     };
