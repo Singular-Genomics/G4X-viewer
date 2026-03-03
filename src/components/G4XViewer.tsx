@@ -1,12 +1,11 @@
-import { Box, Theme, useTheme } from '@mui/material';
+import { Box } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
 import { Navigation, NavigationView } from './Navigation';
 import { ViewerView } from '../views/ViewerView';
 import { DashboardView } from '../views/DashboardView';
 
 export default function G4XViewer() {
-  const theme = useTheme();
-  const sx = styles(theme);
+  const sx = styles();
 
   const [currentView, setCurrentView] = useState<NavigationView>('viewer');
   const [dashboardScrollPosition, setDashboardScrollPosition] = useState(0);
@@ -61,10 +60,10 @@ export default function G4XViewer() {
   );
 }
 
-const styles = (theme: Theme) => ({
+const styles = () => ({
   mainContainer: {
-    background: `linear-gradient(0deg, ${theme.palette.gx.darkGrey[500]}, ${theme.palette.gx.darkGrey[100]})`,
-    minHeight: '100vh',
+    background: '#1a1a1a',
+    minHeight: '100dvh',
     width: '100vw',
     display: 'flex',
     flexDirection: 'column',

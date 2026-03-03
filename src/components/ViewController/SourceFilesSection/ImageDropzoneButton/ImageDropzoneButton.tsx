@@ -10,14 +10,20 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
+import { IMAGE_URL_PARAM } from '../../../../hooks/useCloudImageLoader.hook';
+
+const getInitialCloudImageUrl = () => new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || '';
 
 export default function ImageDropzoneButton() {
   const { t } = useTranslation();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [cloudImageUrl, setCloudImageUrl] = useState('');
+  const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
 
   const handleDropzoneUpload = () => {
     setCloudImageUrl('');
+    const url = new URL(window.location.href);
+    url.searchParams.delete(IMAGE_URL_PARAM);
+    window.history.replaceState({}, '', url);
   };
 
   const dropzoneProps = useImageHandler(handleDropzoneUpload);
@@ -55,6 +61,10 @@ export default function ImageDropzoneButton() {
     useBrightfieldImagesStore.getState().reset();
 
     setIsPopupOpen(false);
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete(IMAGE_URL_PARAM);
+    window.history.replaceState({}, '', url);
 
     enqueueSnackbar({
       message: t('sourceFiles.imageSuccess', { filename: filename }),

@@ -176,6 +176,7 @@
     "imageInputLabel": "Image File Name",
     "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
     "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
+    "imageLoadError": "Failed to load image. Please check the URL and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
     "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
@@ -248,6 +249,7 @@
     "loadingBrightfieldImage": "Loading Brightfield Image",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "noImageInfo": "Please upload an image file to view",
+    "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",
     "processingPolygonImport": "Processing polygon import...",
@@ -306,7 +308,9 @@
   },
   "navigation": {
     "viewer": "Viewer",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "mobilePreview": "Mobile preview",
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
