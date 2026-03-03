@@ -89,7 +89,8 @@ const sx = {
   },
   loadingText: {
     color: '#fff',
-    fontSize: '12px',
+    fontSize: '13px',
+    fontWeight: 500,
     lineHeight: 1
   },
   loadingProgress: {
