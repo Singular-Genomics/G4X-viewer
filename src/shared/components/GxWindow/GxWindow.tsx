@@ -1,11 +1,22 @@
-import { Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
+import { NAVIGATION_HEIGHT_DESKTOP, NAVIGATION_HEIGHT_MOBILE } from '../../../components/Navigation/Navigation';
+import { InfoTooltip } from '../../../components/InfoTooltip';
 
-export const GxWindow = ({ children, title, boundries, onClose, config }: React.PropsWithChildren<GxWindowProps>) => {
+export const GxWindow = ({
+  children,
+  title,
+  titleTooltip,
+  boundries,
+  onClose,
+  config
+}: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
+  const navigationHeight = isDesktop ? NAVIGATION_HEIGHT_DESKTOP : NAVIGATION_HEIGHT_MOBILE;
 
   const windowContainer = useMemo(
     () =>
@@ -55,8 +66,8 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         newXPos = windowContainer.width - windowSize.width;
       }
 
-      if (newYPos < windowContainer.y) {
-        newYPos = windowSize.y;
+      if (newYPos < windowContainer.y + navigationHeight) {
+        newYPos = windowContainer.y + navigationHeight;
       } else if (newYPos + windowSize.height > windowContainer.height) {
         newYPos = windowContainer.height - windowSize.height;
       }
@@ -66,7 +77,7 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         y: newYPos
       });
     },
-    [isDragging, windowContainer]
+    [isDragging, navigationHeight, windowContainer]
   );
 
   const handleMouseUp = () => {
@@ -97,7 +108,12 @@ export const GxWindow = ({ children, title, boundries, onClose, config }: React.
         onMouseDown={handleMouseDown}
       />
       <Box sx={sx.windowHeader}>
-        {title && <Typography sx={sx.windowTitle}>{title}</Typography>}
+        {title && (
+          <Box sx={sx.titleContainer}>
+            <Typography sx={sx.windowTitle}>{title}</Typography>
+            {titleTooltip && <InfoTooltip title={titleTooltip} />}
+          </Box>
+        )}
         <IconButton
           onClick={onClose}
           disableTouchRipple
@@ -154,6 +170,11 @@ const styles = (theme: Theme) => ({
     borderTop: '1px solid',
     borderBottom: '1px solid',
     borderColor: theme.palette.gx.primary.black
+  },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
   windowTitle: {
     fontWeight: 700,

@@ -1,9 +1,9 @@
 import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
-import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
+import { DEFAULT_OVERVIEW, DEFAULT_OVERVIEW_MOBILE, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
@@ -23,8 +23,11 @@ import PictureInPictureViewer from '../PictureInPictureViewer';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
+import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -49,9 +52,16 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     [containerSize]
   );
 
-  const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
-    useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
+  const [colors, contrastLimits, channelsVisible, selections, isLayerVisible] = useChannelsStore(
+    useShallow((store) => [
+      store.colors,
+      store.contrastLimits,
+      store.channelsVisible,
+      store.selections,
+      store.isLayerVisible
+    ])
   );
+  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
   const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
     useShallow((store) => [
@@ -119,31 +129,24 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
 
   const takeScreenshot = () => {
     try {
-      if (!deckGLRef.current?.deck) {
-        throw new Error('DeckGL reference is not available');
-      }
+      const deck = deckGLRef.current?.deck;
+      if (!deck?.canvas) throw new Error('DeckGL reference is not available');
 
-      const deck = deckGLRef.current.deck;
-      const fileName = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
+      deck.redraw?.(true);
 
-      // Force an immediate redraw to ensure the scene is rendered
-      if (typeof deck.redraw === 'function') {
-        // Use synchronous redraw
-        deck.redraw(true);
-      }
+      const tempCanvas = document.createElement('canvas');
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
 
-      const canvas = deck.canvas;
-      if (!canvas) {
-        throw new Error('Canvas not available');
-      }
+      tempCanvas.width = deck.canvas.width;
+      tempCanvas.height = deck.canvas.height;
+      ctx.drawImage(deck.canvas, 0, 0);
 
-      // Get the data URL right away
-      const result = canvas.toDataURL('image/png');
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
 
-      // Create and trigger download
       const link = document.createElement('a');
-      link.href = result;
-      link.download = `${fileName}.png`;
+      link.href = tempCanvas.toDataURL('image/png');
+      link.download = `screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -189,10 +192,10 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
             colors={colors}
-            channelsVisible={channelsVisible}
+            channelsVisible={visibleChannels}
             loader={loader}
             selections={selections}
-            overview={DEFAULT_OVERVIEW}
+            overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
             overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
@@ -233,10 +236,12 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               } as any
             }
           />
-          <PolygonDrawingMenu
-            takeScreenshot={takeScreenshot}
-            isViewerActive={isViewerActive}
-          />
+          {isDesktop && (
+            <PolygonDrawingMenu
+              takeScreenshot={takeScreenshot}
+              isViewerActive={isViewerActive}
+            />
+          )}
           <Tooltip />
         </>
       )}

@@ -279,7 +279,11 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
-export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
+export const exportPolygonsWithCells = (
+  polygonFeatures: PolygonFeature[],
+  includeGenes: boolean,
+  polygonNotes: Record<number, string>
+) => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
   const exportData: CellsExportData = {};
@@ -317,7 +321,8 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], inclu
                 : {})
             };
           }) || [],
-      polygonId: polygonId
+      polygonId: polygonId,
+      notes: polygonNotes[polygonId] || ''
     };
   });
 
@@ -333,7 +338,10 @@ export const exportPolygonsWithCells = (polygonFeatures: PolygonFeature[], inclu
   URL.revokeObjectURL(url);
 };
 
-export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[]) => {
+export const exportPolygonsWithTranscripts = (
+  polygonFeatures: PolygonFeature[],
+  polygonNotes: Record<number, string>
+) => {
   const { selectedPoints } = useTranscriptLayerStore.getState();
 
   const exportData: TranscriptsExportData = {};
@@ -346,7 +354,8 @@ export const exportPolygonsWithTranscripts = (polygonFeatures: PolygonFeature[])
     exportData[roiName] = {
       coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
       transcripts: selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [],
-      polygonId: polygonId
+      polygonId: polygonId,
+      notes: polygonNotes[polygonId] || ''
     };
   });
 

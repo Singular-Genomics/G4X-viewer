@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useChannelsStore } from '../stores/ChannelsStore/ChannelsStore';
 import { VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
 import { useMetadata } from './useMetadata.hook';
@@ -11,13 +11,16 @@ import { isInterleaved } from '@hms-dbmi/viv';
 import { COLOR_PALLETE } from '../shared/constants';
 import { ChannelsSettings } from '../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
+import { useSnackbar } from 'notistack';
 
 const NUCLEAR_CHANNEL = 'nuclear';
 
 export const useProteinImage = (source: ViewerSourceType | null) => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
+  const lastValidSourceRef = useRef<ViewerSourceType | null>(null);
 
   useEffect(() => {
     async function changeLoader() {
@@ -38,7 +41,18 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       const newLoader = await createLoader(
         urlOrFile,
         () => {},
-        () => {}
+        (errorMessage: string | null) => {
+          enqueueSnackbar({
+            message: errorMessage || t('sourceFiles.imageLoadError'),
+            variant: 'error',
+            autoHideDuration: 5000
+          });
+          useViewerStore.setState({
+            source: lastValidSourceRef.current,
+            isViewerLoading: undefined,
+            isChannelLoading: [false]
+          });
+        }
       );
       // ----------------------------------------------------------
 
@@ -57,7 +71,30 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         nextMeta = newLoader.metadata;
         nextLoader = newLoader.data;
       }
+
+      // Validate that HE images (isRgb with single channel) are not allowed
+      if (nextMeta && nextLoader) {
+        const isRgb = guessRgb(nextMeta);
+        const numChannels = nextMeta.Pixels?.Channels?.length || 0;
+
+        if (isRgb && numChannels === 1) {
+          enqueueSnackbar({
+            message: t('sourceFiles.heImageNotSupported'),
+            variant: 'error',
+            autoHideDuration: 5000
+          });
+          useViewerStore.setState({
+            source: lastValidSourceRef.current,
+            isViewerLoading: undefined,
+            isChannelLoading: [false]
+          });
+          return;
+        }
+      }
+
       if (nextLoader) {
+        lastValidSourceRef.current = source;
+
         unstable_batchedUpdates(() => {
           useChannelsStore.setState({ loader: nextLoader });
           useViewerStore.setState({
@@ -162,6 +199,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
+        isLayerVisible: true,
         channelsSettings
       });
       useViewerStore.setState({

@@ -20,10 +20,11 @@ export const UmapGraph = () => {
   const sx = styles();
 
   const containerRef = useRef(null);
+  const plotRef = useRef<any>(null);
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData } = useCellSegmentationLayerStore();
-  const { settings } = useUmapGraphStore();
+  const { settings, ranges: savedRanges } = useUmapGraphStore();
   const [dimensions, setDimensions] = useState({ width: 400, height: 400 });
   const [selectionRange, setSelectionRange] = useState<UmapRange | undefined>(undefined);
   const [plotData, setPlotData] = useState<UmapClusterPoint[]>([{ x: [], y: [], clusterId: '' }]);
@@ -127,6 +128,25 @@ export const UmapGraph = () => {
     };
   });
 
+  const handleClearSelection = () => {
+    setSelectionRange(undefined);
+    useUmapGraphStore.setState({ ranges: undefined });
+
+    // Clear Plotly's internal selection state to remove shadow selection
+    if (plotRef.current?.el) {
+      const Plotly = window.Plotly;
+      if (Plotly) {
+        Plotly.relayout(plotRef.current.el, {
+          selections: []
+        } as any).then(() => {
+          const traceCount = plotRef.current?.data?.length || data.length;
+          const traceIndices = Array.from({ length: traceCount }, (_, i) => i);
+          Plotly.restyle(plotRef.current.el, { selectedpoints: [null] }, traceIndices);
+        });
+      }
+    }
+  };
+
   return (
     <Box sx={sx.container}>
       <UmapGraphHeader />
@@ -135,6 +155,7 @@ export const UmapGraph = () => {
         sx={sx.graphWrapper}
       >
         <Plot
+          ref={plotRef}
           data={data}
           style={{
             width: '100%'
@@ -159,11 +180,9 @@ export const UmapGraph = () => {
       </Box>
       <GraphRangeInputs
         rangeSource={selectionRange}
+        savedRange={savedRanges}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
-        onClear={() => {
-          setSelectionRange(undefined);
-          useUmapGraphStore.setState({ ranges: undefined });
-        }}
+        onClear={handleClearSelection}
         onConfirm={() => useUmapGraphStore.setState({ ranges: selectionRange })}
         inputPrecission={3}
       />

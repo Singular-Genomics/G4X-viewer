@@ -8,7 +8,6 @@ export type CellSegmentationLayerStoreValues = {
   segmentationMetadata?: SegmentationMetadata;
   fileName: string;
   isCellLayerOn: boolean;
-  isCellFillOn: boolean;
   isCellNameFilterOn: boolean;
   showFilteredCells: boolean;
   cellFillOpacity: number;
@@ -22,7 +21,6 @@ export type CellSegmentationLayerStoreValues = {
 
 export type CellSegmentationLayerStoreMethods = {
   toggleCellLayer: () => void;
-  toggleCellFill: () => void;
   toggleCellNameFilter: () => void;
   toggleShowFilteredCells: () => void;
   setCellFillOpacity: (newOpacity: number) => void;

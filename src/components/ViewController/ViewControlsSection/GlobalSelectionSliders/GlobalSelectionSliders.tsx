@@ -7,6 +7,7 @@ import { unstable_batchedUpdates } from 'react-dom';
 import { PropertiesUpdateType } from '../../../../stores/ChannelsStore/ChannelsStore.types';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { InfoTooltip } from '../../../InfoTooltip';
 
 export const GlobalSelectionSliders = () => {
   const theme = useTheme();
@@ -78,6 +79,10 @@ export const GlobalSelectionSliders = () => {
           const maxValue = size - 1;
           const hasNavigationData = maxValue > 0;
 
+          const isControlWithTooltip = label === 't' || label === 'z';
+          const tooltipKey = label === 'T' ? 'tControl' : 'zControl';
+          const tooltipText = t(`tooltips.viewSettings.${tooltipKey}`);
+
           return (
             <Grid
               key={label}
@@ -116,6 +121,14 @@ export const GlobalSelectionSliders = () => {
                   disabled={isAnyChannelLoading || !hasNavigationData}
                 />
               </Grid>
+              {isControlWithTooltip && (
+                <Grid
+                  size="auto"
+                  sx={sx.tooltipContainer}
+                >
+                  <InfoTooltip title={tooltipText} />
+                </Grid>
+              )}
             </Grid>
           );
         })
@@ -138,7 +151,8 @@ const styles = (theme: Theme) => ({
   },
   slider: {
     '&.MuiSlider-root': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.gx.accent.greenBlue,
+      marginTop: '3px'
     },
     '&.Mui-disabled': {
       color: theme.palette.gx.darkGrey[700],
@@ -147,5 +161,8 @@ const styles = (theme: Theme) => ({
     '& .MuiSlider-thumb:hover': {
       boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`
     }
+  },
+  tooltipContainer: {
+    marginRight: '2px'
   }
 });

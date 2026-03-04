@@ -21,7 +21,7 @@
     "channelImportError": "Error importing channel settings",
     "channelImportSuccess": "Channel settings imported successfully",
     "channelOptionsTooltip": "Channel options",
-    "colormapSelect": "Proteomics Colormap",
+    "colormapSelect": "Proteomics Color Mode",
     "highlightedChannel": "Highlighted Channel",
     "lens": "Lens",
     "overview": "Overview",
@@ -32,7 +32,7 @@
   },
   "general": {
     "apply": "Apply",
-    "appTitle": "G4X Viewer",
+    "appTitle": "G4X-viewer",
     "cancel": "Cancel",
     "clear": "Clear",
     "cloudUpload": "Cloud Upload",
@@ -181,8 +181,10 @@
     "imageInputLabel": "Image File Name",
     "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
     "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
+    "imageLoadError": "Failed to load image. Please check the URL and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
+    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",
@@ -196,7 +198,7 @@
     "sectionTitle": "Source Files",
     "segmentationFileInputLabel": "Segmentation Filename",
     "segmentationFileUploadButton": "Upload Segmentation File",
-    "invalidFileFormatError": "Invalid or deprecated file format. Please verify you're using the correct schema version.",
+    "invalidFileFormatError": "Invalid or deprecated file format. For data from software versions older than 25.11.0, please use the <1>legacy viewer</1> or migrate your files using <2>g4x-helpers</2>.",
     "segmentationMissingColormap": "Missing colormap config, cell segmentation filtering will be unavailable",
     "segmentationMissingData": "Given file is missing cell segmentation masks data",
     "singleFileButtonLabel": "Single-file",
@@ -206,6 +208,10 @@
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
     "transcriptsUnsupportedError": "File type not supported",
+    "imagePlaceholder": "{sample}_multiplex.ome.tiff / {sample}.ome.tiff",
+    "transcriptsPlaceholder": "{sample}_transcripts.tar / {sample}.tar",
+    "segmentationPlaceholder": "{sample}_segmentation.bin / {sample}.bin",
+    "metadataPlaceholder": "{sample}_run_metadata.json",
     "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
@@ -248,6 +254,7 @@
     "loadingBrightfieldImage": "Loading Brightfield Image",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "noImageInfo": "Please upload an image file to view",
+    "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",
     "processingPolygonImport": "Processing polygon import...",
@@ -261,6 +268,7 @@
     "layerToggles": "Layer Toggles",
     "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
+    "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
@@ -296,12 +304,20 @@
     "title": "Hidden Layers",
     "transcriptLayer": "Transcript Layer",
     "segmentationLayer": "Segmentation Layer", 
+    "channelsLayer": "Channels Layer",
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
   },
+  "roiDetails": {
+    "title": "ROI Details",
+    "cells": "Cells",
+    "addNote": "Add note..."
+  },
   "navigation": {
     "viewer": "Viewer",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "mobilePreview": "Mobile preview",
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
@@ -350,5 +366,37 @@
     "title": "Heatmap Chart",
     "normalizationLabel": "Normalization Method",
     "normalizationAxisLabel": "Normalization Axis"
+  },
+  "tooltips": {
+    "viewSettings": {
+      "tControl": "T Control",
+      "zControl": "Z Control"
+    },
+    "channelSettings": {
+      "lens": "A lens to highlight a specific protein channel in color, displaying all other active channels in grayscale.",
+      "export": "Export the current protein settings as a JSON file.",
+      "import": "Import protein channel settings from a JSON file.",
+      "currentPixelIntensity": "Intensity value of the specific protein channel at the location of your cursor.",
+      "minMaxDisplay": "All pixels above/below these values will display as zero.",
+      "proteomicsColormap": "Choose a color mapping mode: Additive Blend ('None') for mixed overlapping signals, or Colormaps (Any other preset) for predefined intensity gradients."
+    },
+    "segmentationSettings": {
+      "clusterIdColumn": "A cluster assignment of nan or -1 indicates that a cell was filtered before clustering."
+    },
+    "sourceFiles": {
+      "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
+      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section."
+    },
+    "flowCytometry": {
+      "title": "Select cell populations based on protein signal intensity by gating regions of a scatterplot."
+    }
+  },
+  "socialLinks": {
+    "website": "Website",
+    "linkedin": "LinkedIn",
+    "x": "X (Twitter)",
+    "github": "GitHub",
+    "email": "Email",
+    "documentation": "Documentation"
   }
 }

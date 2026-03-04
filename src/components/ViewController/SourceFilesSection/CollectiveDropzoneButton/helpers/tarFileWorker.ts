@@ -33,11 +33,11 @@ onmessage = async (e) => {
         const entryFileName = sourcePath.split('/').pop();
         if (!entryFileName || entryFileName.startsWith('.')) continue;
 
-        const chunks = [];
+        const chunks: Uint8Array[] = [];
         for await (const chunk of entry.body) {
           chunks.push(chunk);
         }
-        const blob = new Blob(chunks, { type: 'application/octet-stream' });
+        const blob = new Blob(chunks as BlobPart[], { type: 'application/octet-stream' });
         extractedFiles.push(new File([blob], sourcePath));
       }
       postMessage({ success: true, files: extractedFiles, completed: true });

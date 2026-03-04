@@ -6,12 +6,13 @@ const DEFAUlT_CHANNEL_VALUES = {
   contrastLimits: [[0, 65535]],
   colors: [[255, 255, 255]],
   domains: [[0, 65535]],
-  selections: [{ z: 0, c: 0, t: 0 }],
+  selections: { z: 0, c: 0, t: 0 },
   ids: ''
 };
 
 const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   channelsVisible: [true],
+  isLayerVisible: true,
   contrastLimits: [[0, 65535]],
   colors: [[255, 255, 255]],
   domains: [[0, 65535]],
@@ -30,6 +31,11 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       channelsVisible[index] = !channelsVisible[index];
       return { ...store, channelsVisible };
     }),
+  toggleLayerVisibility: () =>
+    set((store) => ({
+      ...store,
+      isLayerVisible: !store.isLayerVisible
+    })),
   setPropertiesForChannel: (channel, newProperties) =>
     set((store) => {
       const entries = Object.entries(newProperties);
@@ -54,13 +60,13 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
   addChannel: (newChannelProperties) => {
     set((store) => {
       const entries = Object.entries(newChannelProperties);
-      const newStore = { ...store };
+      const newStore: any = { ...store };
       entries.forEach(([property, value]) => {
-        newStore[property as keyof ChannelsStore] = [...store[property as keyof ChannelsStore], value];
+        newStore[property] = [...(store as any)[property], value];
       });
       Object.entries(DEFAUlT_CHANNEL_VALUES).forEach(([key, value]) => {
-        if (newStore[key as keyof ChannelsStore].length < newStore[entries[0][0] as keyof ChannelsStore].length) {
-          newStore[key as keyof ChannelsStore] = [...store[key as keyof ChannelsStore], value];
+        if (newStore[key].length < newStore[entries[0][0]].length) {
+          newStore[key] = [...(store as any)[key], value];
         }
       });
       return newStore;

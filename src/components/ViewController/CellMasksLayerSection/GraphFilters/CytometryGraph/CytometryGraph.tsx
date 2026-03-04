@@ -64,7 +64,7 @@ export const CytometryGraph = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { cellMasksData, segmentationMetadata } = useCellSegmentationLayerStore();
-  const { proteinIndices, settings, updateSettings } = useCytometryGraphStore();
+  const { proteinIndices, settings, updateSettings, ranges: savedRanges } = useCytometryGraphStore();
   const [loader, setLoader] = useState<LoaderInfo | undefined>();
   const [heatmapData, setHeatmapData] = useState<GraphData>({ axisType: 'linear', graphMode: 'scattergl' });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -379,6 +379,7 @@ export const CytometryGraph = () => {
       </Box>
       <GraphRangeInputs
         rangeSource={selectionRange}
+        savedRange={savedRanges}
         onUpdateRange={(newFilter) => setSelectionRange(newFilter)}
         onClear={() => {
           setSelectionRange(undefined);

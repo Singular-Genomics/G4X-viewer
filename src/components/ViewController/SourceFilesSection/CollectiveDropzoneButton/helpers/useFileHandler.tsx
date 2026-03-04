@@ -13,7 +13,7 @@ import { SegmentationFileSchema } from '../../../../../schemas/segmentationFile.
 import { validateTranscriptFileSchema } from '../../../../../schemas/transcriptaFile.schema';
 import { getMissingFilesContent } from './helpers';
 import { useCytometryGraphStore } from '../../../../../stores/CytometryGraphStore/CytometryGraphStore';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { CellMasks } from '../../../../../shared/types';
 
 type DataSetConfig = {
@@ -131,9 +131,30 @@ export const useFileHandler = () => {
         } catch (error) {
           console.error('Error decoding segmentation file:', error);
           enqueueSnackbar({
-            message: t('sourceFiles.invalidFileFormatError'),
+            message: (
+              <Trans
+                i18nKey="sourceFiles.invalidFileFormatError"
+                components={{
+                  1: (
+                    <a
+                      href="https://g4x-viewer.legacy.singulargenomics.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  ),
+                  2: (
+                    <a
+                      href="https://docs.singulargenomics.com/G4X-helpers/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  )
+                }}
+              />
+            ),
             variant: 'gxSnackbar',
-            titleMode: 'error'
+            titleMode: 'error',
+            autoHideDuration: 4200
           });
           setLoading(false);
         }
@@ -169,9 +190,30 @@ export const useFileHandler = () => {
 
           if (!isValidSchema) {
             enqueueSnackbar({
-              message: t('sourceFiles.invalidFileFormatError'),
+              message: (
+                <Trans
+                  i18nKey="sourceFiles.invalidFileFormatError"
+                  components={{
+                    1: (
+                      <a
+                        href="https://g4x-viewer.legacy.singulargenomics.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    ),
+                    2: (
+                      <a
+                        href="https://docs.singulargenomics.com/G4X-helpers/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    )
+                  }}
+                />
+              ),
               variant: 'gxSnackbar',
-              titleMode: 'error'
+              titleMode: 'error',
+              autoHideDuration: 4200
             });
             setLoading(false);
             worker.terminate();
