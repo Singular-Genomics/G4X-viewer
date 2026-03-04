@@ -189,7 +189,13 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => (Channels[i]?.Color && Channels[i].Color.slice(0, -1)) ?? COLOR_PALLETE[i]);
+            : newSelections.map((sel: any, i: number) => {
+                const channelIndex = sel.c ?? i;
+                return (
+                  (Channels[channelIndex]?.Color && Channels[channelIndex].Color.slice(0, -1)) ??
+                  COLOR_PALLETE[channelIndex]
+                );
+              });
         useViewerStore.setState({
           useColorMap: true
         });

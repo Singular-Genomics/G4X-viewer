@@ -1,6 +1,7 @@
 import { fromBlob, fromUrl } from 'geotiff';
 import { loadOmeTiff, loadBioformatsZarr, loadOmeZarr, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
 import axios from 'axios';
+import { HexToRgb } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
 export const GLOBAL_SLIDER_DIMENSION_FIELDS = /** @type {const} */ (['z', 't']);
 
@@ -221,7 +222,8 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
         Pixels: {
           Channels: res.metadata.omero.channels.map((c) => ({
             Name: c.label,
-            SamplesPerPixel: 1
+            SamplesPerPixel: 1,
+            Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined
           }))
         }
       }
