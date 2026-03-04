@@ -82,7 +82,8 @@ export const useHiddenLayers = () => {
   const { t } = useTranslation();
   const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((store) => store.isCellLayerOn);
-  const isLayerVisible = useBrightfieldImagesStore((store) => store.isLayerVisible);
+  const isBrightfieldLayerVisible = useBrightfieldImagesStore((store) => store.isLayerVisible);
+  const isChannelLayerVisible = useChannelsStore((store) => store.isLayerVisible);
   const isPolygonLayerVisible = usePolygonDrawingStore((store) => store.isPolygonLayerVisible);
 
   const getHiddenLayers = () => {
@@ -93,7 +94,10 @@ export const useHiddenLayers = () => {
     if (!isCellLayerOn) {
       hiddenLayers.push(t('hiddenLayers.segmentationLayer'));
     }
-    if (!isLayerVisible) {
+    if (!isChannelLayerVisible) {
+      hiddenLayers.push(t('hiddenLayers.channelsLayer'));
+    }
+    if (!isBrightfieldLayerVisible) {
       hiddenLayers.push(t('hiddenLayers.brightfieldLayer'));
     }
     if (!isPolygonLayerVisible) {

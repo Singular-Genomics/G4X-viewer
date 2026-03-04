@@ -1,4 +1,4 @@
-import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
+import { Box, Theme, Typography, alpha, useMediaQuery, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
 import { PictureInPictureViewerAdapter } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter';
 import { ViewController } from '../../components/ViewController';
@@ -13,14 +13,19 @@ import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
+import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
+import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const { t } = useTranslation();
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+
+  useCloudImageLoader();
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
@@ -58,8 +63,9 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
           <DetailsPopup />
         </>
       </Box>
-      <ViewController imageLoaded={!!source} />
+      {isDesktop && <ViewController imageLoaded={!!source} />}
       <ActiveFiltersPanel />
+      <MobileWelcomeModal />
     </Box>
   );
 };
@@ -73,6 +79,8 @@ const styles = (theme: Theme) => ({
   },
   viewerWrapper: {
     width: '100%',
+    flex: 1,
+    minWidth: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -86,7 +94,9 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     gap: '16px',
     padding: '32px',
-    borderRadius: '32px'
+    borderRadius: '32px',
+    maxWidth: '100vw',
+    boxSizing: 'border-box'
   },
   loadingText: {
     fontSize: '30px',

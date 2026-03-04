@@ -4,6 +4,12 @@ export const DEFAULT_OVERVIEW = {
   position: 'bottom-left'
 };
 
+export const DEFAULT_OVERVIEW_MOBILE = {
+  ...DEFAULT_OVERVIEW,
+  maximumWidth: 120,
+  maximumHeight: 120
+};
+
 export const LAYER_ZOOM_OFFSET = 2;
 
 export const COLORMAP_OPTIONS = [

@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material';
-import { OverviewToggle } from './OverviewToggle';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { LensToggle } from './LensToggle';
 import { ChannelControllers } from './ChannelControllers';
@@ -24,11 +23,12 @@ export const ChannelsSettingsSection = () => {
         </Box>
         <ColormapSelector />
       </Box>
-      <Box sx={sx.togglesWrapper}>
-        <OverviewToggle />
-        {!colormap && shape[labels.indexOf('c')] > 1 && <LensToggle />}
-      </Box>
-      <Box>
+      {!colormap && shape[labels.indexOf('c')] > 1 && (
+        <Box sx={sx.togglesWrapper}>
+          <LensToggle />
+        </Box>
+      )}
+      <Box sx={sx.channelControlsSection}>
         <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
         <ChannelControllers />
         <AddChannel />
@@ -54,5 +54,8 @@ const sx = {
     alignItems: 'center',
     paddingLeft: '8px',
     marginBottom: '8px'
+  },
+  channelControlsSection: {
+    marginTop: '12px'
   }
 };

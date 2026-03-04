@@ -23,8 +23,8 @@ const DisabledLayerWarning = () => {
 
 export const CellMasksLayerSection = () => {
   const { t } = useTranslation();
-  const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellLayerOn, store.isCellFillOn, store.isCellNameFilterOn])
+  const [isCellLayerOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.isCellNameFilterOn])
   );
 
   return (
@@ -32,7 +32,7 @@ export const CellMasksLayerSection = () => {
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFillLabel')}</Typography>
-          {!isCellLayerOn && isCellFillOn && <DisabledLayerWarning />}
+          {!isCellLayerOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
       </Box>

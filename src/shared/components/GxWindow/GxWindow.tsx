@@ -1,8 +1,8 @@
-import { Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { GxWindowProps } from './GxWindow.types';
-import { NAVIGATION_HEIGHT } from '../../../components/Navigation/Navigation';
+import { NAVIGATION_HEIGHT_DESKTOP, NAVIGATION_HEIGHT_MOBILE } from '../../../components/Navigation/Navigation';
 import { InfoTooltip } from '../../../components/InfoTooltip';
 
 export const GxWindow = ({
@@ -14,7 +14,9 @@ export const GxWindow = ({
   config
 }: React.PropsWithChildren<GxWindowProps>) => {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
+  const navigationHeight = isDesktop ? NAVIGATION_HEIGHT_DESKTOP : NAVIGATION_HEIGHT_MOBILE;
 
   const windowContainer = useMemo(
     () =>
@@ -64,8 +66,8 @@ export const GxWindow = ({
         newXPos = windowContainer.width - windowSize.width;
       }
 
-      if (newYPos < windowContainer.y + NAVIGATION_HEIGHT) {
-        newYPos = windowContainer.y + NAVIGATION_HEIGHT;
+      if (newYPos < windowContainer.y + navigationHeight) {
+        newYPos = windowContainer.y + navigationHeight;
       } else if (newYPos + windowSize.height > windowContainer.height) {
         newYPos = windowContainer.height - windowSize.height;
       }
@@ -75,7 +77,7 @@ export const GxWindow = ({
         y: newYPos
       });
     },
-    [isDragging, windowContainer]
+    [isDragging, navigationHeight, windowContainer]
   );
 
   const handleMouseUp = () => {

@@ -41,7 +41,18 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       const newLoader = await createLoader(
         urlOrFile,
         () => {},
-        () => {}
+        (errorMessage: string | null) => {
+          enqueueSnackbar({
+            message: errorMessage || t('sourceFiles.imageLoadError'),
+            variant: 'error',
+            autoHideDuration: 5000
+          });
+          useViewerStore.setState({
+            source: lastValidSourceRef.current,
+            isViewerLoading: undefined,
+            isChannelLoading: [false]
+          });
+        }
       );
       // ----------------------------------------------------------
 
@@ -188,6 +199,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         contrastLimits: newContrastLimits,
         colors: newColors,
         channelsVisible: newColors.map(() => true),
+        isLayerVisible: true,
         channelsSettings
       });
       useViewerStore.setState({

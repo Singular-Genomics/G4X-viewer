@@ -122,7 +122,6 @@ export const useCellSegmentationLayer = () => {
   const [
     cellMasksData,
     isCellLayerOn,
-    isCellFillOn,
     isCellNameFilterOn,
     cellFillOpacity,
     showFilteredCells,
@@ -132,7 +131,6 @@ export const useCellSegmentationLayer = () => {
     useShallow((store) => [
       store.cellMasksData,
       store.isCellLayerOn,
-      store.isCellFillOn,
       store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showFilteredCells,
@@ -216,7 +214,7 @@ export const useCellSegmentationLayer = () => {
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     visible: !!cellMasksData && isCellLayerOn,
-    showCellFill: isCellFillOn,
+    showCellFill: true,
     showDiscardedPoints: showFilteredCells,
     cellFillOpacity,
     cellsData: filteredCells.unselectedCellsData,
@@ -767,7 +765,7 @@ export const usePolygonTextLayer = () => {
     getText: (d: any) => d.text,
     getColor: [255, 255, 255, Math.round(polygonOpacity * 255)],
     getSize: 18,
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     fontWeight: 'bold',
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center',
