@@ -69,7 +69,6 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
     const genesIndptr = genesIndptrChunk.data as BigInt64Array;
 
     const cellMasks: SingleMask[] = [];
-    const clusterSet = new Set<string>();
 
     const numCells = cellIds.length;
 
@@ -89,8 +88,6 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
       }
 
       const clusterId = clusterIds.get ? clusterIds.get(i) : String(clusterIds[i]);
-      clusterSet.add(clusterId);
-
       const umapValues = { umapX: umapData[i * 2], umapY: umapData[i * 2 + 1] };
 
       const nonzeroGeneIndices: number[] = [];
@@ -116,7 +113,7 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
       });
     }
 
-    const colormap = loadColormapFromZarr(metadataGroup.attrs, Array.from(clusterSet));
+    const colormap = loadColormapFromZarr(metadataGroup.attrs);
 
     const metadata: SegmentationMetadata = {
       proteinNames: proteinNames,
@@ -139,26 +136,17 @@ function extractStringArray(chunk: { data: any; shape: number[] }): string[] {
   return result;
 }
 
-function loadColormapFromZarr(metadataAttrs: Record<string, unknown>, clusterIds: string[]): ColormapEntry[] {
+function loadColormapFromZarr(metadataAttrs: Record<string, unknown>): ColormapEntry[] {
   const clusterIdColors = metadataAttrs.clusterID_colors as Record<string, [number, number, number]> | undefined;
 
   if (!clusterIdColors) {
     throw new Error('clusterID_colors not found in cells/metadata .zattrs');
   }
 
-  return clusterIds.map((clusterId) => {
-    const color = clusterIdColors[clusterId] || clusterIdColors['-1'];
-    if (!color) {
-      return {
-        clusterId,
-        color: [128, 128, 128] as [number, number, number]
-      };
-    }
-    return {
-      clusterId,
-      color: color as [number, number, number]
-    };
-  });
+  return Object.keys(clusterIdColors).map((clusterId) => ({
+    clusterId,
+    color: clusterIdColors[clusterId] as [number, number, number]
+  }));
 }
 
 export function extractProteinNamesFromMetadata(metadata: Record<string, any>): string[] {
