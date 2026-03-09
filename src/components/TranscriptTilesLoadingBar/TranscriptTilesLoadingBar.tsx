@@ -9,6 +9,8 @@ const SHOW_DELAY_MS = 150;
 export const TranscriptTilesLoadingBar = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const sx = styles(theme);
+
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
   const isTranscriptTilesLoading = useViewerStore((store) => store.isTranscriptTilesLoading);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,7 +51,7 @@ export const TranscriptTilesLoadingBar = () => {
   );
 };
 
-const sx = {
+const styles = (theme: Theme) => ({
   loadingContainer: {
     position: 'absolute',
     left: '50%',
@@ -77,7 +79,7 @@ const sx = {
     },
     backgroundColor: {
       xs: 'transparent',
-      md: alpha('#000', 0.6)
+      md: alpha(theme.palette.gx.primary.black, 0.6)
     },
     display: 'flex',
     flexDirection: 'column',
@@ -88,7 +90,7 @@ const sx = {
     zIndex: 120
   },
   loadingText: {
-    color: '#fff',
+    color: theme.palette.gx.primary.white,
     fontSize: '13px',
     fontWeight: 500,
     lineHeight: 1
@@ -99,10 +101,10 @@ const sx = {
       md: 4
     },
     borderRadius: '999px',
-    backgroundColor: alpha('#fff', 0.25),
+    backgroundColor: alpha(theme.palette.gx.primary.white, 0.25),
     '& .MuiLinearProgress-bar': {
-      backgroundColor: (theme: Theme) => theme.palette.gx.accent.greenBlue,
+      backgroundColor: theme.palette.gx.accent.greenBlue,
       borderRadius: '999px'
     }
   }
-};
+});
