@@ -223,7 +223,8 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
           Channels: res.metadata.omero.channels.map((c) => ({
             Name: c.label,
             SamplesPerPixel: 1,
-            Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined
+            Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
+            Active: c.active ?? false
           }))
         }
       }
