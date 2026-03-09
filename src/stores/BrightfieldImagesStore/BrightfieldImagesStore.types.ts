@@ -10,6 +10,7 @@ export type BrightfieldImagesStoreValues = {
   selections: SelectionsType[];
   opacity: number;
   contrastLimits: number[][];
+  colors: [number, number, number][];
   isLayerVisible: boolean;
   availableImages: (File | string)[];
 };

@@ -13,8 +13,6 @@ import { ChannelsSettings } from '../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 
-const NUCLEAR_CHANNEL = 'nuclear';
-
 export const useProteinImage = (source: ViewerSourceType | null) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -26,80 +24,94 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
     async function changeLoader() {
       if (!source) return null;
 
-      // Should we use sth different than setState
-      useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({
-        isViewerLoading: {
-          type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
-          message: t('viewer.loadingImage')
-        }
-      });
+      try {
+        // Should we use sth different than setState
+        useViewerStore.setState({ isChannelLoading: [true] });
+        useViewerStore.setState({
+          isViewerLoading: {
+            type: VIEWER_LOADING_TYPES.MAIN_IMAGE,
+            message: t('viewer.loadingImage')
+          }
+        });
 
-      const { urlOrFile } = source;
+        const { urlOrFile } = source;
 
-      // --------------------- LEGACY LOADER ----------------------
-      const newLoader = await createLoader(
-        urlOrFile,
-        () => {},
-        (errorMessage: string | null) => {
-          enqueueSnackbar({
-            message: errorMessage || t('sourceFiles.imageLoadError'),
-            variant: 'error',
-            autoHideDuration: 5000
-          });
-          useViewerStore.setState({
-            source: lastValidSourceRef.current,
-            isViewerLoading: undefined,
-            isChannelLoading: [false]
-          });
-        }
-      );
-      // ----------------------------------------------------------
+        // --------------------- LEGACY LOADER ----------------------
+        const newLoader = await createLoader(
+          urlOrFile,
+          () => {},
+          (errorMessage: string | null) => {
+            enqueueSnackbar({
+              message: errorMessage || t('sourceFiles.imageLoadError'),
+              variant: 'error',
+              autoHideDuration: 5000
+            });
+            useViewerStore.setState({
+              source: lastValidSourceRef.current,
+              isViewerLoading: undefined,
+              isChannelLoading: [false]
+            });
+          }
+        );
+        // ----------------------------------------------------------
 
-      let nextMeta: any;
-      let nextLoader: any;
+        let nextMeta: any;
+        let nextLoader: any;
 
-      if (Array.isArray(newLoader)) {
-        if (newLoader.length > 1) {
-          nextMeta = newLoader.map((l) => l.metadata);
-          nextLoader = newLoader.map((l) => l.data);
+        if (Array.isArray(newLoader)) {
+          if (newLoader.length > 1) {
+            nextMeta = newLoader.map((l) => l.metadata);
+            nextLoader = newLoader.map((l) => l.data);
+          } else {
+            nextMeta = newLoader[0].metadata;
+            nextLoader = newLoader[0].data;
+          }
         } else {
-          nextMeta = newLoader[0].metadata;
-          nextLoader = newLoader[0].data;
+          nextMeta = newLoader.metadata;
+          nextLoader = newLoader.data;
         }
-      } else {
-        nextMeta = newLoader.metadata;
-        nextLoader = newLoader.data;
-      }
 
-      // Validate that HE images (isRgb with single channel) are not allowed
-      if (nextMeta && nextLoader) {
-        const isRgb = guessRgb(nextMeta);
-        const numChannels = nextMeta.Pixels?.Channels?.length || 0;
+        // Validate that HE images (isRgb with single channel) are not allowed
+        if (nextMeta && nextLoader) {
+          const isRgb = guessRgb(nextMeta);
+          const numChannels = nextMeta.Pixels?.Channels?.length || 0;
 
-        if (isRgb && numChannels === 1) {
-          enqueueSnackbar({
-            message: t('sourceFiles.heImageNotSupported'),
-            variant: 'error',
-            autoHideDuration: 5000
-          });
-          useViewerStore.setState({
-            source: lastValidSourceRef.current,
-            isViewerLoading: undefined,
-            isChannelLoading: [false]
-          });
-          return;
+          if (isRgb && numChannels === 1) {
+            enqueueSnackbar({
+              message: t('sourceFiles.heImageNotSupported'),
+              variant: 'error',
+              autoHideDuration: 5000
+            });
+            useViewerStore.setState({
+              source: lastValidSourceRef.current,
+              isViewerLoading: undefined,
+              isChannelLoading: [false]
+            });
+            return;
+          }
         }
-      }
 
-      if (nextLoader) {
-        lastValidSourceRef.current = source;
+        if (nextLoader) {
+          lastValidSourceRef.current = source;
 
-        unstable_batchedUpdates(() => {
-          useChannelsStore.setState({ loader: nextLoader });
-          useViewerStore.setState({
-            metadata: nextMeta
+          unstable_batchedUpdates(() => {
+            useChannelsStore.setState({ loader: nextLoader });
+            useViewerStore.setState({
+              metadata: nextMeta
+            });
           });
+        }
+      } catch (error) {
+        console.error('Failed to load image:', error);
+        enqueueSnackbar({
+          message: t('viewer.imageLoadError'),
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        useViewerStore.setState({
+          source: lastValidSourceRef.current,
+          isViewerLoading: undefined,
+          isChannelLoading: [false]
         });
       }
     }
@@ -114,27 +126,15 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       useViewerStore.setState({
         isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.loadingImage') }
       });
-      let newSelections = buildDefaultSelection(loader[0]);
       const { Channels } = metadata.Pixels;
-
       const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
-      const nuclearIndex = channelOptions.findIndex((name: string) => name.toLowerCase().includes(NUCLEAR_CHANNEL));
 
-      // If nuclear channel found, prioritize it in default selections
-      if (nuclearIndex > -1) {
-        const reorderedSelections = [];
-
-        const nuclearSelection = newSelections.find((sel: any) => sel.c === nuclearIndex) || {
-          ...newSelections[0],
-          c: nuclearIndex
-        };
-        reorderedSelections.push(nuclearSelection);
-
-        const remainingSelections = newSelections.filter((sel: any) => sel.c !== nuclearIndex);
-        reorderedSelections.push(...remainingSelections);
-
-        newSelections = reorderedSelections.slice(0, newSelections.length);
-      }
+      const baseSelection = buildDefaultSelection(loader[0])[0];
+      const activeIndices = Channels.map((c: any, i: number) => (c.Active ? i : -1)).filter((i: number) => i >= 0);
+      const newSelections =
+        activeIndices.length > 0
+          ? activeIndices.map((c: number) => ({ ...baseSelection, c }))
+          : buildDefaultSelection(loader[0]);
       // Default RGB.
       let newContrastLimits = [];
       let newDomains = [];
@@ -175,7 +175,13 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         newColors =
           newDomains.length === 1
             ? [[255, 255, 255]]
-            : newDomains.map((_, i) => (Channels[i]?.Color && Channels[i].Color.slice(0, -1)) ?? COLOR_PALLETE[i]);
+            : newSelections.map((sel: any, i: number) => {
+                const channelIndex = sel.c ?? i;
+                return (
+                  (Channels[channelIndex]?.Color && Channels[channelIndex].Color.slice(0, -1)) ??
+                  COLOR_PALLETE[channelIndex]
+                );
+              });
         useViewerStore.setState({
           useColorMap: true
         });
@@ -198,12 +204,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         domains: newDomains,
         contrastLimits: newContrastLimits,
         colors: newColors,
-        channelsVisible: newColors.map(() => true),
+        channelsVisible: newSelections.map((sel: any) => Channels[sel.c ?? 0]?.Active ?? false),
         isLayerVisible: true,
         channelsSettings
       });
       useViewerStore.setState({
-        isChannelLoading: newSelections.map((i) => !i),
+        isChannelLoading: newSelections.map((_i: any) => false),
         isViewerLoading: undefined,
         pixelValues: new Array(newSelections.length).fill('0'),
         globalSelection: newSelections[0],

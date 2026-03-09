@@ -1,4 +1,5 @@
 import * as protobuf from 'protobufjs';
+import axios from 'axios';
 import { TranscriptFileSchema } from '../../../schemas/transcriptaFile.schema';
 import { SingleMask } from '../../../shared/types';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../../shared/constants';
@@ -9,7 +10,7 @@ import type {
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
 import { BoundingBox, PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
+import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 import {
   getPolygonBoundingBox,
   isPointInSelection,
@@ -19,8 +20,8 @@ import {
 
 const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
   try {
-    const response = await fetch(URL.createObjectURL(file));
-    const arrayBuffer = await response.arrayBuffer();
+    const response = await axios.get(URL.createObjectURL(file), { responseType: 'arraybuffer' });
+    const arrayBuffer = response.data;
 
     const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     const data = protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer)) as unknown as PolygonTileData;
