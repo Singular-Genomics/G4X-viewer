@@ -145,7 +145,7 @@ function loadColormapFromZarr(metadataAttrs: Record<string, unknown>): ColormapE
 
   return Object.keys(clusterIdColors).map((clusterId) => ({
     clusterId,
-    color: clusterIdColors[clusterId] as [number, number, number]
+    color: (clusterIdColors[clusterId] ? clusterIdColors[clusterId] : [128, 128, 128]) as [number, number, number]
   }));
 }
 
