@@ -11,4 +11,7 @@ export default defineConfig({
   define: {
     "process.env.APP_VERSION": JSON.stringify(pkg.version),
   },
+  worker: {
+    format: "es",
+  },
 });
