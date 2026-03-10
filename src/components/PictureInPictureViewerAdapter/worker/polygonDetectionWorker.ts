@@ -182,7 +182,6 @@ const runBatchedPointsDetection = async <T>(
     }
 
     const currentTotal = totalPointsFound + batchPointCount;
-    // Check if we exceeded the limit
     if (!limitExceeded && currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
       limitExceeded = true;
       console.warn(
@@ -214,12 +213,11 @@ const detectPointsInPolygonFromLegacyFiles = async (
   layerConfig: LayerConfig,
   maxZoomLevel: number
 ) => {
-  // Calculate the tile size for the max zoom level
   const tileSize = layerConfig.tile_size / Math.pow(2, maxZoomLevel);
   const tileFileRegex = new RegExp(String.raw`${maxZoomLevel}\/(\d+)\/(\d+)\.bin$`, 'ig');
   const filesToProcess: File[] = [];
 
-  // Filter out files from other zoom levels and for tiles that do not intersect the selection ploygon bounding box.
+  // Filter out files from other zoom levels and for tiles that do not intersect the selection polygon bounding box.
   for (const file of files) {
     const match = file.name.match(tileFileRegex);
     if (match) {
@@ -243,9 +241,9 @@ const detectPointsInPolygonFromLegacyFiles = async (
     }
   }
 
+  // Process files in batches to avoid overwhelming the system
   const BATCH_SIZE = 20;
   const fileBatches: File[][] = [];
-  // Process files in batches to avoid overwhelming the system
   for (let i = 0; i < filesToProcess.length; i += BATCH_SIZE) {
     fileBatches.push(filesToProcess.slice(i, i + BATCH_SIZE));
   }
@@ -283,7 +281,6 @@ const detectPointsInPolygon = async (
   layerConfig: LayerConfig,
   zarrUrl?: string
 ) => {
-  // Use the highest zoom level from layerConfig where all points are visible without clustering
   const maxZoomLevel = layerConfig.layers;
   const pointsInPolygon: PolygonPointData[] = [];
   const { allPointArrays, totalPointsFound, limitExceeded } =
