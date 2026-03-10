@@ -2,8 +2,8 @@ import { CircularProgress } from '@mui/material';
 import { FILL_PIXEL_VALUE } from '../../../../../shared/constants';
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [0, 177, 164];
-export const CHANNEL_MIN = 0;
-export const CHANNEL_MAX = 65535;
+export const CHANNEL_MIN_FALLBACK = 0;
+export const CHANNEL_MAX_FALLBACK = 65535;
 export const CHANNEL_STEP = 1;
 export const EXPANDED_RANGE_PADDING_RATIO = 0.15;
 
@@ -15,8 +15,8 @@ export const colormapToRgb = (on: boolean, colorArray: number[]) => {
 export const calculateExpandedRange = (
   sliderMin: number,
   sliderMax: number,
-  boundsMin: number = CHANNEL_MIN,
-  boundsMax: number = CHANNEL_MAX
+  boundsMin: number = CHANNEL_MIN_FALLBACK,
+  boundsMax: number = CHANNEL_MAX_FALLBACK
 ): [number, number] => {
   const range = sliderMax - sliderMin;
   const padding = Math.max(1, Math.round(range * EXPANDED_RANGE_PADDING_RATIO));

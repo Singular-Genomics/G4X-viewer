@@ -1,4 +1,4 @@
-import { CHANNEL_MAX, CHANNEL_MIN, calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
+import { calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
 import { Box, Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
@@ -16,6 +16,7 @@ import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const ChannelController = ({
   color,
+  domain,
   name,
   isLoading,
   pixelValue,
@@ -35,9 +36,10 @@ export const ChannelController = ({
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
   const [currentMinValue, currentMaxValue] = slider;
+  const [domainMin, domainMax] = domain;
   const [sliderRangeMode, setSliderRangeMode] = useState<SliderRangeMode>('expanded');
-  const [rangeMin, setRangeMin] = useState(CHANNEL_MIN.toString());
-  const [rangeMax, setRangeMax] = useState(CHANNEL_MAX.toString());
+  const [rangeMin, setRangeMin] = useState(domainMin.toString());
+  const [rangeMax, setRangeMax] = useState(domainMax.toString());
   const [minInputValue, setMinInputValue] = useState<string>(currentMinValue.toString());
   const [maxInputValue, setMaxInputValue] = useState<string>(currentMaxValue.toString());
 
@@ -101,6 +103,7 @@ export const ChannelController = ({
         <Box>
           <ChannelOptions
             slider={slider}
+            domain={domain}
             handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
             rangeMin={rangeMin}
@@ -130,6 +133,7 @@ export const ChannelController = ({
         <ChannelRangeSlider
           color={color}
           slider={slider}
+          domain={domain}
           handleSliderChange={handleSliderChange}
           isLoading={isLoading}
           visibleMin={visibleMin}

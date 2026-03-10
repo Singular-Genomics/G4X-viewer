@@ -6,6 +6,7 @@ import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useMetadata } from '../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../legacy/utils';
 import { ChannelSettingsImportExportButtons } from './ChannelSettingsImportExportButtons';
+import { CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK } from './ChannelController/ChannelController.helpers';
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -144,17 +145,19 @@ export const ChannelControllers = () => {
           >
             <ChannelController
               name={name}
+              domain={(domains[index] ?? [CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK]) as [number, number]}
               onSelectionChange={onSelectionChange}
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
-              color={colors[index] as [number, number, number]}
+              color={colors[index]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
-              slider={contrastLimits[index] as [number, number]}
+              slider={contrastLimits[index]}
               defaultSlider={
-                (channelsSettings[name]?.initialContrastLimits ?? domains[index] ?? [0, 65535]) as [number, number]
+                (channelsSettings[name]?.initialContrastLimits ??
+                  domains[index] ?? [CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK]) as [number, number]
               }
               handleSliderChange={handleSliderChange}
               handleResetSlider={handleResetSlider}

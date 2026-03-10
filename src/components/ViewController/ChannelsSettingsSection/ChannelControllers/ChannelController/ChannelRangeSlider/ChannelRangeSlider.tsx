@@ -1,5 +1,5 @@
 import { Box, Input, Theme, useTheme } from '@mui/material';
-import { CHANNEL_MAX, CHANNEL_MIN, CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
+import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
@@ -14,6 +14,7 @@ const DEBOUNCE_TIME_MS = 300;
 export const ChannelRangeSlider = ({
   color,
   slider,
+  domain,
   handleSliderChange,
   isLoading,
   visibleMin,
@@ -28,6 +29,7 @@ export const ChannelRangeSlider = ({
   const { t } = useTranslation();
 
   const [currentMinValue, currentMaxValue] = slider;
+  const [domainMin, domainMax] = domain;
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
@@ -42,15 +44,11 @@ export const ChannelRangeSlider = ({
       debounce((currentValue: string) => {
         if (currentValue === '') return;
         const newValue =
-          +currentValue >= currentMaxValue
-            ? currentMaxValue
-            : +currentValue < CHANNEL_MIN
-              ? CHANNEL_MIN
-              : +currentValue;
+          +currentValue >= currentMaxValue ? currentMaxValue : +currentValue < domainMin ? domainMin : +currentValue;
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMaxValue, handleSliderChange, setMinInputValue]
+    [currentMaxValue, domainMin, handleSliderChange, setMinInputValue]
   );
 
   const handleMinInputChange = useCallback(
@@ -66,15 +64,11 @@ export const ChannelRangeSlider = ({
       debounce((currentValue: string) => {
         if (currentValue === '') return;
         const newValue =
-          +currentValue <= currentMinValue
-            ? currentMinValue
-            : +currentValue > CHANNEL_MAX
-              ? CHANNEL_MAX
-              : +currentValue;
+          +currentValue <= currentMinValue ? currentMinValue : +currentValue > domainMax ? domainMax : +currentValue;
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, handleSliderChange, setMaxInputValue]
+    [currentMinValue, domainMax, handleSliderChange, setMaxInputValue]
   );
 
   const handleMaxInputChange = useCallback(
@@ -94,7 +88,7 @@ export const ChannelRangeSlider = ({
         value={minInputValue}
         onChange={handleMinInputChange}
         inputProps={{
-          max: CHANNEL_MAX,
+          max: domainMax,
           step: CHANNEL_STEP
         }}
       />
@@ -116,7 +110,7 @@ export const ChannelRangeSlider = ({
         value={maxInputValue}
         onChange={handleMaxInputChange}
         inputProps={{
-          max: CHANNEL_MAX,
+          max: domainMax,
           step: CHANNEL_STEP
         }}
       />

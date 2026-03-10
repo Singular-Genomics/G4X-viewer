@@ -1,5 +1,6 @@
 export type ChannelRangeSliderProps = {
   slider: [number, number];
+  domain: [number, number];
   color: [number, number, number];
   handleSliderChange: (newValue: [number, number]) => void;
   isLoading?: boolean;
