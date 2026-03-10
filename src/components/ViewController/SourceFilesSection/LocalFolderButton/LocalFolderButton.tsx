@@ -7,39 +7,26 @@ export const LocalFolderButton = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
-  const { inputRef, openDirectory, handleFiles } = useDirectoryPicker();
+  const { openDirectory } = useDirectoryPicker();
+
+  if (typeof window === 'undefined' || !('showDirectoryPicker' in window)) return null;
 
   return (
-    <>
-      <input
-        ref={inputRef}
-        type="file"
-        // @ts-expect-error webkitdirectory is non-standard but widely supported
-        webkitdirectory=""
-        directory=""
-        multiple
-        style={{ display: 'none' }}
-        onChange={(e) => {
-          if (e.target.files) handleFiles(e.target.files);
-          e.target.value = '';
-        }}
-      />
-      <Tooltip
-        title={t('tooltips.sourceFiles.folderUploadButton')}
-        arrow
+    <Tooltip
+      title={t('tooltips.sourceFiles.folderUploadButton')}
+      arrow
+    >
+      <Button
+        fullWidth
+        variant="outlined"
+        sx={sx.folderButton}
+        size="small"
+        onClick={openDirectory}
+        startIcon={<FolderOpenIcon />}
       >
-        <Button
-          fullWidth
-          variant="outlined"
-          sx={sx.folderButton}
-          size="small"
-          onClick={openDirectory}
-          startIcon={<FolderOpenIcon />}
-        >
-          {t('sourceFiles.folderUploadButton')}
-        </Button>
-      </Tooltip>
-    </>
+        {t('sourceFiles.folderUploadButton')}
+      </Button>
+    </Tooltip>
   );
 };
 

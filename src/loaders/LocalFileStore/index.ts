@@ -1,2 +1,2 @@
-export { LocalFileStore, LocalFileMapStore } from './LocalFileStore';
-export { LocalFileMapZarritaStore } from './LocalFileMapZarritaStore';
+export { LocalFileStore } from './LocalFileStore';
+export { LocalFileHandleZarritaStore } from './LocalFileHandleZarritaStore';
