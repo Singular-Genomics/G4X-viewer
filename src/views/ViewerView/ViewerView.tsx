@@ -9,12 +9,13 @@ import { ImageInfo } from '../../components/ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { DetailsPopup } from '../../components/DetailsPopup';
+import { SummaryButton } from '../../components/SummaryButton';
 import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
-import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
+import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -60,7 +61,8 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          <DetailsPopup />
+          {isDesktop && <DetailsPopup />}
+          {isDesktop && <SummaryButton />}
         </>
       </Box>
       {isDesktop && <ViewController imageLoaded={!!source} />}

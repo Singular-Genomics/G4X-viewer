@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
+import { TranscriptTilesLoadingBar } from '../TranscriptTilesLoadingBar';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -63,17 +64,19 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   );
   const visibleChannels = isLayerVisible ? channelsVisible : [];
 
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
-    useShallow((store) => [
-      store.colormap,
-      store.isLensOn,
-      store.isOverviewOn,
-      store.lensSelection,
-      store.onViewportLoad,
-      store.viewState,
-      store.isViewerLoading
-    ])
-  );
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading, physicalSize] =
+    useViewerStore(
+      useShallow((store) => [
+        store.colormap,
+        store.isLensOn,
+        store.isOverviewOn,
+        store.lensSelection,
+        store.onViewportLoad,
+        store.viewState,
+        store.isViewerLoading,
+        store.physicalSize
+      ])
+    );
 
   const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
 
@@ -142,7 +145,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       tempCanvas.height = deck.canvas.height;
       ctx.drawImage(deck.canvas, 0, 0);
 
-      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, physicalSize);
 
       const link = document.createElement('a');
       link.href = tempCanvas.toDataURL('image/png');
@@ -242,6 +245,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               isViewerActive={isViewerActive}
             />
           )}
+          <TranscriptTilesLoadingBar />
           <Tooltip />
         </>
       )}

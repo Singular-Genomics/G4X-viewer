@@ -71,77 +71,81 @@ export const GlobalSelectionSliders = () => {
     { leading: true }
   );
 
+  if (!globalControlLabels.length) {
+    return null;
+  }
+
   return (
     <Box>
-      {globalControlLabels.length ? (
-        globalControlLabels.map((label: any) => {
-          const size = shape[labels.indexOf(label)];
-          const maxValue = size - 1;
-          const hasNavigationData = maxValue > 0;
+      <Typography sx={sx.subsectionTitle}>{t('viewSettings.globalSelection')}</Typography>
+      {globalControlLabels.map((label: any) => {
+        const size = shape[labels.indexOf(label)];
+        const maxValue = size - 1;
+        const hasNavigationData = maxValue > 0;
 
-          const isControlWithTooltip = label === 't' || label === 'z';
-          const tooltipKey = label === 'T' ? 'tControl' : 'zControl';
-          const tooltipText = t(`tooltips.viewSettings.${tooltipKey}`);
+        const isControlWithTooltip = label === 't' || label === 'z';
+        const tooltipKey = label === 't' ? 'tControl' : 'zControl';
+        const tooltipText = t(`tooltips.viewSettings.${tooltipKey}`);
 
-          return (
-            <Grid
-              key={label}
-              container
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Grid size={1}>
-                <Typography sx={sx.selectionLabel}>{label}</Typography>
-              </Grid>
-              <Grid
-                size={'grow'}
-                sx={sx.sliderContainer}
-              >
-                <Slider
-                  value={globalSelection[label]}
-                  onChange={(event, newValue) => {
-                    useViewerStore.setState({
-                      globalSelection: {
-                        ...globalSelection,
-                        [label]: newValue
-                      }
-                    });
-                    if (event.type === 'keydown') {
-                      changeSelection(event, newValue, label);
-                    }
-                  }}
-                  onChangeCommitted={(event, newValue) => changeSelection(event, newValue, label)}
-                  size="small"
-                  valueLabelDisplay="auto"
-                  step={1}
-                  min={0}
-                  max={maxValue}
-                  sx={sx.slider}
-                  disabled={isAnyChannelLoading || !hasNavigationData}
-                />
-              </Grid>
-              {isControlWithTooltip && (
-                <Grid
-                  size="auto"
-                  sx={sx.tooltipContainer}
-                >
-                  <InfoTooltip title={tooltipText} />
-                </Grid>
-              )}
+        return (
+          <Grid
+            key={label}
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Grid size={1}>
+              <Typography sx={sx.selectionLabel}>{label}</Typography>
             </Grid>
-          );
-        })
-      ) : (
-        <Box>
-          <Typography textAlign="center">{t('viewSettings.globalSelectionNoData')}</Typography>
-        </Box>
-      )}
+            <Grid
+              size={'grow'}
+              sx={sx.sliderContainer}
+            >
+              <Slider
+                value={globalSelection[label]}
+                onChange={(event, newValue) => {
+                  useViewerStore.setState({
+                    globalSelection: {
+                      ...globalSelection,
+                      [label]: newValue
+                    }
+                  });
+                  if (event.type === 'keydown') {
+                    changeSelection(event, newValue, label);
+                  }
+                }}
+                onChangeCommitted={(event, newValue) => changeSelection(event, newValue, label)}
+                size="small"
+                valueLabelDisplay="auto"
+                step={1}
+                min={0}
+                max={maxValue}
+                sx={sx.slider}
+                disabled={isAnyChannelLoading || !hasNavigationData}
+              />
+            </Grid>
+            {isControlWithTooltip && (
+              <Grid
+                size="auto"
+                sx={sx.tooltipContainer}
+              >
+                <InfoTooltip title={tooltipText} />
+              </Grid>
+            )}
+          </Grid>
+        );
+      })}
     </Box>
   );
 };
 
 const styles = (theme: Theme) => ({
+  subsectionTitle: {
+    fontWeight: 700,
+    paddingLeft: '8px',
+    marginBottom: '8px'
+  },
   selectionLabel: {
     textTransform: 'uppercase',
     marginLeft: '8px'

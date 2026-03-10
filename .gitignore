@@ -28,3 +28,6 @@ dist-ssr
 
 # docs
 site/
+
+# Claude
+CLAUDE.md

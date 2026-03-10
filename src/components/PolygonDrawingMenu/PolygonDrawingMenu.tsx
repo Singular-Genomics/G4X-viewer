@@ -12,7 +12,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonImportExport } from '../PolygonImportExport';
 import { useEffect, useState, useCallback } from 'react';
@@ -57,7 +57,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     ])
   );
 
-  const transcriptFiles = useBinaryFilesStore((store) => store.files);
+  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -66,9 +66,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
   const sx = styles(theme);
 
   // Check if any data is loaded
-  const hasTranscriptData = transcriptFiles.length > 0;
   const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
-  const hasAnyData = hasTranscriptData || hasCellMaskData;
+  const hasAnyData = hasTranscriptsData || hasCellMaskData;
 
   const handleClearPolygons = useCallback(() => {
     if (polygonFeatures.length > 1) {

@@ -2,7 +2,7 @@ import { usePointFiltersTableColumns } from './usePointFiltersTableColumns';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
@@ -23,7 +23,7 @@ export const PointFiltersTable = () => {
     setActiveFilters(useTranscriptLayerStore.getState().geneNameFilters);
   }, []);
 
-  const colorMapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+  const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
 
   const rowData: PointFiltersTableRowEntry[] = colorMapConfig
     ? colorMapConfig.map((item) => ({

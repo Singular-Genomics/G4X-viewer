@@ -1,6 +1,6 @@
 import { Box, Theme, Tooltip, tooltipClasses, Typography } from '@mui/material';
 import { GxSlider } from '../../../../../shared/components/GxSlider';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const { t } = useTranslation();
   const [sliderValuer, setSliderValue] = useState(0);
-  const { layers } = useBinaryFilesStore((store) => store.layerConfig);
+  const { layers } = useZarrDataStore((store) => store.layerConfig);
   const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
 
   useEffect(() => {

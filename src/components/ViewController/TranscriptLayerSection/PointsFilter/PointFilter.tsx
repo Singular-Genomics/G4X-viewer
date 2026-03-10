@@ -2,7 +2,7 @@ import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { PointFilterOptions } from './PointFilterOptions';
 import { PointFiltersTable } from './PointFiltersTable';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useBinaryFilesStore } from '../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranslation } from 'react-i18next';
 import { GxFilterTableColormap } from '../../../../shared/components/GxFilterTable/GxFilterTableColormap/GxFilterTableColormap';
 import { useSnackbar } from 'notistack';
@@ -12,7 +12,7 @@ export const PointFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { colorMapConfig, setColormapConfig } = useBinaryFilesStore();
+  const { colorMapConfig, setColormapConfig } = useZarrDataStore();
 
   const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
 

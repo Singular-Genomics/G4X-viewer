@@ -3,16 +3,12 @@ import { CompositeLayer, PickingInfo } from '@deck.gl/core';
 import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 
-import * as protobuf from 'protobufjs';
-import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
-
-// ======================== DATA TILE LAYER ==================
+import { ZarrTranscriptLoader } from './zarr-transcript-loader';
 
 class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
   renderLayers() {
-    // @ BOUNDING BOX LAYER @
     const boundingBoxLayer = new PolygonLayer({
       id: `sub-polygon-layer-${this.props.id}`,
       data: this.props.layerData,
@@ -25,9 +21,9 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showBoundries
     });
 
-    // @ INFO TEXT LAYER
     const { index, textPosition, points, outlierPoints, tileData } = this.props.layerData[0];
 
+    // @ INFO TEXT LAYER
     const textLayer = new TextLayer({
       id: `sub-text-layer-${this.props.id}`,
       data: [
@@ -81,37 +77,40 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
 SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
-  protoRoot: protobuf.Root;
   parsedColorMap: Record<string, number[]>;
+  zarrLoader: ZarrTranscriptLoader | null;
+  tileLoadCounter: number;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
+    this.zarrLoader = props.zarrUrl ? new ZarrTranscriptLoader(props.zarrUrl) : null;
+    this.tileLoadCounter = 0;
   }
 
-  async loadMetadata(zoom: number, tileY: number, tileX: number) {
-    const suffix = `/${zoom}/${tileX}/${tileY}.bin`;
-    const file = this.props.files.find((f: File) => f.name.endsWith(suffix));
+  updateLoadingState(delta: number) {
+    const nextCounter = Math.max(this.tileLoadCounter + delta, 0);
+    const hadPendingLoads = this.tileLoadCounter > 0;
+    const hasPendingLoads = nextCounter > 0;
+    this.tileLoadCounter = nextCounter;
+    if (hadPendingLoads !== hasPendingLoads) {
+      this.props.onLoadingStateChange?.(hasPendingLoads);
+    }
+  }
 
-    if (!file) return Promise.resolve([]);
+  async loadMetadata(zoom: number, tileX: number, tileY: number) {
+    // If Zarr loader is available, use it
+    if (this.zarrLoader) {
+      const zarrData = await this.zarrLoader.loadTileData(zoom, tileX, tileY);
+      if (zarrData) {
+        return zarrData;
+      }
+      return { pointsData: [], numberOfPoints: 0 };
+    }
 
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const arrayBuffer = reader.result as ArrayBuffer;
-          const data = this.protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer));
-          resolve(data);
-        } catch (error) {
-          reject([]);
-        }
-      };
-      reader.onerror = () => {
-        reject([]);
-      };
-      reader.readAsArrayBuffer(file);
-    });
+    // Legacy path - kept for ROI detection.
+    // TODO: remove when ROI transcript detection is migrated to Zarr
+    return { pointsData: [], numberOfPoints: 0 };
   }
 
   getPickingInfo({ info }: { info: PickingInfo }) {
@@ -119,48 +118,52 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   }
 
   renderLayers() {
-    // ========================= TILED LAYER =====================
     const getTileData = async ({ index, bbox }: getTileDataProps) => {
       if (index || bbox) {
-        const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;
+        this.updateLoadingState(1);
+        try {
+          const metadata = (await this.loadMetadata(index.z, index.x, index.y)) as any;
 
-        let pointsData = [];
-        let outlierPointsData = [];
+          let pointsData = [];
+          let outlierPointsData = [];
 
-        if (this.props.geneFilters === 'all') {
-          pointsData = metadata.pointsData;
-        } else {
-          [pointsData, outlierPointsData] = partition(metadata.pointsData, (data) =>
-            this.props.geneFilters.includes(data.geneName)
-          );
-        }
-
-        return [
-          {
-            index,
-            textPosition: { x: bbox.top, y: bbox.left },
-            boundingBox: [
-              bbox.left,
-              bbox.top,
-              0,
-              bbox.right,
-              bbox.top,
-              0,
-              bbox.right,
-              bbox.bottom,
-              0,
-              bbox.left,
-              bbox.bottom,
-              0
-            ],
-            points: pointsData,
-            outlierPoints: outlierPointsData,
-            tileData: {
-              width: bbox.right - bbox.left,
-              height: bbox.bottom - bbox.top
-            }
+          if (this.props.geneFilters === 'all') {
+            pointsData = metadata.pointsData;
+          } else {
+            [pointsData, outlierPointsData] = partition(metadata.pointsData, (data) =>
+              this.props.geneFilters.includes(data.geneName)
+            );
           }
-        ];
+
+          return [
+            {
+              index,
+              textPosition: { x: bbox.top, y: bbox.left },
+              boundingBox: [
+                bbox.left,
+                bbox.top,
+                0,
+                bbox.right,
+                bbox.top,
+                0,
+                bbox.right,
+                bbox.bottom,
+                0,
+                bbox.left,
+                bbox.bottom,
+                0
+              ],
+              points: pointsData,
+              outlierPoints: outlierPointsData,
+              tileData: {
+                width: bbox.right - bbox.left,
+                height: bbox.bottom - bbox.top
+              }
+            }
+          ];
+        } finally {
+          this.updateLoadingState(-1);
+        }
       }
       return [];
     };
@@ -173,10 +176,10 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     }
 
     const tiledLayer = new TileLayer({
-      id: 'tiled_layer',
+      id: `tiled_layer_${tile_size}_${layer_width}_${layer_height}_${layers}`,
       tileSize: tile_size,
       maxZoom: layers,
-      minZoom,
+      minZoom: minZoom,
       zoomOffset: LAYER_ZOOM_OFFSET,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
@@ -185,11 +188,13 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       updateTriggers: {
         getTileData: [
           this.props.files,
+          this.props.zarrUrl,
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,
           this.props.pointSize,
-          this.props.colormap
+          this.props.colormap,
+          this.props.config
         ]
       },
       renderSubLayers: ({ id, data }) =>

@@ -77,6 +77,7 @@ export const DetailsPopup = () => {
           vertical: 'top',
           horizontal: 'right'
         }}
+        transitionDuration={250}
         sx={sx.popover}
       >
         <Box sx={sx.contentContainer}>
