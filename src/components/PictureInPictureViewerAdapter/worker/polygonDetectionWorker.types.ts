@@ -4,7 +4,7 @@ import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 
 export type PolygonPointData = {
   position: number[];
-  color: number[];
+  color?: number[];
   geneName: string;
   cellId: string;
 };
@@ -14,6 +14,17 @@ export type PolygonTileData = {
   numberOfPoints: number;
 };
 
+export type TileCoordinates = {
+  x: number;
+  y: number;
+};
+
+export type PointsDetectionBatchResult = {
+  allPointArrays: PolygonPointData[][];
+  totalPointsFound: number;
+  limitExceeded: boolean;
+};
+
 export type PolygonWorkerMessage =
   | {
       type: 'detectPointsInPolygon';
@@ -21,6 +32,7 @@ export type PolygonWorkerMessage =
         polygon: PolygonFeature;
         files: File[];
         layerConfig: LayerConfig;
+        zarrUrl?: string;
       };
     }
   | {

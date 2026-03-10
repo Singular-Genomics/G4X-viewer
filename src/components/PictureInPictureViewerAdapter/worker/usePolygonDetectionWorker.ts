@@ -8,7 +8,8 @@ export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (
     polygon: PolygonFeature,
     files: File[],
-    layerConfig: LayerConfig
+    layerConfig: LayerConfig,
+    zarrUrl?: string
   ) => Promise<{
     pointsInPolygon: PolygonPointData[];
     pointCount: number;
@@ -39,7 +40,7 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   }, []);
 
   const detectPointsInPolygon = useCallback(
-    (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
+    (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig, zarrUrl?: string) => {
       return new Promise<{
         pointsInPolygon: PolygonPointData[];
         pointCount: number;
@@ -78,7 +79,8 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
           payload: {
             polygon,
             files,
-            layerConfig
+            layerConfig,
+            zarrUrl
           }
         };
 
