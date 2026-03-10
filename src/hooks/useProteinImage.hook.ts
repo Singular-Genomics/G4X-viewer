@@ -193,11 +193,14 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       const channelsIds = newDomains.map(() => String(Math.random()));
       const channelsSettings: ChannelsSettings = {};
 
-      channelOptions.forEach((channelName: any) => {
+      channelOptions.forEach((channelName: any, i: number) => {
+        const selectionIndex = newSelections.findIndex((sel: any) => (sel.c ?? 0) === i);
         channelsSettings[`${channelName}`] = {
           color: undefined,
           maxValue: undefined,
-          minValue: undefined
+          minValue: undefined,
+          initialContrastLimits:
+            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined
         };
       });
 

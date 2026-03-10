@@ -15,6 +15,7 @@ export const ChannelControllers = () => {
     channelsVisible,
     colors,
     contrastLimits,
+    domains,
     channelsSettings,
     toggleIsOnSetter,
     removeChannel,
@@ -27,6 +28,7 @@ export const ChannelControllers = () => {
       store.channelsVisible,
       store.colors,
       store.contrastLimits,
+      store.domains,
       store.channelsSettings,
       store.toggleIsOn,
       store.removeChannel,
@@ -74,11 +76,13 @@ export const ChannelControllers = () => {
             const { c } = selection;
 
             const newProps: Partial<PropertiesUpdateType> = {};
-            if (
-              channelName in channelsSettings &&
-              channelsSettings[channelName].minValue &&
-              channelsSettings[channelName].maxValue
-            ) {
+            if (!(channelName in channelsSettings)) {
+              channelsSettings[channelName] = {};
+            }
+            if (!channelsSettings[channelName].initialContrastLimits) {
+              channelsSettings[channelName].initialContrastLimits = newContrastLimit as [number, number];
+            }
+            if (channelsSettings[channelName].minValue && channelsSettings[channelName].maxValue) {
               const settings = channelsSettings[channelName];
               newProps.contrastLimits = [settings.minValue, settings.maxValue] as [number, number];
             } else {
@@ -124,6 +128,15 @@ export const ChannelControllers = () => {
           setPropertiesForChannel(index, { contrastLimits: newValue });
         };
 
+        const handleResetSlider = () => {
+          const initialLimits = channelsSettings[name]?.initialContrastLimits ?? (domains[index] as [number, number]);
+          if (name in channelsSettings) {
+            channelsSettings[name].minValue = undefined;
+            channelsSettings[name].maxValue = undefined;
+          }
+          setPropertiesForChannel(index, { contrastLimits: initialLimits });
+        };
+
         return (
           <Box
             key={id}
@@ -140,7 +153,11 @@ export const ChannelControllers = () => {
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
               slider={contrastLimits[index] as [number, number]}
+              defaultSlider={
+                (channelsSettings[name]?.initialContrastLimits ?? domains[index] ?? [0, 65535]) as [number, number]
+              }
               handleSliderChange={handleSliderChange}
+              handleResetSlider={handleResetSlider}
             />
           </Box>
         );

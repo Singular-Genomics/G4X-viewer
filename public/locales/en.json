@@ -31,7 +31,8 @@
     "sliderRangeMinLabel":"Slider Min",
     "sliderRangeMaxLabel":"Slider Max",
     "sliderRangeModeExpanded": "Expanded Range",
-    "sliderRangeModeContract": "Contract Range"
+    "sliderRangeModeContract": "Contract Range",
+    "resetSlider": "Reset to default range"
   },
   "general": {
     "apply": "Apply",

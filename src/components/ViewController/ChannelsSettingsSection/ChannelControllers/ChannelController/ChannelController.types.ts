@@ -7,9 +7,11 @@ export type ChannelControllerProps = {
   pixelValue: string;
   channelVisible: boolean;
   slider: [number, number];
+  defaultSlider: [number, number];
   toggleIsOn: () => void;
   onSelectionChange: (newValue: string) => void;
   handleColorSelect: (newColor: [number, number, number]) => void;
   handleSliderChange: (newValue: [number, number]) => void;
+  handleResetSlider: () => void;
   handleRemoveChannel: () => void;
 };

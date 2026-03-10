@@ -5,6 +5,7 @@ import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
@@ -20,11 +21,13 @@ export const ChannelController = ({
   pixelValue,
   channelVisible,
   slider,
+  defaultSlider,
   toggleIsOn,
   onSelectionChange,
   handleColorSelect,
   handleRemoveChannel,
-  handleSliderChange
+  handleSliderChange,
+  handleResetSlider
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -66,7 +69,7 @@ export const ChannelController = ({
       container
       direction="column"
       justifyContent="center"
-      gap={1}
+      gap={0.5}
     >
       <Box sx={sx.headerWrapper}>
         <GxCheckbox
@@ -75,6 +78,10 @@ export const ChannelController = ({
           checked={channelVisible}
           disableTouchRipple
         />
+        <Box sx={sx.valueWrapper}>
+          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+        </Box>
+        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
         <GxSelect
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
@@ -119,30 +126,7 @@ export const ChannelController = ({
           </Tooltip>
         </Box>
       </Box>
-      <Box sx={sx.pixelIntensityContainer}>
-        <Box sx={sx.valueWrapper}>
-          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
-        </Box>
-        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
-      </Box>
       <Box sx={sx.sliderRow}>
-        <Tooltip
-          title={t(
-            sliderRangeMode === 'expanded'
-              ? 'channelSettings.sliderRangeModeExpanded'
-              : 'channelSettings.sliderRangeModeContract'
-          )}
-          arrow
-        >
-          <IconButton
-            size="small"
-            onClick={handleModeToggle}
-            disabled={isLoading}
-            sx={sx.modeToggleButton}
-          >
-            {sliderRangeMode === 'expanded' ? <UnfoldMoreIcon fontSize="small" /> : <UnfoldLessIcon fontSize="small" />}
-          </IconButton>
-        </Tooltip>
         <ChannelRangeSlider
           color={color}
           slider={slider}
@@ -155,6 +139,44 @@ export const ChannelController = ({
           setMinInputValue={setMinInputValue}
           setMaxInputValue={setMaxInputValue}
         />
+        <Box sx={sx.sliderRowIcons}>
+          <Tooltip
+            title={t(
+              sliderRangeMode === 'expanded'
+                ? 'channelSettings.sliderRangeModeExpanded'
+                : 'channelSettings.sliderRangeModeContract'
+            )}
+            arrow
+          >
+            <IconButton
+              size="small"
+              onClick={handleModeToggle}
+              disabled={isLoading}
+              sx={sx.modeToggleButton}
+            >
+              {sliderRangeMode === 'expanded' ? (
+                <UnfoldMoreIcon fontSize="small" />
+              ) : (
+                <UnfoldLessIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={t('channelSettings.resetSlider')}
+            arrow
+          >
+            <span>
+              <IconButton
+                size="small"
+                onClick={handleResetSlider}
+                disabled={isLoading || (slider[0] === defaultSlider[0] && slider[1] === defaultSlider[1])}
+                sx={sx.sliderRowButton}
+              >
+                <RestartAltIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
+        </Box>
       </Box>
     </Grid>
   );
@@ -169,29 +191,40 @@ const styles = (theme: Theme) => ({
   },
   headerWrapper: {
     display: 'flex',
-    alignItems: 'center'
-  },
-  pixelIntensityContainer: {
-    display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '4px'
   },
   valueWrapper: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '2px 0 0 0',
-    padding: '4px 0',
+    padding: '2px 6px',
     borderRadius: '8px',
     background: theme.palette.gx.primary.white,
-    width: '50%'
+    flexGrow: 0.5,
+    minWidth: '110px',
+    maxWidth: '110px'
   },
   channelSelect: {
-    flexGrow: 1
+    flexGrow: 1,
+    minWidth: 0
   },
   sliderRow: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: '4px'
+  },
+  sliderRowIcons: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    flexShrink: 0
+  },
+  sliderRowButton: {
+    '&:hover': {
+      color: theme.palette.gx.accent.greenBlue,
+      backgroundColor: 'unset'
+    }
   },
   modeToggleButton: {
     transform: 'rotate(90deg)',
