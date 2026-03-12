@@ -16,6 +16,8 @@ export type ChannelsStoreValues = {
   loader: any; // <- This is quite complicated
   domains: number[][];
   channelSelectionMode: ChannelSelectionMode;
+  soloChannelIndex: number | null;
+  presoloChannelsVisible: boolean[];
 };
 
 export type ChannelsStoreMethods = {
@@ -26,6 +28,8 @@ export type ChannelsStoreMethods = {
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;
   getLoader: () => any;
   setChannelSelectionMode: (mode: ChannelSelectionMode) => void;
+  setSoloChannel: (index: number) => void;
+  togglePresoloIsOn: (index: number) => void;
 };
 
 export type PropertiesUpdateType = {

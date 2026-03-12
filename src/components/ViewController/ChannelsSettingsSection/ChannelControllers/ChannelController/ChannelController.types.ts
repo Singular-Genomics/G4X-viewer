@@ -15,4 +15,9 @@ export type ChannelControllerProps = {
   handleSliderChange: (newValue: [number, number]) => void;
   handleResetSlider: () => void;
   handleRemoveChannel: () => void;
+  isSoloed: boolean;
+  isSoloMode: boolean;
+  presoloVisible: boolean;
+  onSoloToggle: () => void;
+  toggleSelectInSoloMode: () => void;
 };

@@ -1,6 +1,6 @@
 import { calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
-import { Box, Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, MenuItem, Radio, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
@@ -28,7 +28,12 @@ export const ChannelController = ({
   handleColorSelect,
   handleRemoveChannel,
   handleSliderChange,
-  handleResetSlider
+  handleResetSlider,
+  isSoloed,
+  isSoloMode,
+  presoloVisible,
+  onSoloToggle,
+  toggleSelectInSoloMode
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -74,12 +79,27 @@ export const ChannelController = ({
       gap={0.5}
     >
       <Box sx={sx.headerWrapper}>
-        <GxCheckbox
-          onChange={toggleIsOn}
-          disabled={isLoading}
-          checked={channelVisible}
-          disableTouchRipple
-        />
+        <Tooltip
+          title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
+          enterDelay={300}
+          arrow
+        >
+          <Radio
+            checked={isSoloed}
+            onClick={onSoloToggle}
+            size="small"
+            disableTouchRipple
+            sx={sx.soloRadio}
+          />
+        </Tooltip>
+        <Box sx={isSoloMode ? sx.selectDimmed : undefined}>
+          <GxCheckbox
+            onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
+            disabled={isLoading}
+            checked={isSoloMode ? presoloVisible : channelVisible}
+            disableTouchRipple
+          />
+        </Box>
         <Box sx={sx.valueWrapper}>
           <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
         </Box>
@@ -187,6 +207,19 @@ export const ChannelController = ({
 };
 
 const styles = (theme: Theme) => ({
+  soloRadio: {
+    padding: '8px',
+    paddingRight: '2px',
+    '&, &.Mui-checked': {
+      color: theme.palette.gx.accent.greenBlue
+    },
+    '&:hover': {
+      backgroundColor: 'unset'
+    }
+  },
+  selectDimmed: {
+    opacity: 0.4
+  },
   removeChannelButton: {
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,

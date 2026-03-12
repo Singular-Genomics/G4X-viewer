@@ -21,7 +21,9 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   image: 0,
   loader: [{ labels: [], shape: [] }],
   channelsSettings: {},
-  channelSelectionMode: 'multiselect'
+  channelSelectionMode: 'multiselect',
+  soloChannelIndex: null,
+  presoloChannelsVisible: []
 };
 
 export const useChannelsStore = create<ChannelsStore>((set, get) => ({
@@ -63,7 +65,7 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
           newState[key] = store[key as keyof ChannelsStoreValues].filter((_: any, index: number) => index !== channel);
         }
       });
-      return { ...store, ...newState };
+      return { ...store, ...newState, soloChannelIndex: null, presoloChannelsVisible: [] };
     }),
   addChannel: (newChannelProperties) => {
     set((store) => {
@@ -99,5 +101,35 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       }
 
       return newState;
+    }),
+  setSoloChannel: (index) =>
+    set((store) => {
+      if (store.soloChannelIndex === index) {
+        return {
+          ...store,
+          channelsVisible: [...store.presoloChannelsVisible],
+          soloChannelIndex: null,
+          presoloChannelsVisible: []
+        };
+      }
+
+      const channelsVisible = store.channelsVisible.map((_, i) => i === index);
+
+      if (store.soloChannelIndex === null) {
+        return {
+          ...store,
+          presoloChannelsVisible: [...store.channelsVisible],
+          soloChannelIndex: index,
+          channelsVisible
+        };
+      }
+
+      return { ...store, soloChannelIndex: index, channelsVisible };
+    }),
+  togglePresoloIsOn: (index) =>
+    set((store) => {
+      const presoloChannelsVisible = [...store.presoloChannelsVisible];
+      presoloChannelsVisible[index] = !presoloChannelsVisible[index];
+      return { ...store, presoloChannelsVisible };
     })
 }));

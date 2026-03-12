@@ -21,7 +21,11 @@ export const ChannelControllers = () => {
     toggleIsOnSetter,
     removeChannel,
     setPropertiesForChannel,
-    getLoader
+    getLoader,
+    soloChannelIndex,
+    presoloChannelsVisible,
+    setSoloChannel,
+    togglePresoloIsOn
   ] = useChannelsStore(
     useShallow((store) => [
       store.ids,
@@ -34,7 +38,11 @@ export const ChannelControllers = () => {
       store.toggleIsOn,
       store.removeChannel,
       store.setPropertiesForChannel,
-      store.getLoader
+      store.getLoader,
+      store.soloChannelIndex,
+      store.presoloChannelsVisible,
+      store.setSoloChannel,
+      store.togglePresoloIsOn
     ])
   );
 
@@ -161,6 +169,11 @@ export const ChannelControllers = () => {
               }
               handleSliderChange={handleSliderChange}
               handleResetSlider={handleResetSlider}
+              isSoloed={soloChannelIndex === index}
+              isSoloMode={soloChannelIndex !== null}
+              presoloVisible={presoloChannelsVisible[index] ?? channelsVisible[index]}
+              onSoloToggle={() => setSoloChannel(index)}
+              toggleSelectInSoloMode={() => togglePresoloIsOn(index)}
             />
           </Box>
         );
