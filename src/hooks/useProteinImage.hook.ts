@@ -168,12 +168,27 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         }
         useViewerStore.setState({ useColorMap: false });
       } else {
-        const stats = await getMultiSelectionStats({
-          loader,
-          selections: newSelections
+        const omeroWindowsAvailable = newSelections.every((sel: any, i: number) => {
+          const channelIndex = sel.c ?? i;
+          return !!Channels[channelIndex]?.Window;
         });
-        newDomains = stats.domains;
-        newContrastLimits = stats.contrastLimits;
+
+        if (omeroWindowsAvailable) {
+          newSelections.forEach((sel: any, i: number) => {
+            const channelIndex = sel.c ?? i;
+            const w = Channels[channelIndex].Window;
+            newDomains.push([w.min, w.max]);
+            newContrastLimits.push([w.start, w.end]);
+          });
+        } else {
+          const stats = await getMultiSelectionStats({
+            loader,
+            selections: newSelections
+          });
+          newDomains = stats.domains;
+          newContrastLimits = stats.contrastLimits;
+        }
+
         // If there is only one channel, use white.
         newColors =
           newDomains.length === 1
