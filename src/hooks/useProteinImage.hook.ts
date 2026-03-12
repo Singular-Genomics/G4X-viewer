@@ -139,9 +139,9 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           ? activeIndices.map((c: number) => ({ ...baseSelection, c }))
           : buildDefaultSelection(loader[0]);
       // Default RGB.
-      let newContrastLimits = [];
-      let newDomains = [];
-      let newColors = [];
+      let newContrastLimits: [number, number][] = [];
+      let newDomains: [number, number][] = [];
+      let newColors: [number, number, number][] = [];
       const isRgb = guessRgb(metadata);
       if (isRgb) {
         if (isInterleaved(loader[0].shape)) {
@@ -168,26 +168,31 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         }
         useViewerStore.setState({ useColorMap: false });
       } else {
-        const omeroWindowsAvailable = newSelections.every((sel: any, i: number) => {
-          const channelIndex = sel.c ?? i;
-          return !!Channels[channelIndex]?.Window;
+        const selectionsNeedingStats = newSelections.filter((sel: any, i: number) => {
+          const w = Channels[sel.c ?? i]?.Window;
+          return !(typeof w?.min === 'number' && typeof w?.max === 'number');
         });
 
-        if (omeroWindowsAvailable) {
-          newSelections.forEach((sel: any, i: number) => {
-            const channelIndex = sel.c ?? i;
-            const w = Channels[channelIndex].Window;
+        const stats =
+          selectionsNeedingStats.length > 0
+            ? await getMultiSelectionStats({ loader, selections: selectionsNeedingStats })
+            : { domains: [], contrastLimits: [] };
+
+        let statsIndex = 0;
+        newSelections.forEach((sel: any, i: number) => {
+          const w = Channels[sel.c ?? i]?.Window;
+          const hasDomain = typeof w?.min === 'number' && typeof w?.max === 'number';
+
+          if (hasDomain) {
             newDomains.push([w.min, w.max]);
-            newContrastLimits.push([w.start, w.end]);
-          });
-        } else {
-          const stats = await getMultiSelectionStats({
-            loader,
-            selections: newSelections
-          });
-          newDomains = stats.domains;
-          newContrastLimits = stats.contrastLimits;
-        }
+            const hasContrast = typeof w?.start === 'number' && typeof w?.end === 'number';
+            newContrastLimits.push(hasContrast ? [w.start, w.end] : [w.min, w.max]);
+          } else {
+            newDomains.push(stats.domains[statsIndex]);
+            newContrastLimits.push(stats.contrastLimits[statsIndex]);
+            statsIndex++;
+          }
+        });
 
         // If there is only one channel, use white.
         newColors =
