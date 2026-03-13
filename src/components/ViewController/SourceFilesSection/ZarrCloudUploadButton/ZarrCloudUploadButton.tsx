@@ -1,13 +1,13 @@
-import { Box, TextField, Theme, useTheme, Button, alpha, SxProps } from '@mui/material';
-import { useViewerStore } from '../../../../stores/ViewerStore';
+import { TextField, Theme, useTheme, InputAdornment, IconButton, SxProps } from '@mui/material';
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
-import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ClearIcon from '@mui/icons-material/Clear';
+import SendIcon from '@mui/icons-material/Send';
 import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackbar.hook.tsx';
 import { IMAGE_URL_PARAM } from '../../../../hooks/useCloudImageLoader.hook';
 import { loadZarrFromUrl } from '../../../../utils/loadZarrFromUrl';
+import { useViewerStore } from '../../../../stores/ViewerStore';
 
 const getInitialCloudImageUrl = () => new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || '';
 
@@ -15,109 +15,116 @@ export default function ZarrCloudUploadButton() {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
-
+  const [submitted, setSubmitted] = useState(!!getInitialCloudImageUrl());
   const imageName = useViewerStore((store) => store.source?.description);
+
   const { enqueueSnackbar } = useSnackbar();
   const { showConsolidatedMessages } = useConsolidatedSnackbar();
 
-  const handleCloudUploadClick = () => {
-    setIsPopupOpen(true);
-  };
+  const handleSubmit = async () => {
+    if (!cloudImageUrl.trim()) return;
 
-  const handleClose = () => {
-    setIsPopupOpen(false);
-  };
-
-  const handleSubmit = async (cloudImageUrl: string) => {
     const { successMessages, warningMessages, errorMessage } = await loadZarrFromUrl({
       cloudImageUrl,
       t
     });
     if (errorMessage) {
-      enqueueSnackbar({
-        message: errorMessage,
-        variant: 'error'
-      });
+      enqueueSnackbar({ message: errorMessage, variant: 'error' });
       return;
     }
-
-    setCloudImageUrl(cloudImageUrl);
-    setIsPopupOpen(false);
 
     const url = new URL(window.location.href);
     url.searchParams.delete(IMAGE_URL_PARAM);
     window.history.replaceState({}, '', url);
 
+    setSubmitted(true);
     showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
     showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
   };
 
-  return (
-    <Box>
-      <TextField
-        variant="filled"
-        label={t('sourceFiles.zarrInputLabel')}
-        size="small"
-        fullWidth
-        value={imageName || ' '}
-        sx={sx.textField}
-        disabled={false}
-        slotProps={{
-          htmlInput: { readOnly: true }
-        }}
-      />
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={sx.cloudUploadButton}
-        size="small"
-        onClick={handleCloudUploadClick}
-        startIcon={<CloudUploadIcon />}
-      >
-        {t('general.cloudUpload')}
-      </Button>
+  const handleClear = () => {
+    setCloudImageUrl('');
+    setSubmitted(false);
+  };
 
-      <CloudBasedModal
-        isOpen={isPopupOpen}
-        onClose={handleClose}
-        onSubmit={handleSubmit}
-        url={cloudImageUrl}
-        onUrlChange={setCloudImageUrl}
-        title={t('general.cloudUpload')}
-        placeholder={t('sourceFiles.zarrInputPlaceholder')}
-        label={t('general.imageURL')}
-      />
-    </Box>
+  const handleChange = (value: string) => {
+    setCloudImageUrl(value);
+    setSubmitted(false);
+  };
+
+  const handleKeyDown = (e: { key: string }) => {
+    if (e.key === 'Enter') handleSubmit();
+    if (e.key === 'Escape') handleClear();
+  };
+
+  const endAdornment = cloudImageUrl ? (
+    <InputAdornment position="end">
+      {submitted ? (
+        <IconButton
+          size="small"
+          onClick={handleClear}
+          sx={sx.iconButton}
+        >
+          <ClearIcon sx={sx.clearIconSize} />
+        </IconButton>
+      ) : (
+        <IconButton
+          size="small"
+          onClick={handleSubmit}
+          sx={sx.iconButton}
+        >
+          <SendIcon sx={sx.iconSize} />
+        </IconButton>
+      )}
+    </InputAdornment>
+  ) : null;
+
+  return (
+    <TextField
+      variant="filled"
+      label={t('sourceFiles.zarrInputLabel')}
+      size="small"
+      fullWidth
+      value={cloudImageUrl}
+      onChange={(e) => handleChange(e.target.value)}
+      onKeyDown={handleKeyDown}
+      placeholder={t('sourceFiles.zarrInputPlaceholder')}
+      helperText={submitted && imageName ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
+      sx={sx.textField}
+      slotProps={{ input: { endAdornment } }}
+    />
   );
 }
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   textField: {
-    marginBottom: '8px',
     '& .MuiFormLabel-root.Mui-focused': {
       color: theme.palette.gx.accent.greenBlue
-    },
-    '& .MuiInputBase-input': {
-      cursor: 'auto'
     },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
       borderColor: theme.palette.gx.accent.greenBlue
+    },
+    '& .MuiFormHelperText-root': {
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      fontSize: '0.8rem',
+      color: theme.palette.gx.primary.black
     }
   },
-  cloudUploadButton: {
-    borderStyle: 'solid',
-    width: '100%',
-    height: '40px',
-    fontWeight: 700,
-    borderColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.accent.greenBlue,
-    '&:hover': {
-      borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
-    },
-    transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease'
+  iconButton: {
+    color: theme.palette.gx.primary.black,
+    padding: '2px',
+    alignSelf: 'center',
+    marginTop: '12px',
+    marginRight: '-4px'
+  },
+  iconSize: {
+    fontSize: '18px'
+  },
+  clearIconSize: {
+    fontSize: '20px'
   }
 });
