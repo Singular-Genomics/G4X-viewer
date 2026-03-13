@@ -11,7 +11,7 @@ import { useViewerStore } from '../../../../stores/ViewerStore';
 
 const getInitialCloudImageUrl = () => new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || '';
 
-export default function ZarrCloudUploadButton() {
+export default function ZarrSourceInput() {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
