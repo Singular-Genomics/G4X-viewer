@@ -184,9 +184,11 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           const hasDomain = typeof w?.min === 'number' && typeof w?.max === 'number';
 
           if (hasDomain) {
-            newDomains.push([w.min, w.max]);
+            newDomains.push([Math.trunc(w.min), Math.trunc(w.max)]);
             const hasContrast = typeof w?.start === 'number' && typeof w?.end === 'number';
-            newContrastLimits.push(hasContrast ? [w.start, w.end] : [w.min, w.max]);
+            newContrastLimits.push(
+              hasContrast ? [Math.trunc(w.start), Math.trunc(w.end)] : [Math.trunc(w.min), Math.trunc(w.max)]
+            );
           } else {
             newDomains.push(stats.domains[statsIndex]);
             newContrastLimits.push(stats.contrastLimits[statsIndex]);
