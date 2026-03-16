@@ -1,4 +1,4 @@
-import { Box, Input, Theme, useTheme } from '@mui/material';
+import { Box, Input, SxProps, Theme, useTheme } from '@mui/material';
 import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
@@ -102,6 +102,7 @@ export const ChannelRangeSlider = ({
         step={CHANNEL_STEP}
         orientation="horizontal"
         style={{ color: rgbColor }}
+        sx={sx.rangeSlider}
       />
       <Input
         id="channel_max"
@@ -119,7 +120,7 @@ export const ChannelRangeSlider = ({
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   sliderContainer: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -139,6 +140,12 @@ const styles = (theme: Theme) => ({
     '&.MuiInputBase-root::after': {
       borderBottom: '2px solid',
       borderColor: theme.palette.gx.accent.greenBlue
+    }
+  },
+  rangeSlider: {
+    '& .MuiSlider-thumb': {
+      height: '16px',
+      width: '16px'
     }
   }
 });
