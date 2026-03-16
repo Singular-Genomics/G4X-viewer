@@ -8,8 +8,10 @@ import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackb
 import { IMAGE_URL_PARAM } from '../../../../hooks/useCloudImageLoader.hook';
 import { loadZarrFromUrl } from '../../../../utils/loadZarrFromUrl';
 import { useViewerStore } from '../../../../stores/ViewerStore';
+import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 
-const getInitialCloudImageUrl = () => new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || '';
+const getInitialCloudImageUrl = () =>
+  new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM) || useZarrDataStore.getState().zarrUrl || '';
 
 export default function ZarrSourceInput() {
   const theme = useTheme();
