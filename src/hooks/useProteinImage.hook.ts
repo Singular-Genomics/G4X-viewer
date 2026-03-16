@@ -6,6 +6,7 @@ import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
 
 // Legacy from original Avivator app
 import { buildDefaultSelection, createLoader, getMultiSelectionStats, guessRgb } from '../legacy/utils';
+import { MAX_CHANNELS } from '@hms-dbmi/viv';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { COLOR_PALLETE } from '../shared/constants';
@@ -130,7 +131,9 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
 
       const baseSelection = buildDefaultSelection(loader[0])[0];
-      const activeIndices = Channels.map((c: any, i: number) => (c.Active ? i : -1)).filter((i: number) => i >= 0);
+      const activeIndices = Channels.map((c: any, i: number) => (c.Active ? i : -1))
+        .filter((i: number) => i >= 0)
+        .slice(0, MAX_CHANNELS);
       const newSelections =
         activeIndices.length > 0
           ? activeIndices.map((c: number) => ({ ...baseSelection, c }))
