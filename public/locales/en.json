@@ -27,7 +27,7 @@
     "overview": "Overview",
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
-"sliderRangeMinLabel":"Slider Min",
+    "sliderRangeMinLabel":"Slider Min",
     "sliderRangeMaxLabel":"Slider Max",
     "sliderRangeModeExpanded": "Expanded Range",
     "sliderRangeModeContract": "Contract Range",
