@@ -1,5 +1,5 @@
 import { TextField, Theme, useTheme, InputAdornment, IconButton, SxProps } from '@mui/material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -15,6 +15,7 @@ export default function ZarrSourceInput() {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
   const [submitted, setSubmitted] = useState(!!getInitialCloudImageUrl());
   const imageName = useViewerStore((store) => store.source?.description);
@@ -46,6 +47,7 @@ export default function ZarrSourceInput() {
   const handleClear = () => {
     setCloudImageUrl('');
     setSubmitted(false);
+    inputRef.current?.focus();
   };
 
   const handleChange = (value: string) => {
@@ -92,7 +94,7 @@ export default function ZarrSourceInput() {
       placeholder={t('sourceFiles.zarrInputPlaceholder')}
       helperText={submitted && imageName ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
       sx={sx.textField}
-      slotProps={{ input: { endAdornment } }}
+      slotProps={{ input: { endAdornment, inputRef } }}
     />
   );
 }
