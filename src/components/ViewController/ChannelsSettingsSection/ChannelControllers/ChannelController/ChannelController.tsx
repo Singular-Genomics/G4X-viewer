@@ -48,11 +48,15 @@ export const ChannelController = ({
   const [minInputValue, setMinInputValue] = useState<string>(currentMinValue.toString());
   const [maxInputValue, setMaxInputValue] = useState<string>(currentMaxValue.toString());
 
-  const [expandedInit] = useState(() =>
-    calculateExpandedRange(currentMinValue, currentMaxValue, Number(rangeMin), Number(rangeMax))
-  );
-  const [visibleMin, setVisibleMin] = useState(expandedInit[0]);
-  const [visibleMax, setVisibleMax] = useState(expandedInit[1]);
+  const [visibleRange, setVisibleRange] = useState(() => {
+    const [calcMin, calcMax] = calculateExpandedRange(
+      currentMinValue,
+      currentMaxValue,
+      Number(rangeMin),
+      Number(rangeMax)
+    );
+    return { min: calcMin, max: calcMax };
+  });
 
   const handleModeToggle = () => {
     setSliderRangeMode((prev) => {
@@ -60,12 +64,10 @@ export const ChannelController = ({
       const rMin = Number(rangeMin);
       const rMax = Number(rangeMax);
       if (newMode === 'contract') {
-        setVisibleMin(rMin);
-        setVisibleMax(rMax);
+        setVisibleRange({ min: rMin, max: rMax });
       } else {
         const [eMin, eMax] = calculateExpandedRange(currentMinValue, currentMaxValue, rMin, rMax);
-        setVisibleMin(eMin);
-        setVisibleMax(eMax);
+        setVisibleRange({ min: eMin, max: eMax });
       }
       return newMode;
     });
@@ -156,8 +158,8 @@ export const ChannelController = ({
           domain={domain}
           handleSliderChange={handleSliderChange}
           isLoading={isLoading}
-          visibleMin={visibleMin}
-          visibleMax={visibleMax}
+          visibleMin={visibleRange.min}
+          visibleMax={visibleRange.max}
           minInputValue={minInputValue}
           maxInputValue={maxInputValue}
           setMinInputValue={setMinInputValue}
