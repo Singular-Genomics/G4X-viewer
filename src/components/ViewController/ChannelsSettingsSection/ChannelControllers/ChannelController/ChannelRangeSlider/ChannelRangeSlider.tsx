@@ -5,7 +5,6 @@ import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
-import { truncateDecimalNumber } from '../../../../../../legacy/utils';
 import { InfoTooltip } from '../../../../../InfoTooltip';
 import { useTranslation } from 'react-i18next';
 
@@ -96,7 +95,7 @@ export const ChannelRangeSlider = ({
         disabled={isLoading}
         value={slider}
         onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
-        valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
+        valueLabelDisplay="off"
         min={visibleMin}
         max={visibleMax}
         step={CHANNEL_STEP}
