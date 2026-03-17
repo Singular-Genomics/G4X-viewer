@@ -1,8 +1,8 @@
 import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
-import { MAX_NUMBER_OF_IMAGES, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
-import { BrightfieldImageSelectorEntry } from '../BrightfieldImageSelector/BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
+import { MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
+import { OmeTiffSelectorEntry } from '../OmeTiffSelectorEntry/OmeTiffSelectorEntry';
 import { OmeTiffImageSelectorProps } from './OmeTiffImageSelector.types';
 import { useOmeTiffImageHandler } from './OmeTiffImageSelector.hooks';
 import { useSnackbar } from 'notistack';
@@ -15,12 +15,12 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const omeTiffImageSource = useBrightfieldImagesStore((store) => store.omeTiffImageSource);
+  const omeTiffImageSource = useImageOverlaysStore((store) => store.omeTiffImageSource);
   const activeImageName = omeTiffImageSource?.description ?? '';
   const [isCloudModalOpen, setIsCloudModalOpen] = useState<boolean>(false);
   const [cloudImageUrl, setCloudImageUrl] = useState<string>('');
 
-  const { setActiveOmeTiffImage, addOmeTiffFile, availableOmeTiffImages } = useBrightfieldImagesStore();
+  const { setActiveOmeTiffImage, addOmeTiffFile, availableOmeTiffImages } = useImageOverlaysStore();
 
   const { dropzoneProps } = useOmeTiffImageHandler();
 
@@ -52,7 +52,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(filename)) {
       enqueueSnackbar({
-        message: t('brightfieldImages.invalidFileError'),
+        message: t('imageOverlays.invalidFileError'),
         variant: 'error'
       });
       return;
@@ -67,7 +67,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.duplicateImageError'),
+        message: t('imageOverlays.duplicateImageError'),
         variant: 'error'
       });
       return;
@@ -78,7 +78,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
     setCloudImageUrl('');
 
     enqueueSnackbar({
-      message: t('brightfieldImages.imageCloudUploadSuccess', { file: filename }),
+      message: t('imageOverlays.imageCloudUploadSuccess', { file: filename }),
       variant: 'success'
     });
   };
@@ -90,13 +90,13 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
         value={activeImageName}
       >
         {!images.length ? (
-          <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noOmeTiffImages')}</Typography>
+          <Typography sx={sx.imageSelectorEmptyText}>{t('imageOverlays.noOmeTiffImages')}</Typography>
         ) : (
           images.map((entry, index) => {
             const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
 
             return (
-              <BrightfieldImageSelectorEntry
+              <OmeTiffSelectorEntry
                 key={index}
                 imageEntry={entry}
                 isActive={entryName === activeImageName}
@@ -116,7 +116,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
           {...dropzoneProps.getRootProps()}
         >
           <input {...dropzoneProps.getInputProps()} />
-          {t('brightfieldImages.addOmeTiffImage')}
+          {t('imageOverlays.addOmeTiffImage')}
         </Button>
         <Button
           variant="outlined"
@@ -137,8 +137,8 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
         title={t('general.cloudUpload')}
-        placeholder={t('brightfieldImages.imageCloudUploadDescription')}
-        label={t('brightfieldImages.omeTiffCloudUploadLabel')}
+        placeholder={t('imageOverlays.imageCloudUploadDescription')}
+        label={t('imageOverlays.omeTiffCloudUploadLabel')}
       />
     </Box>
   );

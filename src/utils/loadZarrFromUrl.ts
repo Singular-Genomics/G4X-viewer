@@ -1,5 +1,5 @@
 import { TFunction } from 'i18next';
-import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
@@ -35,7 +35,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.getState().reset();
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
-  useBrightfieldImagesStore.getState().reset();
+  useImageOverlaysStore.getState().reset();
   useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false });
 
   useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
@@ -79,7 +79,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   }
 
   const hAndEUrl = zarrDataSet.getHAndEPath();
-  useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
+  useImageOverlaysStore.getState().addNewFile(hAndEUrl);
 
   const imageAxes = await zarrDataSet.fetchImageAxesMetadata();
   if (imageAxes) {

@@ -1,12 +1,12 @@
 import { useShallow } from 'zustand/react/shallow';
-import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
 import { Box, FormControlLabel } from '@mui/material';
 import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
 
 export const BrightfieldLayerToggle = () => {
   const { t } = useTranslation();
-  const [isLayerVisible, toggleImageLayer] = useBrightfieldImagesStore(
+  const [isLayerVisible, toggleImageLayer] = useImageOverlaysStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
 

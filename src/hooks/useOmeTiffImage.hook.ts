@@ -3,7 +3,7 @@ import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../store
 import { buildDefaultSelection, createLoader } from '../legacy/utils';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
-import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { MAX_UINT16_VALUE, MAX_UINT8_VALUE } from '../shared/constants';
@@ -12,7 +12,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
-  const omeTiffLoader = useBrightfieldImagesStore.getState().getOmeTiffLoader();
+  const omeTiffLoader = useImageOverlaysStore.getState().getOmeTiffLoader();
 
   useEffect(() => {
     setIsLoaderCreated(false);
@@ -24,7 +24,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
         useViewerStore.setState({
           isViewerLoading: {
             type: VIEWER_LOADING_TYPES.OMETIFF_IMAGE,
-            message: t('viewer.loadingBrightfieldImage')
+            message: t('viewer.loadingHeImage')
           }
         });
 
@@ -49,7 +49,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
 
         if (nextLoader) {
           unstable_batchedUpdates(() => {
-            useBrightfieldImagesStore.setState({ omeTiffLoader: nextLoader });
+            useImageOverlaysStore.setState({ omeTiffLoader: nextLoader });
           });
           setIsLoaderCreated(true);
         }
@@ -67,7 +67,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
     if (source) {
       changeLoader();
     } else {
-      useBrightfieldImagesStore.setState({
+      useImageOverlaysStore.setState({
         omeTiffLoader: [{ labels: [], shape: [] }]
       });
       useViewerStore.setState({ isViewerLoading: undefined });
@@ -80,7 +80,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
     useViewerStore.setState({
       isViewerLoading: {
         type: VIEWER_LOADING_TYPES.OMETIFF_IMAGE,
-        message: t('viewer.loadingBrightfieldImage')
+        message: t('viewer.loadingHeImage')
       }
     });
 
@@ -95,7 +95,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
           [0, maxValue]
         ];
 
-    useBrightfieldImagesStore.setState({
+    useImageOverlaysStore.setState({
       omeTiffSelections: newSelections,
       omeTiffContrastLimits: newContrastLimits
     });

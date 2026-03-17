@@ -1,12 +1,12 @@
 import { Box, Divider, FormControlLabel, Theme, Typography, useTheme } from '@mui/material';
 import { GxSwitch } from '../../../shared/components/GxSwitch/GxSwitch';
-import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../../stores/ImageOverlaysStore';
 import { useState } from 'react';
 import { GxSlider } from '../../../shared/components/GxSlider';
 import { OmeTiffImageSelector } from './OmeTiffImageSelector/OmeTiffImageSelector';
 import { useTranslation } from 'react-i18next';
 
-export const BrightfieldImagesSection = () => {
+export const ImageOverlaysSection = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ export const BrightfieldImagesSection = () => {
     omeTiffImageSource,
     omeTiffOpacity,
     availableOmeTiffImages
-  } = useBrightfieldImagesStore();
+  } = useImageOverlaysStore();
 
   const handleHeToggle = () => {
     if (brightfieldImageSource) {
@@ -35,10 +35,10 @@ export const BrightfieldImagesSection = () => {
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subSectionHeader}>{t('brightfieldImages.heSectionTitle')}</Typography>
+        <Typography sx={sx.subSectionHeader}>{t('imageOverlays.heSectionTitle')}</Typography>
         <Box sx={sx.subSectionContent}>
           <Box>
-            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
+            <Typography sx={sx.fieldLabel}>{t('imageOverlays.layerOpacityLabel')}</Typography>
             <Box sx={sx.opacityRow}>
               <Typography>0%</Typography>
               <GxSlider
@@ -47,7 +47,7 @@ export const BrightfieldImagesSection = () => {
                   setHeOpacityValue(Array.isArray(newValue) ? newValue[0] : newValue);
                 }}
                 onChangeCommitted={() =>
-                  useBrightfieldImagesStore.setState({
+                  useImageOverlaysStore.setState({
                     opacity: +(heOpacityValue / 100).toFixed(2)
                   })
                 }
@@ -67,7 +67,7 @@ export const BrightfieldImagesSection = () => {
                 disabled={availableImages.length === 0}
               />
             }
-            label={t('brightfieldImages.heLayerVisible')}
+            label={t('imageOverlays.heLayerVisible')}
           />
         </Box>
       </Box>
@@ -75,10 +75,10 @@ export const BrightfieldImagesSection = () => {
       <Divider sx={sx.divider} />
 
       <Box>
-        <Typography sx={sx.subSectionHeader}>{t('brightfieldImages.omeTiffSectionTitle')}</Typography>
+        <Typography sx={sx.subSectionHeader}>{t('imageOverlays.omeTiffSectionTitle')}</Typography>
         <Box sx={sx.subSectionContent}>
           <Box>
-            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
+            <Typography sx={sx.fieldLabel}>{t('imageOverlays.layerOpacityLabel')}</Typography>
             <Box sx={sx.opacityRow}>
               <Typography>0%</Typography>
               <GxSlider
@@ -87,7 +87,7 @@ export const BrightfieldImagesSection = () => {
                   setOmeTiffOpacityValue(Array.isArray(newValue) ? newValue[0] : newValue);
                 }}
                 onChangeCommitted={() =>
-                  useBrightfieldImagesStore.setState({
+                  useImageOverlaysStore.setState({
                     omeTiffOpacity: +(omeTiffOpacityValue / 100).toFixed(2)
                   })
                 }
@@ -100,7 +100,7 @@ export const BrightfieldImagesSection = () => {
             </Box>
           </Box>
           <Box>
-            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.availableOmeTiffImages')}</Typography>
+            <Typography sx={sx.fieldLabel}>{t('imageOverlays.availableOmeTiffImages')}</Typography>
             <OmeTiffImageSelector images={availableOmeTiffImages} />
           </Box>
         </Box>

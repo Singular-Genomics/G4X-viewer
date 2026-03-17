@@ -4,7 +4,7 @@ import { CellMaskLayerToggle } from './CellMaskLayerToggle';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../../../stores/ZarrDataStore';
 import { TranscriptLayerToggle } from './TranscriptLayerToggle';
-import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../../stores/ImageOverlaysStore';
 import { BrightfieldLayerToggle } from './BrightfieldLayerToggle/BrightfieldLayerToggle';
 import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
@@ -15,7 +15,7 @@ import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
-  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
+  const brightfieldImageSource = useImageOverlaysStore((store) => store.brightfieldImageSource);
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
   const cellsData = useCellSegmentationLayerStore((store) => store.cellMasksData);
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);

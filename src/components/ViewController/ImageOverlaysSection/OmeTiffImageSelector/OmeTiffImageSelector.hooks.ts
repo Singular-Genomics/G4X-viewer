@@ -1,17 +1,17 @@
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
-import { MAX_NUMBER_OF_IMAGES, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
 import { useTranslation } from 'react-i18next';
 
 export const useOmeTiffImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
-  const { addOmeTiffFile, availableOmeTiffImages } = useBrightfieldImagesStore();
+  const { addOmeTiffFile, availableOmeTiffImages } = useImageOverlaysStore();
 
   const onDrop = (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.imageUploadMultipleError'),
+        message: t('imageOverlays.imageUploadMultipleError'),
         variant: 'error'
       });
       return;
@@ -21,7 +21,7 @@ export const useOmeTiffImageHandler = () => {
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(imageFile.name)) {
       enqueueSnackbar({
-        message: t('brightfieldImages.invalidFileError'),
+        message: t('imageOverlays.invalidFileError'),
         variant: 'error'
       });
       return;
@@ -40,7 +40,7 @@ export const useOmeTiffImageHandler = () => {
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.duplicateImageError'),
+        message: t('imageOverlays.duplicateImageError'),
         variant: 'error'
       });
       return;

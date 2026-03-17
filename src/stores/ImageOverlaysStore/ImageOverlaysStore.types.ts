@@ -1,9 +1,9 @@
 import { SelectionsType } from '../../components/PictureInPictureViewerAdapter';
 import { ViewerSourceType } from '../ViewerStore';
 
-export type BrightfieldImagesStore = BrightfieldImagesStoreValues & BrightfieldImagesStoreMethods;
+export type ImageOverlaysStore = ImageOverlaysStoreValues & ImageOverlaysStoreMethods;
 
-export type BrightfieldImagesStoreValues = {
+export type ImageOverlaysStoreValues = {
   brightfieldImageSource: ViewerSourceType | null;
   omeTiffImageSource: ViewerSourceType | null;
   loader: any; // <- This is quite complicated
@@ -22,7 +22,7 @@ export type BrightfieldImagesStoreValues = {
   availableOmeTiffImages: (File | string)[];
 };
 
-export type BrightfieldImagesStoreMethods = {
+export type ImageOverlaysStoreMethods = {
   reset: () => void;
   getLoader: () => any;
   getOmeTiffLoader: () => any;

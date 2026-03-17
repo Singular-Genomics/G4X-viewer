@@ -4,7 +4,7 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GroupedActiveFilters } from './ActiveFiltersPanel.types';
@@ -82,7 +82,7 @@ export const useHiddenLayers = () => {
   const { t } = useTranslation();
   const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((store) => store.isCellLayerOn);
-  const isBrightfieldLayerVisible = useBrightfieldImagesStore((store) => store.isLayerVisible);
+  const isBrightfieldLayerVisible = useImageOverlaysStore((store) => store.isLayerVisible);
   const isChannelLayerVisible = useChannelsStore((store) => store.isLayerVisible);
   const isPolygonLayerVisible = usePolygonDrawingStore((store) => store.isPolygonLayerVisible);
 

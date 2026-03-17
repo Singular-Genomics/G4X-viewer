@@ -8,7 +8,7 @@ import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { EditableGeoJsonLayer, ViewMode } from '@deck.gl-community/editable-layers';
 import { TextLayer } from '@deck.gl/layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
@@ -233,7 +233,7 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useBrightfieldImageLayer = () => {
-  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
+  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useImageOverlaysStore(
     useShallow((store) => [
       store.selections,
       store.contrastLimits,
@@ -271,7 +271,7 @@ export const useBrightfieldImageLayer = () => {
 
 export const useOmeTiffImageLayer = () => {
   const [omeTiffSelections, omeTiffContrastLimits, omeTiffColors, omeTiffOpacity, isLayerVisible, getOmeTiffLoader] =
-    useBrightfieldImagesStore(
+    useImageOverlaysStore(
       useShallow((store) => [
         store.omeTiffSelections,
         store.omeTiffContrastLimits,

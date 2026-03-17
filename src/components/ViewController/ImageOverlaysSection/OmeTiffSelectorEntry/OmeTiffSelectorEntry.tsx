@@ -1,16 +1,11 @@
 import { Box, Fade, FormControlLabel, Theme, Tooltip, useTheme } from '@mui/material';
-import { BrightfieldImageSelectorEntryProps } from './BrightfieldImageSelectorEntry.types';
-import { GxRadio } from '../../../../../shared/components/GxRadio';
+import { OmeTiffSelectorEntryProps } from './OmeTiffSelectorEntry.types';
+import { GxRadio } from '../../../../shared/components/GxRadio';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudIcon from '@mui/icons-material/Cloud';
 import { useTranslation } from 'react-i18next';
 
-export const BrightfieldImageSelectorEntry = ({
-  imageEntry,
-  isActive,
-  entryType,
-  onSelectImage
-}: BrightfieldImageSelectorEntryProps) => {
+export const OmeTiffSelectorEntry = ({ imageEntry, isActive, entryType, onSelectImage }: OmeTiffSelectorEntryProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();

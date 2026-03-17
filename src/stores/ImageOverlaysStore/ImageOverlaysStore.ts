@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { BrightfieldImagesStore, BrightfieldImagesStoreValues } from './BrightfieldImagesStore.types';
+import { ImageOverlaysStore, ImageOverlaysStoreValues } from './ImageOverlaysStore.types';
 import { MAX_UINT16_VALUE } from '../../shared/constants';
 
 export const MAX_NUMBER_OF_IMAGES = 10;
@@ -10,7 +10,7 @@ const DEFAULT_COLORS: [number, number, number][] = [
   [0, 0, 255]
 ];
 
-const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
+const DEFAULT_VALUES: ImageOverlaysStoreValues = {
   brightfieldImageSource: null,
   omeTiffImageSource: null,
   loader: [{ labels: [], shape: [] }],
@@ -29,7 +29,7 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   availableOmeTiffImages: []
 };
 
-export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, get) => ({
+export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
   ...DEFAULT_VALUES,
   reset: () => set({ ...DEFAULT_VALUES }),
   getLoader: () => {

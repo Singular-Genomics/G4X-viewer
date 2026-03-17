@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef } from 'react';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { useSnackbar } from 'notistack';
 import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
@@ -31,7 +31,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [brightfieldImageSource, omeTiffImageSource] = useBrightfieldImagesStore(
+  const [brightfieldImageSource, omeTiffImageSource] = useImageOverlaysStore(
     useShallow((store) => [store.brightfieldImageSource, store.omeTiffImageSource])
   );
   const loader = getLoader();
