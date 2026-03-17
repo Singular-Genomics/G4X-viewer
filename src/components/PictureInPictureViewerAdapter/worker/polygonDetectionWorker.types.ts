@@ -9,11 +9,6 @@ export type PolygonPointData = {
   cellId: string;
 };
 
-export type PolygonTileData = {
-  pointsData: PolygonPointData[];
-  numberOfPoints: number;
-};
-
 export type TileCoordinates = {
   x: number;
   y: number;
@@ -30,7 +25,6 @@ export type PolygonWorkerMessage =
       type: 'detectPointsInPolygon';
       payload: {
         polygon: PolygonFeature;
-        files: File[];
         layerConfig: LayerConfig;
         zarrUrl?: string;
       };

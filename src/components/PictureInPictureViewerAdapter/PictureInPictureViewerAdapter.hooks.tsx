@@ -303,9 +303,7 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files, layerConfig, zarrUrl] = useZarrDataStore(
-    useShallow((store) => [store.files, store.layerConfig, store.zarrUrl])
-  );
+  const [layerConfig, zarrUrl] = useZarrDataStore(useShallow((store) => [store.layerConfig, store.zarrUrl]));
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,
@@ -404,9 +402,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0 || zarrUrl) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(newPolygon, files, layerConfig, zarrUrl);
+          const result = await detectPointsInPolygon(newPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, delete the polygon and show error
           if (result.limitExceeded) {
@@ -544,9 +542,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0 || zarrUrl) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(editedPolygon, files, layerConfig, zarrUrl);
+          const result = await detectPointsInPolygon(editedPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, revert the polygon to its previous position
           if (result.limitExceeded) {

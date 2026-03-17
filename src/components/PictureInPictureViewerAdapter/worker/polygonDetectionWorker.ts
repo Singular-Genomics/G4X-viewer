@@ -1,12 +1,8 @@
-import * as protobuf from 'protobufjs';
-import axios from 'axios';
-import { TranscriptFileSchema } from '../../../schemas/transcriptaFile.schema';
 import { SingleMask } from '../../../shared/types';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../../shared/constants';
 import type {
   PointsDetectionBatchResult,
   PolygonPointData,
-  PolygonTileData,
   TileCoordinates,
   PolygonWorkerMessage,
   PolygonWorkerResponse
@@ -20,72 +16,6 @@ import {
   isPolygonInSelection,
   isPolygonWithinBoundingBox
 } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
-
-const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
-  try {
-    const response = await axios.get(URL.createObjectURL(file), { responseType: 'arraybuffer' });
-    const arrayBuffer = response.data;
-
-    const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
-    const data = protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer)) as unknown as PolygonTileData;
-
-    return data;
-  } catch (error) {
-    console.error(`[Load ${file.name}] Error loading tile data:`, error);
-    return null;
-  }
-};
-
-const processLegacyBatch = async (
-  batchFiles: Array<File>,
-  polygon: PolygonFeature,
-  polygonBoundingBox: BoundingBox,
-  countOnly: boolean = false
-) => {
-  const batchPromises = batchFiles.map(async (file) => {
-    try {
-      const tileData = await loadTileData(file);
-      if (tileData && Array.isArray(tileData.pointsData)) {
-        if (countOnly) {
-          // Fast path: only count points without creating arrays
-          let count = 0;
-          for (let i = 0; i < tileData.pointsData.length; i++) {
-            const point = tileData.pointsData[i];
-            if (point && point.position && point.position.length >= 2) {
-              if (
-                isPointInSelection(
-                  point.position as [number, number],
-                  polygon.geometry.coordinates[0],
-                  polygonBoundingBox
-                )
-              ) {
-                count++;
-              }
-            }
-          }
-          return count;
-        } else {
-          // Regular path: collect points in arrays
-          const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
-            if (!point || !point.position || point.position.length < 2) {
-              return false;
-            }
-
-            return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
-          });
-
-          return pointsFoundInTile;
-        }
-      }
-      return countOnly ? 0 : [];
-    } catch (error) {
-      console.error(`Error processing tile: ${file.name}`, error);
-      return countOnly ? 0 : [];
-    }
-  });
-
-  return await Promise.all(batchPromises);
-};
 
 const getZarrIntersectingTileCoordinates = (
   polygonBoundingBox: BoundingBox,
@@ -206,53 +136,6 @@ const runBatchedPointsDetection = async <T>(
   };
 };
 
-const detectPointsInPolygonFromLegacyFiles = async (
-  polygon: PolygonFeature,
-  polygonBoundingBox: BoundingBox,
-  files: File[],
-  layerConfig: LayerConfig,
-  maxZoomLevel: number
-) => {
-  const tileSize = layerConfig.tile_size / Math.pow(2, maxZoomLevel);
-  const tileFileRegex = new RegExp(String.raw`${maxZoomLevel}\/(\d+)\/(\d+)\.bin$`, 'ig');
-  const filesToProcess: File[] = [];
-
-  // Filter out files from other zoom levels and for tiles that do not intersect the selection polygon bounding box.
-  for (const file of files) {
-    const match = file.name.match(tileFileRegex);
-    if (match) {
-      const [_, x, y] = match[0].split('.')[0].split('/').map(Number);
-      const tileCoords: BoundingBox = {
-        left: tileSize * y,
-        top: tileSize * x,
-        right: tileSize * (y + 1),
-        bottom: tileSize * (x + 1)
-      };
-
-      const intersects =
-        tileCoords.left < polygonBoundingBox.right &&
-        tileCoords.right > polygonBoundingBox.left &&
-        tileCoords.bottom > polygonBoundingBox.top &&
-        tileCoords.top < polygonBoundingBox.bottom;
-
-      if (intersects) {
-        filesToProcess.push(file);
-      }
-    }
-  }
-
-  // Process files in batches to avoid overwhelming the system
-  const BATCH_SIZE = 20;
-  const fileBatches: File[][] = [];
-  for (let i = 0; i < filesToProcess.length; i += BATCH_SIZE) {
-    fileBatches.push(filesToProcess.slice(i, i + BATCH_SIZE));
-  }
-
-  return runBatchedPointsDetection(fileBatches, (batch, countOnly) =>
-    processLegacyBatch(batch, polygon, polygonBoundingBox, countOnly)
-  );
-};
-
 const detectPointsInPolygonFromZarr = async (
   polygon: PolygonFeature,
   polygonBoundingBox: BoundingBox,
@@ -277,18 +160,14 @@ const detectPointsInPolygonFromZarr = async (
 const detectPointsInPolygon = async (
   polygon: PolygonFeature,
   polygonBoundingBox: BoundingBox,
-  files: File[],
   layerConfig: LayerConfig,
   zarrUrl?: string
 ) => {
   const maxZoomLevel = layerConfig.layers;
   const pointsInPolygon: PolygonPointData[] = [];
-  const { allPointArrays, totalPointsFound, limitExceeded } =
-    files.length > 0
-      ? await detectPointsInPolygonFromLegacyFiles(polygon, polygonBoundingBox, files, layerConfig, maxZoomLevel)
-      : zarrUrl
-        ? await detectPointsInPolygonFromZarr(polygon, polygonBoundingBox, layerConfig, zarrUrl, maxZoomLevel)
-        : { allPointArrays: [], totalPointsFound: 0, limitExceeded: false };
+  const { allPointArrays, totalPointsFound, limitExceeded } = zarrUrl
+    ? await detectPointsInPolygonFromZarr(polygon, polygonBoundingBox, layerConfig, zarrUrl, maxZoomLevel)
+    : { allPointArrays: [], totalPointsFound: 0, limitExceeded: false };
 
   // Avoid stack overflow by using concat or iterative push instead of spread operator
   // Only add points up to the limit
@@ -374,7 +253,6 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
       const result = await detectPointsInPolygon(
         payload.polygon,
         polygonBoundingBox,
-        payload.files,
         payload.layerConfig,
         payload.zarrUrl
       );
