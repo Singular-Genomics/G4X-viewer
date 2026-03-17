@@ -29,9 +29,7 @@ export type BrightfieldImagesStoreMethods = {
   toggleImageLayer: () => void;
   setActiveImage: (file: File | string | null) => void;
   setActiveOmeTiffImage: (file: File | string | null) => void;
-  setAvailableImages: (files: (File | string)[]) => void;
   addNewFile: (file: File | string) => void;
-  removeFileByName: (fileName: string) => void;
   addOmeTiffFile: (file: File | string) => void;
   removeOmeTiffFileByName: (fileName: string) => void;
 };

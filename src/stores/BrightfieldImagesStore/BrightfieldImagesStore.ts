@@ -75,19 +75,9 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
       omeTiffLoader: DEFAULT_VALUES.omeTiffLoader
     });
   },
-  setAvailableImages: (files: (File | string)[]) => set({ availableImages: files }),
   addNewFile: (file: File | string) =>
     set((state) => ({
       availableImages: [...state.availableImages, file]
-    })),
-  removeFileByName: (fileName: string) =>
-    set((state) => ({
-      availableImages: state.availableImages.filter((entry) => {
-        if (typeof entry === 'string') {
-          return entry.split('/').pop() !== fileName && entry !== fileName;
-        }
-        return entry.name !== fileName;
-      })
     })),
   addOmeTiffFile: (file: File | string) =>
     set((state) => ({
