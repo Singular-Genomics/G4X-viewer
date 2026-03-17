@@ -28,7 +28,12 @@
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
     "sliderRangeMinLabel":"Slider Min",
-    "sliderRangeMaxLabel":"Slider Max"
+    "sliderRangeMaxLabel":"Slider Max",
+    "sliderRangeModeExpanded": "Expanded Range",
+    "sliderRangeModeContract": "Contract Range",
+    "resetSlider": "Reset to default range",
+    "solo": "Solo",
+    "exitSolo": "Exit Solo Mode"
   },
   "general": {
     "apply": "Apply",

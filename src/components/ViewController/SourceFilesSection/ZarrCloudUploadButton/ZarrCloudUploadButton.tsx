@@ -31,6 +31,8 @@ export default function ZarrCloudUploadButton() {
   };
 
   const handleSubmit = async (cloudImageUrl: string) => {
+    setIsPopupOpen(false);
+
     const { successMessages, warningMessages, errorMessage } = await loadZarrFromUrl({
       cloudImageUrl,
       t
@@ -44,7 +46,6 @@ export default function ZarrCloudUploadButton() {
     }
 
     setCloudImageUrl(cloudImageUrl);
-    setIsPopupOpen(false);
 
     const url = new URL(window.location.href);
     url.searchParams.delete(IMAGE_URL_PARAM);
