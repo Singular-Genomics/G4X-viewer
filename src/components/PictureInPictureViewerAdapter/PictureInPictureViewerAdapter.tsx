@@ -9,6 +9,7 @@ import {
   useTranscriptLayer,
   useResizableContainer,
   useBrightfieldImageLayer,
+  useOmeTiffImageLayer,
   usePolygonDrawingLayer,
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
@@ -30,13 +31,16 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
-  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+  const [brightfieldImageSource, omeTiffImageSource] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.omeTiffImageSource])
+  );
   const loader = getLoader();
   const { t } = useTranslation();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
+  const omeTiffImageLayer = useOmeTiffImageLayer();
   const polygonDrawingLayer = usePolygonDrawingLayer();
   const polygonTextLayer = usePolygonTextLayer();
   const deckGLRef = useRef<any>(null);
@@ -175,6 +179,10 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
 
   if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE)) {
     deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
+  }
+
+  if (omeTiffImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.OMETIFF_IMAGE)) {
+    deckProps.layers = [omeTiffImageLayer, ...deckProps.layers];
   }
 
   if (polygonDrawingLayer) {

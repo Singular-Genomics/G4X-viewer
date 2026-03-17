@@ -1,6 +1,7 @@
 {
   "brightfieldImages": {
     "addImage": "Add fH&E Image",
+    "addOmeTiffImage": "Add OmeTiff",
     "availableImage": "Available fH&E Images",
     "duplicateImageError": "Image with same name already has been loaded",
     "imageCloudUploadDescription": "Enter URL to .ome.tiff or .tif file",
@@ -8,9 +9,15 @@
     "imageCloudUploadSuccess": "Successfully loaded fH&E image from URL: {{file}}",
     "imageUploadMultipleError": "Invalid input file. Only single .ome.tiff files allowed",
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
+    "omeTiffCloudUploadLabel": "OmeTiff Image URL",
+    "availableOmeTiffImages": "Available OmeTiff Images",
+    "heSectionTitle": "H&E Images",
+    "heLayerVisible": "Show H&E Layer",
     "layerOpacityLabel": "Layer Opacity",
     "noImages": "No fH&E images have been loaded",
-    "sectionTitle": "Brightfield Images Settings"
+    "noOmeTiffImages": "No OmeTiff images have been loaded",
+    "omeTiffSectionTitle": "OmeTiff Images",
+    "sectionTitle": "Image Overlays"
   },
   "channelSettings": {
     "addChannel": "Add Channel",

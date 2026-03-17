@@ -1,74 +1,146 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, FormControlLabel, Theme, Typography, useTheme } from '@mui/material';
+import { GxSwitch } from '../../../shared/components/GxSwitch/GxSwitch';
 import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
 import { useState } from 'react';
 import { GxSlider } from '../../../shared/components/GxSlider';
-import { BrightfieldImageSelector } from './BrightfieldImageSelector/BrightfieldImageSelector';
+import { OmeTiffImageSelector } from './OmeTiffImageSelector/OmeTiffImageSelector';
 import { useTranslation } from 'react-i18next';
 
 export const BrightfieldImagesSection = () => {
-  const sx = styles();
+  const theme = useTheme();
+  const sx = styles(theme);
   const { t } = useTranslation();
 
-  const { brightfieldImageSource, opacity, availableImages } = useBrightfieldImagesStore();
+  const {
+    brightfieldImageSource,
+    opacity,
+    availableImages,
+    setActiveImage,
+    omeTiffImageSource,
+    omeTiffOpacity,
+    availableOmeTiffImages
+  } = useBrightfieldImagesStore();
 
-  const [opacitySliderValue, setOpacitySliderValue] = useState<number>(opacity * 100);
+  const handleHeToggle = () => {
+    if (brightfieldImageSource) {
+      setActiveImage(null);
+    } else if (availableImages.length > 0) {
+      setActiveImage(availableImages[0]);
+    }
+  };
+
+  const [heOpacityValue, setHeOpacityValue] = useState<number>(opacity * 100);
+  const [omeTiffOpacityValue, setOmeTiffOpacityValue] = useState<number>(omeTiffOpacity * 100);
 
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '16px',
-            marginLeft: '8px'
-          }}
-        >
-          <Typography>0%</Typography>
-          <GxSlider
-            value={opacitySliderValue}
-            onChange={(_, newValue) => {
-              setOpacitySliderValue(Array.isArray(newValue) ? newValue[0] : newValue);
-            }}
-            onChangeCommitted={() =>
-              useBrightfieldImagesStore.setState({
-                opacity: +(opacitySliderValue / 100).toFixed(2)
-              })
+        <Typography sx={sx.subSectionHeader}>{t('brightfieldImages.heSectionTitle')}</Typography>
+        <Box sx={sx.subSectionContent}>
+          <Box>
+            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
+            <Box sx={sx.opacityRow}>
+              <Typography>0%</Typography>
+              <GxSlider
+                value={heOpacityValue}
+                onChange={(_, newValue) => {
+                  setHeOpacityValue(Array.isArray(newValue) ? newValue[0] : newValue);
+                }}
+                onChangeCommitted={() =>
+                  useBrightfieldImagesStore.setState({
+                    opacity: +(heOpacityValue / 100).toFixed(2)
+                  })
+                }
+                min={0}
+                max={100}
+                step={1}
+                disabled={!brightfieldImageSource}
+              />
+              <Typography>100%</Typography>
+            </Box>
+          </Box>
+          <FormControlLabel
+            control={
+              <GxSwitch
+                checked={!!brightfieldImageSource}
+                onChange={handleHeToggle}
+                disabled={availableImages.length === 0}
+              />
             }
-            min={0}
-            max={100}
-            step={1}
-            disabled={!brightfieldImageSource}
+            label={t('brightfieldImages.heLayerVisible')}
           />
-          <Typography>100%</Typography>
         </Box>
       </Box>
+
+      <Divider sx={sx.divider} />
+
       <Box>
-        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.availableImage')}</Typography>
-        <BrightfieldImageSelector images={availableImages} />
+        <Typography sx={sx.subSectionHeader}>{t('brightfieldImages.omeTiffSectionTitle')}</Typography>
+        <Box sx={sx.subSectionContent}>
+          <Box>
+            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
+            <Box sx={sx.opacityRow}>
+              <Typography>0%</Typography>
+              <GxSlider
+                value={omeTiffOpacityValue}
+                onChange={(_, newValue) => {
+                  setOmeTiffOpacityValue(Array.isArray(newValue) ? newValue[0] : newValue);
+                }}
+                onChangeCommitted={() =>
+                  useBrightfieldImagesStore.setState({
+                    omeTiffOpacity: +(omeTiffOpacityValue / 100).toFixed(2)
+                  })
+                }
+                min={0}
+                max={100}
+                step={1}
+                disabled={!omeTiffImageSource}
+              />
+              <Typography>100%</Typography>
+            </Box>
+          </Box>
+          <Box>
+            <Typography sx={sx.fieldLabel}>{t('brightfieldImages.availableOmeTiffImages')}</Typography>
+            <OmeTiffImageSelector images={availableOmeTiffImages} />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
 };
 
-const styles = () => ({
+const styles = (theme: Theme) => ({
   sectionContainer: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px'
   },
-  subsectionTitle: {
+  subSectionHeader: {
+    fontWeight: 700,
+    fontSize: '15px',
+    color: theme.palette.gx.primary.black,
+    marginLeft: '8px',
+    marginBottom: '12px'
+  },
+  subSectionContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    paddingLeft: '8px'
+  },
+  fieldLabel: {
     fontWeight: 700,
     marginLeft: '8px',
     marginBottom: '8px'
   },
-  sliderWrapper: {
+  opacityRow: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '16px',
+    marginLeft: '8px'
   },
-  opacitySlider: {
-    padding: '0 8px 0 16px'
+  divider: {
+    borderColor: theme.palette.gx.mediumGrey[300]
   }
 });

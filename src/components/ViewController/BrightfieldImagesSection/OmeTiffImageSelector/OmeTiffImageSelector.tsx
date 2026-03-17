@@ -2,27 +2,27 @@ import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mu
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
 import { MAX_NUMBER_OF_IMAGES, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
-import { BrightfieldImageSelectorEntry } from './BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
-import { BrightfieldImageSelectorProps } from './BrightfieldImageSelector.types';
-import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
+import { BrightfieldImageSelectorEntry } from '../BrightfieldImageSelector/BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
+import { OmeTiffImageSelectorProps } from './OmeTiffImageSelector.types';
+import { useOmeTiffImageHandler } from './OmeTiffImageSelector.hooks';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
 
-export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
+export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
-  const activeImageName = brightfieldImageSource?.description ?? '';
+  const omeTiffImageSource = useBrightfieldImagesStore((store) => store.omeTiffImageSource);
+  const activeImageName = omeTiffImageSource?.description ?? '';
   const [isCloudModalOpen, setIsCloudModalOpen] = useState<boolean>(false);
   const [cloudImageUrl, setCloudImageUrl] = useState<string>('');
 
-  const { setActiveImage, addNewFile, availableImages } = useBrightfieldImagesStore();
+  const { setActiveOmeTiffImage, addOmeTiffFile, availableOmeTiffImages } = useBrightfieldImagesStore();
 
-  const { dropzoneProps } = useBrightfieldImageHandler();
+  const { dropzoneProps } = useOmeTiffImageHandler();
 
   const handleImageSelect = useCallback(
     (selectedImage: File | string) => {
@@ -30,12 +30,12 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         typeof selectedImage === 'string' ? selectedImage.split('/').pop() || selectedImage : selectedImage.name;
 
       if (imageName === activeImageName) {
-        setActiveImage(null);
+        setActiveOmeTiffImage(null);
         return;
       }
-      setActiveImage(selectedImage);
+      setActiveOmeTiffImage(selectedImage);
     },
-    [activeImageName, setActiveImage]
+    [activeImageName, setActiveOmeTiffImage]
   );
 
   const handleCloudUploadClick = () => {
@@ -58,7 +58,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
       return;
     }
 
-    const index = availableImages.findIndex((entry) => {
+    const index = availableOmeTiffImages.findIndex((entry) => {
       if (typeof entry === 'string') {
         return entry.split('/').pop() === filename || entry === filename;
       }
@@ -73,7 +73,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
       return;
     }
 
-    addNewFile(url);
+    addOmeTiffFile(url);
     setIsCloudModalOpen(false);
     setCloudImageUrl('');
 
@@ -90,7 +90,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         value={activeImageName}
       >
         {!images.length ? (
-          <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noImages')}</Typography>
+          <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noOmeTiffImages')}</Typography>
         ) : (
           images.map((entry, index) => {
             const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
@@ -116,7 +116,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           {...dropzoneProps.getRootProps()}
         >
           <input {...dropzoneProps.getInputProps()} />
-          {t('brightfieldImages.addImage')}
+          {t('brightfieldImages.addOmeTiffImage')}
         </Button>
         <Button
           variant="outlined"
@@ -138,7 +138,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         onUrlChange={setCloudImageUrl}
         title={t('general.cloudUpload')}
         placeholder={t('brightfieldImages.imageCloudUploadDescription')}
-        label={t('brightfieldImages.imageCloudUploadLabel')}
+        label={t('brightfieldImages.omeTiffCloudUploadLabel')}
       />
     </Box>
   );

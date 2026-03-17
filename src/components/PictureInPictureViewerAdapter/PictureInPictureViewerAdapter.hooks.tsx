@@ -269,6 +269,44 @@ export const useBrightfieldImageLayer = () => {
   return brightfieldImageLayer;
 };
 
+export const useOmeTiffImageLayer = () => {
+  const [omeTiffSelections, omeTiffContrastLimits, omeTiffColors, omeTiffOpacity, isLayerVisible, getOmeTiffLoader] =
+    useBrightfieldImagesStore(
+      useShallow((store) => [
+        store.omeTiffSelections,
+        store.omeTiffContrastLimits,
+        store.omeTiffColors,
+        store.omeTiffOpacity,
+        store.isLayerVisible,
+        store.getOmeTiffLoader
+      ])
+    );
+
+  const loader = getOmeTiffLoader();
+
+  if (!loader || !loader[0] || !loader[0].shape) {
+    return undefined;
+  }
+
+  const { dtype } = loader[0];
+
+  const omeTiffImageLayer = new MultiscaleImageLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-ome-tiff-image-layer`,
+    channelsVisible: [true, true, true],
+    selections: omeTiffSelections as any,
+    contrastLimits: omeTiffContrastLimits as any,
+    colors: omeTiffColors as any,
+    loader: loader as any,
+    dtype: dtype,
+    opacity: isLayerVisible ? omeTiffOpacity : 0,
+    ...({
+      pickable: false
+    } as any)
+  });
+
+  return omeTiffImageLayer;
+};
+
 export const usePolygonDrawingLayer = () => {
   const { t } = useTranslation();
   const [

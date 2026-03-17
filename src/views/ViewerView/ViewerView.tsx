@@ -7,6 +7,7 @@ import { GxLoader } from '../../shared/components/GxLoader';
 import { useProteinImage } from '../../hooks/useProteinImage.hook';
 import { ImageInfo } from '../../components/ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../../hooks/useBrightfieldImage.hook';
+import { useOmeTiffImage } from '../../hooks/useOmeTiffImage.hook';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { DetailsPopup } from '../../components/DetailsPopup';
 import { SummaryButton } from '../../components/SummaryButton';
@@ -24,12 +25,15 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   const { t } = useTranslation();
 
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
-  const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+  const [brightfieldImageSource, omeTiffImageSource] = useBrightfieldImagesStore(
+    useShallow((store) => [store.brightfieldImageSource, store.omeTiffImageSource])
+  );
 
   useCloudImageLoader();
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
+  useOmeTiffImage(omeTiffImageSource);
 
   return (
     <Box
