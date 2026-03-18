@@ -224,7 +224,8 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             Name: c.label,
             SamplesPerPixel: 1,
             Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
-            Active: c.active ?? false
+            Active: c.active ?? false,
+            Window: c.window ?? undefined
           }))
         }
       }
