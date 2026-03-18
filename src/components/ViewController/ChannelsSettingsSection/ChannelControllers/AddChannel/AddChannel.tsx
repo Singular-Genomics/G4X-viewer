@@ -24,8 +24,14 @@ export const AddChannel = () => {
     ])
   );
 
-  const [selections, setPropertiesForChannel, addChannel, getLoader] = useChannelsStore(
-    useShallow((store) => [store.selections, store.setPropertiesForChannel, store.addChannel, store.getLoader])
+  const [selections, channelsSettings, setPropertiesForChannel, addChannel, getLoader] = useChannelsStore(
+    useShallow((store) => [
+      store.selections,
+      store.channelsSettings,
+      store.setPropertiesForChannel,
+      store.addChannel,
+      store.getLoader
+    ])
   );
 
   const loader = getLoader();
@@ -41,6 +47,14 @@ export const AddChannel = () => {
       loader,
       selection
     }).then(({ domain, contrastLimits }) => {
+      const { c } = selection;
+      const channelName = metadata.Pixels.Channels[c]?.Name ?? `Channel ${c}`;
+      if (!(channelName in channelsSettings)) {
+        channelsSettings[channelName] = {};
+      }
+      if (!channelsSettings[channelName].initialContrastLimits) {
+        channelsSettings[channelName].initialContrastLimits = contrastLimits as [number, number];
+      }
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
         contrastLimits: contrastLimits as [number, number],
@@ -53,10 +67,7 @@ export const AddChannel = () => {
         }
       });
       addIsChannelLoading(true);
-      const {
-        Pixels: { Channels }
-      } = metadata;
-      const { c } = selection;
+      const { Channels } = metadata.Pixels;
       addChannel({
         selections: selection,
         ids: String(Math.random()),
@@ -67,6 +78,7 @@ export const AddChannel = () => {
   }, [
     addChannel,
     addIsChannelLoading,
+    channelsSettings,
     globalSelection,
     labels,
     loader,

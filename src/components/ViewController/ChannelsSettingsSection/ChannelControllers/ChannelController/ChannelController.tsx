@@ -1,8 +1,11 @@
-import { getPixelValueDisplay } from './ChannelController.helpers';
-import { ChannelControllerProps } from './ChannelController.types';
-import { Box, Grid, IconButton, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
+import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
+import { Box, Grid, IconButton, MenuItem, Radio, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { ChannelRangeSlider } from './ChannelRangeSlider/ChannelRangeSlider';
 import { GxCheckbox } from '../../../../../shared/components/GxCheckbox';
 import { GxSelect } from '../../../../../shared/components/GxSelect';
@@ -13,16 +16,24 @@ import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const ChannelController = ({
   color,
+  domain,
   name,
   isLoading,
   pixelValue,
   channelVisible,
   slider,
+  defaultSlider,
   toggleIsOn,
   onSelectionChange,
   handleColorSelect,
   handleRemoveChannel,
-  handleSliderChange
+  handleSliderChange,
+  handleResetSlider,
+  isSoloed,
+  isSoloMode,
+  presoloVisible,
+  onSoloToggle,
+  toggleSelectInSoloMode
 }: ChannelControllerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -30,25 +41,71 @@ export const ChannelController = ({
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
   const [currentMinValue, currentMaxValue] = slider;
-  const [rangeMin, setRangeMin] = useState(currentMinValue.toString());
-  const [rangeMax, setRangeMax] = useState(currentMaxValue.toString());
-  const [minInputValue, setMinInputValue] = useState<string>('');
-  const [maxInputValue, setMaxInputValue] = useState<string>('');
+  const [domainMin, domainMax] = domain;
+  const [sliderRangeMode, setSliderRangeMode] = useState<SliderRangeMode>('expanded');
+  const [rangeMin, setRangeMin] = useState(domainMin.toString());
+  const [rangeMax, setRangeMax] = useState(domainMax.toString());
+  const [minInputValue, setMinInputValue] = useState<string>(currentMinValue.toString());
+  const [maxInputValue, setMaxInputValue] = useState<string>(currentMaxValue.toString());
+
+  const [visibleRange, setVisibleRange] = useState(() => {
+    const [calcMin, calcMax] = calculateExpandedRange(
+      currentMinValue,
+      currentMaxValue,
+      Number(rangeMin),
+      Number(rangeMax)
+    );
+    return { min: calcMin, max: calcMax };
+  });
+
+  const handleModeToggle = () => {
+    setSliderRangeMode((prev) => {
+      const newMode = prev === 'expanded' ? 'contract' : 'expanded';
+      const rMin = Number(rangeMin);
+      const rMax = Number(rangeMax);
+      if (newMode === 'contract') {
+        setVisibleRange({ min: rMin, max: rMax });
+      } else {
+        const [eMin, eMax] = calculateExpandedRange(currentMinValue, currentMaxValue, rMin, rMax);
+        setVisibleRange({ min: eMin, max: eMax });
+      }
+      return newMode;
+    });
+  };
 
   return (
     <Grid
       container
       direction="column"
       justifyContent="center"
-      gap={1}
+      gap={0.5}
     >
       <Box sx={sx.headerWrapper}>
-        <GxCheckbox
-          onChange={toggleIsOn}
-          disabled={isLoading}
-          checked={channelVisible}
-          disableTouchRipple
-        />
+        <Tooltip
+          title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
+          enterDelay={300}
+          arrow
+        >
+          <Radio
+            checked={isSoloed}
+            onClick={onSoloToggle}
+            size="small"
+            disableTouchRipple
+            sx={sx.soloRadio}
+          />
+        </Tooltip>
+        <Box sx={isSoloMode ? sx.selectDimmed : undefined}>
+          <GxCheckbox
+            onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
+            disabled={isLoading}
+            checked={isSoloMode ? presoloVisible : channelVisible}
+            disableTouchRipple
+          />
+        </Box>
+        <Box sx={sx.valueWrapper}>
+          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+        </Box>
+        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
         <GxSelect
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
@@ -68,6 +125,7 @@ export const ChannelController = ({
         <Box>
           <ChannelOptions
             slider={slider}
+            domain={domain}
             handleColorSelect={handleColorSelect as any}
             disabled={isLoading}
             rangeMin={rangeMin}
@@ -93,29 +151,77 @@ export const ChannelController = ({
           </Tooltip>
         </Box>
       </Box>
-      <Box sx={sx.pixelIntensityContainer}>
-        <Box sx={sx.valueWrapper}>
-          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+      <Box sx={sx.sliderRow}>
+        <ChannelRangeSlider
+          color={color}
+          slider={slider}
+          domain={domain}
+          handleSliderChange={handleSliderChange}
+          isLoading={isLoading}
+          visibleMin={visibleRange.min}
+          visibleMax={visibleRange.max}
+          minInputValue={minInputValue}
+          maxInputValue={maxInputValue}
+          setMinInputValue={setMinInputValue}
+          setMaxInputValue={setMaxInputValue}
+        />
+        <Box sx={sx.sliderRowIcons}>
+          <Tooltip
+            title={t(
+              sliderRangeMode === 'expanded'
+                ? 'channelSettings.sliderRangeModeExpanded'
+                : 'channelSettings.sliderRangeModeContract'
+            )}
+            arrow
+          >
+            <IconButton
+              size="small"
+              onClick={handleModeToggle}
+              disabled={isLoading}
+              sx={sx.modeToggleButton}
+            >
+              {sliderRangeMode === 'expanded' ? (
+                <UnfoldMoreIcon fontSize="small" />
+              ) : (
+                <UnfoldLessIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={t('channelSettings.resetSlider')}
+            arrow
+          >
+            <span>
+              <IconButton
+                size="small"
+                onClick={handleResetSlider}
+                disabled={isLoading || (slider[0] === defaultSlider[0] && slider[1] === defaultSlider[1])}
+                sx={sx.sliderRowButton}
+              >
+                <RestartAltIcon fontSize="small" />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Box>
-        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
       </Box>
-      <ChannelRangeSlider
-        color={color}
-        slider={slider}
-        handleSliderChange={handleSliderChange}
-        isLoading={isLoading}
-        rangeMin={rangeMin}
-        rangeMax={rangeMax}
-        minInputValue={minInputValue}
-        maxInputValue={maxInputValue}
-        setMinInputValue={setMinInputValue}
-        setMaxInputValue={setMaxInputValue}
-      />
     </Grid>
   );
 };
 
 const styles = (theme: Theme) => ({
+  soloRadio: {
+    padding: '8px',
+    paddingRight: '2px',
+    '&, &.Mui-checked': {
+      color: theme.palette.gx.accent.greenBlue
+    },
+    '&:hover': {
+      backgroundColor: 'unset'
+    }
+  },
+  selectDimmed: {
+    opacity: 0.4
+  },
   removeChannelButton: {
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
@@ -124,25 +230,47 @@ const styles = (theme: Theme) => ({
   },
   headerWrapper: {
     display: 'flex',
-    alignItems: 'center'
-  },
-  pixelIntensityContainer: {
-    display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '4px'
   },
   valueWrapper: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '2px 0 0 0',
-    padding: '4px 0',
+    padding: '2px 6px',
     borderRadius: '8px',
     background: theme.palette.gx.primary.white,
-    width: '50%'
+    flexGrow: 0.5,
+    minWidth: '110px',
+    maxWidth: '110px'
   },
   channelSelect: {
-    flexGrow: 1
+    flexGrow: 1,
+    minWidth: 0
+  },
+  sliderRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
+  },
+  sliderRowIcons: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    flexShrink: 0
+  },
+  sliderRowButton: {
+    '&:hover': {
+      color: theme.palette.gx.accent.greenBlue,
+      backgroundColor: 'unset'
+    }
+  },
+  modeToggleButton: {
+    transform: 'rotate(90deg)',
+    '&:hover': {
+      color: theme.palette.gx.accent.greenBlue,
+      backgroundColor: 'unset'
+    }
   },
   textField: {
     marginBottom: '8px',
