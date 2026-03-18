@@ -4,6 +4,7 @@ import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
+import { NavigationRunInfo } from './NavigationRunInfo';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
@@ -31,7 +32,25 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             <Typography sx={sx.versionText}>{app_version}</Typography>
           </Box>
         </Box>
-
+        <NavigationRunInfo />
+      </Box>
+      <Box sx={sx.mobilePreviewBadge}>
+        <Tooltip
+          title={t('navigation.mobilePreviewTooltip')}
+          placement="bottom-end"
+          arrow
+          enterTouchDelay={0}
+          leaveTouchDelay={6000}
+        >
+          <Box
+            component="span"
+            sx={sx.mobilePreviewInner}
+          >
+            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
+          </Box>
+        </Tooltip>
+      </Box>
+      <Box sx={sx.rightSection}>
         <Box sx={sx.tabsSection}>
           <Tabs
             value={currentView}
@@ -55,24 +74,6 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             />
           </Tabs>
         </Box>
-      </Box>
-      <Box sx={sx.mobilePreviewBadge}>
-        <Tooltip
-          title={t('navigation.mobilePreviewTooltip')}
-          placement="bottom-end"
-          arrow
-          enterTouchDelay={0}
-          leaveTouchDelay={6000}
-        >
-          <Box
-            component="span"
-            sx={sx.mobilePreviewInner}
-          >
-            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
-          </Box>
-        </Tooltip>
-      </Box>
-      <Box sx={sx.rightSection}>
         <SocialIcons />
       </Box>
     </Box>
@@ -110,6 +111,7 @@ const styles = (theme: Theme) => ({
   rightSection: {
     display: 'none',
     alignItems: 'center',
+    gap: '40px',
     pointerEvents: 'auto',
     [theme.breakpoints.up('md')]: {
       display: 'flex'

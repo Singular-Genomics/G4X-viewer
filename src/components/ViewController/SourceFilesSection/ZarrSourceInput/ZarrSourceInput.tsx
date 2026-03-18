@@ -48,7 +48,6 @@ export default function ZarrSourceInput() {
 
   const handleClear = () => {
     setCloudImageUrl('');
-    setSubmitted(false);
     inputRef.current?.focus();
   };
 

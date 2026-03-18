@@ -66,7 +66,6 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               <GxCollapsibleSection
                 sectionTitle={t('sourceFiles.sectionTitle')}
                 defultState="open"
-                unmountOnExit={false}
               >
                 <SourceFilesSection />
               </GxCollapsibleSection>
