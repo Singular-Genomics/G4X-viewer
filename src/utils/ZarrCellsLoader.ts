@@ -1,4 +1,5 @@
-import { open, FetchStore, get } from 'zarrita';
+import { open, get } from 'zarrita';
+import { NoCacheFetchStore } from './ZarrDataSet';
 import { SingleMask, SegmentationMetadata, ColormapEntry } from '../shared/types';
 import { ZarrCellsData } from './ZarrDataSet.types';
 import { ZarrDataSet } from './ZarrDataSet';
@@ -7,7 +8,7 @@ import { createZarrPaths } from './ZarrPaths';
 export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrCellsData> {
   try {
     const paths = createZarrPaths(zarrDataSet.getBaseURL());
-    const cellsGroup = await open(new FetchStore(paths.cells.base()), { kind: 'group' });
+    const cellsGroup = await open(new NoCacheFetchStore(paths.cells.base()), { kind: 'group' });
 
     const [metadataGroup, polygonsGroup, proteinGroup, genesGroup] = await Promise.all([
       open(cellsGroup.resolve('metadata'), { kind: 'group' }),
