@@ -206,6 +206,11 @@
     "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
+  "tooltip": {
+    "objectLabel": "Object",
+    "objectCell": "Cell",
+    "objectTranscript": "Transcript"
+  },
   "transcript": {
     "cellId": "Cell ID",
     "color": "Color",
