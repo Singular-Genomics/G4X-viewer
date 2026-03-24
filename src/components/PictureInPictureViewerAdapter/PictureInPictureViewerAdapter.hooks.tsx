@@ -1,6 +1,6 @@
 import { useShallow } from 'zustand/react/shallow';
 import { DETAIL_VIEW_ID, MultiscaleImageLayer } from '@hms-dbmi/viv';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -62,8 +62,8 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
-    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData] = useZarrDataStore(
+    useShallow((store) => [store.layerConfig, store.colorMapConfig, store.zarrUrl, store.hasTranscriptsData])
   );
 
   const [
@@ -90,15 +90,15 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!files.length) {
+  if (!hasTranscriptsData) {
     return undefined;
   }
 
   const metadataLayer = new TranscriptLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
-    files,
+    zarrUrl: zarrUrl!,
     config: layerConfig,
-    visible: !!files.length && isTranscriptLayerOn,
+    visible: isTranscriptLayerOn,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,
@@ -107,6 +107,7 @@ export const useTranscriptLayer = () => {
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers,
     colormap: colorMapConfig,
+    onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -238,10 +239,11 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useBrightfieldImageLayer = () => {
-  const [selections, contrastLimits, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
+  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
     useShallow((store) => [
       store.selections,
       store.contrastLimits,
+      store.colors,
       store.opacity,
       store.isLayerVisible,
       store.getLoader
@@ -261,6 +263,7 @@ export const useBrightfieldImageLayer = () => {
     channelsVisible: [true, true, true],
     selections: selections as any,
     contrastLimits: contrastLimits as any,
+    colors: colors as any,
     loader: loader as any,
     dtype: dtype,
     opacity: isLayerVisible ? opacity : 0,
@@ -306,7 +309,7 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [files, layerConfig] = useZarrDataStore(useShallow((store) => [store.files, store.layerConfig]));
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,

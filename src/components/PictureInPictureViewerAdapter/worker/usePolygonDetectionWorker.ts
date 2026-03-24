@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 import type { PolygonWorkerMessage, PolygonWorkerResponse, PolygonPointData } from './polygonDetectionWorker.types';
 import { SingleMask } from '../../../shared/types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
+import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 
 export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (

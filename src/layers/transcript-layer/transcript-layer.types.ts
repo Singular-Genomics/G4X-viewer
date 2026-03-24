@@ -1,5 +1,5 @@
 import { PickingInfo } from '@deck.gl/core';
-import { ColorMapEntry, LayerConfig } from '../../stores/BinaryFilesStore';
+import { ColorMapEntry, LayerConfig } from '../../stores/ZarrDataStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import { PointData } from '../../shared/types';
 
@@ -23,8 +23,8 @@ export type LayerDataItem = {
 };
 
 export type TranscriptLayerProps = CompositeLayerProps & {
-  protoRoot?: protobuf.Root;
-  files: File[];
+  files?: File[];
+  zarrUrl?: string | null;
   config: LayerConfig;
   geneFilters: GeneNameFilterType | 'all';
   pointSize: number;
@@ -35,6 +35,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   maxVisibleLayers: number;
   colormap: ColorMapEntry[];
   onHover?: (pikingInfo: PickingInfo) => void;
+  onLoadingStateChange?: (isLoading: boolean) => void;
 };
 
 export type getTileDataProps = {

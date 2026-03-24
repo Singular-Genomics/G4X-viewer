@@ -1,16 +1,12 @@
 import { CompositeLayer } from '@deck.gl/core';
 import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
-import * as protobuf from 'protobufjs';
-import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
-  protoRoot: protobuf.Root;
   parsedColorMap: Record<string, number[]>;
 
   constructor(props: CellMasksLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.clusterId, entry.color]));
   }
 

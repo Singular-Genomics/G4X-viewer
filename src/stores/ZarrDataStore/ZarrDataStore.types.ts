@@ -1,19 +1,21 @@
-export type BinaryFilesStore = BinaryFilesStoreValues & BinaryFilesStoreMethods;
+export type ZarrDataStore = ZarrDataStoreValues & ZarrDataStoreMethods;
 
-export type BinaryFilesStoreValues = {
+export type ZarrDataStoreValues = {
   fileName: string;
   files: File[];
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
-  collectiveFileName: string;
+  zarrUrl: string | undefined;
+  hasTranscriptsData: boolean;
 };
 
-export type BinaryFilesStoreMethods = {
-  setFiles: (files: File[]) => void;
+export type ZarrDataStoreMethods = {
   setFileName: (newFileName: string) => void;
+  setFiles: (files: File[]) => void;
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
-  setCollectiveFileName: (name: string) => void;
+  setZarrUrl: (zarrUrl: string | undefined) => void;
+  setHasTranscriptsData: (hasTranscriptsData: boolean) => void;
   reset: () => void;
 };
 

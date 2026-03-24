@@ -6,6 +6,7 @@ import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useMetadata } from '../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../legacy/utils';
 import { ChannelSettingsImportExportButtons } from './ChannelSettingsImportExportButtons';
+import { CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK } from './ChannelController/ChannelController.helpers';
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -15,11 +16,16 @@ export const ChannelControllers = () => {
     channelsVisible,
     colors,
     contrastLimits,
+    domains,
     channelsSettings,
     toggleIsOnSetter,
     removeChannel,
     setPropertiesForChannel,
-    getLoader
+    getLoader,
+    soloChannelIndex,
+    presoloChannelsVisible,
+    setSoloChannel,
+    togglePresoloIsOn
   ] = useChannelsStore(
     useShallow((store) => [
       store.ids,
@@ -27,11 +33,16 @@ export const ChannelControllers = () => {
       store.channelsVisible,
       store.colors,
       store.contrastLimits,
+      store.domains,
       store.channelsSettings,
       store.toggleIsOn,
       store.removeChannel,
       store.setPropertiesForChannel,
-      store.getLoader
+      store.getLoader,
+      store.soloChannelIndex,
+      store.presoloChannelsVisible,
+      store.setSoloChannel,
+      store.togglePresoloIsOn
     ])
   );
 
@@ -74,11 +85,13 @@ export const ChannelControllers = () => {
             const { c } = selection;
 
             const newProps: Partial<PropertiesUpdateType> = {};
-            if (
-              channelName in channelsSettings &&
-              channelsSettings[channelName].minValue &&
-              channelsSettings[channelName].maxValue
-            ) {
+            if (!(channelName in channelsSettings)) {
+              channelsSettings[channelName] = {};
+            }
+            if (!channelsSettings[channelName].initialContrastLimits) {
+              channelsSettings[channelName].initialContrastLimits = newContrastLimit as [number, number];
+            }
+            if (channelsSettings[channelName].minValue && channelsSettings[channelName].maxValue) {
               const settings = channelsSettings[channelName];
               newProps.contrastLimits = [settings.minValue, settings.maxValue] as [number, number];
             } else {
@@ -124,6 +137,15 @@ export const ChannelControllers = () => {
           setPropertiesForChannel(index, { contrastLimits: newValue });
         };
 
+        const handleResetSlider = () => {
+          const initialLimits = channelsSettings[name]?.initialContrastLimits ?? (domains[index] as [number, number]);
+          if (name in channelsSettings) {
+            channelsSettings[name].minValue = undefined;
+            channelsSettings[name].maxValue = undefined;
+          }
+          setPropertiesForChannel(index, { contrastLimits: initialLimits });
+        };
+
         return (
           <Box
             key={id}
@@ -131,16 +153,27 @@ export const ChannelControllers = () => {
           >
             <ChannelController
               name={name}
+              domain={(domains[index] ?? [CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK]) as [number, number]}
               onSelectionChange={onSelectionChange}
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
-              color={colors[index] as [number, number, number]}
+              color={colors[index]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
-              slider={contrastLimits[index] as [number, number]}
+              slider={contrastLimits[index]}
+              defaultSlider={
+                (channelsSettings[name]?.initialContrastLimits ??
+                  domains[index] ?? [CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK]) as [number, number]
+              }
               handleSliderChange={handleSliderChange}
+              handleResetSlider={handleResetSlider}
+              isSoloed={soloChannelIndex === index}
+              isSoloMode={soloChannelIndex !== null}
+              presoloVisible={presoloChannelsVisible[index] ?? channelsVisible[index]}
+              onSoloToggle={() => setSoloChannel(index)}
+              toggleSelectInSoloMode={() => togglePresoloIsOn(index)}
             />
           </Box>
         );

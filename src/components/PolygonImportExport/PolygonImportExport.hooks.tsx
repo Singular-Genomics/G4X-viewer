@@ -1,4 +1,4 @@
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { usePolygonDetectionWorker } from '../PictureInPictureViewerAdapter/worker/usePolygonDetectionWorker';
 import { PolygonFeature, usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
@@ -62,7 +62,7 @@ export const usePolygonsFileImport = () => {
     });
 
     // Run detection for transcripts
-    const { files: transcriptFiles, layerConfig } = useBinaryFilesStore.getState();
+    const { files: transcriptFiles, layerConfig } = useZarrDataStore.getState();
     if (transcriptFiles.length > 0) {
       for (const polygon of importedPolygons) {
         try {

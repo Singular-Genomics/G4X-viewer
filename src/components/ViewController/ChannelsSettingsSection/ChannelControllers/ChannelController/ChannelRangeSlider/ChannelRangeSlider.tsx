@@ -1,26 +1,23 @@
-import { Box, Input, Theme, useTheme } from '@mui/material';
-import { colormapToRgb } from '../ChannelController.helpers';
+import { Box, Input, SxProps, Theme, useTheme } from '@mui/material';
+import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
-import { truncateDecimalNumber } from '../../../../../../legacy/utils';
 import { InfoTooltip } from '../../../../../InfoTooltip';
 import { useTranslation } from 'react-i18next';
 
-const CHANNEL_MIN = 0;
-const CHANNEL_MAX = 65535;
-const CHANNEL_STEP = 1;
 const DEBOUNCE_TIME_MS = 300;
 
 export const ChannelRangeSlider = ({
   color,
   slider,
+  domain,
   handleSliderChange,
   isLoading,
-  rangeMin,
-  rangeMax,
+  visibleMin,
+  visibleMax,
   minInputValue,
   maxInputValue,
   setMinInputValue,
@@ -31,6 +28,7 @@ export const ChannelRangeSlider = ({
   const { t } = useTranslation();
 
   const [currentMinValue, currentMaxValue] = slider;
+  const [domainMin, domainMax] = domain;
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
@@ -45,15 +43,11 @@ export const ChannelRangeSlider = ({
       debounce((currentValue: string) => {
         if (currentValue === '') return;
         const newValue =
-          +currentValue >= currentMaxValue
-            ? currentMaxValue
-            : +currentValue < CHANNEL_MIN
-              ? CHANNEL_MIN
-              : +currentValue;
+          +currentValue >= currentMaxValue ? currentMaxValue : +currentValue < domainMin ? domainMin : +currentValue;
         setMinInputValue(newValue.toString());
         handleSliderChange([newValue, currentMaxValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMaxValue, handleSliderChange, setMinInputValue]
+    [currentMaxValue, domainMin, handleSliderChange, setMinInputValue]
   );
 
   const handleMinInputChange = useCallback(
@@ -69,15 +63,11 @@ export const ChannelRangeSlider = ({
       debounce((currentValue: string) => {
         if (currentValue === '') return;
         const newValue =
-          +currentValue <= currentMinValue
-            ? currentMinValue
-            : +currentValue > CHANNEL_MAX
-              ? CHANNEL_MAX
-              : +currentValue;
+          +currentValue <= currentMinValue ? currentMinValue : +currentValue > domainMax ? domainMax : +currentValue;
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, handleSliderChange, setMaxInputValue]
+    [currentMinValue, domainMax, handleSliderChange, setMaxInputValue]
   );
 
   const handleMaxInputChange = useCallback(
@@ -97,7 +87,7 @@ export const ChannelRangeSlider = ({
         value={minInputValue}
         onChange={handleMinInputChange}
         inputProps={{
-          max: CHANNEL_MAX,
+          max: domainMax,
           step: CHANNEL_STEP
         }}
       />
@@ -105,12 +95,13 @@ export const ChannelRangeSlider = ({
         disabled={isLoading}
         value={slider}
         onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
-        valueLabelFormat={(v) => truncateDecimalNumber(v, 5)}
-        min={Number(rangeMin)}
-        max={Number(rangeMax)}
+        valueLabelDisplay="off"
+        min={visibleMin}
+        max={visibleMax}
         step={CHANNEL_STEP}
         orientation="horizontal"
         style={{ color: rgbColor }}
+        sx={sx.rangeSlider}
       />
       <Input
         id="channel_max"
@@ -119,7 +110,7 @@ export const ChannelRangeSlider = ({
         value={maxInputValue}
         onChange={handleMaxInputChange}
         inputProps={{
-          max: CHANNEL_MAX,
+          max: domainMax,
           step: CHANNEL_STEP
         }}
       />
@@ -128,12 +119,13 @@ export const ChannelRangeSlider = ({
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   sliderContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: '24px'
+    gap: '20px',
+    padding: '0 2px'
   },
   textField: {
     marginBottom: '8px',
@@ -147,6 +139,12 @@ const styles = (theme: Theme) => ({
     '&.MuiInputBase-root::after': {
       borderBottom: '2px solid',
       borderColor: theme.palette.gx.accent.greenBlue
+    }
+  },
+  rangeSlider: {
+    '& .MuiSlider-thumb': {
+      height: '16px',
+      width: '16px'
     }
   }
 });
