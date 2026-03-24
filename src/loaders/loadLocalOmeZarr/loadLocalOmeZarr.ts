@@ -2,6 +2,7 @@ import { openGroup, openArray, ZarrArray } from 'zarr';
 import { ZarrPixelSource } from '@vivjs/loaders';
 
 import type { MultiscaleMetadata, OmeroMetadata } from './loadLocalOmeZarr.types';
+import { HexToRgb } from '../../shared/components/GxColorPicker/GxColorPicker.helpers';
 
 /**
  * Round down to the previous power of 2.
@@ -99,7 +100,10 @@ export async function loadLocalOmeZarr(
     Pixels: {
       Channels: channels.map((c) => ({
         Name: c.label,
-        SamplesPerPixel: 1
+        SamplesPerPixel: 1,
+        Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
+        Active: c.active ?? false,
+        Window: c.window ?? undefined
       }))
     }
   };
