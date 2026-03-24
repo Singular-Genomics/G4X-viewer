@@ -94,6 +94,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'flex-start',
     paddingInline: '12px',
     pointerEvents: 'none',
+    overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
       height: `${NAVIGATION_HEIGHT_DESKTOP}px`,
       justifyContent: 'space-between',
@@ -104,7 +105,17 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: 0,
+    pointerEvents: 'auto',
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
+      gap: '20px'
+    },
+    [theme.breakpoints.up('lg')]: {
+      gap: '30px'
+    },
+    [theme.breakpoints.up('xl')]: {
       gap: '50px'
     }
   },
@@ -132,7 +143,8 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.primary.white,
     fontWeight: 700,
     fontSize: '20px',
-    lineHeight: '20px'
+    lineHeight: '20px',
+    whiteSpace: 'nowrap'
   },
   versionText: {
     fontSize: '12px',
