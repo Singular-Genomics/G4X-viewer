@@ -23,7 +23,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
           id: `sub-discarded-cells-layer-${this.props.id}`,
           data: this.props.outlierCellsData,
           positionFormat: 'XY',
-          stroked: false,
+          stroked: this.props.showBoundary,
           filled: this.props.showCellFill,
           getPolygon: (d) => d.vertices,
           getLineColor: [238, 238, 238],
@@ -31,7 +31,7 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
           updateTriggers: {
             getFillColor: this.props.cellFillOpacity
           },
-          getLineWidth: 0,
+          getLineWidth: this.props.showBoundary ? this.props.boundaryWidth : 0,
           visible: this.props.visible && this.props.showDiscardedPoints
         })
       );
@@ -43,15 +43,16 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
         id: `sub-cells-layer-${this.props.id}`,
         data: cellsData,
         positionFormat: 'XY',
-        stroked: false,
+        stroked: this.props.showBoundary,
         filled: this.props.showCellFill,
         getPolygon: (d) => d.vertices,
         getLineColor: (d) => (this.parsedColorMap[d.clusterId] as [number, number, number]) || [255, 255, 255],
         getFillColor: (d) => [...(this.parsedColorMap[d.clusterId] || [255, 255, 255]), opacityValue] as any,
         updateTriggers: {
-          getFillColor: [this.props.cellFillOpacity, this.props.colormap]
+          getFillColor: [this.props.cellFillOpacity, this.props.colormap],
+          getLineColor: this.props.colormap
         },
-        getLineWidth: 0,
+        getLineWidth: this.props.showBoundary ? this.props.boundaryWidth : 0,
         pickable: true,
         visible: this.props.visible
       })

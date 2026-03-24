@@ -6,6 +6,8 @@ export type CellMasksLayerProps = CompositeLayerProps & {
   showCellFill: boolean;
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
+  showBoundary: boolean;
+  boundaryWidth: number;
   outlierCellsData?: SingleMask[];
   colormap: ColormapEntry[];
   onHover?: (pikingInfo: PickingInfo) => void;
