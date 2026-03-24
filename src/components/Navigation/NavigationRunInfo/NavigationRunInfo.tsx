@@ -99,7 +99,7 @@ const styles = (theme: Theme) => ({
     gap: '1px'
   },
   fixedColumn: {
-    minWidth: '80px',
+    minWidth: '75px',
     maxWidth: '100px',
     flexShrink: 0,
     flexGrow: 1
@@ -110,12 +110,11 @@ const styles = (theme: Theme) => ({
     overflow: 'hidden'
   },
   label: {
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: 500,
     color: theme.palette.gx.lightGrey[500],
     lineHeight: 1.3,
     whiteSpace: 'nowrap',
-    textTransform: 'uppercase',
     letterSpacing: '0.04em'
   },
   value: {
