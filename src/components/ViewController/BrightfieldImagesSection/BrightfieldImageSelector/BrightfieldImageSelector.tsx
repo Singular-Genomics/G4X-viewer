@@ -8,6 +8,13 @@ import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
+import type { AvailableImageEntry } from '../../../../stores/BrightfieldImagesStore/BrightfieldImagesStore.types';
+
+function getEntryName(entry: AvailableImageEntry): string {
+  if (typeof entry === 'string') return entry.split('/').pop() || entry;
+  if ('__localZarrImage' in entry) return entry.name;
+  return entry.name;
+}
 
 export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
   const theme = useTheme();
@@ -25,9 +32,8 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const { dropzoneProps } = useBrightfieldImageHandler();
 
   const handleImageSelect = useCallback(
-    (selectedImage: File | string) => {
-      const imageName =
-        typeof selectedImage === 'string' ? selectedImage.split('/').pop() || selectedImage : selectedImage.name;
+    (selectedImage: AvailableImageEntry) => {
+      const imageName = getEntryName(selectedImage);
 
       if (imageName === activeImageName) {
         setActiveImage(null);
@@ -58,12 +64,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
       return;
     }
 
-    const index = availableImages.findIndex((entry) => {
-      if (typeof entry === 'string') {
-        return entry.split('/').pop() === filename || entry === filename;
-      }
-      return entry.name === filename;
-    });
+    const index = availableImages.findIndex((entry) => getEntryName(entry) === filename);
 
     if (index !== -1) {
       enqueueSnackbar({
@@ -93,7 +94,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noImages')}</Typography>
         ) : (
           images.map((entry, index) => {
-            const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
+            const entryName = getEntryName(entry);
 
             return (
               <BrightfieldImageSelectorEntry

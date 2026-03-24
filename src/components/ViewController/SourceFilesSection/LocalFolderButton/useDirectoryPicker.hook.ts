@@ -90,6 +90,20 @@ export const useDirectoryPicker = () => {
       });
     }
 
+    // Check for H&E brightfield image
+    try {
+      const imagesDir = await handle.getDirectoryHandle('images');
+      await imagesDir.getDirectoryHandle('h_and_e');
+      const heStore = new LRUCacheStore(new LocalFileStore(handle), 100, 'images/h_and_e');
+      useBrightfieldImagesStore.getState().addNewFile({
+        __localZarrImage: true,
+        name: 'h_and_e',
+        store: heStore
+      });
+    } catch {
+      // No H&E directory — skip
+    }
+
     // Load cells/segmentation data
     const successMessages: string[] = [];
     const warningMessages: string[] = [];

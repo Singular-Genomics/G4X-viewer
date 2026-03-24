@@ -255,7 +255,7 @@ export const useBrightfieldImageLayer = () => {
 
   const loader = getLoader();
 
-  if (!loader || !loader[0] || !loader[0].shape) {
+  if (!loader || !loader[0] || !loader[0].shape || !loader[0].getRaster) {
     return undefined;
   }
 

@@ -160,7 +160,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
     // Local OME-NGFF directory — either via FileSystemDirectoryHandle or pre-built store
     if (urlOrFile && urlOrFile.__localZarrStore) {
       const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
-      return await loadLocalOmeZarr(urlOrFile, 'images/multiplex');
+      return await loadLocalOmeZarr(urlOrFile, urlOrFile.__localZarrPath || 'images/multiplex');
     }
 
     // OME-TIFF

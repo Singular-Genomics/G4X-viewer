@@ -15,7 +15,8 @@ export const BrightfieldImageSelectorEntry = ({
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
+  const entryName =
+    typeof imageEntry === 'string' ? imageEntry : '__localZarrImage' in imageEntry ? imageEntry.name : imageEntry.name;
 
   const fileName = entryName.split('/').pop();
   const imageName = fileName ? fileName.split('.').shift() : '';

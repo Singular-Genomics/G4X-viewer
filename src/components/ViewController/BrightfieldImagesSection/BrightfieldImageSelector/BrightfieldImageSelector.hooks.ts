@@ -28,10 +28,13 @@ export const useBrightfieldImageHandler = () => {
     }
 
     const index = availableImages.findIndex((entry) => {
-      if (typeof entry === 'string') {
-        return entry.split('/').pop() === imageFile.name || entry === imageFile.name;
-      }
-      return entry.name === imageFile.name;
+      const name =
+        typeof entry === 'string'
+          ? entry.split('/').pop() || entry
+          : '__localZarrImage' in entry
+            ? entry.name
+            : entry.name;
+      return name === imageFile.name;
     });
 
     if (index !== -1) {

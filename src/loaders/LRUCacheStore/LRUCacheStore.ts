@@ -14,14 +14,16 @@ type InnerStore = {
  */
 export class LRUCacheStore {
   readonly __localZarrStore = true;
+  readonly __localZarrPath: string;
   private inner: InnerStore;
   private cache: Map<string, ValidStoreType>;
   private maxSize: number;
 
-  constructor(inner: InnerStore, maxSize = 100) {
+  constructor(inner: InnerStore, maxSize = 100, path = 'images/multiplex') {
     this.inner = inner;
     this.cache = new Map();
     this.maxSize = maxSize;
+    this.__localZarrPath = path;
   }
 
   async getItem(key: string): Promise<ValidStoreType> {
