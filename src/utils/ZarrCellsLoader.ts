@@ -7,7 +7,9 @@ import { createZarrPaths } from './ZarrPaths';
 export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrCellsData> {
   try {
     const paths = createZarrPaths(zarrDataSet.getBaseURL());
-    const cellsGroup = await open(new FetchStore(paths.cells.base()), { kind: 'group' });
+    const cellsGroup = await open(new FetchStore(`${paths.cells.base()}${zarrDataSet.getCacheBuster()}`), {
+      kind: 'group'
+    });
 
     const [metadataGroup, polygonsGroup, proteinGroup, genesGroup] = await Promise.all([
       open(cellsGroup.resolve('metadata'), { kind: 'group' }),

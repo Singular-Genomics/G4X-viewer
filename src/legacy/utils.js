@@ -205,9 +205,15 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
       typeof urlOrFile === 'string' &&
       (urlOrFile.includes('/images/multiplex') || urlOrFile.includes('/images/h_and_e'));
 
+    // Append a cache-busting timestamp to Zarr URLs so that metadata (.zattrs, .zarray)
+    // is always fresh. The zarr library's resolveUrl propagates query params to all child
+    // URLs, so this covers channel settings and other metadata fetched internally by Viv.
+    const cacheBuster = typeof urlOrFile === 'string' ? `?t=${Date.now()}` : '';
+    const zarrUrl = typeof urlOrFile === 'string' ? `${urlOrFile}${cacheBuster}` : urlOrFile;
+
     if (!isOmeZarrPath) {
       try {
-        return await loadBioformatsZarr(urlOrFile);
+        return await loadBioformatsZarr(zarrUrl);
       } catch (e) {
         if (isZodError(e)) {
           throw e;
@@ -215,7 +221,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
       }
     }
 
-    const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
+    const res = await loadOmeZarr(zarrUrl, { type: 'multiscales' });
     return {
       data: res.data,
       metadata: {
@@ -224,7 +230,8 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
             Name: c.label,
             SamplesPerPixel: 1,
             Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
-            Active: c.active ?? false
+            Active: c.active ?? false,
+            Window: c.window ?? undefined
           }))
         }
       }

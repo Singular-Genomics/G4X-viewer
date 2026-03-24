@@ -27,10 +27,11 @@ export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
+  private cacheBuster: string;
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
-      await axios.head(path);
+      await axios.head(`${path}${this.cacheBuster}`);
       return true;
     } catch {
       return false;
@@ -40,10 +41,15 @@ export class ZarrDataSet {
   constructor(zarrUrl: string) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
+    this.cacheBuster = `?t=${Date.now()}`;
   }
 
   public getBaseURL(): string {
     return this.zarrURL;
+  }
+
+  public getCacheBuster(): string {
+    return this.cacheBuster;
   }
 
   public isValid(): boolean {
@@ -82,7 +88,7 @@ export class ZarrDataSet {
 
   public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {
     try {
-      const response = await axios.get(this.paths.attrs.images());
+      const response = await axios.get(`${this.paths.attrs.images()}${this.cacheBuster}`);
       const axes = response.data?.axes;
       if (axes?.pixel_per_um) {
         return { unit: axes.unit ?? 'μm', pixel_per_um: axes.pixel_per_um };
@@ -96,7 +102,7 @@ export class ZarrDataSet {
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await axios.get(this.paths.attrs.root());
+      const response = await axios.get(`${this.paths.attrs.root()}${this.cacheBuster}`);
       return response.data.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
@@ -109,7 +115,7 @@ export class ZarrDataSet {
       return this.transcriptAttrs;
     }
     try {
-      const response = await axios.get(this.paths.attrs.transcripts());
+      const response = await axios.get(`${this.paths.attrs.transcripts()}${this.cacheBuster}`);
       this.transcriptAttrs = response.data;
       return response.data;
     } catch (error) {
@@ -135,7 +141,7 @@ export class ZarrDataSet {
         return transcriptConfig;
       }
 
-      const response = await axios.get(this.paths.attrs.multiplexLevel(0));
+      const response = await axios.get(`${this.paths.attrs.multiplexLevel(0)}${this.cacheBuster}`);
       const metadata = response.data;
       const shape = metadata.shape;
       const chunks = metadata.chunks;
@@ -158,7 +164,7 @@ export class ZarrDataSet {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
       try {
-        await axios.head(this.paths.attrs.multiplexLevel(level));
+        await axios.head(`${this.paths.attrs.multiplexLevel(level)}${this.cacheBuster}`);
         levels.push(level);
       } catch {
         break;
@@ -175,15 +181,28 @@ export class ZarrDataSet {
       const tileParams = { z: invertedZ, y, x };
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
-          kind: 'array'
-        }).catch(() => null)
+        open(
+          new FetchStore(`${this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })}${this.cacheBuster}`),
+          {
+            kind: 'array'
+          }
+        ).catch(() => null),
+        open(
+          new FetchStore(
+            `${this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })}${this.cacheBuster}`
+          ),
+          {
+            kind: 'array'
+          }
+        ).catch(() => null),
+        open(
+          new FetchStore(
+            `${this.paths.transcripts.tileField({ ...tileParams, field: 'position' })}${this.cacheBuster}`
+          ),
+          {
+            kind: 'array'
+          }
+        ).catch(() => null)
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
@@ -228,7 +247,7 @@ export class ZarrDataSet {
 
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
-      const response = await axios.get(this.paths.misc.summary(), {
+      const response = await axios.get(`${this.paths.misc.summary()}${this.cacheBuster}`, {
         responseType: 'text'
       });
       return response.data;
