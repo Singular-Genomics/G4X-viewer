@@ -4,7 +4,6 @@ import { t } from 'i18next';
 
 export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointType }) {
   const tooltipItems: TooltipContentItem[] = [
-    { label: t('tooltip.objectLabel'), value: t('tooltip.objectTranscript') },
     {
       label: t('transcript.position'),
       value: `X: ${data.position[0].toFixed(2)}
@@ -14,12 +13,16 @@ export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointTyp
     { label: t('transcript.cellId'), value: data.cellId }
   ];
 
-  return <TooltipContent data={tooltipItems} />;
+  return (
+    <TooltipContent
+      data={tooltipItems}
+      title={t('tooltip.objectTranscript')}
+    />
+  );
 }
 
 export function TooltipCellMaskContent({ data }: { data: CellMaskDatapointType }) {
   const tooltipItems: TooltipContentItem[] = [
-    { label: t('tooltip.objectLabel'), value: t('tooltip.objectCell') },
     { label: t('segmentation.cellId'), value: data.cellId },
     { label: t('segmentation.clusterId'), value: data.clusterId },
     { label: t('segmentation.area'), value: data.area },
@@ -27,5 +30,10 @@ export function TooltipCellMaskContent({ data }: { data: CellMaskDatapointType }
     { label: t('segmentation.totalGenes'), value: data.totalGenes }
   ];
 
-  return <TooltipContent data={tooltipItems} />;
+  return (
+    <TooltipContent
+      data={tooltipItems}
+      title={t('tooltip.objectCell')}
+    />
+  );
 }
