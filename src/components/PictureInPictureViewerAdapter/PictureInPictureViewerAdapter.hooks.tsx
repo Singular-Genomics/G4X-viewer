@@ -327,8 +327,55 @@ export const usePolygonDrawingLayer = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const polygonFeaturesBeforeEdit = useRef<PolygonFeature[]>([]);
+  const isCellMasksInitialLoad = useRef(true);
+
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastClickedPolygonRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isCellMasksInitialLoad.current) {
+      isCellMasksInitialLoad.current = false;
+      return;
+    }
+    if (!cellMasksData) return;
+
+    const currentPolygons = usePolygonDrawingStore.getState().polygonFeatures;
+    if (currentPolygons.length === 0) return;
+
+    const redetect = async () => {
+      setDetecting(true);
+
+      const results = await Promise.all(
+        currentPolygons.map(async (polygon) => {
+          const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
+          return { polygon, result };
+        })
+      );
+
+      const updatedFeatures = results.map(({ polygon, result }) => ({
+        ...polygon,
+        properties: {
+          ...polygon.properties,
+          cellPolygonCount: result.cellPolygonCount,
+          cellClusterDistribution: result.cellClusterDistribution
+        }
+      }));
+
+      const newSelectedCells = results.map(({ polygon, result }) => ({
+        roiId: polygon.properties?.polygonId as number,
+        data: result.cellPolygonsInDrawnPolygon
+      }));
+
+      usePolygonDrawingStore.setState({ polygonFeatures: updatedFeatures });
+      setSelectedCells(newSelectedCells);
+      setDetecting(false);
+    };
+
+    redetect().catch((error) => {
+      console.error('Error re-detecting cells after segmentation change:', error);
+      setDetecting(false);
+    });
+  }, [cellMasksData, detectCellPolygonsInPolygon, setDetecting, setSelectedCells]);
 
   const getPolygonColor = (
     feature: any,
