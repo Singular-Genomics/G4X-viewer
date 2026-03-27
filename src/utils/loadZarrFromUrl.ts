@@ -1,10 +1,12 @@
 import { TFunction } from 'i18next';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
+import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -90,14 +92,11 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
 
   if (hasSegmentationData) {
     try {
-      const { extractProteinNamesFromMetadata } = await import('./ZarrCellsLoader');
-
       const cellsSegmentations = await zarrDataSet.fetchCellsSegmentations();
 
-      const availableSegmentations: import('../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types').SegmentationOption[] =
-        cellsSegmentations.segmentationOrder
-          .map((label) => ({ label, folderName: cellsSegmentations.segmentationSources[label] }))
-          .filter((seg) => !!seg.folderName);
+      const availableSegmentations: SegmentationOption[] = cellsSegmentations.segmentationOrder
+        .map((label) => ({ label, folderName: cellsSegmentations.segmentationSources[label] }))
+        .filter((seg) => !!seg.folderName);
 
       const defaultSegmentation = availableSegmentations[0];
       const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);

@@ -10,6 +10,7 @@ import type {
   ZarrCellsSegmentations
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
+import { loadCellsFromZarr } from './ZarrCellsLoader';
 
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
@@ -232,7 +233,6 @@ export class ZarrDataSet {
   }
 
   public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
-    const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
     return loadCellsFromZarr(this, segmentationFolderName);
   }
 
