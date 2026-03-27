@@ -125,6 +125,8 @@ export const useCellSegmentationLayer = () => {
     isCellLayerOn,
     isCellNameFilterOn,
     cellFillOpacity,
+    showBoundary,
+    boundaryWidth,
     showFilteredCells,
     cellNameFilters,
     cellColormapConfig
@@ -134,6 +136,8 @@ export const useCellSegmentationLayer = () => {
       store.isCellLayerOn,
       store.isCellNameFilterOn,
       store.cellFillOpacity,
+      store.showBoundary,
+      store.boundaryWidth,
       store.showFilteredCells,
       store.cellNameFilters,
       store.cellColormapConfig
@@ -218,6 +222,8 @@ export const useCellSegmentationLayer = () => {
     showCellFill: true,
     showDiscardedPoints: showFilteredCells,
     cellFillOpacity,
+    showBoundary,
+    boundaryWidth,
     cellsData: filteredCells.unselectedCellsData,
     outlierCellsData: filteredCells.outlierCellsData,
     colormap: cellColormapConfig,

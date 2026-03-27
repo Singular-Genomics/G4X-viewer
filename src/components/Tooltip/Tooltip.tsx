@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Theme, useTheme } from '@mui/material';
 import { TooltipType, useTooltipStore } from '../../stores/TooltipStore';
 import { useEffect, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -16,6 +16,8 @@ function getTooltipContent(type: TooltipType | undefined, object: any) {
 }
 
 export function Tooltip() {
+  const theme = useTheme();
+  const sx = styles(theme);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [viewportWidth, viewportHeight] = useViewerStore(
     useShallow((store) => [store.viewportWidth, store.viewportHeight])
@@ -47,26 +49,27 @@ export function Tooltip() {
   return (
     <Box
       ref={tooltipRef}
-      sx={{
-        position: 'absolute',
-        zIndex: 10,
-        pointerEvents: 'none',
-        display: 'none'
-      }}
+      sx={sx.tooltipWrapper}
     >
       <Box sx={sx.tooltipContainer}>{object && getTooltipContent(type, object)}</Box>
     </Box>
   );
 }
 
-const sx = {
+const styles = (theme: Theme) => ({
+  tooltipWrapper: {
+    position: 'absolute',
+    zIndex: 10,
+    pointerEvents: 'none',
+    display: 'none'
+  },
   tooltipContainer: {
-    backgroundColor: '#C9CACB',
+    backgroundColor: theme.palette.gx.darkGrey[300],
+    color: theme.palette.gx.lightGrey[900],
     padding: '8px 16px',
-    border: '5px solid #8E9092',
+    border: `5px solid ${theme.palette.gx.darkGrey[100]}`,
     borderRadius: '10px',
-    display: 'flex',
-    gap: '10px',
-    cursor: 'crosshair'
+    cursor: 'crosshair',
+    fontSize: '13px'
   }
-};
+});
