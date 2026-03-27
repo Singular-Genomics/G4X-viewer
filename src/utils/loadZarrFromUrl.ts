@@ -42,6 +42,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
 
   useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
   useZarrDataStore.getState().setFileName(zarrDir);
+  useZarrDataStore.setState({ zarrDataSet });
 
   const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
     zarrDataSet.hasTranscriptsData(),

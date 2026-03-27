@@ -1,4 +1,5 @@
 import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
+import type { ClusterLabelEntry } from './ZarrCellsLoader';
 
 export type ZarrLayerConfig = {
   layer_width: number;
@@ -30,7 +31,7 @@ export type ZarrCellsData = {
   cellMasks: SingleMask[];
   colormap: ColormapEntry[];
   metadata: SegmentationMetadata;
-  clusterLabels: import('./ZarrCellsLoader').ClusterLabelEntry[];
+  clusterLabels: ClusterLabelEntry[];
 };
 
 export type ZarrCellsSegmentations = {

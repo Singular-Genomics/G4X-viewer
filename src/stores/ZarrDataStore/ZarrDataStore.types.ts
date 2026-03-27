@@ -1,3 +1,5 @@
+import type { ZarrDataSet } from '../../utils/ZarrDataSet';
+
 export type ZarrDataStore = ZarrDataStoreValues & ZarrDataStoreMethods;
 
 export type ZarrDataStoreValues = {
@@ -7,6 +9,7 @@ export type ZarrDataStoreValues = {
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
   hasTranscriptsData: boolean;
+  zarrDataSet: ZarrDataSet | null;
 };
 
 export type ZarrDataStoreMethods = {

@@ -2,15 +2,12 @@ import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../../../stores/ZarrDataStore/ZarrDataStore';
-import { ZarrDataSet } from '../../../utils/ZarrDataSet';
 import { buildColormap } from '../../../utils/ZarrCellsLoader';
-import { open, FetchStore, get } from 'zarrita';
-import { createZarrPaths } from '../../../utils/ZarrPaths';
 
 export const useSegmentationSelectors = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const zarrDataSet = useZarrDataStore((store) => store.zarrDataSet);
 
   const [
     availableSegmentations,
@@ -30,14 +27,13 @@ export const useSegmentationSelectors = () => {
 
   const handleSegmentationChange = useCallback(
     async (newLabel: string) => {
-      if (!zarrUrl || newLabel === selectedSegmentationLabel) return;
+      if (!zarrDataSet || newLabel === selectedSegmentationLabel) return;
 
       const segmentationOption = availableSegmentations.find((s) => s.label === newLabel);
       if (!segmentationOption) return;
 
       setIsLoading(true);
       try {
-        const zarrDataSet = new ZarrDataSet(zarrUrl);
         const cellsData = await zarrDataSet.fetchCellsData(segmentationOption.folderName);
 
         useCellSegmentationLayerStore.setState({
@@ -57,12 +53,12 @@ export const useSegmentationSelectors = () => {
         setIsLoading(false);
       }
     },
-    [zarrUrl, selectedSegmentationLabel, availableSegmentations]
+    [zarrDataSet, selectedSegmentationLabel, availableSegmentations]
   );
 
   const handleClusterLabelChange = useCallback(
     async (newKey: string) => {
-      if (!zarrUrl || newKey === selectedClusterLabelKey || !cellMasksData) return;
+      if (!zarrDataSet || newKey === selectedClusterLabelKey || !cellMasksData) return;
 
       const targetLabel = availableClusterLabels.find((l) => l.key === newKey);
       if (!targetLabel) return;
@@ -72,14 +68,7 @@ export const useSegmentationSelectors = () => {
 
       setIsLoading(true);
       try {
-        const paths = createZarrPaths(zarrUrl);
-        const cellsBaseUrl = `${paths.cells.base()}/${segmentationOption.folderName}`;
-
-        const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/metadata/cluster_id`), { kind: 'array' });
-        const clusterIdsChunk = await get(clusterIdArray);
-
-        const clusterIdsRaw = clusterIdsChunk.data as any;
-        const columnCount = clusterIdsChunk.shape[1];
+        const { data: clusterIdsRaw, columnCount } = await zarrDataSet.fetchClusterIds(segmentationOption.folderName);
 
         const updatedMasks = cellMasksData.map((mask, i) => {
           const flatIndex = i * columnCount + targetLabel.index;
@@ -99,7 +88,7 @@ export const useSegmentationSelectors = () => {
       }
     },
     [
-      zarrUrl,
+      zarrDataSet,
       selectedClusterLabelKey,
       cellMasksData,
       availableClusterLabels,

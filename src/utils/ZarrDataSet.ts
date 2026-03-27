@@ -236,6 +236,13 @@ export class ZarrDataSet {
     return loadCellsFromZarr(this, segmentationFolderName);
   }
 
+  public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
+    const cellsBaseUrl = `${this.paths.cells.base()}/${segmentationFolderName}`;
+    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/metadata/cluster_id`), { kind: 'array' });
+    const chunk = await get(clusterIdArray);
+    return { data: chunk.data, columnCount: chunk.shape[1] };
+  }
+
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
       const response = await axios.get(this.paths.misc.summary(), {

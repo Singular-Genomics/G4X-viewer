@@ -14,7 +14,8 @@ const DEFAULT_ZARR_DATA_STORE_VALUES: ZarrDataStoreValues = {
   layerConfig: defaultLayerConfig,
   colorMapConfig: [],
   zarrUrl: undefined,
-  hasTranscriptsData: false
+  hasTranscriptsData: false,
+  zarrDataSet: null
 };
 
 export const useZarrDataStore = create<ZarrDataStore>((set) => ({
