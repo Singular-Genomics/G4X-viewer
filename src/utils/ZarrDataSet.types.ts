@@ -30,6 +30,12 @@ export type ZarrCellsData = {
   cellMasks: SingleMask[];
   colormap: ColormapEntry[];
   metadata: SegmentationMetadata;
+  clusterLabels: import('./ZarrCellsLoader').ClusterLabelEntry[];
+};
+
+export type ZarrCellsSegmentations = {
+  segmentationOrder: string[];
+  segmentationSources: Record<string, string>;
 };
 
 export type ZarrCellsMetadataField = 'cell_id' | 'area' | 'cluster_id' | 'total_counts' | 'total_genes' | 'umap';

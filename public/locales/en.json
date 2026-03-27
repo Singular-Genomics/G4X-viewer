@@ -148,6 +148,8 @@
     "cytometryMenuReverseColorscale": "Reverse colorscale",
     "cytometryMenuSubsamplingStep": "Subsampling Step",
     "disabledLayerWarning": "Segmentation Layer is disabled",
+    "segmentationSelectLabel": "Cell Segmentation",
+    "clusterLabelSelectLabel": "Cluster ID",
     "filteringFailed": "Failed to filter cells. Please try again or contact support.",
     "graphFilterCytometryLabel": "Flow Cytometry",
     "graphFiltersLabel": "Graph Filters",

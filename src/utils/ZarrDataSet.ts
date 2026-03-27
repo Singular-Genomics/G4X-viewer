@@ -6,7 +6,8 @@ import type {
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
-  ZarrCellsData
+  ZarrCellsData,
+  ZarrCellsSegmentations
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
 
@@ -221,9 +222,18 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchCellsData(): Promise<ZarrCellsData> {
+  public async fetchCellsSegmentations(): Promise<ZarrCellsSegmentations> {
+    const response = await axios.get(`${this.paths.cells.base()}/.zattrs`);
+    const attrs = response.data;
+    return {
+      segmentationOrder: attrs.segmentation_order as string[],
+      segmentationSources: attrs.segmentation_sources as Record<string, string>
+    };
+  }
+
+  public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
     const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
-    return loadCellsFromZarr(this);
+    return loadCellsFromZarr(this, segmentationFolderName);
   }
 
   public async fetchSummaryHtml(): Promise<string | null> {

@@ -6,6 +6,7 @@ import { CellMasksFillSettings } from './CellMasksFillSettings';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
 import { useTranslation } from 'react-i18next';
+import { SegmentationSelectors } from './SegmentationSelectors';
 
 const DisabledLayerWarning = () => {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ export const CellMasksLayerSection = () => {
 
   return (
     <Box sx={sx.sectionContainer}>
+      <SegmentationSelectors />
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFillLabel')}</Typography>
