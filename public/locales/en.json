@@ -115,6 +115,12 @@
   },
   "segmentationSettings": {
     "cellFillLabel": "Cell Fill",
+    "cellFillShow": "Show cell fill",
+    "boundaryLabel": "Cell Boundary",
+    "boundaryShow": "Show boundary",
+    "boundaryPerformanceWarning": "Rendering cell boundaries with large datasets (>100k cells) is computationally intensive:",
+    "boundaryPerformanceWarningCaseOne": "Requires a powerful GPU for smooth rendering",
+    "boundaryPerformanceWarningCaseTwo": "Performance depends on your hardware capabilities and dataset size",
     "cellFiltersLabel": "Cell Filters",
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphBinningError": "Failed to bin {{count}} cells",
@@ -208,6 +214,11 @@
     "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
   },
+  "tooltip": {
+    "objectLabel": "Object",
+    "objectCell": "Cell",
+    "objectTranscript": "Transcript"
+  },
   "transcript": {
     "cellId": "Cell ID",
     "color": "Color",
@@ -249,7 +260,7 @@
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "imageLoadError": "Failed to load image. Please check the file format and try again.",
     "brightfieldImageLoadError": "Failed to load brightfield image. Please check the file format and try again.",
-    "noImageInfo": "Please upload an image file to view",
+    "noImageInfo": "Please load a Zarr dataset to start viewing data",
     "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",

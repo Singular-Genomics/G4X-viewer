@@ -3,6 +3,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { CellMasksFillSettings } from './CellMasksFillSettings';
+import { CellMasksBoundarySettings } from './CellMasksBoundarySettings';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
 import { useTranslation } from 'react-i18next';
@@ -24,8 +25,8 @@ const DisabledLayerWarning = () => {
 
 export const CellMasksLayerSection = () => {
   const { t } = useTranslation();
-  const [isCellLayerOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellLayerOn, store.isCellNameFilterOn])
+  const [isCellLayerOn, showBoundary, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.showBoundary, store.isCellNameFilterOn])
   );
 
   return (
@@ -37,6 +38,13 @@ export const CellMasksLayerSection = () => {
           {!isCellLayerOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
+      </Box>
+      <Box>
+        <Box sx={sx.subsectionWrapper}>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.boundaryLabel')}</Typography>
+          {!isCellLayerOn && showBoundary && <DisabledLayerWarning />}
+        </Box>
+        <CellMasksBoundarySettings />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
