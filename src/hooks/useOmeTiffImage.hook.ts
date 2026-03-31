@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore';
-import { buildDefaultSelection, createLoader, getMultiSelectionStats, guessRgb } from '../legacy/utils';
+import { buildDefaultSelection, getMultiSelectionStats, guessRgb } from '../legacy/utils';
+import { loadOverlayImage } from '../utils/loadOverlayImage';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
@@ -28,29 +29,7 @@ export const useOmeTiffImage = (source: ViewerSourceType | null) => {
           }
         });
 
-        const { urlOrFile } = source;
-
-        const newLoader = await createLoader(
-          urlOrFile,
-          () => {},
-          () => {}
-        );
-
-        let nextLoader: any;
-        let nextMeta: any;
-
-        if (Array.isArray(newLoader)) {
-          if (newLoader.length > 1) {
-            nextMeta = newLoader.map((l) => l.metadata);
-            nextLoader = newLoader.map((l) => l.data);
-          } else {
-            nextMeta = newLoader[0].metadata;
-            nextLoader = newLoader[0].data;
-          }
-        } else {
-          nextMeta = newLoader.metadata;
-          nextLoader = newLoader.data;
-        }
+        const { loader: nextLoader, metadata: nextMeta } = await loadOverlayImage(source);
 
         if (nextLoader) {
           unstable_batchedUpdates(() => {

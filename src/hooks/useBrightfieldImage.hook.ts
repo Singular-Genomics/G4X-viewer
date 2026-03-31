@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore';
-import { buildDefaultSelection, createLoader } from '../legacy/utils';
+import { buildDefaultSelection } from '../legacy/utils';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
 import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { MAX_UINT16_VALUE, MAX_UINT8_VALUE } from '../shared/constants';
+import { loadOverlayImage } from '../utils/loadOverlayImage';
 
 export const useBrightfieldImage = (source: ViewerSourceType | null) => {
   const { t } = useTranslation();
@@ -29,26 +30,8 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
           }
         });
 
-        const { urlOrFile } = source;
+        const { loader: nextLoader } = await loadOverlayImage(source);
 
-        // --------------------- LEGACY LOADER ----------------------
-        const newLoader = await createLoader(
-          urlOrFile,
-          () => {},
-          () => {}
-        );
-        // ----------------------------------------------------------
-        let nextLoader: any;
-
-        if (Array.isArray(newLoader)) {
-          if (newLoader.length > 1) {
-            nextLoader = newLoader.map((l) => l.data);
-          } else {
-            nextLoader = newLoader[0].data;
-          }
-        } else {
-          nextLoader = newLoader.data;
-        }
         if (nextLoader) {
           unstable_batchedUpdates(() => {
             useImageOverlaysStore.setState({ loader: nextLoader });

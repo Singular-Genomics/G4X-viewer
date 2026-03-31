@@ -63,7 +63,8 @@ export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
     if (file === null) {
       set({
         omeTiffImageSource: null,
-        omeTiffLoader: DEFAULT_VALUES.omeTiffLoader
+        omeTiffLoader: DEFAULT_VALUES.omeTiffLoader,
+        omeTiffMetadata: null
       });
       return;
     }
@@ -73,7 +74,8 @@ export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
         description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
         urlOrFile: file
       },
-      omeTiffLoader: DEFAULT_VALUES.omeTiffLoader
+      omeTiffLoader: DEFAULT_VALUES.omeTiffLoader,
+      omeTiffMetadata: null
     });
   },
   addNewFile: (file: File | string) =>
