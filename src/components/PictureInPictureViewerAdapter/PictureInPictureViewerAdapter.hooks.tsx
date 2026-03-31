@@ -292,7 +292,7 @@ export const useOmeTiffImageLayer = () => {
 
   const omeTiffImageLayer = new MultiscaleImageLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-ome-tiff-image-layer`,
-    channelsVisible: [true, true, true],
+    channelsVisible: omeTiffSelections.map(() => true),
     selections: omeTiffSelections as any,
     contrastLimits: omeTiffContrastLimits as any,
     colors: omeTiffColors as any,

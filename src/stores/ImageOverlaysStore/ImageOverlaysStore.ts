@@ -15,6 +15,7 @@ const DEFAULT_VALUES: ImageOverlaysStoreValues = {
   omeTiffImageSource: null,
   loader: [{ labels: [], shape: [] }],
   omeTiffLoader: [{ labels: [], shape: [] }],
+  omeTiffMetadata: null,
   image: 0,
   contrastLimits: [[0, MAX_UINT16_VALUE]],
   omeTiffContrastLimits: [[0, MAX_UINT16_VALUE]],

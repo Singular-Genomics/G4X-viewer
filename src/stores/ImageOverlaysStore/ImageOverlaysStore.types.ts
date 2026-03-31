@@ -8,6 +8,7 @@ export type ImageOverlaysStoreValues = {
   omeTiffImageSource: ViewerSourceType | null;
   loader: any; // <- This is quite complicated
   omeTiffLoader: any;
+  omeTiffMetadata: any;
   image: number;
   selections: SelectionsType[];
   omeTiffSelections: SelectionsType[];
