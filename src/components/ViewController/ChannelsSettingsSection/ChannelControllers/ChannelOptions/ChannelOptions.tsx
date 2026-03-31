@@ -8,6 +8,7 @@ import { SliderThreshold } from './SliderRange/SliderThreshold';
 
 export const ChannelOptions = ({
   slider,
+  domain,
   handleColorSelect,
   disabled,
   rangeMin,
@@ -52,6 +53,7 @@ export const ChannelOptions = ({
               <ColorPalette handleColorSelect={handleColorSelect} />
               <SliderThreshold
                 slider={slider}
+                domain={domain}
                 rangeMin={rangeMin}
                 rangeMax={rangeMax}
                 setRangeMin={setRangeMin}

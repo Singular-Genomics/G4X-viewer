@@ -139,9 +139,9 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           ? activeIndices.map((c: number) => ({ ...baseSelection, c }))
           : buildDefaultSelection(loader[0]);
       // Default RGB.
-      let newContrastLimits = [];
-      let newDomains = [];
-      let newColors = [];
+      let newContrastLimits: [number, number][] = [];
+      let newDomains: [number, number][] = [];
+      let newColors: [number, number, number][] = [];
       const isRgb = guessRgb(metadata);
       if (isRgb) {
         if (isInterleaved(loader[0].shape)) {
@@ -168,12 +168,34 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         }
         useViewerStore.setState({ useColorMap: false });
       } else {
-        const stats = await getMultiSelectionStats({
-          loader,
-          selections: newSelections
+        const selectionsNeedingStats = newSelections.filter((sel: any, i: number) => {
+          const w = Channels[sel.c ?? i]?.Window;
+          return !(typeof w?.min === 'number' && typeof w?.max === 'number');
         });
-        newDomains = stats.domains;
-        newContrastLimits = stats.contrastLimits;
+
+        const stats =
+          selectionsNeedingStats.length > 0
+            ? await getMultiSelectionStats({ loader, selections: selectionsNeedingStats })
+            : { domains: [], contrastLimits: [] };
+
+        let statsIndex = 0;
+        newSelections.forEach((sel: any, i: number) => {
+          const w = Channels[sel.c ?? i]?.Window;
+          const hasDomain = typeof w?.min === 'number' && typeof w?.max === 'number';
+
+          if (hasDomain) {
+            newDomains.push([Math.trunc(w.min), Math.trunc(w.max)]);
+            const hasContrast = typeof w?.start === 'number' && typeof w?.end === 'number';
+            newContrastLimits.push(
+              hasContrast ? [Math.trunc(w.start), Math.trunc(w.end)] : [Math.trunc(w.min), Math.trunc(w.max)]
+            );
+          } else {
+            newDomains.push(stats.domains[statsIndex]);
+            newContrastLimits.push(stats.contrastLimits[statsIndex]);
+            statsIndex++;
+          }
+        });
+
         // If there is only one channel, use white.
         newColors =
           newDomains.length === 1
@@ -193,11 +215,14 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
       const channelsIds = newDomains.map(() => String(Math.random()));
       const channelsSettings: ChannelsSettings = {};
 
-      channelOptions.forEach((channelName: any) => {
+      channelOptions.forEach((channelName: any, i: number) => {
+        const selectionIndex = newSelections.findIndex((sel: any) => (sel.c ?? 0) === i);
         channelsSettings[`${channelName}`] = {
           color: undefined,
           maxValue: undefined,
-          minValue: undefined
+          minValue: undefined,
+          initialContrastLimits:
+            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined
         };
       });
 
