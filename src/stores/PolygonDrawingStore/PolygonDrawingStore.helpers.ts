@@ -1,5 +1,3 @@
-import * as protobuf from 'protobufjs';
-import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useViewerStore } from '../ViewerStore';
@@ -252,24 +250,6 @@ export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId
     featuresWithIds,
     nextPolygonId: currentMaxId + 1
   };
-};
-
-export const loadTileData = (file: File) => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = protobuf.Root.fromJSON(TranscriptFileSchema)
-          .lookupType('TileData')
-          .decode(new Uint8Array(reader.result as ArrayBuffer));
-        resolve(data);
-      } catch {
-        resolve(null);
-      }
-    };
-    reader.onerror = () => resolve(null);
-    reader.readAsArrayBuffer(file);
-  });
 };
 
 const generateExportJsonFilename = (type: string): string => {
