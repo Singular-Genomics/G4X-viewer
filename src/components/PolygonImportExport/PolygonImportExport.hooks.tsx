@@ -62,11 +62,11 @@ export const usePolygonsFileImport = () => {
     });
 
     // Run detection for transcripts
-    const { files: transcriptFiles, layerConfig } = useZarrDataStore.getState();
-    if (transcriptFiles.length > 0) {
+    const { layerConfig, zarrUrl } = useZarrDataStore.getState();
+    if (zarrUrl) {
       for (const polygon of importedPolygons) {
         try {
-          const result = await detectPointsInPolygon(polygon, transcriptFiles, layerConfig);
+          const result = await detectPointsInPolygon(polygon, layerConfig, zarrUrl);
 
           // Update polygon properties
           polygon.properties = {
