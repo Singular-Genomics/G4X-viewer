@@ -1,14 +1,13 @@
 import { Slider, SliderProps, Theme, alpha, useTheme } from '@mui/material';
 
-export const GxSlider = (props: SliderProps) => {
+export const GxSlider = ({ sx: customStyles, ...rest }: SliderProps) => {
   const theme = useTheme();
   const sx = styles(theme);
 
   return (
     <Slider
-      valueLabelDisplay="auto"
-      sx={sx.slider}
-      {...props}
+      sx={{ ...sx.slider, ...customStyles }}
+      {...rest}
     />
   );
 };

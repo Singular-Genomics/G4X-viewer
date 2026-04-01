@@ -7,8 +7,8 @@ import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (
     polygon: PolygonFeature,
-    files: File[],
-    layerConfig: LayerConfig
+    layerConfig: LayerConfig,
+    zarrUrl?: string
   ) => Promise<{
     pointsInPolygon: PolygonPointData[];
     pointCount: number;
@@ -39,7 +39,7 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   }, []);
 
   const detectPointsInPolygon = useCallback(
-    (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
+    (polygon: PolygonFeature, layerConfig: LayerConfig, zarrUrl?: string) => {
       return new Promise<{
         pointsInPolygon: PolygonPointData[];
         pointCount: number;
@@ -77,8 +77,8 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
           type: 'detectPointsInPolygon',
           payload: {
             polygon,
-            files,
-            layerConfig
+            layerConfig,
+            zarrUrl
           }
         };
 

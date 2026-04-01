@@ -2,6 +2,8 @@ import { SelectionsType } from '../../components/PictureInPictureViewerAdapter/P
 
 export type ChannelsStore = ChannelsStoreValues & ChannelsStoreMethods;
 
+export type ChannelSelectionMode = 'multiselect' | 'radio';
+
 export type ChannelsStoreValues = {
   contrastLimits: [number, number][];
   colors: [number, number, number][];
@@ -13,6 +15,9 @@ export type ChannelsStoreValues = {
   image: number;
   loader: any; // <- This is quite complicated
   domains: number[][];
+  channelSelectionMode: ChannelSelectionMode;
+  soloChannelIndex: number | null;
+  presoloChannelsVisible: boolean[];
 };
 
 export type ChannelsStoreMethods = {
@@ -22,6 +27,9 @@ export type ChannelsStoreMethods = {
   removeChannel: (channel: number) => void;
   addChannel: (newChannelProperties: ChannelsStoreValues) => void;
   getLoader: () => any;
+  setChannelSelectionMode: (mode: ChannelSelectionMode) => void;
+  setSoloChannel: (index: number) => void;
+  togglePresoloIsOn: (index: number) => void;
 };
 
 export type PropertiesUpdateType = {
@@ -45,4 +53,5 @@ export type ChannelSettings = {
   color?: [number, number, number];
   maxValue?: number;
   minValue?: number;
+  initialContrastLimits?: [number, number];
 };

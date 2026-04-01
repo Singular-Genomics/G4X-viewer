@@ -11,6 +11,8 @@ export type CellSegmentationLayerStoreValues = {
   isCellNameFilterOn: boolean;
   showFilteredCells: boolean;
   cellFillOpacity: number;
+  showBoundary: boolean;
+  boundaryWidth: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
   selectedCells: SelectionData<SingleMask>[];
@@ -22,6 +24,8 @@ export type CellSegmentationLayerStoreMethods = {
   toggleCellNameFilter: () => void;
   toggleShowFilteredCells: () => void;
   setCellFillOpacity: (newOpacity: number) => void;
+  toggleBoundary: () => void;
+  setBoundaryWidth: (width: number) => void;
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
