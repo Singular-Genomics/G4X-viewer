@@ -2,7 +2,6 @@ export type ZarrDataStore = ZarrDataStoreValues & ZarrDataStoreMethods;
 
 export type ZarrDataStoreValues = {
   fileName: string;
-  files: File[];
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
@@ -11,7 +10,6 @@ export type ZarrDataStoreValues = {
 
 export type ZarrDataStoreMethods = {
   setFileName: (newFileName: string) => void;
-  setFiles: (files: File[]) => void;
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;

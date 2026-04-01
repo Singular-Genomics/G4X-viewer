@@ -125,6 +125,8 @@ export const useCellSegmentationLayer = () => {
     isCellLayerOn,
     isCellNameFilterOn,
     cellFillOpacity,
+    showBoundary,
+    boundaryWidth,
     showFilteredCells,
     cellNameFilters,
     cellColormapConfig
@@ -134,6 +136,8 @@ export const useCellSegmentationLayer = () => {
       store.isCellLayerOn,
       store.isCellNameFilterOn,
       store.cellFillOpacity,
+      store.showBoundary,
+      store.boundaryWidth,
       store.showFilteredCells,
       store.cellNameFilters,
       store.cellColormapConfig
@@ -218,6 +222,8 @@ export const useCellSegmentationLayer = () => {
     showCellFill: true,
     showDiscardedPoints: showFilteredCells,
     cellFillOpacity,
+    showBoundary,
+    boundaryWidth,
     cellsData: filteredCells.unselectedCellsData,
     outlierCellsData: filteredCells.outlierCellsData,
     colormap: cellColormapConfig,
@@ -303,7 +309,7 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files, layerConfig] = useZarrDataStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [layerConfig, zarrUrl] = useZarrDataStore(useShallow((store) => [store.layerConfig, store.zarrUrl]));
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,
@@ -402,9 +408,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
+          const result = await detectPointsInPolygon(newPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, delete the polygon and show error
           if (result.limitExceeded) {
@@ -542,9 +548,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
+          const result = await detectPointsInPolygon(editedPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, revert the polygon to its previous position
           if (result.limitExceeded) {
