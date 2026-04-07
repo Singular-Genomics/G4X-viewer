@@ -33,7 +33,9 @@
     "sliderRangeModeContract": "Contract Range",
     "resetSlider": "Reset to default range",
     "solo": "Solo",
-    "exitSolo": "Exit Solo Mode"
+    "exitSolo": "Exit Solo Mode",
+    "groupProteins": "Proteins",
+    "groupMorphology": "Morphology"
   },
   "general": {
     "apply": "Apply",
