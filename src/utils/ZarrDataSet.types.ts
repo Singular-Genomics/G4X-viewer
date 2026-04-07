@@ -1,4 +1,5 @@
 import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
+import type { ClusterLabelEntry } from './ZarrCellsLoader';
 
 export type ZarrLayerConfig = {
   layer_width: number;
@@ -30,6 +31,12 @@ export type ZarrCellsData = {
   cellMasks: SingleMask[];
   colormap: ColormapEntry[];
   metadata: SegmentationMetadata;
+  clusterLabels: ClusterLabelEntry[];
+};
+
+export type ZarrCellsSegmentations = {
+  segmentationOrder: string[];
+  segmentationSources: Record<string, string>;
 };
 
 export type ZarrCellsMetadataField = 'cell_id' | 'area' | 'cluster_id' | 'total_counts' | 'total_genes' | 'umap';
