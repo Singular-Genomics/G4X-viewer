@@ -241,11 +241,13 @@ export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
     const coordinatesStr = JSON.stringify(coordinates);
 
     // Calculate cell statistics
-    const cellStatistics = selectedCells.reduce(
-      (acc, curr) => ({
-        totalCells: acc.totalCells + curr.data.length,
-        totalCounts: acc.totalCounts + curr.data.reduce((sum, cell) => sum + Number(cell.totalCounts), 0),
-        totalGenes: acc.totalGenes + curr.data.reduce((sum, cell) => sum + Number(cell.totalGenes), 0)
+    const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    const cellStatistics = cellsInPolygon.reduce(
+      (acc, cell) => ({
+        totalCells: acc.totalCells + 1,
+        totalCounts: acc.totalCounts + Number(cell.totalCounts),
+        totalGenes: acc.totalGenes + Number(cell.totalGenes)
       }),
       {
         totalCells: 0,
@@ -255,7 +257,7 @@ export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
     );
 
     // Calculate transcript statistics
-    const totalTranscripts = selectedPoints.reduce((acc, curr) => acc + curr.data.length, 0);
+    const totalTranscripts = selectedPoints.find((selection) => selection.roiId === polygonId)?.data.length ?? 0;
 
     // Calculate means
     const meanCounts =
@@ -363,16 +365,18 @@ const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string =
     const coordinates = feature.geometry.coordinates[0];
     const coordinatesStr = JSON.stringify(coordinates);
 
-    const cellStatistics = selectedCells.reduce(
-      (acc, curr) => ({
-        totalCells: acc.totalCells + curr.data.length,
-        totalCounts: acc.totalCounts + curr.data.reduce((sum, cell) => sum + Number(cell.totalCounts), 0),
-        totalGenes: acc.totalGenes + curr.data.reduce((sum, cell) => sum + Number(cell.totalGenes), 0)
+    const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    const cellStatistics = cellsInPolygon.reduce(
+      (acc, cell) => ({
+        totalCells: acc.totalCells + 1,
+        totalCounts: acc.totalCounts + Number(cell.totalCounts),
+        totalGenes: acc.totalGenes + Number(cell.totalGenes)
       }),
       { totalCells: 0, totalCounts: 0, totalGenes: 0 }
     );
 
-    const totalTranscripts = selectedPoints.reduce((acc, curr) => acc + curr.data.length, 0);
+    const totalTranscripts = selectedPoints.find((selection) => selection.roiId === polygonId)?.data.length ?? 0;
     const meanCounts =
       cellStatistics.totalCells > 0
         ? Math.round((cellStatistics.totalCounts / cellStatistics.totalCells) * 100) / 100
