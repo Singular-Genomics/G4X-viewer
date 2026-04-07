@@ -5,10 +5,24 @@ import { ZarrCellsData } from './ZarrDataSet.types';
 import { ZarrDataSet } from './ZarrDataSet';
 import { createZarrPaths } from './ZarrPaths';
 
-export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrCellsData> {
+export type ClusterLabelEntry = {
+  key: string;
+  displayName: string;
+  // Column index in the 2D cluster_id array [N, numLabels]
+  index: number;
+  clusterIdColors: Record<string, [number, number, number]>;
+  clusterIdOrder: string[];
+};
+
+export async function loadCellsFromZarr(
+  zarrDataSet: ZarrDataSet,
+  segmentationFolderName: string
+): Promise<ZarrCellsData> {
   try {
     const paths = createZarrPaths(zarrDataSet.getBaseURL());
-    const cellsGroup = await open(new NoCacheFetchStore(paths.cells.base()), { kind: 'group' });
+    const cellsBaseUrl = `${paths.cells.base()}/${segmentationFolderName}`;
+
+    const cellsGroup = await open(new NoCacheFetchStore(cellsBaseUrl), { kind: 'group' });
 
     const [metadataGroup, polygonsGroup, proteinGroup, genesGroup] = await Promise.all([
       open(cellsGroup.resolve('metadata'), { kind: 'group' }),
@@ -53,7 +67,6 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
 
     const cellIds = cellIdsChunk.data as Uint32Array;
     const areas = areasChunk.data as Uint16Array;
-    const clusterIds = clusterIdsChunk.data as any;
     const polygonOffsets = polygonOffsetsChunk.data as BigInt64Array;
     const polygonVertices = polygonVerticesChunk.data as Float64Array;
     const proteinValues = proteinValuesChunk.data as Uint16Array;
@@ -69,9 +82,20 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
     const genesIndices = genesIndicesChunk.data as Int32Array;
     const genesIndptr = genesIndptrChunk.data as BigInt64Array;
 
-    const cellMasks: SingleMask[] = [];
+    const clusterLabels = parseClusterLabels(metadataGroup.attrs);
+    const defaultLabel = clusterLabels[0];
+
+    // cluster_id is a 2D array [N, numLabels]; use index from .zattrs for each label
+    const columnCount = clusterIdsChunk.shape[1];
+    const clusterIdsRaw = clusterIdsChunk.data as any;
+
+    const getClusterId = (i: number, columnIndex: number): string => {
+      const flatIndex = i * columnCount + columnIndex;
+      return clusterIdsRaw.get ? clusterIdsRaw.get(flatIndex) : String(clusterIdsRaw[flatIndex]);
+    };
 
     const numCells = cellIds.length;
+    const cellMasks: SingleMask[] = [];
 
     for (let i = 0; i < numCells; i++) {
       const vsStart = Number(polygonOffsets[i]);
@@ -88,9 +112,6 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
         proteinVals.push(proteinValues[i * numProteins + p]);
       }
 
-      const clusterId = clusterIds.get ? clusterIds.get(i) : String(clusterIds[i]);
-      const umapValues = { umapX: umapData[i * 2], umapY: umapData[i * 2 + 1] };
-
       const nonzeroGeneIndices: number[] = [];
       const nonzeroGeneValues: number[] = [];
       const rowStart = Number(genesIndptr[i]);
@@ -103,31 +124,57 @@ export async function loadCellsFromZarr(zarrDataSet: ZarrDataSet): Promise<ZarrC
       cellMasks.push({
         cellId: String(cellIds[i]),
         area: areas[i],
-        clusterId: clusterId,
-        vertices: vertices,
+        clusterId: getClusterId(i, defaultLabel.index),
+        vertices,
         proteinValues: proteinVals,
         totalCounts: totalCounts[i],
         totalGenes: totalGenes[i],
-        nonzeroGeneIndices: nonzeroGeneIndices,
-        nonzeroGeneValues: nonzeroGeneValues,
-        umapValues: umapValues
+        nonzeroGeneIndices,
+        nonzeroGeneValues,
+        umapValues: { umapX: umapData[i * 2], umapY: umapData[i * 2 + 1] }
       });
     }
 
-    const colormap = loadColormapFromZarr(metadataGroup.attrs);
+    const colormap = buildColormap(defaultLabel);
+    const metadata: SegmentationMetadata = { proteinNames, geneNames };
 
-    const metadata: SegmentationMetadata = {
-      proteinNames: proteinNames,
-      geneNames: geneNames
-    };
-
-    return { cellMasks, colormap, metadata };
+    return { cellMasks, colormap, metadata, clusterLabels };
   } catch (error) {
     throw new Error(`Failed to load cells from Zarr: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
-function extractStringArray(chunk: { data: any; shape: number[] }): string[] {
+function parseClusterLabels(metadataAttrs: Record<string, unknown>): ClusterLabelEntry[] {
+  const clusterLabelsRaw = metadataAttrs.cluster_labels as Record<
+    string,
+    { clusterID_colors: Record<string, [number, number, number]>; clusterID_order: string[]; index: number }
+  >;
+  const clusterLabelsOrder = metadataAttrs.cluster_labels_order as string[];
+
+  if (!clusterLabelsRaw || !clusterLabelsOrder) {
+    throw new Error('cluster_labels or cluster_labels_order not found in metadata .zattrs');
+  }
+
+  return clusterLabelsOrder.map((key) => {
+    const entry = clusterLabelsRaw[key];
+    return {
+      key,
+      displayName: key,
+      index: entry.index,
+      clusterIdColors: entry.clusterID_colors,
+      clusterIdOrder: entry.clusterID_order
+    };
+  });
+}
+
+export function buildColormap(label: ClusterLabelEntry): ColormapEntry[] {
+  return label.clusterIdOrder.map((clusterId) => ({
+    clusterId,
+    color: (label.clusterIdColors[clusterId] ?? [128, 128, 128]) as [number, number, number]
+  }));
+}
+
+export function extractStringArray(chunk: { data: any; shape: number[] }): string[] {
   const data = chunk.data as any;
   const length = chunk.shape[0];
   const result: string[] = [];
@@ -135,19 +182,6 @@ function extractStringArray(chunk: { data: any; shape: number[] }): string[] {
     result.push(data.get ? data.get(i) : String(data[i]));
   }
   return result;
-}
-
-function loadColormapFromZarr(metadataAttrs: Record<string, unknown>): ColormapEntry[] {
-  const clusterIdColors = metadataAttrs.clusterID_colors as Record<string, [number, number, number]> | undefined;
-
-  if (!clusterIdColors) {
-    throw new Error('clusterID_colors not found in cells/metadata .zattrs');
-  }
-
-  return Object.keys(clusterIdColors).map((clusterId) => ({
-    clusterId,
-    color: (clusterIdColors[clusterId] ? clusterIdColors[clusterId] : [128, 128, 128]) as [number, number, number]
-  }));
 }
 
 export function extractProteinNamesFromMetadata(metadata: Record<string, any>): string[] {

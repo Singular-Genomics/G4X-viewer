@@ -1,4 +1,4 @@
-import { open, get } from 'zarrita';
+import { open, get, FetchStore } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
@@ -6,9 +6,11 @@ import type {
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
-  ZarrCellsData
+  ZarrCellsData,
+  ZarrCellsSegmentations
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
+import { loadCellsFromZarr } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
 
@@ -235,9 +237,24 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchCellsData(): Promise<ZarrCellsData> {
-    const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
-    return loadCellsFromZarr(this);
+  public async fetchCellsSegmentations(): Promise<ZarrCellsSegmentations> {
+    const response = await axios.get(`${this.paths.cells.base()}/.zattrs`);
+    const attrs = response.data;
+    return {
+      segmentationOrder: attrs.segmentation_order as string[],
+      segmentationSources: attrs.segmentation_sources as Record<string, string>
+    };
+  }
+
+  public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
+    return loadCellsFromZarr(this, segmentationFolderName);
+  }
+
+  public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
+    const cellsBaseUrl = `${this.paths.cells.base()}/${segmentationFolderName}`;
+    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/metadata/cluster_id`), { kind: 'array' });
+    const chunk = await get(clusterIdArray);
+    return { data: chunk.data, columnCount: chunk.shape[1] };
   }
 
   public async fetchSummaryHtml(): Promise<string | null> {
