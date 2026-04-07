@@ -38,7 +38,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
   useBrightfieldImagesStore.getState().reset();
-  useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false });
+  useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false, viewState: null });
 
   useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
   useZarrDataStore.getState().setFileName(zarrDir);

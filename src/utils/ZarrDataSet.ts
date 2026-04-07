@@ -1,4 +1,4 @@
-import { open, FetchStore, get } from 'zarrita';
+import { open, get, FetchStore } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
@@ -11,6 +11,20 @@ import type {
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
 import { loadCellsFromZarr } from './ZarrCellsLoader';
+
+const noCacheHeaders = { 'Cache-Control': 'no-cache' };
+
+export class NoCacheFetchStore {
+  constructor(public url: string) {}
+
+  async get(key: string): Promise<Uint8Array | undefined> {
+    const url = `${this.url.replace(/\/$/, '')}/${key.replace(/^\//, '')}`;
+    const response = await fetch(url, { cache: 'no-cache' });
+    if (response.status === 404) return undefined;
+    if (!response.ok) throw new Error(`Request unsuccessful: ${response.statusText}`);
+    return new Uint8Array(await response.arrayBuffer());
+  }
+}
 
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
@@ -32,7 +46,7 @@ export class ZarrDataSet {
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
-      await axios.head(path);
+      await axios.head(path, { headers: noCacheHeaders });
       return true;
     } catch {
       return false;
@@ -84,7 +98,7 @@ export class ZarrDataSet {
 
   public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {
     try {
-      const response = await axios.get(this.paths.attrs.images());
+      const response = await axios.get(this.paths.attrs.images(), { headers: noCacheHeaders });
       const axes = response.data?.axes;
       if (axes?.pixel_per_um) {
         return { unit: axes.unit ?? 'μm', pixel_per_um: axes.pixel_per_um };
@@ -98,7 +112,7 @@ export class ZarrDataSet {
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await axios.get(this.paths.attrs.root());
+      const response = await axios.get(this.paths.attrs.root(), { headers: noCacheHeaders });
       return response.data.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
@@ -111,7 +125,7 @@ export class ZarrDataSet {
       return this.transcriptAttrs;
     }
     try {
-      const response = await axios.get(this.paths.attrs.transcripts());
+      const response = await axios.get(this.paths.attrs.transcripts(), { headers: noCacheHeaders });
       this.transcriptAttrs = response.data;
       return response.data;
     } catch (error) {
@@ -137,7 +151,7 @@ export class ZarrDataSet {
         return transcriptConfig;
       }
 
-      const response = await axios.get(this.paths.attrs.multiplexLevel(0));
+      const response = await axios.get(this.paths.attrs.multiplexLevel(0), { headers: noCacheHeaders });
       const metadata = response.data;
       const shape = metadata.shape;
       const chunks = metadata.chunks;
@@ -160,7 +174,7 @@ export class ZarrDataSet {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
       try {
-        await axios.head(this.paths.attrs.multiplexLevel(level));
+        await axios.head(this.paths.attrs.multiplexLevel(level), { headers: noCacheHeaders });
         levels.push(level);
       } catch {
         break;
@@ -177,13 +191,13 @@ export class ZarrDataSet {
       const tileParams = { z: invertedZ, y, x };
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
+        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
           kind: 'array'
         }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
+        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
           kind: 'array'
         }).catch(() => null),
-        open(new FetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
+        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
           kind: 'array'
         }).catch(() => null)
       ]);
@@ -246,7 +260,8 @@ export class ZarrDataSet {
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
       const response = await axios.get(this.paths.misc.summary(), {
-        responseType: 'text'
+        responseType: 'text',
+        headers: noCacheHeaders
       });
       return response.data;
     } catch (error) {

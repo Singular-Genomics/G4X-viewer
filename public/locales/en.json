@@ -188,7 +188,8 @@
     "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
     "proteinNamesExtractionError": "Failed to extract protein names from metadata",
     "segmentationLoadError": "Failed to load cell segmentation data from Zarr file",
-    "zarrInputLabel": "Zarr File Name",
+    "zarrInputLabel": "Zarr Store URL",
+    "zarrFileName": "File Name",
     "zarrInputPlaceholder": "Enter URL to .zarr file",
     "zarrInvalidFile": "Invalid input file name. Only .zarr extension allowed",
     "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}",
@@ -324,7 +325,14 @@
     "viewer": "Viewer",
     "dashboard": "Dashboard",
     "mobilePreview": "Mobile preview",
-    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop.",
+    "runInfo": {
+      "sampleId": "Sample ID",
+      "flowCell": "Flow Cell",
+      "tissueType": "Tissue Type",
+      "block": "Block",
+      "experiment": "Experiment"
+    }
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
