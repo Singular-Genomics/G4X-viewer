@@ -226,55 +226,7 @@ export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature
 };
 
 export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
-  const { selectedCells } = useCellSegmentationLayerStore.getState();
-  const { selectedPoints } = useTranscriptLayerStore.getState();
-  const { polygonNotes } = usePolygonDrawingStore.getState();
-
-  const header = ['ROI', 'ROI_coordinates', 'mean_counts', 'mean_genes', 'total_cells', 'total_transcripts', 'notes'];
-  const rows: (string | number)[][] = [header];
-
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const coordinates = feature.geometry.coordinates[0];
-
-    // Convert coordinates to string format
-    const coordinatesStr = JSON.stringify(coordinates);
-
-    // Calculate cell statistics
-    const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
-
-    const cellStatistics = cellsInPolygon.reduce(
-      (acc, cell) => ({
-        totalCells: acc.totalCells + 1,
-        totalCounts: acc.totalCounts + Number(cell.totalCounts),
-        totalGenes: acc.totalGenes + Number(cell.totalGenes)
-      }),
-      {
-        totalCells: 0,
-        totalCounts: 0,
-        totalGenes: 0
-      }
-    );
-
-    // Calculate transcript statistics
-    const totalTranscripts = selectedPoints.find((selection) => selection.roiId === polygonId)?.data.length ?? 0;
-
-    // Calculate means
-    const meanCounts =
-      cellStatistics.totalCells > 0
-        ? Math.round((cellStatistics.totalCounts / cellStatistics.totalCells) * 100) / 100
-        : 0;
-    const meanGenes =
-      cellStatistics.totalCells > 0
-        ? Math.round((cellStatistics.totalGenes / cellStatistics.totalCells) * 100) / 100
-        : 0;
-
-    const note = polygonNotes[polygonId] || '';
-
-    rows.push([polygonId, coordinatesStr, meanCounts, meanGenes, cellStatistics.totalCells, totalTranscripts, note]);
-  });
-
-  const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
+  const csv = generateMetadataCSVContent(polygonFeatures);
   downloadText(csv, generateExportCsvFilename('ROI_metadata'));
 };
 
