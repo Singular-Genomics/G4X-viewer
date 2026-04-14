@@ -3,7 +3,7 @@ import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
-import { useViewerStore } from '../stores/ViewerStore';
+import { useViewerStore, VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
@@ -92,6 +92,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   }
 
   if (hasSegmentationData) {
+    useViewerStore.setState({
+      isViewerLoading: {
+        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
+        message: t('viewer.loadingSegmentationProcessing')
+      }
+    });
     try {
       const cellsSegmentations = await zarrDataSet.fetchCellsSegmentations();
 
@@ -131,6 +137,10 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
       );
     } catch {
       warningMessages.push(t('sourceFiles.segmentationLoadError'));
+    } finally {
+      if (useViewerStore.getState().isViewerLoading?.type === VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING) {
+        useViewerStore.setState({ isViewerLoading: undefined });
+      }
     }
   } else {
     warningMessages.push(t('sourceFiles.segmentationMissingData'));

@@ -16,7 +16,6 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
-import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
 import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
@@ -26,7 +25,7 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
-import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { useViewerStore } from '../../stores/ViewerStore';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
 export const useResizableContainer = () => {
@@ -146,7 +145,6 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
-  const { filterCells } = useCellFilteringWorker();
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -164,53 +162,62 @@ export const useCellSegmentationLayer = () => {
       return;
     }
 
-    useViewerStore.setState({
-      isViewerLoading: {
-        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
-        message: t('viewer.loadingSegmentationProcessing')
-      }
-    });
+    try {
+      const nameFilters = isCellNameFilterOn ? cellNameFilters : 'all';
+      let unselectedCellsData = cellMasksData;
+      let outlierCellsData: SingleMask[] = [];
 
-    filterCells(
-      cellMasksData,
-      isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
-        ? {
-            proteins: proteinIndices,
-            range: ranges
+      if (nameFilters !== 'all' && nameFilters.length > 0) {
+        const selected: SingleMask[] = [];
+        const outliers: SingleMask[] = [];
+        for (const cell of cellMasksData) {
+          if (nameFilters.includes(cell.clusterId)) {
+            selected.push(cell);
+          } else {
+            outliers.push(cell);
           }
-        : undefined,
-      umapRange
-    )
-      .then((result) => {
-        setFilteredCells(result);
-      })
-      .catch((error) => {
-        console.error('Cell filtering error:', error);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'error',
-          message: t('segmentationSettings.filteringFailed')
-        });
-        setFilteredCells({
-          unselectedCellsData: cellMasksData,
-          outlierCellsData: []
-        });
-      })
-      .finally(() => {
-        useViewerStore.setState({ isViewerLoading: undefined });
+        }
+        unselectedCellsData = selected;
+        outlierCellsData = outliers;
+      }
+
+      if (ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0) {
+        unselectedCellsData = unselectedCellsData.filter(
+          (cell) =>
+            cell.proteinValues[proteinIndices.xAxisIndex] <= ranges.xEnd &&
+            cell.proteinValues[proteinIndices.xAxisIndex] >= ranges.xStart &&
+            cell.proteinValues[proteinIndices.yAxisIndex] >= ranges.yEnd &&
+            cell.proteinValues[proteinIndices.yAxisIndex] <= ranges.yStart
+        );
+      }
+
+      if (umapRange) {
+        unselectedCellsData = unselectedCellsData.filter(
+          (cell) =>
+            cell.umapValues.umapX >= umapRange.xStart &&
+            cell.umapValues.umapX <= umapRange.xEnd &&
+            cell.umapValues.umapY <= umapRange.yStart &&
+            cell.umapValues.umapY >= umapRange.yEnd
+        );
+      }
+
+      setFilteredCells({
+        unselectedCellsData,
+        outlierCellsData
       });
-  }, [
-    cellMasksData,
-    isCellNameFilterOn,
-    cellNameFilters,
-    ranges,
-    proteinIndices,
-    umapRange,
-    filterCells,
-    enqueueSnackbar,
-    t
-  ]);
+    } catch (error) {
+      console.error('Cell filtering error:', error);
+      enqueueSnackbar({
+        variant: 'gxSnackbar',
+        titleMode: 'error',
+        message: t('segmentationSettings.filteringFailed')
+      });
+      setFilteredCells({
+        unselectedCellsData: cellMasksData,
+        outlierCellsData: []
+      });
+    }
+  }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange, enqueueSnackbar, t]);
 
   if (!cellMasksData) {
     return undefined;
