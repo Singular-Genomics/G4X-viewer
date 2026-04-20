@@ -272,18 +272,14 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
-    "brightfieldLayer": "fH&E Image Layer",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "layerToggles": "Layer Toggles",
-    "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
-    "segmentationLayer": "Segmentation Layer",
-    "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
   },
   "activeFilters": {
