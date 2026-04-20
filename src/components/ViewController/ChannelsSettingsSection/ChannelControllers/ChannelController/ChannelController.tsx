@@ -54,8 +54,14 @@ export const ChannelController = ({
   const channelOptions = useViewerStore((store) => store.channelOptions);
 
   const isMorphology = (name: string) => MORPHOLOGY_KEYWORDS.some((kw) => name.toLowerCase().includes(kw));
-  const morphologyOptions = channelOptions.filter(isMorphology);
-  const proteinOptions = channelOptions.filter((opt) => !isMorphology(opt));
+
+  const [morphologyOptions, proteinOptions] = channelOptions.reduce(
+    (result, opt): [string[], string[]] => {
+      result[isMorphology(opt) ? 0 : 1].push(opt);
+      return result;
+    },
+    [[], []]
+  );
 
   const [currentMinValue, currentMaxValue] = slider;
   const [domainMin, domainMax] = domain;
