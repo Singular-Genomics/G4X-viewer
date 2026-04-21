@@ -39,6 +39,10 @@ export type ZarrCellsSegmentations = {
   segmentationSources: Record<string, string>;
 };
 
+export type ZarrCellTileData = {
+  polygons: SingleMask[];
+};
+
 export type ZarrCellsMetadataField = 'cell_id' | 'area' | 'cluster_id' | 'total_counts' | 'total_genes' | 'umap';
 
 export type ZarrCellsPolygonsField = 'polygon_offsets' | 'polygon_vertices_xy';
@@ -46,6 +50,31 @@ export type ZarrCellsPolygonsField = 'polygon_offsets' | 'polygon_vertices_xy';
 export type ZarrCellsProteinField = 'protein_names' | 'protein_values';
 
 export type ZarrCellsGenesField = 'gene_names' | 'data' | 'indices' | 'indptr';
+
+export type ZarrCellTileField =
+  | 'polygon_offsets'
+  | 'polygon_vertices_xy'
+  | 'cluster_id'
+  | 'cell_id'
+  | 'position'
+  | 'area'
+  | 'total_counts'
+  | 'total_genes'
+  | 'umap'
+  | 'protein_values'
+  | 'gene_counts'
+  | 'gene_indices'
+  | 'gene_indptr';
+
+export type ZarrCellTileCoordinates = {
+  y: number;
+  x: number;
+  folder: string;
+};
+
+export type ZarrCellTileFieldParams = ZarrCellTileCoordinates & {
+  field: ZarrCellTileField;
+};
 
 export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position';
 
@@ -59,6 +88,9 @@ export type ZarrPathsCells = {
   protein: (field: ZarrCellsProteinField) => string;
   genes: (field: ZarrCellsGenesField) => string;
   base: () => string;
+  segmentation: (folder: string) => string;
+  tile: (params: ZarrCellTileCoordinates) => string;
+  tileField: (params: ZarrCellTileFieldParams) => string;
 };
 
 export type ZarrPathsImages = {
@@ -77,6 +109,7 @@ export type ZarrPathsAttrs = {
   transcripts: () => string;
   multiplexLevel: (level: number) => string;
   images: () => string;
+  cellsSegmentation: (folder: string) => string;
 };
 
 export type ZarrPathsMisc = {

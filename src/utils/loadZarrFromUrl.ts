@@ -6,7 +6,7 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
-import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
+import { buildColormap } from './ZarrCellsLoader';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -100,32 +100,30 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
         .filter((seg) => !!seg.folderName);
 
       const defaultSegmentation = availableSegmentations[0];
-      const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);
 
-      let proteinNames = cellsData.metadata.proteinNames;
-      if (proteinNames.length === 0 && metadata) {
-        proteinNames = extractProteinNamesFromMetadata(metadata);
-      }
+      const [cellsLayerConfig, clusterLabels] = await Promise.all([
+        zarrDataSet.fetchCellsLayerConfig(defaultSegmentation.folderName),
+        zarrDataSet.fetchCellsClusterLabels(defaultSegmentation.folderName)
+      ]);
 
-      const hasUmapData = cellsData.cellMasks.some(
-        (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
-      );
+      const defaultLabel = clusterLabels[0];
+      const colormap = buildColormap(defaultLabel);
 
       useCellSegmentationLayerStore.setState({
-        cellMasksData: cellsData.cellMasks,
-        cellColormapConfig: cellsData.colormap,
+        cellMasksData: null,
+        cellColormapConfig: colormap,
         fileName: zarrDir,
-        umapDataAvailable: hasUmapData,
-        segmentationMetadata: { ...cellsData.metadata, proteinNames },
         availableSegmentations,
         selectedSegmentationLabel: defaultSegmentation.label,
-        availableClusterLabels: cellsData.clusterLabels,
-        selectedClusterLabelKey: cellsData.clusterLabels[0].key
+        selectedSegmentationFolder: defaultSegmentation.folderName,
+        availableClusterLabels: clusterLabels,
+        selectedClusterLabelKey: defaultLabel.key,
+        cellsLayerConfig
       });
 
       successMessages.push(
         t('sourceFiles.segmentationSuccess', {
-          count: cellsData.cellMasks.length,
+          count: 0,
           filename: zarrDir
         })
       );

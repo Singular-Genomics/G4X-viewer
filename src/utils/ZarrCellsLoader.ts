@@ -144,7 +144,7 @@ export async function loadCellsFromZarr(
   }
 }
 
-function parseClusterLabels(metadataAttrs: Record<string, unknown>): ClusterLabelEntry[] {
+export function parseClusterLabels(metadataAttrs: Record<string, unknown>): ClusterLabelEntry[] {
   const clusterLabelsRaw = metadataAttrs.cluster_labels as Record<
     string,
     { clusterID_colors: Record<string, [number, number, number]>; clusterID_order: string[]; index: number }

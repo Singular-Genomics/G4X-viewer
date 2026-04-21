@@ -17,8 +17,10 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   segmentationMetadata: undefined,
   availableSegmentations: [],
   selectedSegmentationLabel: '',
+  selectedSegmentationFolder: '',
   availableClusterLabels: [],
-  selectedClusterLabelKey: ''
+  selectedClusterLabelKey: '',
+  cellsLayerConfig: null
 };
 
 export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>((set) => ({
@@ -50,6 +52,8 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   deleteSelectedCells: (selectionId) =>
     set((store) => ({ selectedCells: store.selectedCells.filter((selection) => selection.roiId !== selectionId) })),
   setSelectedSegmentationLabel: (label) => set({ selectedSegmentationLabel: label }),
+  setSelectedSegmentationFolder: (folder) => set({ selectedSegmentationFolder: folder }),
   setSelectedClusterLabelKey: (key) => set({ selectedClusterLabelKey: key }),
+  setCellsLayerConfig: (config) => set({ cellsLayerConfig: config }),
   reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES })
 }));

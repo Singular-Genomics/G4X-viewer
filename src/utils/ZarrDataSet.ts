@@ -7,10 +7,13 @@ import type {
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
   ZarrCellsData,
-  ZarrCellsSegmentations
+  ZarrCellsSegmentations,
+  ZarrCellTileCoordinates,
+  ZarrCellTileData
 } from './ZarrDataSet.types';
+import type { SingleMask } from '../shared/types';
 import { createZarrPaths } from './ZarrPaths';
-import { loadCellsFromZarr } from './ZarrCellsLoader';
+import { loadCellsFromZarr, parseClusterLabels, type ClusterLabelEntry } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
 
@@ -248,6 +251,129 @@ export class ZarrDataSet {
 
   public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
     return loadCellsFromZarr(this, segmentationFolderName);
+  }
+
+  private async fetchCellsSegmentationAttrs(folder: string): Promise<Record<string, any>> {
+    const response = await axios.get(this.paths.attrs.cellsSegmentation(folder), { headers: noCacheHeaders });
+    return response.data;
+  }
+
+  public async fetchCellsLayerConfig(folder: string): Promise<ZarrLayerConfig | null> {
+    try {
+      const attrs = await this.fetchCellsSegmentationAttrs(folder);
+      const config = attrs.layer_config;
+      if (!config) return null;
+      return {
+        layer_width: config.layer_width,
+        layer_height: config.layer_height,
+        layers: config.layers,
+        tile_size: config.tile_size
+      };
+    } catch (error) {
+      console.error(`Failed to fetch cells layer_config for "${folder}":`, error);
+      return null;
+    }
+  }
+
+  public async fetchCellsClusterLabels(folder: string): Promise<ClusterLabelEntry[]> {
+    const attrs = await this.fetchCellsSegmentationAttrs(folder);
+    return parseClusterLabels(attrs);
+  }
+
+  public async getCellTileData(
+    { folder, y, x }: ZarrCellTileCoordinates,
+    clusterLabelIndex: number
+  ): Promise<ZarrCellTileData | null> {
+    try {
+      const openField = (field: string) =>
+        open(new NoCacheFetchStore(this.paths.cells.tileField({ folder, y, x, field: field as any })), {
+          kind: 'array'
+        }).catch(() => null);
+
+      const [
+        polygonOffsetsArray,
+        polygonVerticesArray,
+        clusterIdArray,
+        cellIdArray,
+        areaArray,
+        totalCountsArray,
+        totalGenesArray
+      ] = await Promise.all([
+        openField('polygon_offsets'),
+        openField('polygon_vertices_xy'),
+        openField('cluster_id'),
+        openField('cell_id'),
+        openField('area'),
+        openField('total_counts'),
+        openField('total_genes')
+      ]);
+
+      if (!polygonOffsetsArray || !polygonVerticesArray || !clusterIdArray || !cellIdArray) {
+        return { polygons: [] };
+      }
+
+      const [
+        polygonOffsetsChunk,
+        polygonVerticesChunk,
+        clusterIdChunk,
+        cellIdChunk,
+        areaChunk,
+        totalCountsChunk,
+        totalGenesChunk
+      ] = await Promise.all([
+        get(polygonOffsetsArray),
+        get(polygonVerticesArray),
+        get(clusterIdArray),
+        get(cellIdArray),
+        areaArray ? get(areaArray) : Promise.resolve(null),
+        totalCountsArray ? get(totalCountsArray) : Promise.resolve(null),
+        totalGenesArray ? get(totalGenesArray) : Promise.resolve(null)
+      ]);
+
+      const polygonOffsets = polygonOffsetsChunk.data as BigInt64Array;
+      const polygonVertices = polygonVerticesChunk.data as Float64Array;
+      const cellIds = cellIdChunk.data as Uint32Array;
+      const clusterIdsRaw = clusterIdChunk.data as any;
+      const numLabels = clusterIdChunk.shape[1] as number;
+      const areas = (areaChunk?.data as Uint16Array | undefined) ?? null;
+      const totalCounts = (totalCountsChunk?.data as Uint16Array | undefined) ?? null;
+      const totalGenes = (totalGenesChunk?.data as Uint16Array | undefined) ?? null;
+
+      const numCells = cellIds.length;
+      const polygons: SingleMask[] = [];
+
+      for (let i = 0; i < numCells; i++) {
+        const vsStart = Number(polygonOffsets[i]);
+        const vsEnd = Number(polygonOffsets[i + 1]);
+
+        const vertices: number[] = [];
+        for (let j = vsStart; j < vsEnd; j++) {
+          vertices.push(polygonVertices[j * 2]);
+          vertices.push(polygonVertices[j * 2 + 1]);
+        }
+
+        const flatIndex = i * numLabels + clusterLabelIndex;
+        const clusterId = clusterIdsRaw.get ? clusterIdsRaw.get(flatIndex) : String(clusterIdsRaw[flatIndex]);
+
+        polygons.push({
+          cellId: String(cellIds[i]),
+          clusterId,
+          vertices,
+          area: areas ? areas[i] : 0,
+          totalCounts: totalCounts ? totalCounts[i] : 0,
+          totalGenes: totalGenes ? totalGenes[i] : 0,
+          proteinValues: [],
+          nonzeroGeneIndices: [],
+          nonzeroGeneValues: [],
+          umapValues: { umapX: 0, umapY: 0 }
+        });
+      }
+
+      return { polygons };
+    } catch (error) {
+      console.error(`Failed to fetch cell tile data [folder:${folder}, y:${y}, x:${x}]:`, error);
+      return null;
+    }
   }
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {

@@ -4,7 +4,7 @@ import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
+import CellTilesLayer from '../../layers/cell-tiles-layer';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
@@ -14,10 +14,6 @@ import { TextLayer } from '@deck.gl/layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
-import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
-import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
-import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
-import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
@@ -26,8 +22,8 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
-import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
-import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
+import { useViewerStore } from '../../stores/ViewerStore';
+import { CELL_TILES_MIN_ZOOM, MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -120,113 +116,55 @@ export const useTranscriptLayer = () => {
 };
 
 export const useCellSegmentationLayer = () => {
+  const [zarrUrl] = useZarrDataStore(useShallow((store) => [store.zarrUrl]));
+
   const [
-    cellMasksData,
     isCellLayerOn,
-    isCellNameFilterOn,
     cellFillOpacity,
     showBoundary,
     boundaryWidth,
-    showFilteredCells,
-    cellNameFilters,
-    cellColormapConfig
+    cellColormapConfig,
+    cellsLayerConfig,
+    selectedSegmentationFolder,
+    availableClusterLabels,
+    selectedClusterLabelKey
   ] = useCellSegmentationLayerStore(
     useShallow((store) => [
-      store.cellMasksData,
       store.isCellLayerOn,
-      store.isCellNameFilterOn,
       store.cellFillOpacity,
       store.showBoundary,
       store.boundaryWidth,
-      store.showFilteredCells,
-      store.cellNameFilters,
-      store.cellColormapConfig
+      store.cellColormapConfig,
+      store.cellsLayerConfig,
+      store.selectedSegmentationFolder,
+      store.availableClusterLabels,
+      store.selectedClusterLabelKey
     ])
   );
 
-  const { proteinIndices, ranges } = useCytometryGraphStore();
-  const { ranges: umapRange } = useUmapGraphStore();
-  const { filterCells } = useCellFilteringWorker();
-  const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
+  const [viewStateZoom] = useViewerStore(useShallow((store) => [store.viewState?.zoom as number | undefined]));
 
-  const [filteredCells, setFilteredCells] = useState<{
-    unselectedCellsData: SingleMask[];
-    outlierCellsData: SingleMask[];
-  }>({ unselectedCellsData: [], outlierCellsData: [] });
-
-  useEffect(() => {
-    if (!cellMasksData) {
-      setFilteredCells({
-        unselectedCellsData: [],
-        outlierCellsData: []
-      });
-      return;
-    }
-
-    useViewerStore.setState({
-      isViewerLoading: {
-        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
-        message: t('viewer.loadingSegmentationProcessing')
-      }
-    });
-
-    filterCells(
-      cellMasksData,
-      isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
-        ? {
-            proteins: proteinIndices,
-            range: ranges
-          }
-        : undefined,
-      umapRange
-    )
-      .then((result) => {
-        setFilteredCells(result);
-      })
-      .catch((error) => {
-        console.error('Cell filtering error:', error);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'error',
-          message: t('segmentationSettings.filteringFailed')
-        });
-        setFilteredCells({
-          unselectedCellsData: cellMasksData,
-          outlierCellsData: []
-        });
-      })
-      .finally(() => {
-        useViewerStore.setState({ isViewerLoading: undefined });
-      });
-  }, [
-    cellMasksData,
-    isCellNameFilterOn,
-    cellNameFilters,
-    ranges,
-    proteinIndices,
-    umapRange,
-    filterCells,
-    enqueueSnackbar,
-    t
-  ]);
-
-  if (!cellMasksData) {
+  if (!zarrUrl || !cellsLayerConfig || !selectedSegmentationFolder || availableClusterLabels.length === 0) {
     return undefined;
   }
 
-  const cellMasksLayer = new CellMasksLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
-    visible: !!cellMasksData && isCellLayerOn,
-    showCellFill: true,
-    showDiscardedPoints: showFilteredCells,
+  const selectedClusterLabel =
+    availableClusterLabels.find((entry) => entry.key === selectedClusterLabelKey) ?? availableClusterLabels[0];
+
+  const zoomGate = (viewStateZoom ?? -Infinity) >= CELL_TILES_MIN_ZOOM;
+
+  const cellTilesLayer = new CellTilesLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-cell-tiles-layer`,
+    visible: isCellLayerOn && zoomGate,
+    zarrUrl,
+    segmentationFolder: selectedSegmentationFolder,
+    cellsLayerConfig,
+    clusterLabelIndex: selectedClusterLabel.index,
+    colormap: cellColormapConfig,
     cellFillOpacity,
+    showCellFill: true,
     showBoundary,
     boundaryWidth,
-    cellsData: filteredCells.unselectedCellsData,
-    outlierCellsData: filteredCells.outlierCellsData,
-    colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -235,7 +173,7 @@ export const useCellSegmentationLayer = () => {
       })
   });
 
-  return cellMasksLayer;
+  return cellTilesLayer;
 };
 
 export const useBrightfieldImageLayer = () => {

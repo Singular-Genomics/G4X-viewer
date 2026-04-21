@@ -9,7 +9,18 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
       polygons: (field) => `${base}/cells/polygons/${field}`,
       protein: (field) => `${base}/cells/protein/${field}`,
       genes: (field) => `${base}/cells/genes/${field}`,
-      base: () => `${base}/cells`
+      base: () => `${base}/cells`,
+      segmentation: (folder) => `${base}/cells/${folder}`,
+      tile: ({ folder, y, x }) => {
+        const yStr = `y${String(y).padStart(2, '0')}`;
+        const xStr = `x${String(x).padStart(2, '0')}`;
+        return `${base}/cells/${folder}/tiles/${yStr}/${xStr}`;
+      },
+      tileField: ({ folder, y, x, field }) => {
+        const yStr = `y${String(y).padStart(2, '0')}`;
+        const xStr = `x${String(x).padStart(2, '0')}`;
+        return `${base}/cells/${folder}/tiles/${yStr}/${xStr}/${field}`;
+      }
     },
     images: {
       multiplex: (level) => (level !== undefined ? `${base}/images/multiplex/${level}` : `${base}/images/multiplex`),
@@ -34,7 +45,8 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
       root: () => `${base}/.zattrs`,
       transcripts: () => `${base}/transcripts/.zattrs`,
       multiplexLevel: (level) => `${base}/images/multiplex/${level}/.zarray`,
-      images: () => `${base}/images/.zattrs`
+      images: () => `${base}/images/.zattrs`,
+      cellsSegmentation: (folder) => `${base}/cells/${folder}/.zattrs`
     },
     misc: {
       summary: () => `${base}/misc/summary.html`

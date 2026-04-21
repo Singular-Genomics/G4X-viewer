@@ -12,6 +12,8 @@ export const DEFAULT_OVERVIEW_MOBILE = {
 
 export const LAYER_ZOOM_OFFSET = 2;
 
+export const CELL_TILES_MIN_ZOOM = -1;
+
 export const COLORMAP_OPTIONS = [
   'viridis',
   'greys',
