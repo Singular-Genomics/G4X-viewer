@@ -8,10 +8,10 @@ export default defineConfig({
     allowedHosts: ["rg-server"],
   },
   plugins: [react()],
-  optimizeDeps: {
-    include: ["it-tar", "it-pipe"],
-  },
   define: {
     "process.env.APP_VERSION": JSON.stringify(pkg.version),
+  },
+  worker: {
+    format: "es",
   },
 });

@@ -1,20 +1,20 @@
 import type { ZarritaStoreFactory } from '../../utils/ZarrDataSet.types';
+import type { ZarrDataSet } from '../../utils/ZarrDataSet';
 
 export type ZarrDataStore = ZarrDataStoreValues & ZarrDataStoreMethods;
 
 export type ZarrDataStoreValues = {
   fileName: string;
-  files: File[];
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
   hasTranscriptsData: boolean;
   zarrStoreFactory: ZarritaStoreFactory | undefined;
+  zarrDataSet: ZarrDataSet | null;
 };
 
 export type ZarrDataStoreMethods = {
   setFileName: (newFileName: string) => void;
-  setFiles: (files: File[]) => void;
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;

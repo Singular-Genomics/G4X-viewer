@@ -24,7 +24,6 @@ export type LayerDataItem = {
 };
 
 export type TranscriptLayerProps = CompositeLayerProps & {
-  files?: File[];
   zarrUrl?: string | null;
   zarrStoreFactory?: ZarritaStoreFactory;
   config: LayerConfig;

@@ -1,10 +1,14 @@
 import { TFunction } from 'i18next';
+import { FetchStore } from 'zarrita';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
+import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
+import type { ZarritaStoreFactory } from './ZarrDataSet.types';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -36,10 +40,15 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
   useBrightfieldImagesStore.getState().reset();
-  useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false });
+  useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false, viewState: null });
+
+  const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) =>
+    new FetchStore(cloudImageUrl.replace(/\/$/, '') + '/' + subpath);
 
   useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
   useZarrDataStore.getState().setFileName(zarrDir);
+  useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
+  useZarrDataStore.setState({ zarrDataSet });
 
   const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
     zarrDataSet.hasTranscriptsData(),
@@ -90,16 +99,18 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
 
   if (hasSegmentationData) {
     try {
-      const cellsData = await zarrDataSet.fetchCellsData();
+      const cellsSegmentations = await zarrDataSet.fetchCellsSegmentations();
+
+      const availableSegmentations: SegmentationOption[] = cellsSegmentations.segmentationOrder
+        .map((label) => ({ label, folderName: cellsSegmentations.segmentationSources[label] }))
+        .filter((seg) => !!seg.folderName);
+
+      const defaultSegmentation = availableSegmentations[0];
+      const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);
 
       let proteinNames = cellsData.metadata.proteinNames;
       if (proteinNames.length === 0 && metadata) {
-        try {
-          const { extractProteinNamesFromMetadata } = await import('./ZarrCellsLoader');
-          proteinNames = extractProteinNamesFromMetadata(metadata);
-        } catch {
-          warningMessages.push(t('sourceFiles.proteinNamesExtractionError'));
-        }
+        proteinNames = extractProteinNamesFromMetadata(metadata);
       }
 
       const hasUmapData = cellsData.cellMasks.some(
@@ -111,10 +122,11 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
         cellColormapConfig: cellsData.colormap,
         fileName: zarrDir,
         umapDataAvailable: hasUmapData,
-        segmentationMetadata: {
-          ...cellsData.metadata,
-          proteinNames
-        }
+        segmentationMetadata: { ...cellsData.metadata, proteinNames },
+        availableSegmentations,
+        selectedSegmentationLabel: defaultSegmentation.label,
+        availableClusterLabels: cellsData.clusterLabels,
+        selectedClusterLabelKey: cellsData.clusterLabels[0].key
       });
 
       successMessages.push(

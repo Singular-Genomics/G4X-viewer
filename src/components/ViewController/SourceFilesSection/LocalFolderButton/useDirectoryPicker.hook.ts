@@ -109,9 +109,10 @@ export const useDirectoryPicker = () => {
     const warningMessages: string[] = [];
 
     try {
-      const { loadCellsFromZarr, extractProteinNamesFromMetadata } = await import('../../../../utils/ZarrCellsLoader');
+      const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
+        await import('../../../../utils/ZarrCellsLoader');
 
-      const cellsData = await loadCellsFromZarr(zarrStoreFactory);
+      const cellsData = await loadCellsFromStoreFactory(zarrStoreFactory);
 
       let proteinNames = cellsData.metadata.proteinNames;
       if (proteinNames.length === 0 && rootAttrs?.run_metadata) {

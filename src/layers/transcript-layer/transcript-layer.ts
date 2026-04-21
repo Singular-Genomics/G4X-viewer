@@ -190,7 +190,6 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       getTileData,
       updateTriggers: {
         getTileData: [
-          this.props.files,
           this.props.zarrUrl,
           this.props.zarrStoreFactory,
           this.props.visible,

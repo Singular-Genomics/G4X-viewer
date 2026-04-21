@@ -1,4 +1,4 @@
-import { open, FetchStore, get } from 'zarrita';
+import { open, get, FetchStore } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
@@ -7,9 +7,25 @@ import type {
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
   ZarrCellsData,
+  ZarrCellsSegmentations,
   ZarritaStoreFactory
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
+import { loadCellsFromZarr } from './ZarrCellsLoader';
+
+const noCacheHeaders = { 'Cache-Control': 'no-cache' };
+
+export class NoCacheFetchStore {
+  constructor(public url: string) {}
+
+  async get(key: string): Promise<Uint8Array | undefined> {
+    const url = `${this.url.replace(/\/$/, '')}/${key.replace(/^\//, '')}`;
+    const response = await fetch(url, { cache: 'no-cache' });
+    if (response.status === 404) return undefined;
+    if (!response.ok) throw new Error(`Request unsuccessful: ${response.statusText}`);
+    return new Uint8Array(await response.arrayBuffer());
+  }
+}
 
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
@@ -32,7 +48,7 @@ export class ZarrDataSet {
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
-      await axios.head(path);
+      await axios.head(path, { headers: noCacheHeaders });
       return true;
     } catch {
       return false;
@@ -77,7 +93,7 @@ export class ZarrDataSet {
 
   public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {
     try {
-      const response = await axios.get(this.paths.attrs.images());
+      const response = await axios.get(this.paths.attrs.images(), { headers: noCacheHeaders });
       const axes = response.data?.axes;
       if (axes?.pixel_per_um) {
         return { unit: axes.unit ?? 'μm', pixel_per_um: axes.pixel_per_um };
@@ -91,7 +107,7 @@ export class ZarrDataSet {
 
   public async fetchRunMetadata(): Promise<Record<string, any> | null> {
     try {
-      const response = await axios.get(this.paths.attrs.root());
+      const response = await axios.get(this.paths.attrs.root(), { headers: noCacheHeaders });
       return response.data.run_metadata || null;
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
@@ -112,7 +128,7 @@ export class ZarrDataSet {
         return decoded;
       }
       // Fallback to axios for HTTP stores that may not support .zattrs via get()
-      const response = await axios.get(this.paths.attrs.transcripts());
+      const response = await axios.get(this.paths.attrs.transcripts(), { headers: noCacheHeaders });
       this.transcriptAttrs = response.data;
       return response.data;
     } catch (error) {
@@ -138,7 +154,7 @@ export class ZarrDataSet {
         return transcriptConfig;
       }
 
-      const response = await axios.get(this.paths.attrs.multiplexLevel(0));
+      const response = await axios.get(this.paths.attrs.multiplexLevel(0), { headers: noCacheHeaders });
       const metadata = response.data;
       const shape = metadata.shape;
       const chunks = metadata.chunks;
@@ -161,7 +177,7 @@ export class ZarrDataSet {
     const levels: number[] = [];
     for (let level = 0; level <= 10; level++) {
       try {
-        await axios.head(this.paths.attrs.multiplexLevel(level));
+        await axios.head(this.paths.attrs.multiplexLevel(level), { headers: noCacheHeaders });
         levels.push(level);
       } catch {
         break;
@@ -222,15 +238,31 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchCellsData(): Promise<ZarrCellsData> {
-    const { loadCellsFromZarr } = await import('./ZarrCellsLoader');
-    return loadCellsFromZarr(this.storeFactory);
+  public async fetchCellsSegmentations(): Promise<ZarrCellsSegmentations> {
+    const response = await axios.get(`${this.paths.cells.base()}/.zattrs`);
+    const attrs = response.data;
+    return {
+      segmentationOrder: attrs.segmentation_order as string[],
+      segmentationSources: attrs.segmentation_sources as Record<string, string>
+    };
+  }
+
+  public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
+    return loadCellsFromZarr(this, segmentationFolderName);
+  }
+
+  public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
+    const cellsBaseUrl = `${this.paths.cells.base()}/${segmentationFolderName}`;
+    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/metadata/cluster_id`), { kind: 'array' });
+    const chunk = await get(clusterIdArray);
+    return { data: chunk.data, columnCount: chunk.shape[1] };
   }
 
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
       const response = await axios.get(this.paths.misc.summary(), {
-        responseType: 'text'
+        responseType: 'text',
+        headers: noCacheHeaders
       });
       return response.data;
     } catch (error) {
