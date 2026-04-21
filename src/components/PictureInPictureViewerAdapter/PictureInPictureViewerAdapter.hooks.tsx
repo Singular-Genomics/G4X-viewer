@@ -5,7 +5,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -16,7 +16,6 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
-import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
@@ -145,79 +144,49 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
-  const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
 
-  const [filteredCells, setFilteredCells] = useState<{
-    unselectedCellsData: SingleMask[];
-    outlierCellsData: SingleMask[];
-  }>({ unselectedCellsData: [], outlierCellsData: [] });
-
-  useEffect(() => {
+  const filterValues = useMemo(() => {
     if (!cellMasksData) {
-      setFilteredCells({
-        unselectedCellsData: [],
-        outlierCellsData: []
-      });
-      return;
+      return new Uint8Array(0);
     }
 
-    try {
-      const nameFilters = isCellNameFilterOn ? cellNameFilters : 'all';
-      let unselectedCellsData = cellMasksData;
-      let outlierCellsData: SingleMask[] = [];
+    const n = cellMasksData.length;
+    const fv = new Uint8Array(n);
 
-      if (nameFilters !== 'all' && nameFilters.length > 0) {
-        const selected: SingleMask[] = [];
-        const outliers: SingleMask[] = [];
-        for (const cell of cellMasksData) {
-          if (nameFilters.includes(cell.clusterId)) {
-            selected.push(cell);
-          } else {
-            outliers.push(cell);
-          }
-        }
-        unselectedCellsData = selected;
-        outlierCellsData = outliers;
+    const allowed = isCellNameFilterOn && cellNameFilters.length > 0 ? new Set(cellNameFilters) : null;
+    const cytoActive = !!ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0;
+    const umapActive = !!umapRange;
+
+    for (let i = 0; i < n; i++) {
+      const c = cellMasksData[i];
+
+      if (allowed && !allowed.has(c.clusterId)) {
+        fv[i] = 1;
+        continue;
       }
-
-      if (ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0) {
-        unselectedCellsData = unselectedCellsData.filter(
-          (cell) =>
-            cell.proteinValues[proteinIndices.xAxisIndex] <= ranges.xEnd &&
-            cell.proteinValues[proteinIndices.xAxisIndex] >= ranges.xStart &&
-            cell.proteinValues[proteinIndices.yAxisIndex] >= ranges.yEnd &&
-            cell.proteinValues[proteinIndices.yAxisIndex] <= ranges.yStart
-        );
+      if (
+        cytoActive &&
+        (c.proteinValues[proteinIndices.xAxisIndex] > ranges!.xEnd ||
+          c.proteinValues[proteinIndices.xAxisIndex] < ranges!.xStart ||
+          c.proteinValues[proteinIndices.yAxisIndex] < ranges!.yEnd ||
+          c.proteinValues[proteinIndices.yAxisIndex] > ranges!.yStart)
+      ) {
+        continue;
       }
-
-      if (umapRange) {
-        unselectedCellsData = unselectedCellsData.filter(
-          (cell) =>
-            cell.umapValues.umapX >= umapRange.xStart &&
-            cell.umapValues.umapX <= umapRange.xEnd &&
-            cell.umapValues.umapY <= umapRange.yStart &&
-            cell.umapValues.umapY >= umapRange.yEnd
-        );
+      if (
+        umapActive &&
+        (c.umapValues.umapX < umapRange!.xStart ||
+          c.umapValues.umapX > umapRange!.xEnd ||
+          c.umapValues.umapY > umapRange!.yStart ||
+          c.umapValues.umapY < umapRange!.yEnd)
+      ) {
+        continue;
       }
-
-      setFilteredCells({
-        unselectedCellsData,
-        outlierCellsData
-      });
-    } catch (error) {
-      console.error('Cell filtering error:', error);
-      enqueueSnackbar({
-        variant: 'gxSnackbar',
-        titleMode: 'error',
-        message: t('segmentationSettings.filteringFailed')
-      });
-      setFilteredCells({
-        unselectedCellsData: cellMasksData,
-        outlierCellsData: []
-      });
+      fv[i] = 2;
     }
-  }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange, enqueueSnackbar, t]);
+
+    return fv;
+  }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange]);
 
   if (!cellMasksData) {
     return undefined;
@@ -231,8 +200,8 @@ export const useCellSegmentationLayer = () => {
     cellFillOpacity,
     showBoundary,
     boundaryWidth,
-    cellsData: filteredCells.unselectedCellsData,
-    outlierCellsData: filteredCells.outlierCellsData,
+    cellMasksData,
+    filterValues,
     colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
