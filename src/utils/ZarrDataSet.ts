@@ -32,10 +32,10 @@ export class NoCacheFetchStore {
  * Structure: /{cells,images,transcripts,misc}
  * - images/multiplex: /images/multiplex/{level}
  * - images/h_and_e: /images/h_and_e/{level}
- * - cells/metadata: /cells/metadata/{area,cell_id,cluster_id,total_counts,total_genes,umap}
- * - cells/polygons: /cells/polygons/{polygon_offsets,polygon_vertices_xy}
- * - cells/protein: /cells/protein/{protein_names,protein_values}
- * - cells/genes: /cells/genes/{data,gene_names,indices,indptr}
+ * - cells/{segmentation}: /cells/{segmentation}/{area,cell_id,cluster_id,total_counts,total_genes,umap,
+ *     position,polygon_offsets,polygon_vertices_xy,protein_names,protein_values,
+ *     gene_names,gene_counts,gene_indices,gene_indptr}
+ *   (cluster_labels & cluster_labels_order live in /cells/{segmentation}/.zattrs)
  * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
  * - run_metadata: stored in .zattrs at root level
  */
@@ -252,7 +252,7 @@ export class ZarrDataSet {
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
     const cellsBaseUrl = `${this.paths.cells.base()}/${segmentationFolderName}`;
-    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/metadata/cluster_id`), { kind: 'array' });
+    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/cluster_id`), { kind: 'array' });
     const chunk = await get(clusterIdArray);
     return { data: chunk.data, columnCount: chunk.shape[1] };
   }
