@@ -34,6 +34,11 @@ export type ZarrCellsData = {
   clusterLabels: ClusterLabelEntry[];
 };
 
+export type ZarrRunMetadata = {
+  metadata: Record<string, any>;
+  smpInfoOrder: string[];
+};
+
 export type ZarrCellsSegmentations = {
   segmentationOrder: string[];
   segmentationSources: Record<string, string>;

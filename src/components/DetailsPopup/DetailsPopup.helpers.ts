@@ -1,7 +1,6 @@
-export const formatDetailsPopupData = (
-  section: Record<string, any>,
-  smpInfoOrder: string[]
-): { label: string; value: any }[] => {
+import { FormatDetailsPopupDataProps } from './DetailsPopup.types';
+
+export const formatDetailsPopupData = ({ section, smpInfoOrder }: FormatDetailsPopupDataProps) => {
   const orderedKeys = smpInfoOrder.filter((k) => k in section);
   const remainingKeys = Object.keys(section).filter((k) => !smpInfoOrder.includes(k));
   const keys = [...orderedKeys, ...remainingKeys];

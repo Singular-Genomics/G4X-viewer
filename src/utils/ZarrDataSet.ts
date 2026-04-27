@@ -7,7 +7,8 @@ import type {
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
   ZarrCellsData,
-  ZarrCellsSegmentations
+  ZarrCellsSegmentations,
+  ZarrRunMetadata
 } from './ZarrDataSet.types';
 import { createZarrPaths } from './ZarrPaths';
 import { loadCellsFromZarr } from './ZarrCellsLoader';
@@ -110,7 +111,7 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchRunMetadata(): Promise<{ metadata: Record<string, any>; smpInfoOrder: string[] } | null> {
+  public async fetchRunMetadata(): Promise<ZarrRunMetadata | null> {
     try {
       const response = await axios.get(this.paths.attrs.root(), { headers: noCacheHeaders });
       const metadata = response.data.run_metadata;
