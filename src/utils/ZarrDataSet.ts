@@ -110,10 +110,15 @@ export class ZarrDataSet {
     }
   }
 
-  public async fetchRunMetadata(): Promise<Record<string, any> | null> {
+  public async fetchRunMetadata(): Promise<{ metadata: Record<string, any>; smpInfoOrder: string[] } | null> {
     try {
       const response = await axios.get(this.paths.attrs.root(), { headers: noCacheHeaders });
-      return response.data.run_metadata || null;
+      const metadata = response.data.run_metadata;
+      if (!metadata) return null;
+      return {
+        metadata,
+        smpInfoOrder: response.data.smp_info_order ?? []
+      };
     } catch (error) {
       console.error('Failed to fetch run metadata from .zattrs:', error);
       return null;
