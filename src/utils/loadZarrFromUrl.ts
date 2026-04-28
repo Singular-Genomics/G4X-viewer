@@ -73,11 +73,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     source: { urlOrFile: zarrMultiplexUrl, description: zarrDir }
   });
 
-  const metadata = await zarrDataSet.fetchRunMetadata();
-  if (metadata) {
+  const runMetadataResult = await zarrDataSet.fetchRunMetadata();
+  if (runMetadataResult) {
     useViewerStore.getState().setGeneralDetails({
       fileName: '.zattrs',
-      data: metadata
+      data: runMetadataResult.metadata,
+      smpInfoOrder: runMetadataResult.smpInfoOrder
     });
   }
 
@@ -103,8 +104,8 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
       const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);
 
       let proteinNames = cellsData.metadata.proteinNames;
-      if (proteinNames.length === 0 && metadata) {
-        proteinNames = extractProteinNamesFromMetadata(metadata);
+      if (proteinNames.length === 0 && runMetadataResult) {
+        proteinNames = extractProteinNamesFromMetadata(runMetadataResult.metadata);
       }
 
       const hasUmapData = cellsData.cellMasks.some(
