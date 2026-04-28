@@ -122,11 +122,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
   useEffect(() => {
     const changeSettings = async () => {
       if (!source) return null;
-      // Placeholder
       useViewerStore.setState({ isChannelLoading: [true] });
-      useViewerStore.setState({
-        isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.loadingImage') }
-      });
+      if (!useViewerStore.getState().isViewerLoading) {
+        useViewerStore.setState({
+          isViewerLoading: { type: VIEWER_LOADING_TYPES.MAIN_IMAGE, message: t('viewer.loadingImage') }
+        });
+      }
       const { Channels } = metadata.Pixels;
       const channelOptions = Channels.map((c: any, i: any) => c.Name ?? `Channel ${i}`);
 
@@ -236,9 +237,10 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         isLayerVisible: true,
         channelsSettings
       });
+      const currentLoading = useViewerStore.getState().isViewerLoading;
       useViewerStore.setState({
         isChannelLoading: newSelections.map((_i: any) => false),
-        isViewerLoading: undefined,
+        isViewerLoading: currentLoading?.type === VIEWER_LOADING_TYPES.MAIN_IMAGE ? undefined : currentLoading,
         pixelValues: new Array(newSelections.length).fill('0'),
         globalSelection: newSelections[0],
         channelOptions

@@ -24,7 +24,6 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
-import { TranscriptTilesLoadingBar } from '../TranscriptTilesLoadingBar';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -245,7 +244,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               isViewerActive={isViewerActive}
             />
           )}
-          <TranscriptTilesLoadingBar />
           <Tooltip />
         </>
       )}
