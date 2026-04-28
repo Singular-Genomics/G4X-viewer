@@ -5,10 +5,6 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
 
   return {
     cells: {
-      metadata: (field) => `${base}/cells/metadata/${field}`,
-      polygons: (field) => `${base}/cells/polygons/${field}`,
-      protein: (field) => `${base}/cells/protein/${field}`,
-      genes: (field) => `${base}/cells/genes/${field}`,
       base: () => `${base}/cells`
     },
     images: {

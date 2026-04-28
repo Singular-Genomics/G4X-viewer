@@ -24,13 +24,6 @@ export async function loadCellsFromZarr(
 
     const cellsGroup = await open(new NoCacheFetchStore(cellsBaseUrl), { kind: 'group' });
 
-    const [metadataGroup, polygonsGroup, proteinGroup, genesGroup] = await Promise.all([
-      open(cellsGroup.resolve('metadata'), { kind: 'group' }),
-      open(cellsGroup.resolve('polygons'), { kind: 'group' }),
-      open(cellsGroup.resolve('protein'), { kind: 'group' }),
-      open(cellsGroup.resolve('genes'), { kind: 'group' })
-    ]);
-
     const openAndGet = (location: Parameters<typeof open>[0]) => open(location, { kind: 'array' }).then(get);
 
     const [
@@ -45,44 +38,44 @@ export async function loadCellsFromZarr(
       umapChunk,
       proteinNamesChunk
     ] = await Promise.all([
-      openAndGet(metadataGroup.resolve('cell_id')),
-      openAndGet(metadataGroup.resolve('area')),
-      openAndGet(metadataGroup.resolve('cluster_id')),
-      openAndGet(polygonsGroup.resolve('polygon_offsets')),
-      openAndGet(polygonsGroup.resolve('polygon_vertices_xy')),
-      openAndGet(proteinGroup.resolve('protein_values')),
-      openAndGet(metadataGroup.resolve('total_counts')),
-      openAndGet(metadataGroup.resolve('total_genes')),
-      openAndGet(metadataGroup.resolve('umap')),
-      openAndGet(proteinGroup.resolve('protein_names'))
+      openAndGet(cellsGroup.resolve('cell_id')),
+      openAndGet(cellsGroup.resolve('area')),
+      openAndGet(cellsGroup.resolve('cluster_id')),
+      openAndGet(cellsGroup.resolve('polygon_offsets')),
+      openAndGet(cellsGroup.resolve('polygon_vertices_xy')),
+      openAndGet(cellsGroup.resolve('protein_values')),
+      openAndGet(cellsGroup.resolve('total_counts')),
+      openAndGet(cellsGroup.resolve('total_genes')),
+      openAndGet(cellsGroup.resolve('umap')),
+      openAndGet(cellsGroup.resolve('protein_names'))
     ]);
 
     // Load genes separately - many chunks can cause ERR_INSUFFICIENT_RESOURCES
-    const [geneNamesChunk, genesDataChunk, genesIndicesChunk, genesIndptrChunk] = await Promise.all([
-      openAndGet(genesGroup.resolve('gene_names')),
-      openAndGet(genesGroup.resolve('data')),
-      openAndGet(genesGroup.resolve('indices')),
-      openAndGet(genesGroup.resolve('indptr'))
+    const [geneNamesChunk, geneCountsChunk, geneIndicesChunk, geneIndptrChunk] = await Promise.all([
+      openAndGet(cellsGroup.resolve('gene_names')),
+      openAndGet(cellsGroup.resolve('gene_counts')),
+      openAndGet(cellsGroup.resolve('gene_indices')),
+      openAndGet(cellsGroup.resolve('gene_indptr'))
     ]);
 
     const cellIds = cellIdsChunk.data as Uint32Array;
     const areas = areasChunk.data as Uint16Array;
     const polygonOffsets = polygonOffsetsChunk.data as BigInt64Array;
-    const polygonVertices = polygonVerticesChunk.data as Float64Array;
-    const proteinValues = proteinValuesChunk.data as Uint16Array;
+    const polygonVertices = polygonVerticesChunk.data as Float16Array;
+    const proteinValues = proteinValuesChunk.data as Float16Array;
     const numProteins = proteinValuesChunk.shape[1] as number;
     const totalCounts = totalCountsChunk.data as Uint16Array;
     const totalGenes = totalGenesChunk.data as Uint16Array;
-    const umapData = umapChunk.data as Float32Array;
+    const umapData = umapChunk.data as Float16Array;
 
     const proteinNames = extractStringArray(proteinNamesChunk);
     const geneNames = extractStringArray(geneNamesChunk);
 
-    const genesData = genesDataChunk.data as Int16Array;
-    const genesIndices = genesIndicesChunk.data as Int32Array;
-    const genesIndptr = genesIndptrChunk.data as BigInt64Array;
+    const geneCounts = geneCountsChunk.data as Uint16Array;
+    const geneIndices = geneIndicesChunk.data as Int32Array;
+    const geneIndptr = geneIndptrChunk.data as Int32Array;
 
-    const clusterLabels = parseClusterLabels(metadataGroup.attrs);
+    const clusterLabels = parseClusterLabels(cellsGroup.attrs);
     const defaultLabel = clusterLabels[0];
 
     // cluster_id is a 2D array [N, numLabels]; use index from .zattrs for each label
@@ -114,11 +107,11 @@ export async function loadCellsFromZarr(
 
       const nonzeroGeneIndices: number[] = [];
       const nonzeroGeneValues: number[] = [];
-      const rowStart = Number(genesIndptr[i]);
-      const rowEnd = Number(genesIndptr[i + 1]);
+      const rowStart = Number(geneIndptr[i]);
+      const rowEnd = Number(geneIndptr[i + 1]);
       for (let j = rowStart; j < rowEnd; j++) {
-        nonzeroGeneIndices.push(genesIndices[j]);
-        nonzeroGeneValues.push(genesData[j]);
+        nonzeroGeneIndices.push(geneIndices[j]);
+        nonzeroGeneValues.push(geneCounts[j]);
       }
 
       cellMasks.push({
