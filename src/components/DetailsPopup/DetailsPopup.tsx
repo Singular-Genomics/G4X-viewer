@@ -31,7 +31,7 @@ export const DetailsPopup = () => {
         {sectionTitle}
       </Typography>
       <Box sx={sx.dataSection}>
-        {formatDetailsPopupData(sectionData).map((item, index) => (
+        {formatDetailsPopupData({ section: sectionData, smpInfoOrder: detailsData.smpInfoOrder }).map((item, index) => (
           <Box
             key={index}
             sx={sx.dataRow}
