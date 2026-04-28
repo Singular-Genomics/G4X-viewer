@@ -100,7 +100,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   }, [loader.length]);
 
   useEffect(() => {
-    if (containerSize.width && containerSize.height) {
+    if (containerSize.width && containerSize.height && loader[0]?.shape?.length) {
       const width = containerSize.width;
       const height = containerSize.height;
 
@@ -190,7 +190,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       sx={sx.viewerContainer}
       ref={containerRef}
     >
-      {containerSize.width && containerSize.height && (
+      {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
