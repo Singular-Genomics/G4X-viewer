@@ -24,9 +24,8 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   availableImages: []
 };
 
-function getEntryName(entry: AvailableImageEntry): string {
+export function getEntryName(entry: AvailableImageEntry): string {
   if (typeof entry === 'string') return entry.split('/').pop() || entry;
-  if ('__localZarrImage' in entry) return entry.name;
   return entry.name;
 }
 
@@ -60,7 +59,7 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
 
     set({
       brightfieldImageSource: {
-        description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
+        description: getEntryName(file),
         urlOrFile: file
       },
       loader: DEFAULT_VALUES.loader

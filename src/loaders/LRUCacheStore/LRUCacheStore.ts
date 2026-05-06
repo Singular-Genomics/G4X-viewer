@@ -1,3 +1,5 @@
+import { ZARR_SUBPATHS } from '../../utils/ZarrPaths';
+
 type ValidStoreType = ArrayBuffer;
 
 type InnerStore = {
@@ -19,7 +21,7 @@ export class LRUCacheStore {
   private cache: Map<string, ValidStoreType>;
   private maxSize: number;
 
-  constructor(inner: InnerStore, maxSize = 100, path = 'images/multiplex') {
+  constructor(inner: InnerStore, maxSize = 100, path: string = ZARR_SUBPATHS.images.multiplex()) {
     this.inner = inner;
     this.cache = new Map();
     this.maxSize = maxSize;

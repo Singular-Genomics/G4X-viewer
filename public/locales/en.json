@@ -402,7 +402,8 @@
     "sourceFiles": {
       "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
       "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
-      "folderUploadButton": "Open a local OME-Zarr folder from your filesystem (Chromium browsers only)"
+      "folderUploadButton": "Open a local OME-Zarr folder from your filesystem (Chromium browsers only)",
+      "folderUploadUnsupported": "Local folder upload is unavailable in this browser. Please use a Chromium-based browser (Chrome, Edge, or Brave)."
     },
     "flowCytometry": {
       "title": "Select cell populations based on protein signal intensity by gating regions of a scatterplot."

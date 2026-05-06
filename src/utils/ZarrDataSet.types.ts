@@ -55,6 +55,8 @@ export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
 
 export type ZarrPathsCells = {
   base: () => string;
+  segmentation: (folder: string) => string;
+  field: (folder: string, field: string) => string;
 };
 
 export type ZarrPathsImages = {
@@ -70,9 +72,12 @@ export type ZarrPathsTranscripts = {
 
 export type ZarrPathsAttrs = {
   root: () => string;
+  group: () => string;
   transcripts: () => string;
   multiplexLevel: (level: number) => string;
   images: () => string;
+  cells: () => string;
+  cellsSegmentation: (folder: string) => string;
 };
 
 export type ZarrPathsMisc = {

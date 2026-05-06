@@ -8,6 +8,7 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import type { ZarritaStoreFactory } from '../../../../utils/ZarrDataSet.types';
 import type { SegmentationOption } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import { ZARR_SUBPATHS } from '../../../../utils/ZarrPaths';
 
 export const useDirectoryPicker = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -47,7 +48,7 @@ export const useDirectoryPicker = () => {
     useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
 
     // Load layer config from transcript .zattrs
-    const transcriptAttrs = await readJsonFromHandle(handle, 'transcripts/.zattrs');
+    const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
     if (transcriptAttrs?.layer_config) {
       useZarrDataStore.getState().setLayerConfig(transcriptAttrs.layer_config);
     }
@@ -72,17 +73,17 @@ export const useDirectoryPicker = () => {
     });
 
     // Load run metadata from root .zattrs
-    const rootAttrs = await readJsonFromHandle(handle, '.zattrs');
+    const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
     if (rootAttrs?.run_metadata) {
       useViewerStore.getState().setGeneralDetails({
-        fileName: '.zattrs',
+        fileName: ZARR_SUBPATHS.attrs.root,
         data: rootAttrs.run_metadata,
         smpInfoOrder: rootAttrs.smp_info_order ?? []
       });
     }
 
     // Load image axes metadata
-    const imageAttrs = await readJsonFromHandle(handle, 'images/.zattrs');
+    const imageAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.images);
     if (imageAttrs?.axes?.pixel_per_um) {
       useViewerStore.setState({
         physicalSize: {
@@ -94,9 +95,8 @@ export const useDirectoryPicker = () => {
 
     // Check for H&E brightfield image
     try {
-      const imagesDir = await handle.getDirectoryHandle('images');
-      await imagesDir.getDirectoryHandle('h_and_e');
-      const heStore = new LRUCacheStore(new LocalFileStore(handle), 100, 'images/h_and_e');
+      await getDirectoryAt(handle, ZARR_SUBPATHS.images.h_and_e());
+      const heStore = new LRUCacheStore(new LocalFileStore(handle), 100, ZARR_SUBPATHS.images.h_and_e());
       useBrightfieldImagesStore.getState().addNewFile({
         __localZarrImage: true,
         name: 'h_and_e',
@@ -114,7 +114,7 @@ export const useDirectoryPicker = () => {
       const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
         await import('../../../../utils/ZarrCellsLoader');
 
-      const cellsAttrs = await readJsonFromHandle(handle, 'cells/.zattrs');
+      const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
       const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
       const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
       const availableSegmentations: SegmentationOption[] = segmentationOrder
@@ -195,15 +195,24 @@ async function readJsonFromHandle(
   }
 }
 
+async function getDirectoryAt(handle: FileSystemDirectoryHandle, subpath: string): Promise<FileSystemDirectoryHandle> {
+  const parts = subpath.split('/').filter(Boolean);
+  let dir = handle;
+  for (const part of parts) {
+    dir = await dir.getDirectoryHandle(part);
+  }
+  return dir;
+}
+
 async function hasZarrMarkerInHandle(handle: FileSystemDirectoryHandle): Promise<boolean> {
   try {
-    await handle.getFileHandle('.zattrs');
+    await handle.getFileHandle(ZARR_SUBPATHS.attrs.root);
     return true;
   } catch {
     // .zattrs not found, try .zgroup
   }
   try {
-    await handle.getFileHandle('.zgroup');
+    await handle.getFileHandle(ZARR_SUBPATHS.attrs.group);
     return true;
   } catch {
     return false;

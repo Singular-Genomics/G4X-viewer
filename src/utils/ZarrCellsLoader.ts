@@ -3,7 +3,7 @@ import { NoCacheFetchStore } from './ZarrDataSet';
 import { SingleMask, SegmentationMetadata, ColormapEntry } from '../shared/types';
 import { ZarrCellsData, ZarritaStoreFactory } from './ZarrDataSet.types';
 import { ZarrDataSet } from './ZarrDataSet';
-import { createZarrPaths } from './ZarrPaths';
+import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
 
 export type ClusterLabelEntry = {
   key: string;
@@ -19,8 +19,9 @@ export async function loadCellsFromZarr(
   segmentationFolderName: string
 ): Promise<ZarrCellsData> {
   const paths = createZarrPaths(zarrDataSet.getBaseURL());
-  const cellsBaseUrl = `${paths.cells.base()}/${segmentationFolderName}`;
-  const cellsGroup = await open(new NoCacheFetchStore(cellsBaseUrl), { kind: 'group' });
+  const cellsGroup = await open(new NoCacheFetchStore(paths.cells.segmentation(segmentationFolderName)), {
+    kind: 'group'
+  });
   return loadCellsFromGroup(cellsGroup);
 }
 
@@ -28,7 +29,9 @@ export async function loadCellsFromStoreFactory(
   storeFactory: ZarritaStoreFactory,
   segmentationFolderName: string
 ): Promise<ZarrCellsData> {
-  const cellsGroup = await open(storeFactory(`cells/${segmentationFolderName}`) as any, { kind: 'group' });
+  const cellsGroup = await open(storeFactory(ZARR_SUBPATHS.cells.segmentation(segmentationFolderName)) as any, {
+    kind: 'group'
+  });
   return loadCellsFromGroup(cellsGroup);
 }
 
@@ -48,24 +51,24 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
       umapChunk,
       proteinNamesChunk
     ] = await Promise.all([
-      openAndGet(cellsGroup.resolve('cell_id')),
-      openAndGet(cellsGroup.resolve('area')),
-      openAndGet(cellsGroup.resolve('cluster_id')),
-      openAndGet(cellsGroup.resolve('polygon_offsets')),
-      openAndGet(cellsGroup.resolve('polygon_vertices_xy')),
-      openAndGet(cellsGroup.resolve('protein_values')),
-      openAndGet(cellsGroup.resolve('total_counts')),
-      openAndGet(cellsGroup.resolve('total_genes')),
-      openAndGet(cellsGroup.resolve('umap')),
-      openAndGet(cellsGroup.resolve('protein_names'))
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.cellId)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.area)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.clusterId)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.polygonOffsets)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.polygonVerticesXy)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.proteinValues)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.totalCounts)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.totalGenes)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.umap)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.proteinNames))
     ]);
 
     // Load genes separately - many chunks can cause ERR_INSUFFICIENT_RESOURCES
     const [geneNamesChunk, geneCountsChunk, geneIndicesChunk, geneIndptrChunk] = await Promise.all([
-      openAndGet(cellsGroup.resolve('gene_names')),
-      openAndGet(cellsGroup.resolve('gene_counts')),
-      openAndGet(cellsGroup.resolve('gene_indices')),
-      openAndGet(cellsGroup.resolve('gene_indptr'))
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.geneNames)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.geneCounts)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.geneIndices)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.geneIndptr))
     ]);
 
     const cellIds = cellIdsChunk.data as Uint32Array;

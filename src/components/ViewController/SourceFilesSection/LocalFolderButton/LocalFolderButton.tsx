@@ -1,4 +1,4 @@
-import { Button, alpha, Theme, useTheme, Tooltip } from '@mui/material';
+import { Button, alpha, Box, Theme, useTheme, Tooltip } from '@mui/material';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryPicker } from './useDirectoryPicker.hook';
@@ -9,23 +9,26 @@ export const LocalFolderButton = () => {
   const { t } = useTranslation();
   const { openDirectory } = useDirectoryPicker();
 
-  if (typeof window === 'undefined' || !('showDirectoryPicker' in window)) return null;
+  const supported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
   return (
     <Tooltip
-      title={t('tooltips.sourceFiles.folderUploadButton')}
+      title={t(supported ? 'tooltips.sourceFiles.folderUploadButton' : 'tooltips.sourceFiles.folderUploadUnsupported')}
       arrow
     >
-      <Button
-        fullWidth
-        variant="outlined"
-        sx={sx.folderButton}
-        size="small"
-        onClick={openDirectory}
-        startIcon={<FolderOpenIcon />}
-      >
-        {t('sourceFiles.folderUploadButton')}
-      </Button>
+      <Box sx={{ width: '100%' }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          sx={sx.folderButton}
+          size="small"
+          disabled={!supported}
+          onClick={supported ? openDirectory : undefined}
+          startIcon={<FolderOpenIcon />}
+        >
+          {t('sourceFiles.folderUploadButton')}
+        </Button>
+      </Box>
     </Tooltip>
   );
 };

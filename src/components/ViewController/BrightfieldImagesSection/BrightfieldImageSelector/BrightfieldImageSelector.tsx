@@ -1,7 +1,11 @@
 import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
-import { MAX_NUMBER_OF_IMAGES, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import {
+  getEntryName,
+  MAX_NUMBER_OF_IMAGES,
+  useBrightfieldImagesStore
+} from '../../../../stores/BrightfieldImagesStore';
 import { BrightfieldImageSelectorEntry } from './BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
 import { BrightfieldImageSelectorProps } from './BrightfieldImageSelector.types';
 import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
@@ -9,12 +13,6 @@ import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
 import type { AvailableImageEntry } from '../../../../stores/BrightfieldImagesStore/BrightfieldImagesStore.types';
-
-function getEntryName(entry: AvailableImageEntry): string {
-  if (typeof entry === 'string') return entry.split('/').pop() || entry;
-  if ('__localZarrImage' in entry) return entry.name;
-  return entry.name;
-}
 
 export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
   const theme = useTheme();
