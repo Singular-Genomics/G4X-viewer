@@ -7,6 +7,7 @@ import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import type { ZarritaStoreFactory } from '../../../../utils/ZarrDataSet.types';
+import type { SegmentationOption } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
 export const useDirectoryPicker = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -75,7 +76,8 @@ export const useDirectoryPicker = () => {
     if (rootAttrs?.run_metadata) {
       useViewerStore.getState().setGeneralDetails({
         fileName: '.zattrs',
-        data: rootAttrs.run_metadata
+        data: rootAttrs.run_metadata,
+        smpInfoOrder: rootAttrs.smp_info_order ?? []
       });
     }
 
@@ -112,7 +114,19 @@ export const useDirectoryPicker = () => {
       const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
         await import('../../../../utils/ZarrCellsLoader');
 
-      const cellsData = await loadCellsFromStoreFactory(zarrStoreFactory);
+      const cellsAttrs = await readJsonFromHandle(handle, 'cells/.zattrs');
+      const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
+      const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
+      const availableSegmentations: SegmentationOption[] = segmentationOrder
+        .map((label) => ({ label, folderName: segmentationSources[label] }))
+        .filter((seg) => !!seg.folderName);
+
+      if (availableSegmentations.length === 0) {
+        throw new Error('No segmentations found in cells/.zattrs');
+      }
+
+      const defaultSegmentation = availableSegmentations[0];
+      const cellsData = await loadCellsFromStoreFactory(zarrStoreFactory, defaultSegmentation.folderName);
 
       let proteinNames = cellsData.metadata.proteinNames;
       if (proteinNames.length === 0 && rootAttrs?.run_metadata) {
@@ -131,7 +145,11 @@ export const useDirectoryPicker = () => {
         segmentationMetadata: {
           ...cellsData.metadata,
           proteinNames
-        }
+        },
+        availableSegmentations,
+        selectedSegmentationLabel: defaultSegmentation.label,
+        availableClusterLabels: cellsData.clusterLabels,
+        selectedClusterLabelKey: cellsData.clusterLabels[0].key
       });
 
       successMessages.push(
