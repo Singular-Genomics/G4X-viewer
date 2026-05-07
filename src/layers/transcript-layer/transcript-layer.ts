@@ -84,7 +84,10 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
-    this.zarrLoader = props.zarrUrl ? new ZarrTranscriptLoader(props.zarrUrl) : null;
+    this.zarrLoader =
+      props.zarrUrl || props.zarrStoreFactory
+        ? new ZarrTranscriptLoader(props.zarrUrl ?? undefined, props.zarrStoreFactory)
+        : null;
     this.tileLoadCounter = 0;
   }
 
@@ -188,6 +191,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       updateTriggers: {
         getTileData: [
           this.props.zarrUrl,
+          this.props.zarrStoreFactory,
           this.props.visible,
           this.props.geneFilters,
           this.props.showDiscardedPoints,

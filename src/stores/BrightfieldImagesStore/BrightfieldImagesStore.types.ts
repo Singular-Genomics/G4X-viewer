@@ -1,6 +1,14 @@
 import { SelectionsType } from '../../components/PictureInPictureViewerAdapter';
 import { ViewerSourceType } from '../ViewerStore';
 
+export type LocalZarrImage = {
+  __localZarrImage: true;
+  name: string;
+  store: any;
+};
+
+export type AvailableImageEntry = File | string | LocalZarrImage;
+
 export type BrightfieldImagesStore = BrightfieldImagesStoreValues & BrightfieldImagesStoreMethods;
 
 export type BrightfieldImagesStoreValues = {
@@ -12,15 +20,15 @@ export type BrightfieldImagesStoreValues = {
   contrastLimits: number[][];
   colors: [number, number, number][];
   isLayerVisible: boolean;
-  availableImages: (File | string)[];
+  availableImages: AvailableImageEntry[];
 };
 
 export type BrightfieldImagesStoreMethods = {
   reset: () => void;
   getLoader: () => any;
   toggleImageLayer: () => void;
-  setActiveImage: (file: File | string | null) => void;
-  setAvailableImages: (files: (File | string)[]) => void;
-  addNewFile: (file: File | string) => void;
+  setActiveImage: (file: AvailableImageEntry | null) => void;
+  setAvailableImages: (files: AvailableImageEntry[]) => void;
+  addNewFile: (file: AvailableImageEntry) => void;
   removeFileByName: (fileName: string) => void;
 };
