@@ -57,12 +57,21 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
       useZarrDataStore.getState().setLayerConfig(layerConfig);
     }
 
-    const transcriptColors = await zarrDataSet.fetchTranscriptColors();
+    const [transcriptColors, geneOrder] = await Promise.all([
+      zarrDataSet.fetchTranscriptColors(),
+      zarrDataSet.fetchTranscriptGeneOrder()
+    ]);
     if (transcriptColors) {
       const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
         gene_name,
         color
       }));
+      if (geneOrder) {
+        const orderIndex = new Map(geneOrder.map((name, i) => [name, i]));
+        colorMapEntries.sort(
+          (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
+        );
+      }
       useZarrDataStore.getState().setColormapConfig(colorMapEntries);
     }
   } else {

@@ -10,6 +10,12 @@ export type ZarrLayerConfig = {
 
 export type ZarrGeneColors = Record<string, [number, number, number]>;
 
+export type ZarrTranscriptAttrs = {
+  layer_config?: ZarrLayerConfig;
+  gene_colors?: ZarrGeneColors;
+  gene_order?: string[];
+};
+
 export type ZarrTileCoordinates = {
   z: number;
   y: number;
