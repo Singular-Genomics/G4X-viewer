@@ -3,6 +3,7 @@ import axios from 'axios';
 import type {
   ZarrLayerConfig,
   ZarrGeneColors,
+  ZarrTranscriptAttrs,
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
@@ -44,7 +45,7 @@ export class NoCacheFetchStore {
 export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
-  private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
+  private transcriptAttrs: ZarrTranscriptAttrs | null = null;
   private storeFactory: ZarritaStoreFactory;
 
   private async hasZarrNode(path: string): Promise<boolean> {
@@ -121,7 +122,7 @@ export class ZarrDataSet {
     }
   }
 
-  private async fetchTranscriptAttrs(): Promise<{ layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors }> {
+  private async fetchTranscriptAttrs(): Promise<ZarrTranscriptAttrs> {
     if (this.transcriptAttrs) {
       return this.transcriptAttrs;
     }
@@ -151,6 +152,11 @@ export class ZarrDataSet {
   public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
     const attrs = await this.fetchTranscriptAttrs();
     return attrs.gene_colors || null;
+  }
+
+  public async fetchTranscriptGeneOrder(): Promise<string[] | null> {
+    const attrs = await this.fetchTranscriptAttrs();
+    return attrs.gene_order || null;
   }
 
   public async detectLayerConfig(): Promise<ZarrLayerConfig | null> {
