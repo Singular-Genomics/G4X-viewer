@@ -4,6 +4,9 @@ import pkg from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    allowedHosts: ["rg-server"],
+  },
   plugins: [react()],
   define: {
     "process.env.APP_VERSION": JSON.stringify(pkg.version),

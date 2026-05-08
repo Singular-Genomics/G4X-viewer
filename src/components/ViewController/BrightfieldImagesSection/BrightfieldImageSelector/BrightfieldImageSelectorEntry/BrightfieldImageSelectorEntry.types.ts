@@ -1,6 +1,8 @@
+import type { AvailableImageEntry } from '../../../../../stores/BrightfieldImagesStore/BrightfieldImagesStore.types';
+
 export type BrightfieldImageSelectorEntryProps = {
-  imageEntry: File | string;
-  onSelectImage: (selectedImage: File | string) => void;
+  imageEntry: AvailableImageEntry;
+  onSelectImage: (selectedImage: AvailableImageEntry) => void;
   entryType: 'local-file' | 'cloud-upload';
   isActive?: boolean;
 };

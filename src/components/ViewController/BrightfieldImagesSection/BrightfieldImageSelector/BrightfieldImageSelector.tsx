@@ -1,13 +1,18 @@
 import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
-import { MAX_NUMBER_OF_IMAGES, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import {
+  getEntryName,
+  MAX_NUMBER_OF_IMAGES,
+  useBrightfieldImagesStore
+} from '../../../../stores/BrightfieldImagesStore';
 import { BrightfieldImageSelectorEntry } from './BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
 import { BrightfieldImageSelectorProps } from './BrightfieldImageSelector.types';
 import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
+import type { AvailableImageEntry } from '../../../../stores/BrightfieldImagesStore/BrightfieldImagesStore.types';
 
 export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
   const theme = useTheme();
@@ -25,9 +30,8 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
   const { dropzoneProps } = useBrightfieldImageHandler();
 
   const handleImageSelect = useCallback(
-    (selectedImage: File | string) => {
-      const imageName =
-        typeof selectedImage === 'string' ? selectedImage.split('/').pop() || selectedImage : selectedImage.name;
+    (selectedImage: AvailableImageEntry) => {
+      const imageName = getEntryName(selectedImage);
 
       if (imageName === activeImageName) {
         setActiveImage(null);
@@ -58,12 +62,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
       return;
     }
 
-    const index = availableImages.findIndex((entry) => {
-      if (typeof entry === 'string') {
-        return entry.split('/').pop() === filename || entry === filename;
-      }
-      return entry.name === filename;
-    });
+    const index = availableImages.findIndex((entry) => getEntryName(entry) === filename);
 
     if (index !== -1) {
       enqueueSnackbar({
@@ -93,7 +92,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noImages')}</Typography>
         ) : (
           images.map((entry, index) => {
-            const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
+            const entryName = getEntryName(entry);
 
             return (
               <BrightfieldImageSelectorEntry
