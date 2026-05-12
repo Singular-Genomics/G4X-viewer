@@ -10,7 +10,7 @@
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
     "layerOpacityLabel": "Layer Opacity",
     "noImages": "No fH&E images have been loaded",
-    "sectionTitle": "Brightfield Images Settings"
+    "sectionTitle": "Image Overlays"
   },
   "channelSettings": {
     "addChannel": "Add Channel",
@@ -26,7 +26,7 @@
     "lens": "Lens",
     "overview": "Overview",
     "removeChannel": "Remove Channel",
-    "sectionTitle": "Channel Settings",
+    "sectionTitle": "Multi-Channel",
     "sliderRangeMinLabel":"Slider Min",
     "sliderRangeMaxLabel":"Slider Max",
     "sliderRangeModeExpanded": "Expanded Range",
@@ -163,7 +163,7 @@
     "graphFiltersLabel": "Graph Filters",
     "graphFilterUmapLabel": "UMAP",
     "graphInvalidSubsampling": "Invalid subsampling value",
-    "sectionTitle": "Segmentation Layer Settings",
+    "sectionTitle": "Cells",
     "umapMenuPointSize": "Point Size",
     "umapMenuSubsamplingStep": "Subsampling Step",
     "umapMenuSubsamplingStepTooltip": "Determines the interval for sampling data set, reducing density and increasing performance"
@@ -175,7 +175,7 @@
     "imageLoadError": "Failed to load image. Please check the URL and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
-    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
+    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in the Image Overlays section instead.",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",
@@ -236,7 +236,7 @@
     "disabledLayerWarning": "Transcript layer is disabled",
     "pointFilters": "Point Filters",
     "pointSize": "Point Size",
-    "sectionTitle": "Transcript Layer Settings",
+    "sectionTitle": "Transcripts",
     "clickToChange": "Click to change",
     "subsamplingControlLabel": "Enable transcript subsampling control",
     "subsamplingControlWarning": "You are about to override the number of visible transcript layers.<br />These operations demand significant computational resources and might cause the application to crash. Perform these operations if:",
