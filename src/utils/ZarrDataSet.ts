@@ -50,8 +50,9 @@ export class ZarrDataSet {
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
-      await axios.head(path, { headers: noCacheHeaders });
-      return true;
+      const response = await axios.head(path, { headers: noCacheHeaders });
+      const contentType = response.headers['content-type'] ?? '';
+      return !contentType.includes('text/html');
     } catch {
       return false;
     }
@@ -68,7 +69,7 @@ export class ZarrDataSet {
   }
 
   public isValid(): boolean {
-    return this.zarrURL.includes('.zarr');
+    return /\.zarr\/?$/.test(this.zarrURL);
   }
 
   public getZarrDirectoryName(): string {
@@ -83,6 +84,10 @@ export class ZarrDataSet {
 
   public getHAndEPath(): string {
     return this.paths.images.h_and_e();
+  }
+
+  public async hasImagesData(): Promise<boolean> {
+    return this.hasZarrNode(this.paths.attrs.images());
   }
 
   public async hasTranscriptsData(): Promise<boolean> {

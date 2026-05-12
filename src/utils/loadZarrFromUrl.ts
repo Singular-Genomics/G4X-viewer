@@ -37,6 +37,20 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   const successMessages: string[] = [];
   const warningMessages: string[] = [];
 
+  const hasImagesData = await zarrDataSet.hasImagesData();
+  if (!hasImagesData) {
+    return {
+      successMessages: [],
+      warningMessages: [],
+      errorMessage: t('sourceFiles.zarrNotFound')
+    };
+  }
+
+  const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
+    zarrDataSet.hasTranscriptsData(),
+    zarrDataSet.hasSegmentationData()
+  ]);
+
   useZarrDataStore.getState().reset();
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
@@ -50,11 +64,6 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.getState().setFileName(zarrDir);
   useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
   useZarrDataStore.setState({ zarrDataSet });
-
-  const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
-    zarrDataSet.hasTranscriptsData(),
-    zarrDataSet.hasSegmentationData()
-  ]);
 
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
 
