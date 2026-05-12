@@ -54,7 +54,7 @@ export default defineConfig({
             '@deck.gl-community/layers'
           ],
           'vendor-viv': ['@hms-dbmi/viv'],
-          'vendor-utils': ['zustand', 'lodash', 'jszip', 'protobufjs']
+          'vendor-utils': ['zustand', 'lodash', 'jszip']
         }
       }
     },
