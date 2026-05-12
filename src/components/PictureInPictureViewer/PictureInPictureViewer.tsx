@@ -3,6 +3,8 @@ import { DETAIL_VIEW_ID, OVERVIEW_VIEW_ID, OverviewView, getDefaultInitialViewSt
 import * as React from 'react';
 import { PictureInPictureViewerProps } from './PictureInPictureViewer.types';
 import DetailView from '../DetailView';
+import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function PictureInPictureViewer(props: PictureInPictureViewerProps) {
   const {
@@ -32,6 +34,23 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     extensions = [new ColorPaletteExtension()],
     deckProps
   } = props;
+  const [
+    brightfieldImageSource,
+    isBrightfieldLayerVisible,
+    getBrightfieldLoader,
+    brightfieldContrastLimits,
+    brightfieldColors,
+    brightfieldSelections
+  ] = useBrightfieldImagesStore(
+    useShallow((store) => [
+      store.brightfieldImageSource,
+      store.isLayerVisible,
+      store.getLoader,
+      store.contrastLimits,
+      store.colors,
+      store.selections
+    ])
+  );
 
   const detailViewState = viewStatesProp?.find((v) => v.id === DETAIL_VIEW_ID);
   // biome-ignore lint/correctness/useExhaustiveDependencies: Carried over from eslint, without explanation.
@@ -67,8 +86,18 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   const views = [detailView];
   const layerProps = [layerConfig];
   const viewStates = [{ ...baseViewState, id: DETAIL_VIEW_ID }];
+  const overviewSource =
+    brightfieldImageSource && isBrightfieldLayerVisible
+      ? {
+          loader: getBrightfieldLoader(),
+          contrastLimits: brightfieldContrastLimits as [number, number][],
+          colors: brightfieldColors,
+          channelsVisible: Array(brightfieldColors.length).fill(true),
+          selections: brightfieldSelections
+        }
+      : { loader, contrastLimits, colors, channelsVisible, selections };
 
-  if (overviewOn && loader) {
+  if (overviewOn && overviewSource.loader?.[0]?.getRaster) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
     const overviewViewState = viewStatesProp?.find((v) => v.id === OVERVIEW_VIEW_ID) || {
       ...baseViewState,
@@ -77,7 +106,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
 
     const overviewView = new OverviewView({
       id: OVERVIEW_VIEW_ID,
-      loader,
+      loader: overviewSource.loader,
       detailHeight: height,
       detailWidth: width,
       clickCenter,
@@ -85,7 +114,11 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     } as any);
 
     views.push(overviewView as any);
-    layerProps.push({ ...layerConfig, lensEnabled: false });
+    layerProps.push({
+      ...layerConfig,
+      ...overviewSource,
+      lensEnabled: false
+    });
     viewStates.push(overviewViewState as any);
   }
 

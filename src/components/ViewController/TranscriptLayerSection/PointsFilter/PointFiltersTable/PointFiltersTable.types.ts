@@ -1,4 +1,4 @@
 import { GxFilterTableRowPropBase } from '../../../../../shared/components/GxFilterTable';
-import { ColorMapEntry } from '../../../../../stores/BinaryFilesStore';
+import { ColorMapEntry } from '../../../../../stores/ZarrDataStore';
 
 export type PointFiltersTableRowEntry = GxFilterTableRowPropBase & ColorMapEntry;

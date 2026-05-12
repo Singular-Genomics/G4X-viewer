@@ -1,7 +1,6 @@
 import { Box, Typography, alpha, useMediaQuery, useTheme, Theme } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { useChannelsStore } from '../../stores/ChannelsStore';
 import { makeBoundingBox } from './utils';
 import { ScaleBarIcon } from './ScaleBarIcon';
 
@@ -10,10 +9,7 @@ export function ScaleBar() {
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const getLoader = useChannelsStore((store) => store.getLoader);
-
-  const loader = getLoader();
-  const physicalSize = loader[0]?.meta?.physicalSizes?.x;
+  const physicalSize = useViewerStore((store) => store.physicalSize);
 
   if (!viewState || !physicalSize) return null;
 
@@ -71,6 +67,8 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center'
   },
   text: {
-    color: theme.palette.gx.primary.white
+    color: theme.palette.gx.primary.white,
+    textAlign: 'center',
+    width: '100%'
   }
 });

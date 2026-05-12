@@ -1,7 +1,13 @@
 import { SegmentationMetadata, SingleMask } from '../../shared/types';
 import { SelectionData } from '../PolygonDrawingStore';
+import { ClusterLabelEntry } from '../../utils/ZarrCellsLoader';
 
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
+
+export type SegmentationOption = {
+  label: string;
+  folderName: string;
+};
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: SingleMask[] | null;
@@ -11,10 +17,16 @@ export type CellSegmentationLayerStoreValues = {
   isCellNameFilterOn: boolean;
   showFilteredCells: boolean;
   cellFillOpacity: number;
+  showBoundary: boolean;
+  boundaryWidth: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: string[];
   selectedCells: SelectionData<SingleMask>[];
   umapDataAvailable: boolean;
+  availableSegmentations: SegmentationOption[];
+  selectedSegmentationLabel: string;
+  availableClusterLabels: ClusterLabelEntry[];
+  selectedClusterLabelKey: string;
 };
 
 export type CellSegmentationLayerStoreMethods = {
@@ -22,6 +34,8 @@ export type CellSegmentationLayerStoreMethods = {
   toggleCellNameFilter: () => void;
   toggleShowFilteredCells: () => void;
   setCellFillOpacity: (newOpacity: number) => void;
+  toggleBoundary: () => void;
+  setBoundaryWidth: (width: number) => void;
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
   setCellNameFilter: (cellName: string[]) => void;
   clearCellNameFilter: () => void;
@@ -29,6 +43,8 @@ export type CellSegmentationLayerStoreMethods = {
   addSelectedCells: (newSelectionData: SelectionData<SingleMask>) => void;
   updateSelectedCells: (updatedData: SingleMask[], selectionId: number) => void;
   deleteSelectedCells: (selectionId: number) => void;
+  setSelectedSegmentationLabel: (label: string) => void;
+  setSelectedClusterLabelKey: (key: string) => void;
   reset: () => void;
 };
 

@@ -1,7 +1,7 @@
 import { Box, IconButton, Typography, Popover, Theme, useTheme, alpha } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { formatDetailsPopupData } from './DetailsPopup.helpers';
 import { useViewerStore } from '../../stores/ViewerStore';
 
@@ -9,22 +9,10 @@ export const DetailsPopup = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   const detailsData = useViewerStore((state) => state.generalDetails);
 
-  useEffect(() => {
-    const handleControllerToggle = () => {
-      setIsVisible((prev) => !prev);
-    };
-
-    window.addEventListener('onControllerToggle', handleControllerToggle);
-    return () => {
-      window.removeEventListener('onControllerToggle', handleControllerToggle);
-    };
-  }, []);
-
-  if (!detailsData || !isVisible) return null;
+  if (!detailsData) return null;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -43,7 +31,7 @@ export const DetailsPopup = () => {
         {sectionTitle}
       </Typography>
       <Box sx={sx.dataSection}>
-        {formatDetailsPopupData(sectionData).map((item, index) => (
+        {formatDetailsPopupData({ section: sectionData, smpInfoOrder: detailsData.smpInfoOrder }).map((item, index) => (
           <Box
             key={index}
             sx={sx.dataRow}
@@ -77,6 +65,7 @@ export const DetailsPopup = () => {
           vertical: 'top',
           horizontal: 'right'
         }}
+        transitionDuration={250}
         sx={sx.popover}
       >
         <Box sx={sx.contentContainer}>

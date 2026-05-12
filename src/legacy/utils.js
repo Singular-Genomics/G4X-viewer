@@ -1,5 +1,7 @@
 import { fromBlob, fromUrl } from 'geotiff';
 import { loadOmeTiff, loadBioformatsZarr, loadOmeZarr, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
+import axios from 'axios';
+import { HexToRgb } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
 export const GLOBAL_SLIDER_DIMENSION_FIELDS = /** @type {const} */ (['z', 't']);
 
@@ -135,8 +137,15 @@ async function fetchSingleFileOmeTiffOffsets(url) {
     return undefined;
   }
   const offsetsUrl = url.replace(/ome\.tif(f?)/gi, 'offsets.json');
-  const res = await fetch(offsetsUrl);
-  return res.status === 200 ? await res.json() : undefined;
+  try {
+    const res = await axios.get(offsetsUrl);
+    return res.data;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      return undefined;
+    }
+    throw error;
+  }
 }
 
 /**
@@ -147,9 +156,13 @@ async function fetchSingleFileOmeTiffOffsets(url) {
  * @param {*} handleLoaderError
  */
 export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
-  // If the loader fails to load, handle the error (show an error snackbar)
-  // Otherwise load.
   try {
+    // Local OME-NGFF directory — either via FileSystemDirectoryHandle or pre-built store
+    if (urlOrFile && urlOrFile.__localZarrStore) {
+      const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
+      return await loadLocalOmeZarr(urlOrFile, urlOrFile.__localZarrPath || 'images/multiplex');
+    }
+
     // OME-TIFF
     if (isOmeTiff(urlOrFile)) {
       if (urlOrFile instanceof File) {
@@ -194,31 +207,35 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
       return source;
     }
 
-    // Bio-Formats Zarr
-    let source;
-    try {
-      source = await loadBioformatsZarr(urlOrFile);
-    } catch (e) {
-      if (isZodError(e)) {
-        // If the error is a ZodError, it means there was an OME-XML file
-        // but it was invalid. We shouldn't try to load the file as a OME-Zarr.
-        throw e;
-      }
+    const isOmeZarrPath =
+      typeof urlOrFile === 'string' &&
+      (urlOrFile.includes('/images/multiplex') || urlOrFile.includes('/images/h_and_e'));
 
-      // try ome-zarr
-      const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-      // extract metadata into OME-XML-like form
-      const metadata = {
+    if (!isOmeZarrPath) {
+      try {
+        return await loadBioformatsZarr(urlOrFile);
+      } catch (e) {
+        if (isZodError(e)) {
+          throw e;
+        }
+      }
+    }
+
+    const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
+    return {
+      data: res.data,
+      metadata: {
         Pixels: {
           Channels: res.metadata.omero.channels.map((c) => ({
             Name: c.label,
-            SamplesPerPixel: 1
+            SamplesPerPixel: 1,
+            Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
+            Active: c.active ?? false,
+            Window: c.window ?? undefined
           }))
         }
-      };
-      source = { data: res.data, metadata };
-    }
-    return source;
+      }
+    };
   } catch (e) {
     if (e instanceof UnsupportedBrowserError) {
       handleLoaderError(e.message);

@@ -4,6 +4,9 @@ import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    allowedHosts: ["rg-server"],
+  },
   plugins: [
     react({
       babel: {
@@ -16,21 +19,21 @@ export default defineConfig({
       'buffer/': 'buffer/'
     }
   },
+  define: {
+    'process.env.APP_VERSION': JSON.stringify(pkg.version)
+  },
   optimizeDeps: {
     include: ['it-tar', 'it-pipe', 'buffer']
   },
-  define: {
-    'process.env.APP_VERSION': JSON.stringify(pkg.version)
+  worker: {
+    format: "es",
   },
   build: {
     target: 'es2020',
     rollupOptions: {
       output: {
         manualChunks: {
-          // React core
           'vendor-react': ['react', 'react-dom'],
-
-          // MUI components
           'vendor-mui': [
             '@mui/material',
             '@mui/icons-material',
@@ -38,11 +41,7 @@ export default defineConfig({
             '@emotion/react',
             '@emotion/styled'
           ],
-
-          // Plotly charting library
           'vendor-plotly': ['plotly.js', 'react-plotly.js'],
-
-          // Deck.gl visualization
           'vendor-deck': [
             '@deck.gl/core',
             '@deck.gl/layers',
@@ -54,11 +53,7 @@ export default defineConfig({
             '@deck.gl-community/editable-layers',
             '@deck.gl-community/layers'
           ],
-
-          // Viv image viewer
           'vendor-viv': ['@hms-dbmi/viv'],
-
-          // Utilities
           'vendor-utils': ['zustand', 'lodash', 'jszip', 'protobufjs']
         }
       }

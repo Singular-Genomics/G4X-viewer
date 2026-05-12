@@ -28,7 +28,14 @@
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
     "sliderRangeMinLabel":"Slider Min",
-    "sliderRangeMaxLabel":"Slider Max"
+    "sliderRangeMaxLabel":"Slider Max",
+    "sliderRangeModeExpanded": "Expanded Range",
+    "sliderRangeModeContract": "Contract Range",
+    "resetSlider": "Reset to default range",
+    "solo": "Solo",
+    "exitSolo": "Exit Solo Mode",
+    "groupProteins": "Proteins",
+    "groupMorphology": "Morphology"
   },
   "general": {
     "apply": "Apply",
@@ -68,13 +75,16 @@
     "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
+    "openInNewTab": "Open in New Tab",
     "protein": "Protein",
+    "summaryLoadError": "Failed to load summary report",
     "roiEntry": "ROI {{index}}",
     "rna": "RNA",
     "segmentation": "Segmentation",
     "selectOne": "Select One",
     "selectAll": "Select All",
     "shape": "Shape",
+    "summaryReport": "Summary Report",
     "transcripts": "Transcripts",
     "warning": "Warning"
   },
@@ -107,6 +117,12 @@
   },
   "segmentationSettings": {
     "cellFillLabel": "Cell Fill",
+    "cellFillShow": "Show cell fill",
+    "boundaryLabel": "Cell Boundary",
+    "boundaryShow": "Show boundary",
+    "boundaryPerformanceWarning": "Rendering cell boundaries with large datasets (>100k cells) is computationally intensive:",
+    "boundaryPerformanceWarningCaseOne": "Requires a powerful GPU for smooth rendering",
+    "boundaryPerformanceWarningCaseTwo": "Performance depends on your hardware capabilities and dataset size",
     "cellFiltersLabel": "Cell Filters",
     "cytometryDownloadFailedLabel": "Download failed cells data",
     "cytometryGraphBinningError": "Failed to bin {{count}} cells",
@@ -140,6 +156,8 @@
     "cytometryMenuReverseColorscale": "Reverse colorscale",
     "cytometryMenuSubsamplingStep": "Subsampling Step",
     "disabledLayerWarning": "Segmentation Layer is disabled",
+    "segmentationSelectLabel": "Segmentation Source",
+    "clusterLabelSelectLabel": "Cluster ID",
     "filteringFailed": "Failed to filter cells. Please try again or contact support.",
     "graphFilterCytometryLabel": "Flow Cytometry",
     "graphFiltersLabel": "Graph Filters",
@@ -151,27 +169,6 @@
     "umapMenuSubsamplingStepTooltip": "Determines the interval for sampling data set, reducing density and increasing performance"
   },
   "sourceFiles": {
-    "collectiveErrorTranscriptUnpacking": "Error unpacking transcript TAR file",
-    "collectiveH&E": "H&E images directory",
-    "collectiveImageData": "Protein image data config",
-    "collectiveInputButton": "Upload G4X file",
-    "collectiveInputLabel": "Collective file upload",
-    "collectiveMissingDatasetConfig": "Missing data set config file.",
-    "collectiveMissingH&E": "Missing H&E images source",
-    "collectiveMissingImageData": "Missing protein image data JSON",
-    "collectiveMissingManyError": "Data set config is missing {{count}} source definitions.",
-    "collectiveMissingOneError": "Data set config is missing {{error}} source definition",
-    "collectiveMissingProtein": "Missing protein image file",
-    "collectiveMissingSegmentation": "Missing cell segmentation file",
-    "collectiveMissingTranscripts": "Missing transcript file",
-    "collectiveMissingTranscriptsConfig": "Missing transcript config file in TAR archive",
-    "collectiveProtein": "Protein image file",
-    "collectiveSegmentation": "Cell segmentation BIN file",
-    "collectiveSkippedFiles": "{{count}} missing files were skipped during parsing",
-    "collectiveTranscripts": "Transcripts TAR file",
-    "collectiveUnsupportedFile": "File type not supported",
-    "collectiveWarningDescription": "When working using this mode, remember that this option may require significantly more time to load all the contents, depending on their size.",
-    "collectiveWarningTitle": "You are about use a collective TAR file upload button.",
     "imageInputLabel": "Image File Name",
     "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
     "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
@@ -190,6 +187,16 @@
     "notReadableErrorWarning": "Error loading transcript file. In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
     "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file.  You may need to quit the browser application and restart it if this issue persists.",
     "sectionTitle": "Source Files",
+    "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
+    "proteinNamesExtractionError": "Failed to extract protein names from metadata",
+    "segmentationLoadError": "Failed to load cell segmentation data from Zarr file",
+    "zarrInputLabel": "Zarr Store URL",
+    "zarrFileName": "File Name",
+    "zarrInputPlaceholder": "Enter URL to .zarr file",
+    "zarrInvalidFile": "Invalid input file name. Only .zarr extension allowed",
+    "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}",
+    "zarrLoadComplete": "Zarr file loaded successfully",
+    "zarrLoadWarnings": "Zarr file loaded with warnings",
     "segmentationFileInputLabel": "Segmentation Filename",
     "segmentationFileUploadButton": "Upload Segmentation File",
     "invalidFileFormatError": "Invalid or deprecated file format. For data from software versions older than 25.11.0, please use the <1>legacy viewer</1> or migrate your files using <2>g4x-helpers</2>.",
@@ -198,6 +205,7 @@
     "singleFileButtonLabel": "Single-file",
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
+    "transcriptsLoadError": "Given file is missing transcript data",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
@@ -207,7 +215,15 @@
     "segmentationPlaceholder": "{sample}_segmentation.bin / {sample}.bin",
     "metadataPlaceholder": "{sample}_run_metadata.json",
     "uploadedFileSizeHelper": "Max: {{size}}",
-    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
+    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}",
+    "folderUploadButton": "Open Local Folder",
+    "folderInvalidDirectory": "Selected folder is not a valid OME-Zarr directory",
+    "folderSuccess": "Successfully loaded image from folder: {{name}}"
+  },
+  "tooltip": {
+    "objectLabel": "Object",
+    "objectCell": "Cell",
+    "objectTranscript": "Transcript"
   },
   "transcript": {
     "cellId": "Cell ID",
@@ -246,8 +262,11 @@
     "importPolygonsTitle": "Polygon Data File",
     "loadingImage": "Loading Image",
     "loadingBrightfieldImage": "Loading Brightfield Image",
+    "loadingTranscripts": "Loading transcripts...",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
-    "noImageInfo": "Please upload an image file to view",
+    "imageLoadError": "Failed to load image. Please check the file format and try again.",
+    "brightfieldImageLoadError": "Failed to load brightfield image. Please check the file format and try again.",
+    "noImageInfo": "Please load a Zarr dataset to start viewing data",
     "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
     "polygonsImportFailed": "Failed to import polygons. Please check the file format.",
@@ -256,18 +275,14 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
-    "brightfieldLayer": "fH&E Image Layer",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "layerToggles": "Layer Toggles",
-    "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
-    "segmentationLayer": "Segmentation Layer",
-    "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
   },
   "activeFilters": {
@@ -311,7 +326,14 @@
     "viewer": "Viewer",
     "dashboard": "Dashboard",
     "mobilePreview": "Mobile preview",
-    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop.",
+    "runInfo": {
+      "sampleId": "Sample ID",
+      "flowCell": "Flow Cell",
+      "tissueType": "Tissue Type",
+      "block": "Block",
+      "experiment": "Experiment"
+    }
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
@@ -379,7 +401,9 @@
     },
     "sourceFiles": {
       "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
-      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section."
+      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
+      "folderUploadButton": "Open a local OME-Zarr folder from your filesystem (Chromium browsers only)",
+      "folderUploadUnsupported": "Local folder upload is unavailable in this browser. Please use a Chromium-based browser (Chrome, Edge, or Brave)."
     },
     "flowCytometry": {
       "title": "Select cell populations based on protein signal intensity by gating regions of a scatterplot."

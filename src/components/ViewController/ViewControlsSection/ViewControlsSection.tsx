@@ -9,13 +9,9 @@ import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
-
   return (
     <Box sx={sx.sectionContainer}>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('viewSettings.globalSelection')}</Typography>
-        <GlobalSelectionSliders />
-      </Box>
+      <GlobalSelectionSliders />
       <Box>
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
         <ZoomInput />
