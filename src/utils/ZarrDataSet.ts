@@ -3,14 +3,16 @@ import axios from 'axios';
 import type {
   ZarrLayerConfig,
   ZarrGeneColors,
+  ZarrTranscriptAttrs,
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
   ZarrCellsData,
   ZarrCellsSegmentations,
+  ZarritaStoreFactory,
   ZarrRunMetadata
 } from './ZarrDataSet.types';
-import { createZarrPaths } from './ZarrPaths';
+import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
 import { loadCellsFromZarr } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
@@ -51,7 +53,8 @@ class SkipAttrsFetchStore extends NoCacheFetchStore {
 export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
-  private transcriptAttrs: { layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors } | null = null;
+  private transcriptAttrs: ZarrTranscriptAttrs | null = null;
+  private storeFactory: ZarritaStoreFactory;
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
@@ -62,9 +65,10 @@ export class ZarrDataSet {
     }
   }
 
-  constructor(zarrUrl: string) {
+  constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
+    this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
   }
 
   public getBaseURL(): string {
@@ -89,20 +93,12 @@ export class ZarrDataSet {
     return this.paths.images.h_and_e();
   }
 
-  public getCellsBasePath(): string {
-    return this.paths.cells.base();
-  }
-
-  public getTranscriptsBasePath(): string {
-    return this.paths.transcripts.base();
-  }
-
   public async hasTranscriptsData(): Promise<boolean> {
     return this.hasZarrNode(this.paths.attrs.transcripts());
   }
 
   public async hasSegmentationData(): Promise<boolean> {
-    return this.hasZarrNode(`${this.paths.cells.base()}/.zgroup`);
+    return this.hasZarrNode(`${this.paths.cells.base()}/${ZARR_SUBPATHS.attrs.group}`);
   }
 
   public async fetchImageAxesMetadata(): Promise<{ unit: string; pixel_per_um: number } | null> {
@@ -134,11 +130,19 @@ export class ZarrDataSet {
     }
   }
 
-  private async fetchTranscriptAttrs(): Promise<{ layer_config?: ZarrLayerConfig; gene_colors?: ZarrGeneColors }> {
+  private async fetchTranscriptAttrs(): Promise<ZarrTranscriptAttrs> {
     if (this.transcriptAttrs) {
       return this.transcriptAttrs;
     }
     try {
+      const store = this.storeFactory(ZARR_SUBPATHS.transcripts.base);
+      const data = await store.get(`/${ZARR_SUBPATHS.attrs.root}`);
+      if (data) {
+        const decoded = JSON.parse(new TextDecoder().decode(data));
+        this.transcriptAttrs = decoded;
+        return decoded;
+      }
+      // Fallback to axios for HTTP stores that may not support .zattrs via get()
       const response = await axios.get(this.paths.attrs.transcripts(), { headers: noCacheHeaders });
       this.transcriptAttrs = response.data;
       return response.data;
@@ -156,6 +160,11 @@ export class ZarrDataSet {
   public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
     const attrs = await this.fetchTranscriptAttrs();
     return attrs.gene_colors || null;
+  }
+
+  public async fetchTranscriptGeneOrder(): Promise<string[] | null> {
+    const attrs = await this.fetchTranscriptAttrs();
+    return attrs.gene_order || null;
   }
 
   public async detectLayerConfig(): Promise<ZarrLayerConfig | null> {
@@ -202,18 +211,14 @@ export class ZarrDataSet {
       const transcriptConfig = await this.fetchTranscriptLayerConfig();
       const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
       const invertedZ = maxZoom - z;
-      const tileParams = { z: invertedZ, y, x };
+
+      const tileField = (field: 'cell_id' | 'gene_name' | 'position') =>
+        ZARR_SUBPATHS.transcripts.tileField({ z: invertedZ, y, x, field });
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new NoCacheFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
-          kind: 'array'
-        }).catch(() => null)
+        open(this.storeFactory(tileField('cell_id')) as any, { kind: 'array' }).catch(() => null),
+        open(this.storeFactory(tileField('gene_name')) as any, { kind: 'array' }).catch(() => null),
+        open(this.storeFactory(tileField('position')) as any, { kind: 'array' }).catch(() => null)
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
@@ -292,7 +297,7 @@ export class ZarrDataSet {
   }
 
   public async fetchCellsSegmentations(): Promise<ZarrCellsSegmentations> {
-    const response = await axios.get(`${this.paths.cells.base()}/.zattrs`);
+    const response = await axios.get(this.paths.attrs.cells());
     const attrs = response.data;
     return {
       segmentationOrder: attrs.segmentation_order as string[],
@@ -305,8 +310,10 @@ export class ZarrDataSet {
   }
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
-    const cellsBaseUrl = `${this.paths.cells.base()}/${segmentationFolderName}`;
-    const clusterIdArray = await open(new FetchStore(`${cellsBaseUrl}/cluster_id`), { kind: 'array' });
+    const clusterIdArray = await open(
+      new FetchStore(this.paths.cells.field(segmentationFolderName, ZARR_CELL_FIELDS.clusterId)),
+      { kind: 'array' }
+    );
     const chunk = await get(clusterIdArray);
     return { data: chunk.data, columnCount: chunk.shape[1] };
   }

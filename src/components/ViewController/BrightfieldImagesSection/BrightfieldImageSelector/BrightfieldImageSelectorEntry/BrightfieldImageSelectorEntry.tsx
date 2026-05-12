@@ -4,6 +4,7 @@ import { GxRadio } from '../../../../../shared/components/GxRadio';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudIcon from '@mui/icons-material/Cloud';
 import { useTranslation } from 'react-i18next';
+import { getEntryName } from '../../../../../stores/BrightfieldImagesStore';
 
 export const BrightfieldImageSelectorEntry = ({
   imageEntry,
@@ -15,10 +16,8 @@ export const BrightfieldImageSelectorEntry = ({
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
-
-  const fileName = entryName.split('/').pop();
-  const imageName = fileName ? fileName.split('.').shift() : '';
+  const entryName = getEntryName(imageEntry);
+  const imageName = entryName.split('.').shift() ?? '';
 
   return (
     <Box sx={sx.entryContainer}>

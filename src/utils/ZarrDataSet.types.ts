@@ -1,6 +1,9 @@
 import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
 import type { ClusterLabelEntry } from './ZarrCellsLoader';
 
+export type ZarritaReadableStore = { get(key: string): Promise<Uint8Array | undefined> };
+export type ZarritaStoreFactory = (subpath: string) => ZarritaReadableStore;
+
 export type ZarrLayerConfig = {
   layer_width: number;
   layer_height: number;
@@ -9,6 +12,12 @@ export type ZarrLayerConfig = {
 };
 
 export type ZarrGeneColors = Record<string, [number, number, number]>;
+
+export type ZarrTranscriptAttrs = {
+  layer_config?: ZarrLayerConfig;
+  gene_colors?: ZarrGeneColors;
+  gene_order?: string[];
+};
 
 export type ZarrTileCoordinates = {
   z: number;
@@ -52,6 +61,8 @@ export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
 
 export type ZarrPathsCells = {
   base: () => string;
+  segmentation: (folder: string) => string;
+  field: (folder: string, field: string) => string;
 };
 
 export type ZarrPathsImages = {
@@ -67,9 +78,12 @@ export type ZarrPathsTranscripts = {
 
 export type ZarrPathsAttrs = {
   root: () => string;
+  group: () => string;
   transcripts: () => string;
   multiplexLevel: (level: number) => string;
   images: () => string;
+  cells: () => string;
+  cellsSegmentation: (folder: string) => string;
 };
 
 export type ZarrPathsMisc = {

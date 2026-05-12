@@ -67,8 +67,10 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
             nextMeta = newLoader[0].metadata;
             nextLoader = newLoader[0].data;
           }
-        } else {
+        } else if ('metadata' in newLoader) {
           nextMeta = newLoader.metadata;
+          nextLoader = newLoader.data;
+        } else {
           nextLoader = newLoader.data;
         }
 

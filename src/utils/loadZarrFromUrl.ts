@@ -1,4 +1,5 @@
 import { TFunction } from 'i18next';
+import { FetchStore } from 'zarrita';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
@@ -7,6 +8,8 @@ import { useViewerStore, VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
+import type { ZarritaStoreFactory } from './ZarrDataSet.types';
+import { ZARR_SUBPATHS } from './ZarrPaths';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -40,8 +43,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useBrightfieldImagesStore.getState().reset();
   useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false, viewState: null });
 
+  const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) =>
+    new FetchStore(cloudImageUrl.replace(/\/$/, '') + '/' + subpath);
+
   useZarrDataStore.getState().setZarrUrl(cloudImageUrl);
   useZarrDataStore.getState().setFileName(zarrDir);
+  useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
   useZarrDataStore.setState({ zarrDataSet });
 
   const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
@@ -57,12 +64,21 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
       useZarrDataStore.getState().setLayerConfig(layerConfig);
     }
 
-    const transcriptColors = await zarrDataSet.fetchTranscriptColors();
+    const [transcriptColors, geneOrder] = await Promise.all([
+      zarrDataSet.fetchTranscriptColors(),
+      zarrDataSet.fetchTranscriptGeneOrder()
+    ]);
     if (transcriptColors) {
       const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
         gene_name,
         color
       }));
+      if (geneOrder) {
+        const orderIndex = new Map(geneOrder.map((name, i) => [name, i]));
+        colorMapEntries.sort(
+          (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
+        );
+      }
       useZarrDataStore.getState().setColormapConfig(colorMapEntries);
     }
   } else {
@@ -76,7 +92,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   const runMetadataResult = await zarrDataSet.fetchRunMetadata();
   if (runMetadataResult) {
     useViewerStore.getState().setGeneralDetails({
-      fileName: '.zattrs',
+      fileName: ZARR_SUBPATHS.attrs.root,
       data: runMetadataResult.metadata,
       smpInfoOrder: runMetadataResult.smpInfoOrder
     });

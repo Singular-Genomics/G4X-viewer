@@ -60,8 +60,14 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData] = useZarrDataStore(
-    useShallow((store) => [store.layerConfig, store.colorMapConfig, store.zarrUrl, store.hasTranscriptsData])
+  const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData, zarrStoreFactory] = useZarrDataStore(
+    useShallow((store) => [
+      store.layerConfig,
+      store.colorMapConfig,
+      store.zarrUrl,
+      store.hasTranscriptsData,
+      store.zarrStoreFactory
+    ])
   );
 
   const [
@@ -88,15 +94,16 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!hasTranscriptsData) {
+  if (!hasTranscriptsData && !zarrStoreFactory) {
     return undefined;
   }
 
   const metadataLayer = new TranscriptLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
-    zarrUrl: zarrUrl!,
+    zarrUrl,
+    zarrStoreFactory,
     config: layerConfig,
-    visible: isTranscriptLayerOn,
+    visible: (!!hasTranscriptsData || !!zarrStoreFactory) && isTranscriptLayerOn,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,
@@ -228,7 +235,7 @@ export const useBrightfieldImageLayer = () => {
 
   const loader = getLoader();
 
-  if (!loader || !loader[0] || !loader[0].shape) {
+  if (!loader || !loader[0] || !loader[0].shape || !loader[0].getRaster) {
     return undefined;
   }
 
