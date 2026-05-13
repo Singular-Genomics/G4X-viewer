@@ -13,9 +13,10 @@ export const PercentageOfTranscripts = () => {
   const { t } = useTranslation();
   const viewState = useViewerStore(useShallow((store) => store.viewState));
   const layerConfig = useZarrDataStore(useShallow((store) => store.layerConfig));
-  const [maxVisibleLayers, overrideLayers] = useTranscriptLayerStore(
+  const [maxVisibleLayersRaw, overrideLayers] = useTranscriptLayerStore(
     useShallow((store) => [store.maxVisibleLayers, store.overrideLayers])
   );
+  const maxVisibleLayers = maxVisibleLayersRaw ?? layerConfig.layers;
 
   const zoomBrakePoints = overrideLayers
     ? Array.from(
