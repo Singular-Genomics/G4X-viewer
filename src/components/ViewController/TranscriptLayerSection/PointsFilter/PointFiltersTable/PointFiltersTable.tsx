@@ -40,6 +40,9 @@ export const PointFiltersTable = () => {
 
   const handleApplyClick = () => {
     setGeneNamesFilter(activeFilters);
+    if (!isGeneNameFilterActive && activeFilters.length > 0) {
+      useTranscriptLayerStore.getState().toggleGeneNameFilter();
+    }
   };
 
   const haveFiltersChanges =
@@ -54,7 +57,7 @@ export const PointFiltersTable = () => {
       onApplyClick={handleApplyClick}
       onSetFilter={(filters) => setActiveFilters(filters)}
       clearDisabled={!isGeneNameFilterActive || activeFilters.length === 0}
-      applyDisabled={!isGeneNameFilterActive || activeFilters.length === 0 || !haveFiltersChanges}
+      applyDisabled={activeFilters.length === 0 || !haveFiltersChanges}
     />
   );
 };
