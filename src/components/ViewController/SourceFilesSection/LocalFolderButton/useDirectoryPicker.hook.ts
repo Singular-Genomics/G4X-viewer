@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackbar.hook.tsx';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
@@ -13,6 +14,7 @@ import { ZARR_SUBPATHS } from '../../../../utils/ZarrPaths';
 export const useDirectoryPicker = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const { showConsolidatedMessages } = useConsolidatedSnackbar();
 
   const openDirectory = useCallback(async () => {
     let handle: FileSystemDirectoryHandle;
@@ -163,15 +165,12 @@ export const useDirectoryPicker = () => {
       warningMessages.push(t('sourceFiles.segmentationLoadError'));
     }
 
-    successMessages.push(t('sourceFiles.zarrSuccess', { filename: handle.name }));
-
-    if (successMessages.length > 0) {
-      enqueueSnackbar(successMessages.join('; '), { variant: 'success' });
+    if (warningMessages.length === 0) {
+      successMessages.push(t('sourceFiles.zarrSuccess', { filename: handle.name }));
+      showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
     }
-    if (warningMessages.length > 0) {
-      enqueueSnackbar(warningMessages.join('; '), { variant: 'warning' });
-    }
-  }, [enqueueSnackbar, t]);
+    showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
+  }, [enqueueSnackbar, showConsolidatedMessages, t]);
 
   return { openDirectory };
 };

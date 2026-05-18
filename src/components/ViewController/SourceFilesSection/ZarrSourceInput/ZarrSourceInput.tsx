@@ -42,7 +42,9 @@ export default function ZarrSourceInput() {
     window.history.replaceState({}, '', url);
 
     setSubmitted(true);
-    showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    if (warningMessages.length === 0) {
+      showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    }
     showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
   };
 

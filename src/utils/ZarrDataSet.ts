@@ -86,6 +86,14 @@ export class ZarrDataSet {
     return this.paths.images.h_and_e();
   }
 
+  public async isAccessible(): Promise<boolean> {
+    const [hasGroup, hasAttrs] = await Promise.all([
+      this.hasZarrNode(this.paths.attrs.group()),
+      this.hasZarrNode(this.paths.attrs.root())
+    ]);
+    return hasGroup || hasAttrs;
+  }
+
   public async hasImagesData(): Promise<boolean> {
     return this.hasZarrNode(this.paths.attrs.images());
   }
