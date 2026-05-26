@@ -2,6 +2,7 @@ import { CircularProgress } from '@mui/material';
 import { FILL_PIXEL_VALUE } from '../../../../../shared/constants';
 
 export const COLORMAP_SLIDER_CHECKBOX_COLOR = [0, 177, 164];
+export const MORPHOLOGY_KEYWORDS = ['nuclear', 'cytoplasmic'];
 export const CHANNEL_MIN_FALLBACK = 0;
 export const CHANNEL_MAX_FALLBACK = 65535;
 export const CHANNEL_STEP = 1;

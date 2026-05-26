@@ -97,7 +97,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
         }
       : { loader, contrastLimits, colors, channelsVisible, selections };
 
-  if (overviewOn && overviewSource.loader) {
+  if (overviewOn && overviewSource.loader?.[0]?.getRaster) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
     const overviewViewState = viewStatesProp?.find((v) => v.id === OVERVIEW_VIEW_ID) || {
       ...baseViewState,

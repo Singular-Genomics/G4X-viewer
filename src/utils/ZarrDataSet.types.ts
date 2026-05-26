@@ -1,4 +1,8 @@
 import { SingleMask, ColormapEntry, SegmentationMetadata } from '../shared/types';
+import type { ClusterLabelEntry } from './ZarrCellsLoader';
+
+export type ZarritaReadableStore = { get(key: string): Promise<Uint8Array | undefined> };
+export type ZarritaStoreFactory = (subpath: string) => ZarritaReadableStore;
 
 export type ZarrLayerConfig = {
   layer_width: number;
@@ -8,6 +12,12 @@ export type ZarrLayerConfig = {
 };
 
 export type ZarrGeneColors = Record<string, [number, number, number]>;
+
+export type ZarrTranscriptAttrs = {
+  layer_config?: ZarrLayerConfig;
+  gene_colors?: ZarrGeneColors;
+  gene_order?: string[];
+};
 
 export type ZarrTileCoordinates = {
   z: number;
@@ -30,15 +40,18 @@ export type ZarrCellsData = {
   cellMasks: SingleMask[];
   colormap: ColormapEntry[];
   metadata: SegmentationMetadata;
+  clusterLabels: ClusterLabelEntry[];
 };
 
-export type ZarrCellsMetadataField = 'cell_id' | 'area' | 'cluster_id' | 'total_counts' | 'total_genes' | 'umap';
+export type ZarrRunMetadata = {
+  metadata: Record<string, any>;
+  smpInfoOrder: string[];
+};
 
-export type ZarrCellsPolygonsField = 'polygon_offsets' | 'polygon_vertices_xy';
-
-export type ZarrCellsProteinField = 'protein_names' | 'protein_values';
-
-export type ZarrCellsGenesField = 'gene_names' | 'data' | 'indices' | 'indptr';
+export type ZarrCellsSegmentations = {
+  segmentationOrder: string[];
+  segmentationSources: Record<string, string>;
+};
 
 export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position';
 
@@ -47,11 +60,9 @@ export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
 };
 
 export type ZarrPathsCells = {
-  metadata: (field: ZarrCellsMetadataField) => string;
-  polygons: (field: ZarrCellsPolygonsField) => string;
-  protein: (field: ZarrCellsProteinField) => string;
-  genes: (field: ZarrCellsGenesField) => string;
   base: () => string;
+  segmentation: (folder: string) => string;
+  field: (folder: string, field: string) => string;
 };
 
 export type ZarrPathsImages = {
@@ -67,9 +78,12 @@ export type ZarrPathsTranscripts = {
 
 export type ZarrPathsAttrs = {
   root: () => string;
+  group: () => string;
   transcripts: () => string;
   multiplexLevel: (level: number) => string;
   images: () => string;
+  cells: () => string;
+  cellsSegmentation: (folder: string) => string;
 };
 
 export type ZarrPathsMisc = {

@@ -65,8 +65,8 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          {isDesktop && <DetailsPopup />}
           {isDesktop && <SummaryButton />}
+          {isDesktop && <DetailsPopup />}
         </>
       </Box>
       {isDesktop && <ViewController imageLoaded={!!source} />}

@@ -1,7 +1,13 @@
 import { SegmentationMetadata, SingleMask } from '../../shared/types';
 import { SelectionData } from '../PolygonDrawingStore';
+import { ClusterLabelEntry } from '../../utils/ZarrCellsLoader';
 
 export type CellSegmentationLayerStore = CellSegmentationLayerStoreValues & CellSegmentationLayerStoreMethods;
+
+export type SegmentationOption = {
+  label: string;
+  folderName: string;
+};
 
 export type CellSegmentationLayerStoreValues = {
   cellMasksData: SingleMask[] | null;
@@ -17,6 +23,10 @@ export type CellSegmentationLayerStoreValues = {
   cellNameFilters: string[];
   selectedCells: SelectionData<SingleMask>[];
   umapDataAvailable: boolean;
+  availableSegmentations: SegmentationOption[];
+  selectedSegmentationLabel: string;
+  availableClusterLabels: ClusterLabelEntry[];
+  selectedClusterLabelKey: string;
 };
 
 export type CellSegmentationLayerStoreMethods = {
@@ -33,6 +43,8 @@ export type CellSegmentationLayerStoreMethods = {
   addSelectedCells: (newSelectionData: SelectionData<SingleMask>) => void;
   updateSelectedCells: (updatedData: SingleMask[], selectionId: number) => void;
   deleteSelectedCells: (selectionId: number) => void;
+  setSelectedSegmentationLabel: (label: string) => void;
+  setSelectedClusterLabelKey: (key: string) => void;
   reset: () => void;
 };
 

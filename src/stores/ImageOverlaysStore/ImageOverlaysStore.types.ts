@@ -1,6 +1,14 @@
 import { SelectionsType } from '../../components/PictureInPictureViewerAdapter';
 import { ViewerSourceType } from '../ViewerStore';
 
+export type LocalZarrImage = {
+  __localZarrImage: true;
+  name: string;
+  store: any;
+};
+
+export type AvailableImageEntry = File | string | LocalZarrImage;
+
 export type ImageOverlaysStore = ImageOverlaysStoreValues & ImageOverlaysStoreMethods;
 
 export type ImageOverlaysStoreValues = {
@@ -19,7 +27,7 @@ export type ImageOverlaysStoreValues = {
   colors: [number, number, number][];
   omeTiffColors: [number, number, number][];
   isLayerVisible: boolean;
-  availableImages: (File | string)[];
+  availableImages: AvailableImageEntry[];
   availableOmeTiffImages: (File | string)[];
 };
 
@@ -28,9 +36,9 @@ export type ImageOverlaysStoreMethods = {
   getLoader: () => any;
   getOmeTiffLoader: () => any;
   toggleImageLayer: () => void;
-  setActiveImage: (file: File | string | null) => void;
+  setActiveImage: (file: AvailableImageEntry | null) => void;
   setActiveOmeTiffImage: (file: File | string | null) => void;
-  addNewFile: (file: File | string) => void;
+  addNewFile: (file: AvailableImageEntry) => void;
   addOmeTiffFile: (file: File | string) => void;
   removeOmeTiffFileByName: (fileName: string) => void;
 };

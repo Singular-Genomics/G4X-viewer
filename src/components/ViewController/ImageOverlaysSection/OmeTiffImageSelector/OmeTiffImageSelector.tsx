@@ -1,7 +1,7 @@
 import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
-import { MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
+import { getEntryName, MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
 import { OmeTiffSelectorEntry } from '../OmeTiffSelectorEntry/OmeTiffSelectorEntry';
 import { OmeTiffImageSelectorProps } from './OmeTiffImageSelector.types';
 import { useOmeTiffImageHandler } from './OmeTiffImageSelector.hooks';
@@ -26,8 +26,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
 
   const handleImageSelect = useCallback(
     (selectedImage: File | string) => {
-      const imageName =
-        typeof selectedImage === 'string' ? selectedImage.split('/').pop() || selectedImage : selectedImage.name;
+      const imageName = getEntryName(selectedImage);
 
       if (imageName === activeImageName) {
         setActiveOmeTiffImage(null);
@@ -93,7 +92,7 @@ export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
           <Typography sx={sx.imageSelectorEmptyText}>{t('imageOverlays.noOmeTiffImages')}</Typography>
         ) : (
           images.map((entry, index) => {
-            const entryName = typeof entry === 'string' ? entry.split('/').pop() || entry : entry.name;
+            const entryName = getEntryName(entry);
 
             return (
               <OmeTiffSelectorEntry

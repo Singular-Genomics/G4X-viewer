@@ -1,6 +1,18 @@
-import { calculateExpandedRange, getPixelValueDisplay } from './ChannelController.helpers';
+import { calculateExpandedRange, getPixelValueDisplay, MORPHOLOGY_KEYWORDS } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
-import { Box, Grid, IconButton, MenuItem, Radio, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Divider,
+  Grid,
+  IconButton,
+  ListSubheader,
+  MenuItem,
+  Radio,
+  Theme,
+  Tooltip,
+  Typography,
+  useTheme
+} from '@mui/material';
 import { ChannelOptions } from '../ChannelOptions/ChannelOptions';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
@@ -40,6 +52,17 @@ export const ChannelController = ({
   const { t } = useTranslation();
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
+
+  const isMorphology = (name: string) => MORPHOLOGY_KEYWORDS.some((kw) => name.toLowerCase().includes(kw));
+
+  const [morphologyOptions, proteinOptions] = channelOptions.reduce(
+    (result, opt): [string[], string[]] => {
+      result[isMorphology(opt) ? 0 : 1].push(opt);
+      return result;
+    },
+    [[], []]
+  );
+
   const [currentMinValue, currentMaxValue] = slider;
   const [domainMin, domainMax] = domain;
   const [sliderRangeMode, setSliderRangeMode] = useState<SliderRangeMode>('expanded');
@@ -112,15 +135,46 @@ export const ChannelController = ({
           sx={sx.channelSelect}
           disabled={isLoading}
         >
-          {channelOptions.map((opt) => (
-            <MenuItem
-              disabled={isLoading}
-              key={opt}
-              value={opt}
+          {morphologyOptions.length > 0 && [
+            <ListSubheader
+              key="morphology-header"
+              sx={sx.groupHeader}
             >
-              <Typography>{opt}</Typography>
-            </MenuItem>
-          ))}
+              {t('channelSettings.groupMorphology')}
+            </ListSubheader>,
+            ...morphologyOptions.map((opt) => (
+              <MenuItem
+                disabled={isLoading}
+                key={opt}
+                value={opt}
+              >
+                <Typography>{opt}</Typography>
+              </MenuItem>
+            ))
+          ]}
+          {morphologyOptions.length > 0 && proteinOptions.length > 0 && (
+            <Divider
+              key="group-divider"
+              sx={sx.groupDivider}
+            />
+          )}
+          {proteinOptions.length > 0 && [
+            <ListSubheader
+              key="proteins-header"
+              sx={sx.groupHeader}
+            >
+              {t('channelSettings.groupProteins')}
+            </ListSubheader>,
+            ...proteinOptions.map((opt) => (
+              <MenuItem
+                disabled={isLoading}
+                key={opt}
+                value={opt}
+              >
+                <Typography>{opt}</Typography>
+              </MenuItem>
+            ))
+          ]}
         </GxSelect>
         <Box>
           <ChannelOptions
@@ -247,6 +301,21 @@ const styles = (theme: Theme) => ({
   channelSelect: {
     flexGrow: 1,
     minWidth: 0
+  },
+  groupHeader: {
+    fontSize: '11px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    color: theme.palette.gx.accent.greenBlue,
+    lineHeight: '28px',
+    paddingTop: '4px',
+    paddingBottom: '0'
+  },
+  groupDivider: {
+    borderColor: theme.palette.gx.lightGrey[500],
+    marginTop: '4px',
+    marginBottom: '4px'
   },
   sliderRow: {
     display: 'flex',

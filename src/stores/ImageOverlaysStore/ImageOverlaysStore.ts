@@ -1,8 +1,13 @@
 import { create } from 'zustand';
-import { ImageOverlaysStore, ImageOverlaysStoreValues } from './ImageOverlaysStore.types';
+import { AvailableImageEntry, ImageOverlaysStore, ImageOverlaysStoreValues } from './ImageOverlaysStore.types';
 import { MAX_UINT16_VALUE } from '../../shared/constants';
 
 export const MAX_NUMBER_OF_IMAGES = 10;
+
+export function getEntryName(entry: AvailableImageEntry): string {
+  if (typeof entry === 'string') return entry.split('/').pop() || entry;
+  return entry.name;
+}
 
 const DEFAULT_COLORS: [number, number, number][] = [
   [255, 0, 0],
@@ -42,7 +47,7 @@ export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
     return Array.isArray(omeTiffLoader[0]) ? omeTiffLoader[image] : omeTiffLoader;
   },
   toggleImageLayer: () => set((store) => ({ isLayerVisible: !store.isLayerVisible })),
-  setActiveImage: (file: File | string | null) => {
+  setActiveImage: (file: AvailableImageEntry | null) => {
     if (file === null) {
       set({
         brightfieldImageSource: null,
@@ -51,9 +56,20 @@ export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
       return;
     }
 
+    if (typeof file !== 'string' && '__localZarrImage' in file) {
+      set({
+        brightfieldImageSource: {
+          description: file.name,
+          urlOrFile: file.store
+        },
+        loader: DEFAULT_VALUES.loader
+      });
+      return;
+    }
+
     set({
       brightfieldImageSource: {
-        description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
+        description: getEntryName(file),
         urlOrFile: file
       },
       loader: DEFAULT_VALUES.loader
@@ -78,7 +94,7 @@ export const useImageOverlaysStore = create<ImageOverlaysStore>((set, get) => ({
       omeTiffMetadata: null
     });
   },
-  addNewFile: (file: File | string) =>
+  addNewFile: (file: AvailableImageEntry) =>
     set((state) => ({
       availableImages: [...state.availableImages, file]
     })),
