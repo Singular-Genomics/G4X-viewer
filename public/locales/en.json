@@ -19,6 +19,7 @@
     "channelExportSuccess": "Channel settings exported successfully",
     "channelFormattingError": "Error formatting channel settings for export",
     "channelImportError": "Error importing channel settings",
+    "channelImportInvalidFormat": "Invalid channel settings format",
     "channelImportSuccess": "Channel settings imported successfully",
     "channelOptionsTooltip": "Channel options",
     "colormapSelect": "Proteomics Color Mode",

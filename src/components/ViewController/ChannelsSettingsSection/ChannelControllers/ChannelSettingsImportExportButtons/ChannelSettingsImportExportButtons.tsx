@@ -4,10 +4,25 @@ import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
-import { PropertiesUpdateType, useChannelsStore } from '../../../../../stores/ChannelsStore';
+import { ChannelsSettings, PropertiesUpdateType, useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
+
+const validateChannelImportData = (data: unknown): void => {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    throw new Error('Root must be an object');
+  }
+  const obj = data as Record<string, unknown>;
+  if (!Array.isArray(obj.channels)) {
+    throw new Error('Missing or invalid "channels" array');
+  }
+  for (const ch of obj.channels) {
+    if (!ch || typeof ch !== 'object' || typeof (ch as Record<string, unknown>).name !== 'string') {
+      throw new Error('Each channel must have a string "name"');
+    }
+  }
+};
 
 export const ChannelSettingsImportExportButtons = () => {
   const theme = useTheme();
@@ -34,33 +49,22 @@ export const ChannelSettingsImportExportButtons = () => {
 
   const exportChannelSettings = () => {
     try {
-      // Filter out empty channel settings objects
-      const filteredChannelsSettings: Record<string, any> = {};
-
-      // Only include settings that have meaningful properties
-      Object.entries(channelsSettings || {}).forEach(([key, value]) => {
-        if (value && Object.keys(value).length > 0 && Object.values(value).some((v) => v !== undefined && v !== null)) {
-          filteredChannelsSettings[key] = value;
-        }
-      });
-
-      const exportData: {
-        channelsSettings?: Record<string, any>;
-        channels: any[];
-      } = {
-        channels: ids.map((_, index) => ({
-          name: channelOptions[(selections as any)[index].c],
-          visible: channelsVisible[index],
-          color: colors[index],
-          contrastLimits: contrastLimits[index],
-          selection: selections[index]
-        }))
+      const exportData = {
+        channels: ids.map((_, index) => {
+          const name = channelOptions[(selections as any)[index].c];
+          const perChannelSettings = channelsSettings?.[name];
+          return {
+            name,
+            visible: channelsVisible[index],
+            color: colors[index],
+            contrastLimits: contrastLimits[index],
+            ...(perChannelSettings?.initialContrastLimits !== undefined && {
+              initialContrastLimits: perChannelSettings.initialContrastLimits
+            }),
+            selection: selections[index]
+          };
+        })
       };
-
-      // Only include channel settings if we have non-empty ones
-      if (Object.keys(filteredChannelsSettings).length > 0) {
-        exportData.channelsSettings = filteredChannelsSettings;
-      }
 
       let jsonData;
       try {
@@ -123,107 +127,136 @@ export const ChannelSettingsImportExportButtons = () => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
+        const content = e.target?.result as string;
+        let importData: unknown;
         try {
-          const content = e.target?.result as string;
-          const importData = JSON.parse(content);
+          importData = JSON.parse(content);
+        } catch {
+          enqueueSnackbar({ message: t('channelSettings.channelImportError'), variant: 'error' });
+          return;
+        }
 
+        try {
+          validateChannelImportData(importData);
+        } catch {
+          enqueueSnackbar({ message: t('channelSettings.channelImportInvalidFormat'), variant: 'error' });
+          return;
+        }
+
+        try {
+          const data = importData as { channels: any[]; channelsSettings?: Record<string, any> };
           const { addIsChannelLoading, setIsChannelLoading } = useViewerStore.getState();
 
-          if (importData.channelsSettings) {
-            useChannelsStore.setState({
-              channelsSettings: importData.channelsSettings
-            });
+          const newChannelsSettings: ChannelsSettings = {};
+          data.channels.forEach((ch: any) => {
+            if (ch.name) {
+              newChannelsSettings[ch.name] = {
+                ...(ch.color !== undefined && { color: ch.color }),
+                ...(ch.initialContrastLimits !== undefined && { initialContrastLimits: ch.initialContrastLimits }),
+                ...(ch.contrastLimits !== undefined && {
+                  minValue: ch.contrastLimits[0],
+                  maxValue: ch.contrastLimits[1]
+                }),
+              };
+            }
+          });
+
+          const mergedSettings: ChannelsSettings = { ...newChannelsSettings, ...(data.channelsSettings ?? {}) };
+          if (Object.keys(mergedSettings).length > 0) {
+            useChannelsStore.setState({ channelsSettings: mergedSettings });
           }
 
-          if (importData.channels && Array.isArray(importData.channels)) {
-            importData.channels.forEach((channelData: any, idx: number) => {
-              if (idx < ids.length && channelData.name) {
+          data.channels.forEach((channelData: any, idx: number) => {
+            if (idx < ids.length && channelData.name) {
+              const channelName = channelData.name;
+              const channelIndex = channelOptions.indexOf(channelName);
+
+              if (channelIndex !== -1) {
+                const newProps: Partial<PropertiesUpdateType> = {};
+
+                if (channelData.contrastLimits) {
+                  newProps.contrastLimits = channelData.contrastLimits;
+                }
+
+                if (channelData.color) {
+                  newProps.colors = channelData.color;
+                }
+
+                if (channelData.visible !== undefined) {
+                  newProps.channelsVisible = channelData.visible;
+                }
+
+                if (channelData.selection) {
+                  const updatedSelection = {
+                    ...channelData.selection,
+                    c: channelIndex
+                  };
+                  newProps.selections = updatedSelection;
+                }
+
+                setPropertiesForChannel(idx, newProps);
+              }
+            }
+          });
+
+          if (ids.length > data.channels.length) {
+            const { removeIsChannelLoading } = useViewerStore.getState();
+            for (let i = ids.length - 1; i >= data.channels.length; i--) {
+              useChannelsStore.getState().removeChannel(i);
+              removeIsChannelLoading(i);
+            }
+          }
+
+          if (data.channels.length > ids.length) {
+            const channelsToAdd = data.channels.slice(ids.length);
+            const channelIndicesToLoad: number[] = [];
+
+            channelsToAdd.forEach((channelData: any) => {
+              if (channelData.name) {
                 const channelName = channelData.name;
                 const channelIndex = channelOptions.indexOf(channelName);
 
                 if (channelIndex !== -1) {
-                  const newProps: Partial<PropertiesUpdateType> = {};
+                  const newSelection = channelData.selection
+                    ? {
+                        ...channelData.selection,
+                        c: channelIndex
+                      }
+                    : {
+                        z: 0,
+                        c: channelIndex,
+                        t: 0
+                      };
 
-                  if (channelData.contrastLimits) {
-                    newProps.contrastLimits = channelData.contrastLimits;
-                  }
+                  const numSelectionsBeforeAdd = useChannelsStore.getState().selections.length;
+                  channelIndicesToLoad.push(numSelectionsBeforeAdd);
 
-                  if (channelData.color) {
-                    newProps.colors = channelData.color;
-                  }
-
-                  if (channelData.visible !== undefined) {
-                    newProps.channelsVisible = channelData.visible;
-                  }
-
-                  if (channelData.selection) {
-                    const updatedSelection = {
-                      ...channelData.selection,
-                      c: channelIndex
-                    };
-                    newProps.selections = updatedSelection;
-                  }
-
-                  setPropertiesForChannel(idx, newProps);
+                  addIsChannelLoading(true);
+                  useChannelsStore.getState().addChannel({
+                    selections: newSelection,
+                    ids: String(Math.random()),
+                    channelsVisible: channelData.visible !== undefined ? channelData.visible : true,
+                    colors: channelData.color || [255, 255, 255],
+                    contrastLimits: (channelData.contrastLimits ?? [0, 65535]) as [number, number],
+                    domains: (channelData.contrastLimits ?? [0, 65535]) as [number, number]
+                  } as any);
                 }
               }
             });
 
-            if (importData.channels.length > ids.length) {
-              const channelsToAdd = importData.channels.slice(ids.length);
-              const channelIndicesToLoad: number[] = [];
-
-              channelsToAdd.forEach((channelData: any) => {
-                if (channelData.name) {
-                  const channelName = channelData.name;
-                  const channelIndex = channelOptions.indexOf(channelName);
-
-                  if (channelIndex !== -1) {
-                    const newSelection = channelData.selection
-                      ? {
-                          ...channelData.selection,
-                          c: channelIndex
-                        }
-                      : {
-                          z: 0,
-                          c: channelIndex,
-                          t: 0
-                        };
-
-                    const numSelectionsBeforeAdd = useChannelsStore.getState().selections.length;
-                    channelIndicesToLoad.push(numSelectionsBeforeAdd);
-
-                    addIsChannelLoading(true);
-                    useChannelsStore.getState().addChannel({
-                      selections: newSelection,
-                      ids: String(Math.random()),
-                      channelsVisible: channelData.visible !== undefined ? channelData.visible : true,
-                      colors: channelData.color || [255, 255, 255]
-                    } as any);
-
-                    if (channelData.contrastLimits) {
-                      setPropertiesForChannel(numSelectionsBeforeAdd, {
-                        contrastLimits: channelData.contrastLimits
-                      });
+            if (channelIndicesToLoad.length > 0) {
+              let loadedCount = 0;
+              useViewerStore.setState({
+                onViewportLoad: () => {
+                  if (loadedCount < channelIndicesToLoad.length) {
+                    setIsChannelLoading(channelIndicesToLoad[loadedCount], false);
+                    loadedCount++;
+                    if (loadedCount === channelIndicesToLoad.length) {
+                      useViewerStore.setState({ onViewportLoad: () => {} });
                     }
                   }
                 }
               });
-
-              if (channelIndicesToLoad.length > 0) {
-                let loadedCount = 0;
-                useViewerStore.setState({
-                  onViewportLoad: () => {
-                    if (loadedCount < channelIndicesToLoad.length) {
-                      setIsChannelLoading(channelIndicesToLoad[loadedCount], false);
-                      loadedCount++;
-                      if (loadedCount === channelIndicesToLoad.length) {
-                        useViewerStore.setState({ onViewportLoad: () => {} });
-                      }
-                    }
-                  }
-                });
-              }
             }
           }
 
