@@ -1,18 +1,18 @@
 {
   "imageOverlays": {
-    "addOmeTiffImage": "Add OmeTiff",
+    "addOmeTiffImage": "Add OME-TIFF",
     "duplicateImageError": "Image with same name already has been loaded",
     "imageCloudUploadDescription": "Enter URL to .ome.tiff or .tif file",
-    "imageCloudUploadSuccess": "Successfully loaded OmeTiff image from URL: {{file}}",
+    "imageCloudUploadSuccess": "Successfully loaded OME-TIFF image from URL: {{file}}",
     "imageUploadMultipleError": "Invalid input file. Only single .ome.tiff files allowed",
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
-    "omeTiffCloudUploadLabel": "OmeTiff Image URL",
-    "availableOmeTiffImages": "Available OmeTiff Images",
+    "omeTiffCloudUploadLabel": "OME-TIFF Image URL",
+    "availableOmeTiffImages": "Available OME-TIFF Images",
     "heSectionTitle": "fH&E Images",
     "heLayerVisible": "Show fH&E Layer",
     "layerOpacityLabel": "Layer Opacity",
-    "noOmeTiffImages": "No OmeTiff images have been loaded",
-    "omeTiffSectionTitle": "OmeTiff Images",
+    "noOmeTiffImages": "No OME-TIFF images have been loaded",
+    "omeTiffSectionTitle": "OME-TIFF Images",
     "sectionTitle": "Image Overlays Settings"
   },
   "channelSettings": {
@@ -259,7 +259,7 @@
     "drawingMenuEnable": "Enable Drawing (D)",
     "drawingMenuView": "View Mode (V)",
     "exportPolygons": "Export Polygons",
-    "imageLoading" : "Loading OME Tiff image",
+    "imageLoading" : "Loading OME-TIFF image",
     "importPolygons": "Import Polygons",
     "importPolygonsLabel": "Select JSON File",
     "importPolygonsTitle": "Polygon Data File",
