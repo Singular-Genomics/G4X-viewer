@@ -11,18 +11,29 @@ export const useChannelSettingsImportExport = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
-  const [ids, selections, channelsVisible, colors, contrastLimits, channelsSettings, setPropertiesForChannel] =
-    useChannelsStore(
-      useShallow((store) => [
-        store.ids,
-        store.selections,
-        store.channelsVisible,
-        store.colors,
-        store.contrastLimits,
-        store.channelsSettings,
-        store.setPropertiesForChannel
-      ])
-    );
+  const [
+    ids,
+    selections,
+    channelsVisible,
+    colors,
+    contrastLimits,
+    channelsSettings,
+    soloChannelIndex,
+    presoloChannelsVisible,
+    setPropertiesForChannel
+  ] = useChannelsStore(
+    useShallow((store) => [
+      store.ids,
+      store.selections,
+      store.channelsVisible,
+      store.colors,
+      store.contrastLimits,
+      store.channelsSettings,
+      store.soloChannelIndex,
+      store.presoloChannelsVisible,
+      store.setPropertiesForChannel
+    ])
+  );
 
   const [channelOptions, metadata, generalDetails] = useViewerStore(
     useShallow((store) => [store.channelOptions, store.metadata, store.generalDetails])
@@ -34,9 +45,15 @@ export const useChannelSettingsImportExport = () => {
         channels: ids.map((_, index) => {
           const name = channelOptions[(selections as any)[index].c];
           const perChannelSettings = channelsSettings?.[name];
+          const isSoloed = soloChannelIndex === index;
+          const visible =
+            soloChannelIndex !== null
+              ? (presoloChannelsVisible[index] ?? channelsVisible[index])
+              : channelsVisible[index];
           return {
             name,
-            visible: channelsVisible[index],
+            visible,
+            ...(soloChannelIndex !== null && { soloed: isSoloed }),
             color: colors[index],
             contrastLimits: contrastLimits[index],
             ...(perChannelSettings?.initialContrastLimits !== undefined && {
@@ -124,7 +141,10 @@ export const useChannelSettingsImportExport = () => {
         }
 
         try {
-          const data = importData as { channels: any[]; channelsSettings?: Record<string, any> };
+          const data = importData as {
+            channels: any[];
+            channelsSettings?: Record<string, any>;
+          };
           const { addIsChannelLoading, setIsChannelLoading } = useViewerStore.getState();
 
           const newChannelsSettings: ChannelsSettings = {};
@@ -215,7 +235,7 @@ export const useChannelSettingsImportExport = () => {
                   useChannelsStore.getState().addChannel({
                     selections: newSelection,
                     ids: String(Math.random()),
-                    channelsVisible: channelData.visible !== undefined ? channelData.visible : true,
+                    channelsVisible: true,
                     colors: channelData.color || [255, 255, 255],
                     contrastLimits: (channelData.contrastLimits ?? [0, 65535]) as [number, number],
                     domains: (channelData.contrastLimits ?? [0, 65535]) as [number, number]
@@ -238,6 +258,18 @@ export const useChannelSettingsImportExport = () => {
                 }
               });
             }
+          }
+
+          const soloIndex = data.channels.findIndex((ch: any) => ch.soloed === true);
+          if (soloIndex !== -1) {
+            const currentCount = useChannelsStore.getState().ids.length;
+            useChannelsStore.setState({
+              soloChannelIndex: soloIndex,
+              presoloChannelsVisible: data.channels.map((ch: any) => ch.visible ?? true),
+              channelsVisible: Array.from({ length: currentCount }, (_, i) => i === soloIndex)
+            });
+          } else {
+            useChannelsStore.setState({ soloChannelIndex: null, presoloChannelsVisible: [] });
           }
 
           enqueueSnackbar({
