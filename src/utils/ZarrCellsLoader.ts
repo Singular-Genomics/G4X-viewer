@@ -103,6 +103,9 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
     const numCells = cellIds.length;
     const cellMasks: SingleMask[] = [];
 
+    // Yield to the browser before the synchronous loop so the loading UI can paint
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
     for (let i = 0; i < numCells; i++) {
       const vsStart = Number(polygonOffsets[i]);
       const vsEnd = Number(polygonOffsets[i + 1]);
