@@ -110,7 +110,7 @@ export const useTranscriptLayer = () => {
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
-    maxVisibleLayers: maxVisibleLayers,
+    maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
     colormap: colorMapConfig,
     onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
     onHover: (pickingInfo) =>
