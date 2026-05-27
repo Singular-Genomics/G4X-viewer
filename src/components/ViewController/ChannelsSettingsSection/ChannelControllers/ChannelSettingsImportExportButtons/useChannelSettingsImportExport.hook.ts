@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ChannelsSettings, PropertiesUpdateType, useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { validateChannelImportData } from './ChannelSettingsImportExportButtons.helpers';
+import { MAX_UINT16_VALUE } from '../../../../../shared/constants';
 
 export const useChannelSettingsImportExport = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -79,20 +80,18 @@ export const useChannelSettingsImportExport = () => {
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
 
-      let fileName = 'channel-settings';
+      const sanitizeFileName = (raw: string) =>
+        raw
+          .split('.')
+          .slice(0, -1)
+          .join('.')
+          .replace(/[^\w-]/g, '_');
 
-      if (generalDetails && generalDetails.fileName) {
-        const baseName = generalDetails.fileName.split('.').slice(0, -1).join('.');
-        const sanitizedName = baseName.replace(/[^\w-]/g, '_');
-        if (sanitizedName) {
-          fileName = `channel-settings_${sanitizedName}`;
-        }
-      } else if (metadata && metadata.Name) {
-        const baseName = metadata.Name.split('.').slice(0, -1).join('.');
-        const sanitizedName = baseName.replace(/[^\w-]/g, '_');
-        if (sanitizedName) {
-          fileName = `channel-settings_${sanitizedName}`;
-        }
+      let fileName = 'channel-settings';
+      const rawName = generalDetails?.fileName ?? metadata?.Name;
+      if (rawName) {
+        const sanitized = sanitizeFileName(rawName);
+        if (sanitized) fileName = `channel-settings_${sanitized}`;
       }
 
       const a = document.createElement('a');
@@ -237,8 +236,8 @@ export const useChannelSettingsImportExport = () => {
                     ids: String(Math.random()),
                     channelsVisible: true,
                     colors: channelData.color || [255, 255, 255],
-                    contrastLimits: (channelData.contrastLimits ?? [0, 65535]) as [number, number],
-                    domains: (channelData.contrastLimits ?? [0, 65535]) as [number, number]
+                    contrastLimits: (channelData.contrastLimits ?? [0, MAX_UINT16_VALUE]) as [number, number],
+                    domains: (channelData.contrastLimits ?? [0, MAX_UINT16_VALUE]) as [number, number]
                   } as any);
                 }
               }
