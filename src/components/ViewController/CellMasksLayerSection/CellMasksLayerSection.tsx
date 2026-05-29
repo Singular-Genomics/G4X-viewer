@@ -1,4 +1,4 @@
-import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
+import { Box, CircularProgress, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -25,9 +25,17 @@ const DisabledLayerWarning = () => {
 
 export const CellMasksLayerSection = () => {
   const { t } = useTranslation();
-  const [isCellLayerOn, showBoundary, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellLayerOn, store.showBoundary, store.isCellNameFilterOn])
+  const [isCellLayerOn, cellMasksData, showBoundary, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.cellMasksData, store.showBoundary, store.isCellNameFilterOn])
   );
+
+  if (isCellLayerOn && cellMasksData === null) {
+    return (
+      <Box sx={sx.loadingContainer}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={sx.sectionContainer}>
@@ -65,6 +73,11 @@ export const CellMasksLayerSection = () => {
 };
 
 const sx = {
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '16px 0'
+  },
   sectionContainer: {
     display: 'flex',
     flexDirection: 'column',
