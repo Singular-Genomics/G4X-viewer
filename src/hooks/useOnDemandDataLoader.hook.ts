@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
-import { useViewerStore, VIEWER_LOADING_TYPES } from '../stores/ViewerStore';
+import { useViewerStore } from '../stores/ViewerStore';
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -82,13 +82,6 @@ export const useOnDemandDataLoader = () => {
     if (!hasSegmentationData || cellMasksData !== null) return;
 
     const load = async () => {
-      useViewerStore.setState({
-        isViewerLoading: {
-          type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
-          message: t('viewer.loadingSegmentationProcessing')
-        }
-      });
-
       try {
         const defaultSegmentation = availableSegmentations[0];
         if (!defaultSegmentation) throw new Error('No segmentation available');
@@ -154,10 +147,6 @@ export const useOnDemandDataLoader = () => {
       } catch {
         enqueueSnackbar(t('sourceFiles.segmentationLoadError'), { variant: 'error' });
         useCellSegmentationLayerStore.getState().toggleCellLayer();
-      } finally {
-        if (useViewerStore.getState().isViewerLoading?.type === VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING) {
-          useViewerStore.setState({ isViewerLoading: undefined });
-        }
       }
     };
 
