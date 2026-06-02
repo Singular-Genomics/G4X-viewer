@@ -1,4 +1,4 @@
-import { alpha, Box, Button, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { alpha, Box, Button, SxProps, Theme, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -38,27 +38,24 @@ export const GxFilterTableColormap = ({ onDrop, onExport }: GxFilterTableColorma
   };
 
   return (
-    <Box>
-      <Typography sx={sx.label}>{t('general.colormapConfig')}:</Typography>
-      <Box sx={sx.buttonsContainer}>
-        <Button
-          startIcon={<DownloadIcon />}
-          fullWidth
-          sx={sx.exportButton}
-          onClick={onExport}
-        >
-          {t('general.export')}
-        </Button>
-        <Button
-          startIcon={<UploadIcon />}
-          sx={importButtonStyle}
-          fullWidth
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} />
-          {dynamicButtonText}
-        </Button>
-      </Box>
+    <Box sx={sx.buttonsContainer}>
+      <Button
+        startIcon={<DownloadIcon />}
+        fullWidth
+        sx={sx.exportButton}
+        onClick={onExport}
+      >
+        {t('general.export')}
+      </Button>
+      <Button
+        startIcon={<UploadIcon />}
+        sx={importButtonStyle}
+        fullWidth
+        {...getRootProps()}
+      >
+        <input {...getInputProps()} />
+        {dynamicButtonText}
+      </Button>
     </Box>
   );
 };
@@ -68,13 +65,9 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     display: 'flex',
     justifyContent: 'space-between',
     gap: '16px',
-    marginBottom: '12px',
+    marginTop: '12px',
     width: '100%',
     padding: '0'
-  },
-  label: {
-    fontWeight: 600,
-    marginBottom: '4px'
   },
   exportButton: {
     background: theme.palette.gx.gradients.brand(),
