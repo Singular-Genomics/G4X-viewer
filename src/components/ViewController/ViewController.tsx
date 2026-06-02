@@ -13,9 +13,9 @@ import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
-import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
+import { ImageOverlaysSection } from './ImageOverlaysSection/ImageOverlaysSection';
 import { useTranslation } from 'react-i18next';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
@@ -34,7 +34,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
   );
-  const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
+  const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useImageOverlaysStore(
     useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
   const [isChannelLayerVisible, toggleChannelLayerVisibility] = useChannelsStore(
@@ -91,7 +91,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                 <ChannelsSettingsSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
-                sectionTitle={t('brightfieldImages.sectionTitle')}
+                sectionTitle={t('imageOverlays.sectionTitle')}
                 disabled={!imageLoaded}
                 headerAction={
                   <GxCheckbox
@@ -103,7 +103,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                   />
                 }
               >
-                <BrightfieldImagesSection />
+                <ImageOverlaysSection />
               </GxCollapsibleSection>
               <GxCollapsibleSection
                 sectionTitle={t('transcriptsSettings.sectionTitle')}

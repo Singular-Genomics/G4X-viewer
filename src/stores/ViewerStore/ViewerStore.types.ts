@@ -41,6 +41,7 @@ export type ViewerStoreMethods = {
 export const VIEWER_LOADING_TYPES = {
   MAIN_IMAGE: 'mainImage',
   BRIGHTFIELD_IMAGE: 'brightfieldImage',
+  OMETIFF_IMAGE: 'omeTiffImage',
   SEGMENTATION_PROCESSING: 'segmentationProcessing'
 } as const;
 

@@ -5,7 +5,7 @@ import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
 import type { ZarritaStoreFactory } from '../../../../utils/ZarrDataSet.types';
 import type { SegmentationOption } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { ZARR_SUBPATHS } from '../../../../utils/ZarrPaths';
@@ -33,7 +33,7 @@ export const useDirectoryPicker = () => {
     useZarrDataStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
-    useBrightfieldImagesStore.getState().reset();
+    useImageOverlaysStore.getState().reset();
     useViewerStore.setState({ physicalSize: null });
 
     const { LocalFileStore, LocalFileHandleZarritaStore } = await import('../../../../loaders/LocalFileStore');
@@ -97,7 +97,7 @@ export const useDirectoryPicker = () => {
     try {
       await getDirectoryAt(handle, ZARR_SUBPATHS.images.h_and_e());
       const heStore = new LRUCacheStore(new LocalFileStore(handle), 100, ZARR_SUBPATHS.images.h_and_e());
-      useBrightfieldImagesStore.getState().addNewFile({
+      useImageOverlaysStore.getState().addNewFile({
         __localZarrImage: true,
         name: 'h_and_e',
         store: heStore

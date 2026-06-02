@@ -3,7 +3,7 @@ import { DETAIL_VIEW_ID, OVERVIEW_VIEW_ID, OverviewView, getDefaultInitialViewSt
 import * as React from 'react';
 import { PictureInPictureViewerProps } from './PictureInPictureViewer.types';
 import DetailView from '../DetailView';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function PictureInPictureViewer(props: PictureInPictureViewerProps) {
@@ -37,11 +37,11 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   const [
     brightfieldImageSource,
     isBrightfieldLayerVisible,
-    getBrightfieldLoader,
+    getLoader,
     brightfieldContrastLimits,
     brightfieldColors,
     brightfieldSelections
-  ] = useBrightfieldImagesStore(
+  ] = useImageOverlaysStore(
     useShallow((store) => [
       store.brightfieldImageSource,
       store.isLayerVisible,
@@ -89,7 +89,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   const overviewSource =
     brightfieldImageSource && isBrightfieldLayerVisible
       ? {
-          loader: getBrightfieldLoader(),
+          loader: getLoader(),
           contrastLimits: brightfieldContrastLimits as [number, number][],
           colors: brightfieldColors,
           channelsVisible: Array(brightfieldColors.length).fill(true),

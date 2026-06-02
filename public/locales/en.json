@@ -1,16 +1,19 @@
 {
-  "brightfieldImages": {
-    "addImage": "Add fH&E Image",
-    "availableImage": "Available fH&E Images",
+  "imageOverlays": {
+    "addOmeTiffImage": "Add OME-TIFF",
     "duplicateImageError": "Image with same name already has been loaded",
     "imageCloudUploadDescription": "Enter URL to .ome.tiff or .tif file",
-    "imageCloudUploadLabel": "fH&E Image URL",
-    "imageCloudUploadSuccess": "Successfully loaded fH&E image from URL: {{file}}",
+    "imageCloudUploadSuccess": "Successfully loaded OME-TIFF image from URL: {{file}}",
     "imageUploadMultipleError": "Invalid input file. Only single .ome.tiff files allowed",
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
+    "omeTiffCloudUploadLabel": "OME-TIFF Image URL",
+    "availableOmeTiffImages": "Available OME-TIFF Images",
+    "heSectionTitle": "fH&E Images",
+    "heLayerVisible": "Show fH&E Layer",
     "layerOpacityLabel": "Layer Opacity",
-    "noImages": "No fH&E images have been loaded",
-    "sectionTitle": "Brightfield Images Settings"
+    "noOmeTiffImages": "No OME-TIFF images have been loaded",
+    "omeTiffSectionTitle": "OME-TIFF Images",
+    "sectionTitle": "Image Overlays Settings"
   },
   "channelSettings": {
     "addChannel": "Add Channel",
@@ -175,7 +178,7 @@
     "imageLoadError": "Failed to load image. Please check the URL and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
-    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
+    "heImageNotSupported": "fH&E images are not supported here. Please upload fH&E images in Image Overlays section instead.",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",
@@ -256,16 +259,16 @@
     "drawingMenuEnable": "Enable Drawing (D)",
     "drawingMenuView": "View Mode (V)",
     "exportPolygons": "Export Polygons",
-    "imageLoading" : "Loading OME Tiff image",
+    "imageLoading" : "Loading OME-TIFF image",
     "importPolygons": "Import Polygons",
     "importPolygonsLabel": "Select JSON File",
     "importPolygonsTitle": "Polygon Data File",
     "loadingImage": "Loading Image",
-    "loadingBrightfieldImage": "Loading Brightfield Image",
+    "loadingBrightfieldImage": "Loading fH&E Image",
     "loadingTranscripts": "Loading transcripts...",
     "loadingSegmentationProcessing": "Processing Segmentation Data",
     "imageLoadError": "Failed to load image. Please check the file format and try again.",
-    "brightfieldImageLoadError": "Failed to load brightfield image. Please check the file format and try again.",
+    "brightfieldImageLoadError": "Failed to load fH&E image. Please check the file format and try again.",
     "noImageInfo": "Please load a Zarr dataset to start viewing data",
     "mobileWelcomeDesktopHint": "For full control and the best experience, please open the application on a desktop browser.",
     "polygonsImportedSuccessfully": "Polygons imported successfully!",
@@ -299,8 +302,8 @@
     "showFilteredCells": "Show filtered cells",
     "segmentationLayer": "Segmentation Layer",
     "segmentationLayerDisabled": "Segmentation Layer disabled",
-    "brightfieldLayer": "Brightfield Layer",
-    "brightfieldLayerDisabled": "Brightfield Layer disabled",
+    "brightfieldLayer": "fH&E Layer",
+    "brightfieldLayerDisabled": "fH&E Layer disabled",
     "polygonLayerDisabled": "ROI Polygons disabled",
     "flowCytometry": "Flow Cytometry",
     "flowCytometryRangeFilter": "Flow Cytometry filter",
@@ -314,7 +317,7 @@
     "transcriptLayer": "Transcript Layer",
     "segmentationLayer": "Segmentation Layer", 
     "channelsLayer": "Channels Layer",
-    "brightfieldLayer": "Brightfield Layer",
+    "brightfieldLayer": "fH&E Layer",
     "polygonLayer": "ROI Polygons Layer"
   },
   "roiDetails": {
@@ -400,8 +403,8 @@
       "clusterIdColumn": "A cluster assignment of nan or -1 indicates that a cell was filtered before clustering."
     },
     "sourceFiles": {
-      "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
-      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
+      "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Image Overlays section.",
+      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Image Overlays section.",
       "folderUploadButton": "Open a local OME-Zarr folder from your filesystem (Chromium browsers only)",
       "folderUploadUnsupported": "Local folder upload is unavailable in this browser. Please use a Chromium-based browser (Chrome, Edge, or Brave)."
     },

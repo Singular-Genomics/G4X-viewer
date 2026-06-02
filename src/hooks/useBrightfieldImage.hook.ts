@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useViewerStore, VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore';
-import { buildDefaultSelection, createLoader } from '../legacy/utils';
+import { buildDefaultSelection } from '../legacy/utils';
 import { unstable_batchedUpdates } from 'react-dom';
 import { isInterleaved } from '@hms-dbmi/viv';
-import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { MAX_UINT16_VALUE, MAX_UINT8_VALUE } from '../shared/constants';
+import { loadOverlayImage } from '../utils/loadOverlayImage';
 
 export const useBrightfieldImage = (source: ViewerSourceType | null) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoaderCreated, setIsLoaderCreated] = useState(false);
-  const loader = useBrightfieldImagesStore.getState().getLoader();
+  const loader = useImageOverlaysStore.getState().getLoader();
 
   useEffect(() => {
     // Reset state when source changes
@@ -29,34 +30,16 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
           }
         });
 
-        const { urlOrFile } = source;
+        const { loader: nextLoader } = await loadOverlayImage(source);
 
-        // --------------------- LEGACY LOADER ----------------------
-        const newLoader = await createLoader(
-          urlOrFile,
-          () => {},
-          () => {}
-        );
-        // ----------------------------------------------------------
-        let nextLoader: any;
-
-        if (Array.isArray(newLoader)) {
-          if (newLoader.length > 1) {
-            nextLoader = newLoader.map((l) => l.data);
-          } else {
-            nextLoader = newLoader[0].data;
-          }
-        } else {
-          nextLoader = newLoader.data;
-        }
         if (nextLoader) {
           unstable_batchedUpdates(() => {
-            useBrightfieldImagesStore.setState({ loader: nextLoader });
+            useImageOverlaysStore.setState({ loader: nextLoader });
           });
           setIsLoaderCreated(true);
         }
       } catch (error) {
-        console.error('Failed to load brightfield image:', error);
+        console.error('Failed to load H&E image:', error);
         enqueueSnackbar({
           message: t('viewer.brightfieldImageLoadError'),
           variant: 'error',
@@ -72,7 +55,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
       changeLoader();
     } else {
       // Reset loader state when source is null
-      useBrightfieldImagesStore.setState({
+      useImageOverlaysStore.setState({
         loader: [{ labels: [], shape: [] }]
       });
       useViewerStore.setState({
@@ -102,7 +85,7 @@ export const useBrightfieldImage = (source: ViewerSourceType | null) => {
           [0, maxValue]
         ];
 
-    useBrightfieldImagesStore.setState({
+    useImageOverlaysStore.setState({
       selections: newSelections,
       contrastLimits: newContrastLimits
     });

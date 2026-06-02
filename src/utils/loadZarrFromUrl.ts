@@ -1,6 +1,6 @@
 import { TFunction } from 'i18next';
 import { FetchStore } from 'zarrita';
-import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../stores/ImageOverlaysStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
@@ -40,7 +40,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.getState().reset();
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
-  useBrightfieldImagesStore.getState().reset();
+  useImageOverlaysStore.getState().reset();
   useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false, viewState: null });
 
   const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) =>
@@ -99,7 +99,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   }
 
   const hAndEUrl = zarrDataSet.getHAndEPath();
-  useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
+  useImageOverlaysStore.getState().addNewFile(hAndEUrl);
 
   const imageAxes = await zarrDataSet.fetchImageAxesMetadata();
   if (imageAxes) {

@@ -9,26 +9,36 @@ export type LocalZarrImage = {
 
 export type AvailableImageEntry = File | string | LocalZarrImage;
 
-export type BrightfieldImagesStore = BrightfieldImagesStoreValues & BrightfieldImagesStoreMethods;
+export type ImageOverlaysStore = ImageOverlaysStoreValues & ImageOverlaysStoreMethods;
 
-export type BrightfieldImagesStoreValues = {
+export type ImageOverlaysStoreValues = {
   brightfieldImageSource: ViewerSourceType | null;
+  omeTiffImageSource: ViewerSourceType | null;
   loader: any; // <- This is quite complicated
+  omeTiffLoader: any;
+  omeTiffMetadata: any;
   image: number;
   selections: SelectionsType[];
+  omeTiffSelections: SelectionsType[];
   opacity: number;
+  omeTiffOpacity: number;
   contrastLimits: number[][];
+  omeTiffContrastLimits: number[][];
   colors: [number, number, number][];
+  omeTiffColors: [number, number, number][];
   isLayerVisible: boolean;
   availableImages: AvailableImageEntry[];
+  availableOmeTiffImages: (File | string)[];
 };
 
-export type BrightfieldImagesStoreMethods = {
+export type ImageOverlaysStoreMethods = {
   reset: () => void;
   getLoader: () => any;
+  getOmeTiffLoader: () => any;
   toggleImageLayer: () => void;
   setActiveImage: (file: AvailableImageEntry | null) => void;
-  setAvailableImages: (files: AvailableImageEntry[]) => void;
+  setActiveOmeTiffImage: (file: File | string | null) => void;
   addNewFile: (file: AvailableImageEntry) => void;
-  removeFileByName: (fileName: string) => void;
+  addOmeTiffFile: (file: File | string) => void;
+  removeOmeTiffFileByName: (fileName: string) => void;
 };

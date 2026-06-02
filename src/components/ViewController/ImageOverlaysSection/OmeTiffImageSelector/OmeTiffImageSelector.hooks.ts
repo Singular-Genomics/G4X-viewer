@@ -1,17 +1,17 @@
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
-import { getEntryName, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
 import { useTranslation } from 'react-i18next';
 
-export const useBrightfieldImageHandler = () => {
+export const useOmeTiffImageHandler = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
-  const { addNewFile, availableImages } = useBrightfieldImagesStore();
+  const { addOmeTiffFile, availableOmeTiffImages } = useImageOverlaysStore();
 
   const onDrop = (files: File[]) => {
     if (files.length !== 1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.imageUploadMultipleError'),
+        message: t('imageOverlays.imageUploadMultipleError'),
         variant: 'error'
       });
       return;
@@ -21,23 +21,32 @@ export const useBrightfieldImageHandler = () => {
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(imageFile.name)) {
       enqueueSnackbar({
-        message: t('brightfieldImages.invalidFileError'),
+        message: t('imageOverlays.invalidFileError'),
         variant: 'error'
       });
       return;
     }
 
-    const index = availableImages.findIndex((entry) => getEntryName(entry) === imageFile.name);
+    if (availableOmeTiffImages.length >= MAX_NUMBER_OF_IMAGES) {
+      return;
+    }
+
+    const index = availableOmeTiffImages.findIndex((entry) => {
+      if (typeof entry === 'string') {
+        return entry.split('/').pop() === imageFile.name || entry === imageFile.name;
+      }
+      return entry.name === imageFile.name;
+    });
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.duplicateImageError'),
+        message: t('imageOverlays.duplicateImageError'),
         variant: 'error'
       });
       return;
     }
 
-    addNewFile(imageFile);
+    addOmeTiffFile(imageFile);
   };
 
   const dropzoneProps = useDropzone({

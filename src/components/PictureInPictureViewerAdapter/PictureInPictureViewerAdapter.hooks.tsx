@@ -8,7 +8,7 @@ import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
+import { useImageOverlaysStore } from '../../stores/ImageOverlaysStore';
 import { EditableGeoJsonLayer, ViewMode } from '@deck.gl-community/editable-layers';
 import { TextLayer } from '@deck.gl/layers';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
@@ -222,7 +222,7 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useBrightfieldImageLayer = () => {
-  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
+  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useImageOverlaysStore(
     useShallow((store) => [
       store.selections,
       store.contrastLimits,
@@ -256,6 +256,44 @@ export const useBrightfieldImageLayer = () => {
   });
 
   return brightfieldImageLayer;
+};
+
+export const useOmeTiffImageLayer = () => {
+  const [omeTiffSelections, omeTiffContrastLimits, omeTiffColors, omeTiffOpacity, isLayerVisible, getOmeTiffLoader] =
+    useImageOverlaysStore(
+      useShallow((store) => [
+        store.omeTiffSelections,
+        store.omeTiffContrastLimits,
+        store.omeTiffColors,
+        store.omeTiffOpacity,
+        store.isLayerVisible,
+        store.getOmeTiffLoader
+      ])
+    );
+
+  const loader = getOmeTiffLoader();
+
+  if (!loader || !loader[0] || !loader[0].shape) {
+    return undefined;
+  }
+
+  const { dtype } = loader[0];
+
+  const omeTiffImageLayer = new MultiscaleImageLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-ome-tiff-image-layer`,
+    channelsVisible: omeTiffSelections.map(() => true),
+    selections: omeTiffSelections as any,
+    contrastLimits: omeTiffContrastLimits as any,
+    colors: omeTiffColors as any,
+    loader: loader as any,
+    dtype: dtype,
+    opacity: isLayerVisible ? omeTiffOpacity : 0,
+    ...({
+      pickable: false
+    } as any)
+  });
+
+  return omeTiffImageLayer;
 };
 
 export const usePolygonDrawingLayer = () => {

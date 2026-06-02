@@ -1,45 +1,40 @@
 import { alpha, Box, Button, RadioGroup, Theme, Typography, useTheme } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useCallback, useState } from 'react';
-import {
-  getEntryName,
-  MAX_NUMBER_OF_IMAGES,
-  useBrightfieldImagesStore
-} from '../../../../stores/BrightfieldImagesStore';
-import { BrightfieldImageSelectorEntry } from './BrightfieldImageSelectorEntry/BrightfieldImageSelectorEntry';
-import { BrightfieldImageSelectorProps } from './BrightfieldImageSelector.types';
-import { useBrightfieldImageHandler } from './BrightfieldImageSelector.hooks';
+import { getEntryName, MAX_NUMBER_OF_IMAGES, useImageOverlaysStore } from '../../../../stores/ImageOverlaysStore';
+import { OmeTiffSelectorEntry } from '../OmeTiffSelectorEntry/OmeTiffSelectorEntry';
+import { OmeTiffImageSelectorProps } from './OmeTiffImageSelector.types';
+import { useOmeTiffImageHandler } from './OmeTiffImageSelector.hooks';
 import { useSnackbar } from 'notistack';
 import { CloudBasedModal } from '../../CloudBasedModal/CloudBasedModal';
 import { useTranslation } from 'react-i18next';
-import type { AvailableImageEntry } from '../../../../stores/BrightfieldImagesStore/BrightfieldImagesStore.types';
 
-export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorProps) => {
+export const OmeTiffImageSelector = ({ images }: OmeTiffImageSelectorProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  const brightfieldImageSource = useBrightfieldImagesStore((store) => store.brightfieldImageSource);
-  const activeImageName = brightfieldImageSource?.description ?? '';
+  const omeTiffImageSource = useImageOverlaysStore((store) => store.omeTiffImageSource);
+  const activeImageName = omeTiffImageSource?.description ?? '';
   const [isCloudModalOpen, setIsCloudModalOpen] = useState<boolean>(false);
   const [cloudImageUrl, setCloudImageUrl] = useState<string>('');
 
-  const { setActiveImage, addNewFile, availableImages } = useBrightfieldImagesStore();
+  const { setActiveOmeTiffImage, addOmeTiffFile, availableOmeTiffImages } = useImageOverlaysStore();
 
-  const { dropzoneProps } = useBrightfieldImageHandler();
+  const { dropzoneProps } = useOmeTiffImageHandler();
 
   const handleImageSelect = useCallback(
-    (selectedImage: AvailableImageEntry) => {
+    (selectedImage: File | string) => {
       const imageName = getEntryName(selectedImage);
 
       if (imageName === activeImageName) {
-        setActiveImage(null);
+        setActiveOmeTiffImage(null);
         return;
       }
-      setActiveImage(selectedImage);
+      setActiveOmeTiffImage(selectedImage);
     },
-    [activeImageName, setActiveImage]
+    [activeImageName, setActiveOmeTiffImage]
   );
 
   const handleCloudUploadClick = () => {
@@ -56,46 +51,51 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
 
     if (!/^.+\.(ome\.tiff|tif)$/.test(filename)) {
       enqueueSnackbar({
-        message: t('brightfieldImages.invalidFileError'),
+        message: t('imageOverlays.invalidFileError'),
         variant: 'error'
       });
       return;
     }
 
-    const index = availableImages.findIndex((entry) => getEntryName(entry) === filename);
+    const index = availableOmeTiffImages.findIndex((entry) => {
+      if (typeof entry === 'string') {
+        return entry.split('/').pop() === filename || entry === filename;
+      }
+      return entry.name === filename;
+    });
 
     if (index !== -1) {
       enqueueSnackbar({
-        message: t('brightfieldImages.duplicateImageError'),
+        message: t('imageOverlays.duplicateImageError'),
         variant: 'error'
       });
       return;
     }
 
-    addNewFile(url);
+    addOmeTiffFile(url);
     setIsCloudModalOpen(false);
     setCloudImageUrl('');
 
     enqueueSnackbar({
-      message: t('brightfieldImages.imageCloudUploadSuccess', { file: filename }),
+      message: t('imageOverlays.imageCloudUploadSuccess', { file: filename }),
       variant: 'success'
     });
   };
 
   return (
-    <Box sx={{ padding: '0 8px' }}>
+    <Box sx={sx.container}>
       <RadioGroup
         sx={sx.imageSelectorBody}
         value={activeImageName}
       >
         {!images.length ? (
-          <Typography sx={sx.imageSelectorEmptyText}>{t('brightfieldImages.noImages')}</Typography>
+          <Typography sx={sx.imageSelectorEmptyText}>{t('imageOverlays.noOmeTiffImages')}</Typography>
         ) : (
           images.map((entry, index) => {
             const entryName = getEntryName(entry);
 
             return (
-              <BrightfieldImageSelectorEntry
+              <OmeTiffSelectorEntry
                 key={index}
                 imageEntry={entry}
                 isActive={entryName === activeImageName}
@@ -115,7 +115,7 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
           {...dropzoneProps.getRootProps()}
         >
           <input {...dropzoneProps.getInputProps()} />
-          {t('brightfieldImages.addImage')}
+          {t('imageOverlays.addOmeTiffImage')}
         </Button>
         <Button
           variant="outlined"
@@ -136,14 +136,17 @@ export const BrightfieldImageSelector = ({ images }: BrightfieldImageSelectorPro
         url={cloudImageUrl}
         onUrlChange={setCloudImageUrl}
         title={t('general.cloudUpload')}
-        placeholder={t('brightfieldImages.imageCloudUploadDescription')}
-        label={t('brightfieldImages.imageCloudUploadLabel')}
+        placeholder={t('imageOverlays.imageCloudUploadDescription')}
+        label={t('imageOverlays.omeTiffCloudUploadLabel')}
       />
     </Box>
   );
 };
 
 const styles = (theme: Theme) => ({
+  container: {
+    padding: '0 8px'
+  },
   buttonsContainer: {
     display: 'flex',
     width: '100%',
