@@ -88,7 +88,6 @@ export const CellsFilter = () => {
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <CellsFilterOptions />
-        <Typography sx={sx.colormapLabel}>{t('general.colormapConfig')}:</Typography>
         <CellsFilterTable />
         <GxFilterTableColormap
           onDrop={onDrop}
@@ -122,9 +121,5 @@ const styles = (theme: Theme) => ({
   disabledSection: {
     pointerEvents: 'none',
     opacity: 0.5
-  },
-  colormapLabel: {
-    fontWeight: 600,
-    marginBottom: '4px'
   }
 });

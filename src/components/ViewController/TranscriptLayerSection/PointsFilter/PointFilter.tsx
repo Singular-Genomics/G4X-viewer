@@ -88,7 +88,6 @@ export const PointFilter = () => {
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <PointFilterOptions />
-        <Typography sx={sx.colormapLabel}>{t('general.colormapConfig')}:</Typography>
         <PointFiltersTable />
         <GxFilterTableColormap
           onDrop={onDrop}
