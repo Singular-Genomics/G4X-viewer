@@ -54,8 +54,8 @@ For changes that address core functionality or would require breaking changes (e
 
 ### Prerequisites
 
-- **Node.js** (version 16 or higher)
-- **npm**
+- **Node.js** (version 20.19 or higher)
+- **pnpm**
 
 ### Local Development
 
@@ -67,7 +67,7 @@ For changes that address core functionality or would require breaking changes (e
 3. Install dependencies:
    ```bash
    cd G4X-viewer
-   npm install
+   pnpm install
    ```
 4. Create a branch for your changes based on the staging branch:
    ```bash
@@ -77,7 +77,7 @@ For changes that address core functionality or would require breaking changes (e
    ```
 5. Start the development server:
    ```bash
-   npm run dev
+   pnpm dev
    ```
    The default Vite development server runs on [http://localhost:5173](http://localhost:5173).
 
@@ -85,7 +85,7 @@ For changes that address core functionality or would require breaking changes (e
 
 G4X Viewer uses TypeScript and follows specific coding standards:
 
-- We use ESLint for linting. Run `npm run lint` to check your code.
+- We use ESLint for linting. Run `pnpm lint` to check your code.
 - TypeScript strict mode is enabled.
 - Follow the existing code style in the project.
 - Use meaningful variable and function names.
