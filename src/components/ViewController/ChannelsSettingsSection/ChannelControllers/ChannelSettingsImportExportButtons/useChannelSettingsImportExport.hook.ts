@@ -134,7 +134,8 @@ export const useChannelSettingsImportExport = () => {
 
         try {
           validateChannelImportData(importData);
-        } catch {
+        } catch (error) {
+          console.error(error);
           enqueueSnackbar({ message: t('channelSettings.channelImportInvalidFormat'), variant: 'error' });
           return;
         }
