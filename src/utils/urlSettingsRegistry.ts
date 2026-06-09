@@ -36,14 +36,14 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   {
     key: 'tr',
     type: 'boolean',
-    defaultValue: true,
+    defaultValue: false,
     read: () => useTranscriptLayerStore.getState().isTranscriptLayerOn,
     write: (val) => useTranscriptLayerStore.setState({ isTranscriptLayerOn: val as boolean })
   },
   {
     key: 'seg',
     type: 'boolean',
-    defaultValue: true,
+    defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().isCellLayerOn,
     write: (val) => useCellSegmentationLayerStore.setState({ isCellLayerOn: val as boolean })
   },

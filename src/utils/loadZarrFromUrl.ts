@@ -9,6 +9,8 @@ import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import type { ZarritaStoreFactory } from './ZarrDataSet.types';
 import { ZARR_SUBPATHS } from './ZarrPaths';
+import { applyUrlSettings } from './urlSettings';
+import { IMAGE_URL_PARAM } from '../hooks/useCloudImageLoader.hook';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -62,6 +64,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
 
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
   useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
+
+  // Apply after hasTranscriptsData/hasSegmentationData are set so useOnDemandDataLoader fires with correct values.
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(IMAGE_URL_PARAM)) {
+    applyUrlSettings(urlParams);
+  }
 
   if (!hasTranscriptsData) {
     warningMessages.push(t('sourceFiles.transcriptsLoadError'));
