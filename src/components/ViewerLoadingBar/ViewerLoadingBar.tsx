@@ -1,43 +1,27 @@
 import { Box, LinearProgress, Theme, Typography, alpha, useMediaQuery, useTheme } from '@mui/material';
-import { useViewerStore } from '../../stores/ViewerStore';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ViewerLoadingBarProps } from './ViewerLoadingBar.types';
 
-// Delay prevents loader flicker for very short transcript tile requests.
-const SHOW_DELAY_MS = 150;
-
-export const TranscriptTilesLoadingBar = () => {
-  const { t } = useTranslation();
+export const ViewerLoadingBar = ({ isLoading, text, delayMs = 0 }: ViewerLoadingBarProps) => {
   const theme = useTheme();
   const sx = styles(theme);
-
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
-  const isTranscriptTilesLoading = useViewerStore((store) => store.isTranscriptTilesLoading);
   const [isVisible, setIsVisible] = useState(false);
-  const showTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (showTimeoutRef.current) {
-      window.clearTimeout(showTimeoutRef.current);
-      showTimeoutRef.current = null;
-    }
-
-    if (isTranscriptTilesLoading) {
-      showTimeoutRef.current = window.setTimeout(() => {
-        setIsVisible(true);
-        showTimeoutRef.current = null;
-      }, SHOW_DELAY_MS);
+    if (!isLoading) {
+      setIsVisible(false);
       return;
     }
 
-    setIsVisible(false);
+    if (delayMs <= 0) {
+      setIsVisible(true);
+      return;
+    }
 
-    return () => {
-      if (showTimeoutRef.current) {
-        window.clearTimeout(showTimeoutRef.current);
-      }
-    };
-  }, [isTranscriptTilesLoading]);
+    const timeout = window.setTimeout(() => setIsVisible(true), delayMs);
+    return () => window.clearTimeout(timeout);
+  }, [isLoading, delayMs]);
 
   if (!isVisible) {
     return null;
@@ -45,7 +29,7 @@ export const TranscriptTilesLoadingBar = () => {
 
   return (
     <Box sx={sx.loadingContainer}>
-      {!isMobileOrTablet && <Typography sx={sx.loadingText}>{t('viewer.loadingTranscripts')}</Typography>}
+      {!isMobileOrTablet && <Typography sx={sx.loadingText}>{text}</Typography>}
       <LinearProgress sx={sx.loadingProgress} />
     </Box>
   );
@@ -53,10 +37,6 @@ export const TranscriptTilesLoadingBar = () => {
 
 const styles = (theme: Theme) => ({
   loadingContainer: {
-    position: 'absolute',
-    left: '50%',
-    bottom: 12,
-    transform: 'translateX(-50%)',
     width: {
       xs: '20vw',
       md: 260
@@ -86,8 +66,7 @@ const styles = (theme: Theme) => ({
     gap: {
       xs: 0,
       md: '6px'
-    },
-    zIndex: 120
+    }
   },
   loadingText: {
     color: theme.palette.gx.primary.white,

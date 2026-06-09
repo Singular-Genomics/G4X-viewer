@@ -47,21 +47,8 @@ export const useDirectoryPicker = () => {
     useZarrDataStore.getState().setFileName(handle.name);
     useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
 
-    // Load layer config from transcript .zattrs
     const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
-    if (transcriptAttrs?.layer_config) {
-      useZarrDataStore.getState().setLayerConfig(transcriptAttrs.layer_config);
-    }
-
-    // Load transcript colors
-    if (transcriptAttrs?.gene_colors) {
-      const colorMapEntries = Object.entries(transcriptAttrs.gene_colors).map(([gene_name, color]) => ({
-        gene_name,
-        color: color as number[]
-      }));
-      useZarrDataStore.getState().setColormapConfig(colorMapEntries);
-    }
-
+    useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
     useZarrDataStore.getState().setHasTranscriptsData(!!transcriptAttrs?.layer_config);
 
     // Set the image source — createLoader will detect __localZarrStore
@@ -106,71 +93,25 @@ export const useDirectoryPicker = () => {
       // No H&E directory — skip
     }
 
-    // Load cells/segmentation data
-    const successMessages: string[] = [];
-    const warningMessages: string[] = [];
+    const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
+    const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
+    const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
+    const availableSegmentations: SegmentationOption[] = segmentationOrder
+      .map((label) => ({ label, folderName: segmentationSources[label] }))
+      .filter((seg) => !!seg.folderName);
 
-    try {
-      const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
-        await import('../../../../utils/ZarrCellsLoader');
+    const hasSegmentationData = availableSegmentations.length > 0;
+    useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
-      const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
-      const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
-      const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
-      const availableSegmentations: SegmentationOption[] = segmentationOrder
-        .map((label) => ({ label, folderName: segmentationSources[label] }))
-        .filter((seg) => !!seg.folderName);
-
-      if (availableSegmentations.length === 0) {
-        throw new Error('No segmentations found in cells/.zattrs');
-      }
-
-      const defaultSegmentation = availableSegmentations[0];
-      const cellsData = await loadCellsFromStoreFactory(zarrStoreFactory, defaultSegmentation.folderName);
-
-      let proteinNames = cellsData.metadata.proteinNames;
-      if (proteinNames.length === 0 && rootAttrs?.run_metadata) {
-        proteinNames = extractProteinNamesFromMetadata(rootAttrs.run_metadata);
-      }
-
-      const hasUmapData = cellsData.cellMasks.some(
-        (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
-      );
-
+    if (hasSegmentationData) {
       useCellSegmentationLayerStore.setState({
-        cellMasksData: cellsData.cellMasks,
-        cellColormapConfig: cellsData.colormap,
-        fileName: handle.name,
-        umapDataAvailable: hasUmapData,
-        segmentationMetadata: {
-          ...cellsData.metadata,
-          proteinNames
-        },
         availableSegmentations,
-        selectedSegmentationLabel: defaultSegmentation.label,
-        availableClusterLabels: cellsData.clusterLabels,
-        selectedClusterLabelKey: cellsData.clusterLabels[0].key
+        selectedSegmentationLabel: availableSegmentations[0].label,
+        fileName: handle.name
       });
-
-      successMessages.push(
-        t('sourceFiles.segmentationSuccess', {
-          count: cellsData.cellMasks.length,
-          filename: handle.name
-        })
-      );
-    } catch (e) {
-      console.warn('Failed to load cell segmentation data:', e);
-      warningMessages.push(t('sourceFiles.segmentationLoadError'));
     }
 
-    successMessages.push(t('sourceFiles.zarrSuccess', { filename: handle.name }));
-
-    if (successMessages.length > 0) {
-      enqueueSnackbar(successMessages.join('; '), { variant: 'success' });
-    }
-    if (warningMessages.length > 0) {
-      enqueueSnackbar(warningMessages.join('; '), { variant: 'warning' });
-    }
+    enqueueSnackbar(t('sourceFiles.zarrSuccess', { filename: handle.name }), { variant: 'success' });
   }, [enqueueSnackbar, t]);
 
   return { openDirectory };
