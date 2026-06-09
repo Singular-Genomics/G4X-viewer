@@ -5,7 +5,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -16,8 +16,6 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
-import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
-import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
@@ -26,7 +24,7 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
-import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { useViewerStore } from '../../stores/ViewerStore';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
 export const useResizableContainer = () => {
@@ -153,71 +151,49 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
-  const { filterCells } = useCellFilteringWorker();
-  const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
 
-  const [filteredCells, setFilteredCells] = useState<{
-    unselectedCellsData: SingleMask[];
-    outlierCellsData: SingleMask[];
-  }>({ unselectedCellsData: [], outlierCellsData: [] });
-
-  useEffect(() => {
+  const filterValues = useMemo(() => {
     if (!cellMasksData) {
-      setFilteredCells({
-        unselectedCellsData: [],
-        outlierCellsData: []
-      });
-      return;
+      return new Uint8Array(0);
     }
 
-    useViewerStore.setState({
-      isViewerLoading: {
-        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
-        message: t('viewer.loadingSegmentationProcessing')
-      }
-    });
+    const n = cellMasksData.length;
+    const fv = new Uint8Array(n);
 
-    filterCells(
-      cellMasksData,
-      isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
-        ? {
-            proteins: proteinIndices,
-            range: ranges
-          }
-        : undefined,
-      umapRange
-    )
-      .then((result) => {
-        setFilteredCells(result);
-      })
-      .catch((error) => {
-        console.error('Cell filtering error:', error);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'error',
-          message: t('segmentationSettings.filteringFailed')
-        });
-        setFilteredCells({
-          unselectedCellsData: cellMasksData,
-          outlierCellsData: []
-        });
-      })
-      .finally(() => {
-        useViewerStore.setState({ isViewerLoading: undefined });
-      });
-  }, [
-    cellMasksData,
-    isCellNameFilterOn,
-    cellNameFilters,
-    ranges,
-    proteinIndices,
-    umapRange,
-    filterCells,
-    enqueueSnackbar,
-    t
-  ]);
+    const allowed = isCellNameFilterOn && cellNameFilters.length > 0 ? new Set(cellNameFilters) : null;
+    const cytoActive = !!ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0;
+    const umapActive = !!umapRange;
+
+    for (let i = 0; i < n; i++) {
+      const c = cellMasksData[i];
+
+      if (allowed && !allowed.has(c.clusterId)) {
+        fv[i] = 1;
+        continue;
+      }
+      if (
+        cytoActive &&
+        (c.proteinValues[proteinIndices.xAxisIndex] > ranges!.xEnd ||
+          c.proteinValues[proteinIndices.xAxisIndex] < ranges!.xStart ||
+          c.proteinValues[proteinIndices.yAxisIndex] < ranges!.yEnd ||
+          c.proteinValues[proteinIndices.yAxisIndex] > ranges!.yStart)
+      ) {
+        continue;
+      }
+      if (
+        umapActive &&
+        (c.umapValues.umapX < umapRange!.xStart ||
+          c.umapValues.umapX > umapRange!.xEnd ||
+          c.umapValues.umapY > umapRange!.yStart ||
+          c.umapValues.umapY < umapRange!.yEnd)
+      ) {
+        continue;
+      }
+      fv[i] = 2;
+    }
+
+    return fv;
+  }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange]);
 
   if (!cellMasksData) {
     return undefined;
@@ -231,8 +207,8 @@ export const useCellSegmentationLayer = () => {
     cellFillOpacity,
     showBoundary,
     boundaryWidth,
-    cellsData: filteredCells.unselectedCellsData,
-    outlierCellsData: filteredCells.outlierCellsData,
+    cellMasksData,
+    filterValues,
     colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({

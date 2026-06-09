@@ -1,5 +1,5 @@
 import { SingleMask } from '../../../shared/types';
-import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../../shared/constants';
+import { MAX_TRANSCRIPT_POINTS_LIMIT, ZARR_TILE_BATCH_SIZE } from '../../../shared/constants';
 import type {
   PointsDetectionBatchResult,
   PolygonPointData,
@@ -46,43 +46,38 @@ const processZarrTileBatch = async (
   zarrDataSet: ZarrDataSet,
   polygon: PolygonFeature,
   polygonBoundingBox: BoundingBox,
-  maxZoomLevel: number,
+  invertedZ: number,
   countOnly: boolean = false
 ) => {
+  const roiCoords = polygon.geometry.coordinates[0];
   const batchPromises = batchTiles.map(async ({ x, y }) => {
     try {
-      const tileData = await zarrDataSet.getTranscriptTileData({ z: maxZoomLevel, y, x });
-      if (tileData && Array.isArray(tileData.pointsData)) {
-        if (countOnly) {
-          let count = 0;
-          for (let i = 0; i < tileData.pointsData.length; i++) {
-            const point = tileData.pointsData[i];
-            if (point && point.position && point.position.length >= 2) {
-              if (
-                isPointInSelection(
-                  point.position as [number, number],
-                  polygon.geometry.coordinates[0],
-                  polygonBoundingBox
-                )
-              ) {
-                count++;
-              }
-            }
-          }
-          return count;
+      const raw = await zarrDataSet.getTranscriptTileRawData(invertedZ, y, x);
+      if (!raw) return countOnly ? 0 : [];
+      const { cellIds, geneNames, positions, count } = raw;
+      const gn = geneNames as any;
+
+      if (countOnly) {
+        let matched = 0;
+        for (let i = 0; i < count; i++) {
+          if (isPointInSelection([positions[i * 2], positions[i * 2 + 1]], roiCoords, polygonBoundingBox)) matched++;
         }
-
-        const pointsFoundInTile = tileData.pointsData.filter((point) => {
-          if (!point || !point.position || point.position.length < 2) {
-            return false;
-          }
-
-          return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
-        });
-
-        return pointsFoundInTile;
+        return matched;
       }
-      return countOnly ? 0 : [];
+
+      const matched: PolygonPointData[] = [];
+      for (let i = 0; i < count; i++) {
+        const px = positions[i * 2],
+          py = positions[i * 2 + 1];
+        if (isPointInSelection([px, py], roiCoords, polygonBoundingBox)) {
+          matched.push({
+            position: [px, py],
+            cellId: String(cellIds[i]),
+            geneName: gn.get ? gn.get(i) : String(gn[i])
+          });
+        }
+      }
+      return matched;
     } catch (error) {
       console.error(`Error processing Zarr transcript tile [x:${x}, y:${y}]`, error);
       return countOnly ? 0 : [];
@@ -101,7 +96,6 @@ const runBatchedPointsDetection = async <T>(
   let totalPointsFound = 0;
 
   for (let i = 0; i < batches.length; i++) {
-    // After limit exceeded, use count-only mode for better performance
     const batchResults = await processBatch(batches[i], limitExceeded);
 
     let batchPointCount = 0;
@@ -114,16 +108,20 @@ const runBatchedPointsDetection = async <T>(
     const currentTotal = totalPointsFound + batchPointCount;
     if (!limitExceeded && currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
       limitExceeded = true;
-      console.warn(
-        `[ROI Detection] Point limit exceeded at batch ${i + 1}/${batches.length}: ${currentTotal.toLocaleString()} points found so far, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
-      );
-    }
-
-    // Store points only if limit not exceeded (to save memory)
-    if (!limitExceeded) {
       for (const result of batchResults as PolygonPointData[][]) {
         allPointArrays.push(result);
       }
+      // Estimate total proportionally — avoid processing remaining batches just to count
+      const estimatedTotal = Math.round(currentTotal * (batches.length / (i + 1)));
+      totalPointsFound = estimatedTotal;
+      console.warn(
+        `[ROI Detection] Point limit exceeded at batch ${i + 1}/${batches.length}: ~${estimatedTotal.toLocaleString()} points estimated, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
+      );
+      break;
+    }
+
+    for (const result of batchResults as PolygonPointData[][]) {
+      allPointArrays.push(result);
     }
 
     totalPointsFound = currentTotal;
@@ -140,20 +138,21 @@ const detectPointsInPolygonFromZarr = async (
   polygon: PolygonFeature,
   polygonBoundingBox: BoundingBox,
   layerConfig: LayerConfig,
-  zarrUrl: string,
-  maxZoomLevel: number
+  zarrUrl: string
 ) => {
   const zarrDataSet = new ZarrDataSet(zarrUrl);
+  // Prefetch once — prevents thundering herd where each tile in first batch fires a redundant HTTP request
+  await zarrDataSet.fetchTranscriptLayerConfig();
   const tilesToProcess = getZarrIntersectingTileCoordinates(polygonBoundingBox, layerConfig);
-  const BATCH_SIZE = 20;
   const tileBatches: TileCoordinates[][] = [];
 
-  for (let i = 0; i < tilesToProcess.length; i += BATCH_SIZE) {
-    tileBatches.push(tilesToProcess.slice(i, i + BATCH_SIZE));
+  for (let i = 0; i < tilesToProcess.length; i += ZARR_TILE_BATCH_SIZE) {
+    tileBatches.push(tilesToProcess.slice(i, i + ZARR_TILE_BATCH_SIZE));
   }
 
+  // invertedZ = maxZoomLevel - maxZoomLevel = 0 — always use highest resolution tiles
   return runBatchedPointsDetection(tileBatches, (batch, countOnly) =>
-    processZarrTileBatch(batch, zarrDataSet, polygon, polygonBoundingBox, maxZoomLevel, countOnly)
+    processZarrTileBatch(batch, zarrDataSet, polygon, polygonBoundingBox, 0, countOnly)
   );
 };
 
@@ -163,14 +162,13 @@ const detectPointsInPolygon = async (
   layerConfig: LayerConfig,
   zarrUrl?: string
 ) => {
-  const maxZoomLevel = layerConfig.layers;
   const pointsInPolygon: PolygonPointData[] = [];
   const { allPointArrays, totalPointsFound, limitExceeded } = zarrUrl
-    ? await detectPointsInPolygonFromZarr(polygon, polygonBoundingBox, layerConfig, zarrUrl, maxZoomLevel)
+    ? await detectPointsInPolygonFromZarr(polygon, polygonBoundingBox, layerConfig, zarrUrl)
     : { allPointArrays: [], totalPointsFound: 0, limitExceeded: false };
 
-  // Avoid stack overflow by using concat or iterative push instead of spread operator
-  // Only add points up to the limit
+  // Iterative push avoids stack overflow; gene distribution counted in same pass
+  const countByGeneName: Record<string, number> = {};
   let pointsAdded = 0;
   for (const pointArray of allPointArrays) {
     for (const point of pointArray) {
@@ -178,17 +176,13 @@ const detectPointsInPolygon = async (
         break;
       }
       pointsInPolygon.push(point);
+      const geneName = point.geneName || 'unknown';
+      countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
       pointsAdded++;
     }
     if (pointsAdded >= MAX_TRANSCRIPT_POINTS_LIMIT) {
       break;
     }
-  }
-
-  const countByGeneName: Record<string, number> = {};
-  for (const point of pointsInPolygon) {
-    const geneName = point.geneName || 'unknown';
-    countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
   let suggestedReductionPercent: number | undefined;
