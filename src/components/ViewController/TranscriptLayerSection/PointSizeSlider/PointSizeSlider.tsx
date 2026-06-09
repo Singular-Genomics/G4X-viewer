@@ -4,7 +4,7 @@ import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore
 import { GxSlider } from '../../../../shared/components/GxSlider';
 import { useState } from 'react';
 
-const MIN_POINT_SIZE = 1;
+const MIN_POINT_SIZE = 0.1;
 const MAX_POINT_SIZE = 10;
 const POINT_SIZE_STEP = 0.1;
 

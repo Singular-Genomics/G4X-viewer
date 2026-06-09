@@ -29,6 +29,14 @@ export class NoCacheFetchStore {
   }
 }
 
+// Skips .zattrs requests — transcript tile arrays have no .zattrs, zarrita treats undefined as empty attrs.
+class SkipAttrsFetchStore extends NoCacheFetchStore {
+  override async get(key: string): Promise<Uint8Array | undefined> {
+    if (key.endsWith('.zattrs')) return undefined;
+    return super.get(key);
+  }
+}
+
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
  *
@@ -257,6 +265,46 @@ export class ZarrDataSet {
       };
     } catch (error) {
       console.error(`Failed to fetch transcript tile data [z:${z}, y:${y}, x:${x}]:`, error);
+      return null;
+    }
+  }
+
+  public async getTranscriptTileRawData(
+    invertedZ: number,
+    y: number,
+    x: number
+  ): Promise<{ cellIds: Int32Array; geneNames: unknown; positions: Int32Array; count: number } | null> {
+    try {
+      const tileParams = { z: invertedZ, y, x };
+
+      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
+        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
+          kind: 'array'
+        }).catch(() => null),
+        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
+          kind: 'array'
+        }).catch(() => null),
+        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
+          kind: 'array'
+        }).catch(() => null)
+      ]);
+
+      if (!cellIdArray || !geneNameArray || !positionArray) return null;
+
+      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
+        get(cellIdArray),
+        get(geneNameArray),
+        get(positionArray)
+      ]);
+
+      return {
+        cellIds: cellIdChunk.data as Int32Array,
+        geneNames: geneNameChunk.data,
+        positions: positionChunk.data as Int32Array,
+        count: (cellIdChunk.data as Int32Array).length
+      };
+    } catch (error) {
+      console.error(`Failed to fetch transcript tile raw data [invertedZ:${invertedZ}, y:${y}, x:${x}]:`, error);
       return null;
     }
   }
