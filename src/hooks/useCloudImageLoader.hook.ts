@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import { loadZarrFromUrl } from '../utils/loadZarrFromUrl';
+import { applyUrlSettings } from '../utils/urlSettings';
 
 export const IMAGE_URL_PARAM = 'imageUrl';
 
@@ -30,6 +31,7 @@ export const useCloudImageLoader = () => {
         });
         return;
       }
+      applyUrlSettings(new URLSearchParams(window.location.search));
       warningMessages.forEach((message) =>
         enqueueSnackbar({
           message,

@@ -75,6 +75,8 @@
     "none": "None",
     "openInNewTab": "Open in New Tab",
     "protein": "Protein",
+    "shareLinkCopied": "Link copied to clipboard",
+    "shareSettings": "Copy settings link",
     "summaryLoadError": "Failed to load summary report",
     "roiEntry": "ROI {{index}}",
     "rna": "RNA",
