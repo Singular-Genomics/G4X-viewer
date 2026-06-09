@@ -89,6 +89,109 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     read: () => usePolygonDrawingStore.getState().polygonOpacity,
     write: (val) => usePolygonDrawingStore.setState({ polygonOpacity: val as number })
   },
+  // Transcript layer settings
+  {
+    key: 'tr_gf',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useTranscriptLayerStore.getState().isGeneNameFilterActive,
+    write: (val) => useTranscriptLayerStore.setState({ isGeneNameFilterActive: val as boolean })
+  },
+  {
+    key: 'tr_sf',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useTranscriptLayerStore.getState().showFilteredPoints,
+    write: (val) => useTranscriptLayerStore.setState({ showFilteredPoints: val as boolean })
+  },
+  {
+    key: 'tr_ps',
+    type: 'number',
+    defaultValue: 1.5,
+    read: () => useTranscriptLayerStore.getState().pointSize,
+    write: (val) => useTranscriptLayerStore.setState({ pointSize: val as number })
+  },
+  {
+    key: 'tr_ol',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useTranscriptLayerStore.getState().overrideLayers,
+    write: (val) => useTranscriptLayerStore.setState({ overrideLayers: val as boolean })
+  },
+  {
+    key: 'tr_ml',
+    type: 'number',
+    defaultValue: -1,
+    read: () => {
+      const { maxVisibleLayers } = useTranscriptLayerStore.getState();
+      return maxVisibleLayers ?? -1;
+    },
+    write: (val) => {
+      const n = val as number;
+      if (n < 0) return;
+      useTranscriptLayerStore.setState({ maxVisibleLayers: n });
+    }
+  },
+  // Cell segmentation settings
+  {
+    key: 'seg_fo',
+    type: 'number',
+    defaultValue: 0.2,
+    read: () => useCellSegmentationLayerStore.getState().cellFillOpacity,
+    write: (val) => useCellSegmentationLayerStore.setState({ cellFillOpacity: val as number })
+  },
+  {
+    key: 'seg_sb',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useCellSegmentationLayerStore.getState().showBoundary,
+    write: (val) => useCellSegmentationLayerStore.setState({ showBoundary: val as boolean })
+  },
+  {
+    key: 'seg_bw',
+    type: 'number',
+    defaultValue: 1,
+    read: () => useCellSegmentationLayerStore.getState().boundaryWidth,
+    write: (val) => useCellSegmentationLayerStore.setState({ boundaryWidth: val as number })
+  },
+  {
+    key: 'seg_cf',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useCellSegmentationLayerStore.getState().isCellNameFilterOn,
+    write: (val) => useCellSegmentationLayerStore.setState({ isCellNameFilterOn: val as boolean })
+  },
+  {
+    key: 'seg_sf',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useCellSegmentationLayerStore.getState().showFilteredCells,
+    write: (val) => useCellSegmentationLayerStore.setState({ showFilteredCells: val as boolean })
+  },
+  // Brightfield images settings
+  {
+    key: 'he_op',
+    type: 'number',
+    defaultValue: 1,
+    read: () => useBrightfieldImagesStore.getState().opacity,
+    write: (val) => useBrightfieldImagesStore.setState({ opacity: val as number })
+  },
+  {
+    key: 'he_img',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { brightfieldImageSource } = useBrightfieldImagesStore.getState();
+      if (!brightfieldImageSource) return '';
+      const { urlOrFile } = brightfieldImageSource;
+      if (typeof urlOrFile !== 'string') return '';
+      return urlOrFile;
+    },
+    write: (val) => {
+      if (!val) return;
+      useBrightfieldImagesStore.getState().setActiveImage(val as string);
+    }
+  },
   // Channel settings
   {
     key: 'ch_n',
