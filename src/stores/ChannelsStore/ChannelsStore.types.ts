@@ -18,6 +18,9 @@ export type ChannelsStoreValues = {
   channelSelectionMode: ChannelSelectionMode;
   soloChannelIndex: number | null;
   presoloChannelsVisible: boolean[];
+  loadedColors: [number, number, number][];
+  loadedContrastLimits: [number, number][];
+  loadedChannelsVisible: boolean[];
 };
 
 export type ChannelsStoreMethods = {
@@ -30,6 +33,11 @@ export type ChannelsStoreMethods = {
   setChannelSelectionMode: (mode: ChannelSelectionMode) => void;
   setSoloChannel: (index: number) => void;
   togglePresoloIsOn: (index: number) => void;
+  setLoadedChannelDefaults: (
+    colors: [number, number, number][],
+    contrastLimits: [number, number][],
+    channelsVisible: boolean[]
+  ) => void;
 };
 
 export type PropertiesUpdateType = {

@@ -41,19 +41,22 @@ export const ShareSettingsButton = () => {
 
   if (!zarrUrl && !zarrStoreFactory) return null;
 
+  const buildFullUrl = (queryString: string) => `${window.location.origin}${window.location.pathname}?${queryString}`;
+
   const handleOpen = () => {
-    const params = serializeSettings();
+    const settings = serializeSettings();
+    const params = new URLSearchParams();
     if (zarrUrl) params.set(IMAGE_URL_PARAM, zarrUrl);
-    setFullLinkInput(params.toString());
-    setSettingsInput(serializeSettings().toString());
+    settings.forEach((value, key) => params.set(key, value));
+    setFullLinkInput(buildFullUrl(params.toString()));
+    setSettingsInput(settings.toString());
     setIsDialogOpen(true);
   };
 
   const handleClose = () => setIsDialogOpen(false);
 
   const handleCopyFull = () => {
-    const fullUrl = `${window.location.origin}${window.location.pathname}?${fullLinkInput}`;
-    navigator.clipboard.writeText(fullUrl).then(() => {
+    navigator.clipboard.writeText(fullLinkInput).then(() => {
       enqueueSnackbar({ message: t('general.shareLinkCopied'), variant: 'success' });
     });
   };
@@ -65,12 +68,20 @@ export const ShareSettingsButton = () => {
   };
 
   const handleApplyFull = async () => {
-    const params = new URLSearchParams(fullLinkInput);
+    let params: URLSearchParams;
+    try {
+      params = new URLSearchParams(new URL(fullLinkInput).search);
+    } catch {
+      enqueueSnackbar({ message: t('general.invalidURL'), variant: 'error' });
+      return;
+    }
     const imageUrl = params.get(IMAGE_URL_PARAM);
     if (!imageUrl) {
       enqueueSnackbar({ message: t('general.invalidURL'), variant: 'error' });
       return;
     }
+    // Push params to browser URL so useProteinImage picks them up after image loads
+    window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
     const { successMessages, warningMessages, errorMessage } = await loadZarrFromUrl({
       cloudImageUrl: imageUrl,
       t
@@ -79,7 +90,6 @@ export const ShareSettingsButton = () => {
       enqueueSnackbar({ message: errorMessage, variant: 'error' });
       return;
     }
-    applyUrlSettings(params);
     warningMessages.forEach((message) => enqueueSnackbar({ message, variant: 'warning' }));
     successMessages.forEach((message) => enqueueSnackbar({ message, variant: 'success' }));
     handleClose();
@@ -88,6 +98,7 @@ export const ShareSettingsButton = () => {
   const handleApplySettings = () => {
     applyUrlSettings(new URLSearchParams(settingsInput));
     enqueueSnackbar({ message: t('general.shareSettingsApplied'), variant: 'success' });
+    handleClose();
   };
 
   return (

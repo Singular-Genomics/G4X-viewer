@@ -3,6 +3,8 @@ import { useChannelsStore } from '../stores/ChannelsStore/ChannelsStore';
 import { VIEWER_LOADING_TYPES, ViewerSourceType } from '../stores/ViewerStore/ViewerStore.types';
 import { useMetadata } from './useMetadata.hook';
 import { useViewerStore } from '../stores/ViewerStore/ViewerStore';
+import { applyUrlSettings } from '../utils/urlSettings';
+import { IMAGE_URL_PARAM } from './useCloudImageLoader.hook';
 
 // Legacy from original Avivator app
 import { buildDefaultSelection, createLoader, getMultiSelectionStats, guessRgb } from '../legacy/utils';
@@ -20,10 +22,13 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
   const loader = useChannelsStore.getState().getLoader();
   const metadata = useMetadata();
   const lastValidSourceRef = useRef<ViewerSourceType | null>(null);
+  const hasAppliedUrlSettingsRef = useRef(false);
 
   useEffect(() => {
     async function changeLoader() {
       if (!source) return null;
+
+      hasAppliedUrlSettingsRef.current = false;
 
       try {
         // Should we use sth different than setState
@@ -229,16 +234,21 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         };
       });
 
+      const newChannelsVisible = newSelections.map((sel: any) => Channels[sel.c ?? 0]?.Active ?? false);
+
       useChannelsStore.setState({
         ids: channelsIds,
         selections: newSelections,
         domains: newDomains,
         contrastLimits: newContrastLimits,
         colors: newColors,
-        channelsVisible: newSelections.map((sel: any) => Channels[sel.c ?? 0]?.Active ?? false),
+        channelsVisible: newChannelsVisible,
         isLayerVisible: true,
         channelsSettings
       });
+
+      useChannelsStore.getState().setLoadedChannelDefaults(newColors, newContrastLimits, newChannelsVisible);
+
       const currentLoading = useViewerStore.getState().isViewerLoading;
       useViewerStore.setState({
         isChannelLoading: newSelections.map((_i: any) => false),
@@ -247,6 +257,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         globalSelection: newSelections[0],
         channelOptions
       });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!hasAppliedUrlSettingsRef.current && urlParams.has(IMAGE_URL_PARAM)) {
+        hasAppliedUrlSettingsRef.current = true;
+        applyUrlSettings(urlParams);
+      }
     };
     if (metadata) changeSettings();
   }, [loader, metadata]); // eslint-disable-line react-hooks/exhaustive-deps
