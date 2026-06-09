@@ -4,6 +4,7 @@ import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
+import { NavigationRunInfo } from './NavigationRunInfo';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
@@ -31,7 +32,25 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             <Typography sx={sx.versionText}>{app_version}</Typography>
           </Box>
         </Box>
-
+        <NavigationRunInfo />
+      </Box>
+      <Box sx={sx.mobilePreviewBadge}>
+        <Tooltip
+          title={t('navigation.mobilePreviewTooltip')}
+          placement="bottom-end"
+          arrow
+          enterTouchDelay={0}
+          leaveTouchDelay={6000}
+        >
+          <Box
+            component="span"
+            sx={sx.mobilePreviewInner}
+          >
+            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
+          </Box>
+        </Tooltip>
+      </Box>
+      <Box sx={sx.rightSection}>
         <Box sx={sx.tabsSection}>
           <Tabs
             value={currentView}
@@ -55,24 +74,6 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             />
           </Tabs>
         </Box>
-      </Box>
-      <Box sx={sx.mobilePreviewBadge}>
-        <Tooltip
-          title={t('navigation.mobilePreviewTooltip')}
-          placement="bottom-end"
-          arrow
-          enterTouchDelay={0}
-          leaveTouchDelay={6000}
-        >
-          <Box
-            component="span"
-            sx={sx.mobilePreviewInner}
-          >
-            <Typography sx={sx.mobilePreviewText}>{t('navigation.mobilePreview')}</Typography>
-          </Box>
-        </Tooltip>
-      </Box>
-      <Box sx={sx.rightSection}>
         <SocialIcons />
       </Box>
     </Box>
@@ -93,6 +94,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'flex-start',
     paddingInline: '12px',
     pointerEvents: 'none',
+    overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
       height: `${NAVIGATION_HEIGHT_DESKTOP}px`,
       justifyContent: 'space-between',
@@ -103,13 +105,24 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: 0,
+    pointerEvents: 'auto',
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
+      gap: '20px'
+    },
+    [theme.breakpoints.up('lg')]: {
+      gap: '30px'
+    },
+    [theme.breakpoints.up('xl')]: {
       gap: '50px'
     }
   },
   rightSection: {
     display: 'none',
     alignItems: 'center',
+    gap: '40px',
     pointerEvents: 'auto',
     [theme.breakpoints.up('md')]: {
       display: 'flex'
@@ -130,7 +143,8 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.primary.white,
     fontWeight: 700,
     fontSize: '20px',
-    lineHeight: '20px'
+    lineHeight: '20px',
+    whiteSpace: 'nowrap'
   },
   versionText: {
     fontSize: '12px',

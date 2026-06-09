@@ -33,7 +33,9 @@
     "sliderRangeModeContract": "Contract Range",
     "resetSlider": "Reset to default range",
     "solo": "Solo",
-    "exitSolo": "Exit Solo Mode"
+    "exitSolo": "Exit Solo Mode",
+    "groupProteins": "Proteins",
+    "groupMorphology": "Morphology"
   },
   "general": {
     "apply": "Apply",
@@ -156,6 +158,8 @@
     "cytometryMenuReverseColorscale": "Reverse colorscale",
     "cytometryMenuSubsamplingStep": "Subsampling Step",
     "disabledLayerWarning": "Segmentation Layer is disabled",
+    "segmentationSelectLabel": "Segmentation Source",
+    "clusterLabelSelectLabel": "Cluster ID",
     "filteringFailed": "Failed to filter cells. Please try again or contact support.",
     "graphFilterCytometryLabel": "Flow Cytometry",
     "graphFiltersLabel": "Graph Filters",
@@ -188,7 +192,8 @@
     "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
     "proteinNamesExtractionError": "Failed to extract protein names from metadata",
     "segmentationLoadError": "Failed to load cell segmentation data from Zarr file",
-    "zarrInputLabel": "Zarr File Name",
+    "zarrInputLabel": "Zarr Store URL",
+    "zarrFileName": "File Name",
     "zarrInputPlaceholder": "Enter URL to .zarr file",
     "zarrInvalidFile": "Invalid input file name. Only .zarr extension allowed",
     "zarrSuccess": "Successfully loaded zarr file from URL: {{filename}}",
@@ -212,7 +217,10 @@
     "segmentationPlaceholder": "{sample}_segmentation.bin / {sample}.bin",
     "metadataPlaceholder": "{sample}_run_metadata.json",
     "uploadedFileSizeHelper": "Max: {{size}}",
-    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}"
+    "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}",
+    "folderUploadButton": "Open Local Folder",
+    "folderInvalidDirectory": "Selected folder is not a valid OME-Zarr directory",
+    "folderSuccess": "Successfully loaded image from folder: {{name}}"
   },
   "tooltip": {
     "objectLabel": "Object",
@@ -269,18 +277,14 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
-    "brightfieldLayer": "fH&E Image Layer",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "layerToggles": "Layer Toggles",
-    "noActiveLayers": "No active layers available",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
-    "segmentationLayer": "Segmentation Layer",
-    "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
   },
   "activeFilters": {
@@ -324,7 +328,14 @@
     "viewer": "Viewer",
     "dashboard": "Dashboard",
     "mobilePreview": "Mobile preview",
-    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop."
+    "mobilePreviewTooltip": "G4X-viewer on mobile devices supports data viewing only. Advanced features are available on desktop.",
+    "runInfo": {
+      "sampleId": "Sample ID",
+      "flowCell": "Flow Cell",
+      "tissueType": "Tissue Type",
+      "block": "Block",
+      "experiment": "Experiment"
+    }
   },
   "dashboard": {
     "addGraphButton": "Add Graph",
@@ -392,7 +403,9 @@
     },
     "sourceFiles": {
       "imageUploadButton": "Upload the protein image file ending in .ome.tiff here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
-      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section."
+      "cloudUploadButton": "Upload the protein image file ending in .ome.tiff from cloud here. The <sample_id>_HE.ome.tiff is uploaded in the Brightfield Image Settings section.",
+      "folderUploadButton": "Open a local OME-Zarr folder from your filesystem (Chromium browsers only)",
+      "folderUploadUnsupported": "Local folder upload is unavailable in this browser. Please use a Chromium-based browser (Chrome, Edge, or Brave)."
     },
     "flowCytometry": {
       "title": "Select cell populations based on protein signal intensity by gating regions of a scatterplot."

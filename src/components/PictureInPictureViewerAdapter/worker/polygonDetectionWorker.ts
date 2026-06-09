@@ -1,16 +1,15 @@
-import * as protobuf from 'protobufjs';
-import axios from 'axios';
-import { TranscriptFileSchema } from '../../../schemas/transcriptaFile.schema';
 import { SingleMask } from '../../../shared/types';
-import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../../shared/constants';
+import { MAX_TRANSCRIPT_POINTS_LIMIT, ZARR_TILE_BATCH_SIZE } from '../../../shared/constants';
 import type {
+  PointsDetectionBatchResult,
   PolygonPointData,
-  PolygonTileData,
+  TileCoordinates,
   PolygonWorkerMessage,
   PolygonWorkerResponse
 } from './polygonDetectionWorker.types';
 import { BoundingBox, PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
+import { ZarrDataSet } from '../../../utils/ZarrDataSet';
 import {
   getPolygonBoundingBox,
   isPointInSelection,
@@ -18,65 +17,69 @@ import {
   isPolygonWithinBoundingBox
 } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 
-const loadTileData = async (file: File): Promise<PolygonTileData | null> => {
-  try {
-    const response = await axios.get(URL.createObjectURL(file), { responseType: 'arraybuffer' });
-    const arrayBuffer = response.data;
+const getZarrIntersectingTileCoordinates = (
+  polygonBoundingBox: BoundingBox,
+  layerConfig: LayerConfig
+): TileCoordinates[] => {
+  const p0TileWidth = layerConfig.tile_size / Math.max(1, Math.pow(2, layerConfig.layers));
+  const p0TileHeight = layerConfig.tile_size / Math.max(1, Math.pow(2, layerConfig.layers));
+  const maxTileX = Math.max(0, Math.ceil(layerConfig.layer_width / p0TileWidth) - 1);
+  const maxTileY = Math.max(0, Math.ceil(layerConfig.layer_height / p0TileHeight) - 1);
 
-    const protoRoot = protobuf.Root.fromJSON(TranscriptFileSchema);
-    const data = protoRoot.lookupType('TileData').decode(new Uint8Array(arrayBuffer)) as unknown as PolygonTileData;
+  const startX = Math.max(0, Math.floor(polygonBoundingBox.left / p0TileWidth));
+  const endX = Math.min(maxTileX, Math.floor(polygonBoundingBox.right / p0TileWidth));
+  const startY = Math.max(0, Math.floor(polygonBoundingBox.top / p0TileHeight));
+  const endY = Math.min(maxTileY, Math.floor(polygonBoundingBox.bottom / p0TileHeight));
 
-    return data;
-  } catch (error) {
-    console.error(`❌ [Load ${file.name}] Error loading tile data:`, error);
-    return null;
+  const tiles: TileCoordinates[] = [];
+  for (let y = startY; y <= endY; y++) {
+    for (let x = startX; x <= endX; x++) {
+      tiles.push({ x, y });
+    }
   }
+
+  return tiles;
 };
 
-const processBatch = async (
-  batchFiles: Array<File>,
+const processZarrTileBatch = async (
+  batchTiles: TileCoordinates[],
+  zarrDataSet: ZarrDataSet,
   polygon: PolygonFeature,
   polygonBoundingBox: BoundingBox,
+  invertedZ: number,
   countOnly: boolean = false
 ) => {
-  const batchPromises = batchFiles.map(async (file) => {
+  const roiCoords = polygon.geometry.coordinates[0];
+  const batchPromises = batchTiles.map(async ({ x, y }) => {
     try {
-      const tileData = await loadTileData(file);
-      if (tileData && Array.isArray(tileData.pointsData)) {
-        if (countOnly) {
-          // Fast path: only count points without creating arrays
-          let count = 0;
-          for (let i = 0; i < tileData.pointsData.length; i++) {
-            const point = tileData.pointsData[i];
-            if (point && point.position && point.position.length >= 2) {
-              if (
-                isPointInSelection(
-                  point.position as [number, number],
-                  polygon.geometry.coordinates[0],
-                  polygonBoundingBox
-                )
-              ) {
-                count++;
-              }
-            }
-          }
-          return count;
-        } else {
-          // Regular path: collect points in arrays
-          const pointsFoundInTile = tileData.pointsData.filter((point: any) => {
-            if (!point || !point.position || point.position.length < 2) {
-              return false;
-            }
+      const raw = await zarrDataSet.getTranscriptTileRawData(invertedZ, y, x);
+      if (!raw) return countOnly ? 0 : [];
+      const { cellIds, geneNames, positions, count } = raw;
+      const gn = geneNames as any;
 
-            return isPointInSelection(point.position, polygon.geometry.coordinates[0], polygonBoundingBox);
+      if (countOnly) {
+        let matched = 0;
+        for (let i = 0; i < count; i++) {
+          if (isPointInSelection([positions[i * 2], positions[i * 2 + 1]], roiCoords, polygonBoundingBox)) matched++;
+        }
+        return matched;
+      }
+
+      const matched: PolygonPointData[] = [];
+      for (let i = 0; i < count; i++) {
+        const px = positions[i * 2],
+          py = positions[i * 2 + 1];
+        if (isPointInSelection([px, py], roiCoords, polygonBoundingBox)) {
+          matched.push({
+            position: [px, py],
+            cellId: String(cellIds[i]),
+            geneName: gn.get ? gn.get(i) : String(gn[i])
           });
-
-          return pointsFoundInTile;
         }
       }
-      return countOnly ? 0 : [];
+      return matched;
     } catch (error) {
-      console.error(`❌ Error processing tile: ${file.name}`, error);
+      console.error(`Error processing Zarr transcript tile [x:${x}, y:${y}]`, error);
       return countOnly ? 0 : [];
     }
   });
@@ -84,67 +87,18 @@ const processBatch = async (
   return await Promise.all(batchPromises);
 };
 
-const detectPointsInPolygon = async (
-  polygon: PolygonFeature,
-  polygonBoundingBox: BoundingBox,
-  files: File[],
-  layerConfig: LayerConfig
-) => {
-  // Use the highest zoom level from layerConfig where all points are visible without clustering
-  const maxZoomLevel = layerConfig.layers;
-  // Calculate the tile size for the max zoom level
-  const tileSize = layerConfig.tile_size / Math.pow(2, maxZoomLevel);
-
-  const pointsInPolygon: PolygonPointData[] = [];
-  const tileFileRegex = new RegExp(String.raw`${maxZoomLevel}\/(\d+)\/(\d+)\.bin$`, 'ig');
-
-  const filesToProcess: Array<File> = [];
-
-  // Filter out files from other zoom levels and for tiles that do not intersect the selection ploygon bounding box.
-  for (const file of files) {
-    const match = file.name.match(tileFileRegex);
-    if (match) {
-      const [_, x, y] = match[0].split('.')[0].split('/').map(Number);
-
-      const tileCoords: BoundingBox = {
-        left: tileSize * y,
-        top: tileSize * x,
-        right: tileSize * (y + 1),
-        bottom: tileSize * (x + 1)
-      };
-
-      const intersects =
-        tileCoords.left < polygonBoundingBox.right &&
-        tileCoords.right > polygonBoundingBox.left &&
-        tileCoords.bottom > polygonBoundingBox.top &&
-        tileCoords.top < polygonBoundingBox.bottom;
-
-      if (intersects) {
-        filesToProcess.push(file);
-      }
-    }
-  }
-
-  // Process files in batches to avoid overwhelming the system
-  const BATCH_SIZE = 20;
-  const batches = [];
-
-  for (let i = 0; i < filesToProcess.length; i += BATCH_SIZE) {
-    batches.push(filesToProcess.slice(i, i + BATCH_SIZE));
-  }
-
-  const allPointArrays: any[] = [];
+const runBatchedPointsDetection = async <T>(
+  batches: T[][],
+  processBatch: (batch: T[], countOnly: boolean) => Promise<Array<number | PolygonPointData[]>>
+): Promise<PointsDetectionBatchResult> => {
+  const allPointArrays: PolygonPointData[][] = [];
   let limitExceeded = false;
   let totalPointsFound = 0;
 
   for (let i = 0; i < batches.length; i++) {
-    const batch = batches[i];
+    const batchResults = await processBatch(batches[i], limitExceeded);
 
-    // After limit exceeded, use count-only mode for better performance
-    const batchResults = await processBatch(batch, polygon, polygonBoundingBox, limitExceeded);
-
-    // Calculate total points found in this batch
-    let batchPointCount: number;
+    let batchPointCount = 0;
     if (limitExceeded) {
       batchPointCount = (batchResults as number[]).reduce((sum, count) => sum + count, 0);
     } else {
@@ -152,27 +106,69 @@ const detectPointsInPolygon = async (
     }
 
     const currentTotal = totalPointsFound + batchPointCount;
-
-    // Check if we exceeded the limit
     if (!limitExceeded && currentTotal > MAX_TRANSCRIPT_POINTS_LIMIT) {
       limitExceeded = true;
-      console.warn(
-        `[ROI Detection] Point limit exceeded at batch ${i + 1}/${batches.length}: ${currentTotal.toLocaleString()} points found so far, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
-      );
-    }
-
-    // Store points only if limit not exceeded (to save memory)
-    if (!limitExceeded) {
       for (const result of batchResults as PolygonPointData[][]) {
         allPointArrays.push(result);
       }
+      // Estimate total proportionally — avoid processing remaining batches just to count
+      const estimatedTotal = Math.round(currentTotal * (batches.length / (i + 1)));
+      totalPointsFound = estimatedTotal;
+      console.warn(
+        `[ROI Detection] Point limit exceeded at batch ${i + 1}/${batches.length}: ~${estimatedTotal.toLocaleString()} points estimated, limit is ${MAX_TRANSCRIPT_POINTS_LIMIT.toLocaleString()}`
+      );
+      break;
+    }
+
+    for (const result of batchResults as PolygonPointData[][]) {
+      allPointArrays.push(result);
     }
 
     totalPointsFound = currentTotal;
   }
 
-  // Avoid stack overflow by using concat or iterative push instead of spread operator
-  // Only add points up to the limit
+  return {
+    allPointArrays,
+    totalPointsFound,
+    limitExceeded
+  };
+};
+
+const detectPointsInPolygonFromZarr = async (
+  polygon: PolygonFeature,
+  polygonBoundingBox: BoundingBox,
+  layerConfig: LayerConfig,
+  zarrUrl: string
+) => {
+  const zarrDataSet = new ZarrDataSet(zarrUrl);
+  // Prefetch once — prevents thundering herd where each tile in first batch fires a redundant HTTP request
+  await zarrDataSet.fetchTranscriptLayerConfig();
+  const tilesToProcess = getZarrIntersectingTileCoordinates(polygonBoundingBox, layerConfig);
+  const tileBatches: TileCoordinates[][] = [];
+
+  for (let i = 0; i < tilesToProcess.length; i += ZARR_TILE_BATCH_SIZE) {
+    tileBatches.push(tilesToProcess.slice(i, i + ZARR_TILE_BATCH_SIZE));
+  }
+
+  // invertedZ = maxZoomLevel - maxZoomLevel = 0 — always use highest resolution tiles
+  return runBatchedPointsDetection(tileBatches, (batch, countOnly) =>
+    processZarrTileBatch(batch, zarrDataSet, polygon, polygonBoundingBox, 0, countOnly)
+  );
+};
+
+const detectPointsInPolygon = async (
+  polygon: PolygonFeature,
+  polygonBoundingBox: BoundingBox,
+  layerConfig: LayerConfig,
+  zarrUrl?: string
+) => {
+  const pointsInPolygon: PolygonPointData[] = [];
+  const { allPointArrays, totalPointsFound, limitExceeded } = zarrUrl
+    ? await detectPointsInPolygonFromZarr(polygon, polygonBoundingBox, layerConfig, zarrUrl)
+    : { allPointArrays: [], totalPointsFound: 0, limitExceeded: false };
+
+  // Iterative push avoids stack overflow; gene distribution counted in same pass
+  const countByGeneName: Record<string, number> = {};
   let pointsAdded = 0;
   for (const pointArray of allPointArrays) {
     for (const point of pointArray) {
@@ -180,17 +176,13 @@ const detectPointsInPolygon = async (
         break;
       }
       pointsInPolygon.push(point);
+      const geneName = point.geneName || 'unknown';
+      countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
       pointsAdded++;
     }
     if (pointsAdded >= MAX_TRANSCRIPT_POINTS_LIMIT) {
       break;
     }
-  }
-
-  const countByGeneName: Record<string, number> = {};
-  for (const point of pointsInPolygon) {
-    const geneName = point.geneName || 'unknown';
-    countByGeneName[geneName] = (countByGeneName[geneName] || 0) + 1;
   }
 
   let suggestedReductionPercent: number | undefined;
@@ -240,7 +232,7 @@ const detectCellPolygonsInPolygon = async (
       cellClusterDistribution: countByClusterId
     };
   } catch (error) {
-    console.error(`❌ [Cell Detection] Error:`, error);
+    console.error(`[Cell Detection] Error:`, error);
     throw new Error(`Error processing cell masks: ${error}`);
   }
 };
@@ -255,8 +247,8 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
       const result = await detectPointsInPolygon(
         payload.polygon,
         polygonBoundingBox,
-        payload.files,
-        payload.layerConfig
+        payload.layerConfig,
+        payload.zarrUrl
       );
 
       postMessage({
@@ -278,7 +270,7 @@ onmessage = async (e: MessageEvent<PolygonWorkerMessage>) => {
       } as PolygonWorkerResponse);
     }
   } catch (error) {
-    console.error(`💥 [Worker] Error:`, error);
+    console.error(`[Worker] Error:`, error);
 
     postMessage({
       type: 'error',

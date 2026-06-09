@@ -4,11 +4,14 @@ import pkg from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  optimizeDeps: {
-    include: ["it-tar", "it-pipe"],
+  server: {
+    allowedHosts: ["rg-server"],
   },
+  plugins: [react()],
   define: {
     "process.env.APP_VERSION": JSON.stringify(pkg.version),
+  },
+  worker: {
+    format: "es",
   },
 });

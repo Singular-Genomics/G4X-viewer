@@ -157,6 +157,12 @@ async function fetchSingleFileOmeTiffOffsets(url) {
  */
 export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoaderError) {
   try {
+    // Local OME-NGFF directory — either via FileSystemDirectoryHandle or pre-built store
+    if (urlOrFile && urlOrFile.__localZarrStore) {
+      const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
+      return await loadLocalOmeZarr(urlOrFile, urlOrFile.__localZarrPath || 'images/multiplex');
+    }
+
     // OME-TIFF
     if (isOmeTiff(urlOrFile)) {
       if (urlOrFile instanceof File) {

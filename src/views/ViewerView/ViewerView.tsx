@@ -17,6 +17,7 @@ import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
 import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
 import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
+import { TranscriptTilesLoadingBar } from '../../components/TranscriptTilesLoadingBar';
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -62,9 +63,10 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          {isDesktop && <DetailsPopup />}
+          <TranscriptTilesLoadingBar />
           {isDesktop && <SummaryButton />}
           {isDesktop && <ShareSettingsButton />}
+          {isDesktop && <DetailsPopup />}
         </>
       </Box>
       {isDesktop && <ViewController imageLoaded={!!source} />}

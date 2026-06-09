@@ -65,4 +65,5 @@ export type ViewerHoverCoordinates = {
 export type GeneralDetailsType = {
   fileName: string;
   data: Record<string, any>;
+  smpInfoOrder: string[];
 };
