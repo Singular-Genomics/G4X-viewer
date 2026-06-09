@@ -17,7 +17,11 @@ import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { ViewerViewProps } from './ViewerView.types';
 import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
 import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
-import { TranscriptTilesLoadingBar } from '../../components/TranscriptTilesLoadingBar';
+import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
+import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+
+// Delay prevents loader flicker for very short transcript tile requests.
+const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -25,8 +29,13 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
+  const [source, isViewerLoading, isTranscriptTilesLoading] = useViewerStore(
+    useShallow((store) => [store.source, store.isViewerLoading, store.isTranscriptTilesLoading])
+  );
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
+  const [isCellLayerOn, cellMasksData] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.cellMasksData])
+  );
 
   useCloudImageLoader();
 
@@ -63,7 +72,17 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          <TranscriptTilesLoadingBar />
+          <Box sx={sx.loadingBarsContainer}>
+            <ViewerLoadingBar
+              isLoading={isTranscriptTilesLoading}
+              text={t('viewer.loadingTranscripts')}
+              delayMs={TRANSCRIPT_TILES_LOADING_DELAY_MS}
+            />
+            <ViewerLoadingBar
+              isLoading={isCellLayerOn && cellMasksData === null}
+              text={t('viewer.loadingSegmentation')}
+            />
+          </Box>
           {isDesktop && <SummaryButton />}
           {isDesktop && <ShareSettingsButton />}
           {isDesktop && <DetailsPopup />}
@@ -91,6 +110,17 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative'
+  },
+  loadingBarsContainer: {
+    position: 'absolute',
+    left: '50%',
+    bottom: 12,
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '4px',
+    zIndex: 120
   },
   loaderContainer: {
     position: 'absolute',

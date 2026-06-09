@@ -4,7 +4,7 @@ import { CellSegmentationLayerStore, CellSegmentationLayerStoreValues } from './
 const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues = {
   cellMasksData: null,
   fileName: '',
-  isCellLayerOn: true,
+  isCellLayerOn: false,
   isCellNameFilterOn: false,
   showFilteredCells: false,
   cellFillOpacity: 0.2,
