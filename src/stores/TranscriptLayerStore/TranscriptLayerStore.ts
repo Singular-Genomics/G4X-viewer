@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { TranscriptLayerStore, TranscriptLayerStoreValues } from './TranscriptLayerStore.types';
 
 const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
-  isTranscriptLayerOn: true,
+  isTranscriptLayerOn: false,
   isGeneNameFilterActive: false,
   showFilteredPoints: false,
   showTilesBoundries: false,
