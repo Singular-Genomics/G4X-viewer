@@ -14,8 +14,7 @@ The G4X-viewer enables you to visualize and interact with your [G4X data](https:
 We provide a web-based version of the G4X-viewer that can be accessed through our [website](https://g4x-viewer.singulargenomics.com). For users who want to use it locally, we also provide installation instructions on our [Github](https://github.com/Singular-Genomics/G4X-viewer).
 
 !!! tip
-    Older data sets may require use of our [legacy viewer](https://g4x-viewer.legacy.singulargenomics.com) if the data was generated before December 2025. In this legacy viewer, many analysis features will be unavailable. For a full list, see the [features](./features.md) page.
-<<<<<<< HEAD
+    Older data sets may require use of our [legacy viewer](https://g4x-viewer.legacy.singulargenomics.com) if the data was generated before December 2025. In this legacy viewer, many analysis features will be unavailable. For a full list, see the [dashboard](./dashboard.md) page.
 
 <br>
 
@@ -25,20 +24,9 @@ Please navigate to the [usage](./usage.md) page to see descriptions of the core 
 
 <br>
 
-=======
+### dashboard
 
-<br>
-
-### usage
-
-Please navigate to the [usage](./usage.md) page to see descriptions of the core files that are compatible with the G4x-viewer and how to load them into the viewer to start exploring your data. 
-
-<br>
-
->>>>>>> e60facc... committing remaining changes to swap branches
-### features
-
-Please navigate to the G4X-viewer [features](./features.md) to list out some of the core functionality of the viewer using the multimodal, multilayered images. 
+Please navigate to the G4X-viewer [features](./dashboard.md) to list out some of the core functionality of the viewer using the multimodal, multilayered images. 
 
 These features include:
 + visual adjustments (contrast, marker colors, tx density)
