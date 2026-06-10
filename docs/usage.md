@@ -1,54 +1,275 @@
-<br>
-
-# Usage
+# G4X-Viewer usage
 ---
 
-This page will detail how to view the core output images from a G4X run on the viewer. This page assumes that you have access to the viewer either through local download or our hosted URL.
+This page will detail how to view the core output images from a G4X run on the viewer. This page assumes that you have access to the viewer either through local download or our hosted [URL](https://g4x-viewer.singulargenomics.com).
 
-Once you have opened the viewer, you will see that the G4X viewer has two mode to interact with your data: multi-file upload and single file upload. Only the multi-file upload is supported with default outputs from the G4X, and utilizes the files located in the `/g4x-viewer/` directory, described in detail in [data output](https://docs.singulargenomics.com/g4x_data/g4x_output/) portion of our docuemntation. The specific output files differ slightly based on whether your data is from a transcript-only run or a multiomics run.
+Once you have opened the viewer, either locally or online, you will need to upload your data to begin interacting with it. Each sample output by the G4X contains a directory called `/g4x-viewer/`, described in detail in [data output](https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/) portion of our documentation. The specific output files differ slightly based on whether your data is from a transcript-only run or a multiomics run, but they are all compatible with the G4X Viewer.
 
-Each file in the viewer adds a specific, interactable layer of information for you to explore. To begin, you must load in a [protein image file](./usage.md#protein-images), named `<sample_id>.ome.tiff`. Loading in images in the viewer is simple. You can either drag files from your file navigation window into the right-hand pane for the corresponding file type or you can click in the associated region labeled "Upload image file" to browse local files for upload.
+Each file in the viewer adds a specific, interactable layer of information for you to explore, allowing simultaneous visualization of RNA, segmentation, protein images, and our fH&E. Below, we'll go into a detailed explanation below of how to utilize the G4X-Viewer fully to explore your data.
 
-![G4X Viewer](./images/viewer_instance.png)
-
-!!! tip
-    The viewer works best when you are trying to interact with files saved locally. A remote host will often have much higher latency and may fail to load your images in a reasonable amount of time.
-
-
-
-<br>
-
-## protein images
+## reference image
 ---
 
-In order to begin interacting with the viewer, a protein image file in the .OME.TIFF format must be loaded into the viewer instance. The protein image file acts as the base upon which all subsequent layers are displayed. Protein image files can be dropped into the panel on the right side of your viewer window, in the region labeled "Image File Name." The viewer will allow you to upload either the `<sample_id>.ome.tiff` or the `<sample_id>_he.ome.tiff` to get started, though we recommended using the `<sample_id>.ome.tiff` file which contains the full set of protein images for a given run.
+![G4X Viewer](./images/viewer_aggregate_image.png)
 
-Uploading this file enables interaction with the [View Settings], [Protein Channel Settings], and the [Brightfield Image Settings].
+## source files and layer controls {: .viewer-section .viewer-red }
 
-<br>
+<div class="viewer-card viewer-red">
 
-## transcript file
----
+This first section focuses on uploading your data and toggling which layers you want visible at any given time.
+
+<ol class="viewer-feature-list">
+  <li><strong>Viewer File Upload</strong>
+    The File Upload section of the G4X Viewer is where you will want to start. Depending upon the version that you are using, you'll have either a single file upload (Zarr, coming with Version 4.0.0) or a multi-file upload that utilizes files directly from the 
+    <a href="https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/">g4x_viewer</a> 
+    folder of your sample output. 
+
+    <p>Each file contains one of the layers of the G4X assay:</p>
+
+    <ul>
+      <li><code>&lt;sample_id&gt;.ome.tiff</code>: contains all protein image in a composite image</li>
+      <li><code>&lt;sample_id&gt;_HE.ome.tiff</code>: contains the fH&amp;E image</li>
+      <li><code>&lt;sample_id&gt;.bin</code>: contains the vertices of the segmentation mask</li>
+      <li><code>&lt;sample_id&gt;.tar</code>: contains transcript locations for the sample</li>
+      <li><code>&lt;sample_id&gt;_run_metadata.json</code>: contains sample and run metadata</li>
+    </ul>
+  <br>
+  </li>
+
+  <li><strong>T- and Z-Slice Control</strong>
+  If you upload a composite time course (T) or multi-level image (Z) with multiple stacked planes, this allows the viewer to jump between those image layers seamlessly. In typical G4X data, these features will be inaccessible and fixed to a single Z plane and time point. 
+  <br>
+  </li>
+
+  <li><strong>Image scaling</strong>
+  Here you can precisely set the image scale by manually inputting a distance scale for the scale bar in the bottom right of the viewer window. This value will also autoscale as you zoom in and our of the image.
+  <br>
+  </li>
+
+  <li><strong>Layer Toggles</strong>
+  These layer toggles allow you to turn on and off both segmentation and transcript layers. The protein layer is always on, as it is used as the base upon which other images are aligned and displayed.
+  <br></li>
+</ol>
+
+</div>
+
+## protein layer settings {: .viewer-section .viewer-blue }
+
+<div class="viewer-card viewer-blue">
+
+This section explains the functions to manipulate and change the protein layer visualizations.
+
+<ol class="viewer-feature-list">
+  <li><strong>Protein Color Palette</strong>
+  This drop down allows you to select the color palette to be used for the protein images (from standard plotly palettes).
+  <br></li>
+
+  <li><strong>Overview Image Toggle</strong>
+  This toggles the visibility of the overview image window in the bottom left corner of your viewer instance. It displays a zoomed out perspective of the sample with a red box surrounding the current boundaries of your screen on the sample.
+  <br></li>
+
+  <li><strong>Lens Tool</strong>
+  The lens tool is a toggle that, once enabled, will open up a pane to allow you to select a protein channel. Once selected, it allows you to isolate your selected protein channel and visualize it in color while all other active protein channels are grayed out within the area of the lens. The lens will follow your cursor until you toggled off.
+  <br></li>
+
+  <li><strong>Import/Export Protein Settings</strong>
+  This setting allows the import and export of all settings pertaining to your proteins. Typically, we recommend finding the settings you like, then exporting and saving them so that you can use them on all samples going forward. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
+  <br></li>
 
 
-<br>
+  <li><strong>Protein Channel Settings</strong>
+  <p>When visualizing proteins, there are a number of features to turn to enable you to visualize and interpret your data in exactly the way you want:</p>
 
-## cell segmentation
----
+    <ul>
+      <li><code>Channel Toggle</code>: This is a check box in the top left of the channel settings, turns the channel on and off entirely</li>
+      <li><code>Protein Channel</code>: Dropdown for selection of which protein channel to visualize</li>
+      <li><code>Color Selection</code>: Click the three vertical dots next to the protein channel dropdown to select a color to use</li>
+      <li><code>Current Position Intensity</code>: Displayed as a floating point value below the channel selection pane. Lists the intensity of your cursor's current location for the specified protein channel (displays all channels simultaneously)</li>
+      <li><code>Set Protein Min/Max</code>: Can be adjusted by manually typing in a value or using the slider at the bottom of the protein channel settings</li>
+      <li><code>Isolate Protein Channel</code>: This is a check box near the Channel Toggle that allows you to turn off all channels except for your specified one</li>
+      <li><code>Add/Remove Channel</code>: To add a protein channel, click "+ Add Channel"  at the bottom of the pane. To remove a channel, click the "x" button on the top right of the individual protein channel window.</li>
+    </ul>
+  <br></li>
+</ol>
 
+</div>
 
-<br>
+## fH&E layer settings {: .viewer-section .viewer-teal }
 
-## fH&E stain
----
+<div class="viewer-card viewer-teal">
 
-<br>
+This section explains the functions to manipulate and change the fH&ampE layer visualizations. Our fH&ampE is created from nuclear and cytoplasmic fluorescent stains and colored to match a traditional H&ampE visually.
 
-## sample metadata
----
+<ol class="viewer-feature-list">
+  <li><strong>fH&E Layer Opacity</strong>
+  The layer opacity slider allows you to change the alpha/opacity value of the fH&ampE layer.
+  <br></li>
 
-The sample metadata is a the file called `<sample_id>_run_metadata.json` that contains a variety of metadata for your experiment, including .
+  <li><strong>fH&E Upload and Toggle</strong>
+  To load in your fH&ampE image, click the "ADD FH&ampE IMAGE" button or choose cloud upload and select a source file. Once a file is loaded in, you toggle the fH&ampE image by clicking the circle that appears in the top left of the box. Lastly, to remove the current fH&ampE image, click the "x" on the right side of the same interaction pane. 
+  <br></li>
+</ol>
 
-This file is not necessary to upload in order to utilize the other features of the viewer, but can be useful for identifying things like the .
+</div>
+
+## transcript layer settings {: .viewer-section .viewer-orange }
+
+<div class="viewer-card viewer-orange">
+
+This section explains the functions to manipulate and change the transcript layer visualizations. All transcripts are displayed independent of whether or not they have been assigned to a cell.
+
+<ol class="viewer-feature-list">
+  <li><strong>Transcript Sub-sampling Controls</strong>
+  In a typical experiment, there will be >1 million transcripts obtained. Transcript sub-sampling is done to allow normal PCs to render the transcript spots in real time without crashing. By default, the G4X Viewer performs dynamic down sampling as you zoom and pan about the image. There are two controls to manually change these settings.
+  <br>
+  <br>
+  The first is a toggle which enables you to control this feature instead of letting our software independently perform down sampling to ensure responsiveness of the software. When you turn this on, a warning will pop up, notifying you that increasing the percentage of displayed transcripts can cause your browser to crash. The second control is a stepped slider that allows you to increase the percentage of transcripts displayed from 0.16% to 100%. We don't advise turning this to greater than 20% unless you've already restricted the transcripts displayed to a subset of transcript species.
+  <br></li>
+
+  <li><strong>Edit point size</strong>
+  This setting enables changing of the size of dots for each transcript. It applies to all displayed transcripts. It can be changed by typing a number into the text box or by using the slider.
+  <br></li>
+
+  <li><strong>Transcript Filter Toggles</strong>
+  The "Enable Filters" toggle turns on and off the filter that you've selected in the Transcript Filter Controls section below. The "Show Discarded" filter will display all content which was filtered out, but with white dots to indicate that it was removed.
+  <br></li>
+
+  <li><strong>Import/Export Transcript Settings</strong>
+  This setting allows the import and export of all settings pertaining to your transcript filters. This includes color mapping and transcript species displayed. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
+  <br></li>
+
+  <li><strong>Transcript Filter Controls</strong>
+  Filtering of transcripts can be done either by scrolling through the alphabetized list or using the search bar. To add or remove a gene to your filter list, click the left-hand check box. Checked transcript species will display when the "APPLY" button is clicked or the "Enable Filter" toggle is turned on. Clearing the filter can be done with the "CLEAR" button. Clicking "Show active filters only" will display only selected transcript species, hiding all non-selected ones.
+  <br></li>
+
+</ol>
+
+</div>
+
+## segmentation layer settings {: .viewer-section .viewer-green }
+
+<div class="viewer-card viewer-green">
+
+This section explains the functions to manipulate and change the segmentation layer visualizations. The segmentation masks displayed are approximations of the pixel-level segmentation performed by Cellpose, and are displayed as a set of vertices. As such, they will differ slightly from the true segmentation masks used for analysis.
+
+<ol class="viewer-feature-list">
+  <li><strong>Cell Fill Toggle/Opacity</strong>
+  Using the toggle, you can turn on the fill on the cell masks (on by default). If turned off, only outlines are present. When enabled, the slider enables control of opacity, where 0 means transparent and 100 means opaque.
+  <br></li>
+
+  <li><strong>Segmentation Filter Toggles</strong>
+  These "Enable Filter" toggles enable you to turn on and off any cell-level filtering that you might choose to do, including cluster ID(s), UMAP, and flow cytometry filtering. When a filter is applied, you gain access to the "Show Discarded" toggle, which enables you to add back all data that was filtered as white cells, i.e. dissociated from their assigned clusters.
+  <br></li>
+
+  <li><strong>Import/Export Segmentation Settings</strong>
+  This setting allows the import and export of all settings pertaining to your segmentation colormaps. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
+  <br></li>
+
+  <li><strong>Segmentation Filter Controls</strong>
+  Filtering of cells can be done either by scrolling through the ordered list or by using the search bar. Cells labeled as -1 were not assigned a cluster, often due to filtering. To add or remove a cell cluster from your filter list, click the left-hand check box. Checked clusters will display when the "APPLY" button is clicked or the "Enable Filter" toggle is turned on. Clearing the filter can be done with the "CLEAR" button. Clicking "Show active filters only" will display only selected clusters, hiding all non-selected ones. 
+  <br></li>
+
+  <li><strong>Open UMAP Filter Panel</strong>
+  See <a href="./usage/#umap-cell-filtering">UMAP cell filtering</a> for more details.
+  <br></li>
+  <li><strong>Open Flow Cytometry Filter Panel</strong>
+  See <a href="./usage/#flow-cytometry-cell-filtering">Flow cytometry cell filtering</a> for more details.
+  <br>
+  </li>
+</ol>
+
+</div>
+
+## UMAP cell filtering {: .viewer-section .viewer-purple }
+
+<div class="viewer-card viewer-purple">
+
+This section explains how to use the UMAP filter controls to change which cells are displayed based on a subpopulation of the UMAP embedding that you select. This will appear as a resizable pop-up window with independent interactions that can be applied back to your loaded image.
+
+<ol class="viewer-feature-list">
+
+  <li><strong>Plotting Controls</strong>
+  These two elements control how the UMAP embedding visually appears in the pop out window. The first changes the point size by manually inputting a floating point number between 1 and 10 to scale dots by. The subsampling step will decrease the points displayed in the image by a scale factor equal to the number you input, ranging from 2 to 20 with a default of 2.
+  <br></li>
+
+  <li><strong>Plot Interactions</strong>
+  This menu enables you to interact with the plot through a variety of functions including downloading the plot, zooming in/out (including on a specified area), panning across the image, selecting an ROI, and resetting axes. These are all standard plotly interactions.
+  <br>
+  <br>
+  Of particular note for the filtering we apply is the "Box Select," highlighted in the reference image. We will use this to filter for a subpopulation of cells. In order to only select a specific population with more precision, you may also want to try clicking on the colored circles on the legend. A single click will hide/unhide the specific cluster you've chosen and double clicking will turn off all except the cluster you've chosen. 
+  <br></li>
+
+  <li><strong>Select ROI</strong>
+  Once you have clicked on the "Box Select" tool, you can navigate to location in the image that you want and draw a box around the cells you would like to filter for. Once drawn, the box will stay in place until you draw another or clear the filter.  On the bottom it will also display the X/Y limits of your selected area.
+  <br></li>
+
+  <li><strong>Apply/Clear Filter</strong>
+  Once you're happy with your ROI selection, you can then click "APPLY" to make your selection display on the original G4X Viewer window. This will persist until you reopen the UMAP filter tool and select "CLEAR." This filter will interact with the other features in the same way as any other segmentation filter.
+  <br></li>
+
+</ol>
+
+</div>
+
+## flow cytometry cell filtering {: .viewer-section .viewer-pink }
+
+<div class="viewer-card viewer-pink">
+
+This section explains how to use the flow cytometry filter controls to change which cells are displayed based on a subpopulation of the flow cytometry embedding that you select. This will appear as a resizable pop-up window with independent interactions that can be applied back to your loaded image.
+
+<ol class="viewer-feature-list">
+  <li><strong>Protein Channel Selection</strong>
+  Here, you can choose any two proteins for which you want to compare cells-level intensity. The values used are mean intensity across all pixels in a cell. You cannot select the same protein quantification for both axes.
+  <br></li>
+  
+  <li><strong>Plot Settings</strong>
+  This menu is accessible by clicking the gear icon in the top right of the pane. Here, you can change many settings related to the way the plot looks. This includes graph type, colorscale, number of bins, subsampling, point size, logarithmic scaling, and more. Lastly, you can manually change the color scaling using the sliders along the bottom of the pane so that cells above or below a certain value will not be displayed on the plot.
+  <br></li>
+  
+  <li><strong>Plot Interaction Menu</strong>
+  This menu enables you to interact with the plot through a variety of functions including downloading the plot, zooming in/out (including on a specified area), panning across the image, selecting an ROI, and resetting axes. These are all standard plotly interactions.
+  <br>
+  <br>
+  Of particular note for the filtering we apply is the "Box Select," highlighted in the reference image. We will use this to filter for a subpopulation of cells.
+  <br></li>
+
+  <li><strong>Select ROI</strong>
+  Once you have clicked on the "Box Select" tool, you can navigate to location in the image that you want and draw a box around the cells you would like to filter for. Once drawn, the box will stay in place until you draw another or clear the filter.  On the bottom it will also display the X/Y limits of your selected area.
+  <br></li>
+
+  <li><strong>Apply/Clear Filter</strong>
+  Once you're happy with your ROI selection, you can then click "APPLY" to make your selection display on the original G4X Viewer window. This will persist until you reopen the UMAP filter tool and select "CLEAR." This filter will interact with the other features in the same way as any other segmentation filter.
+  <br></li>
+
+</ol>
+
+</div>
+
+## on-screen features {: .viewer-section .viewer-gray }
+
+<div class="viewer-card viewer-gray">
+
+These features are 
+
+<ol class="viewer-feature-list">
+  <li><strong>Screenshot Tool</strong>
+  This tool allows you to take screenshots directly from the viewer and save them to your local device. Screenshots display the current viewing area with all interaction elements removed (includes side panels, buttons). 
+  <br></li>
+  
+  <li><strong>Import/Export Polygons</strong>
+  These buttons allow you to take drawn ROIs and import or export their contents, vertices, and metadata as JSON/CSV files. If you draw ROIs that you like, then click export to download a CSV containing the vertex information
+  Of particular note for the filtering we apply is the "Box Select," highlighted in the reference image. We will use this to filter for a subpopulation of cells.
+  <br></li>
+
+  <li><strong>Draw Polygon (ROI Selection)</strong>
+  This tool enables ROI selection. There is no limit to the number of ROIs that can be drawn. Once the Draw Polygon button has been selected, an expanded menu will appear. To draw an ROI, left click the image area to place a vertex. Each subsequent left click will refine the polygon shape and extent by adding a vertex. The polygon finalizes when you double click the start vertex. Upon closure of the shape, your polygon will be analyzed for cells, transcripts, and protein information stored within it. ROIs can be edited, imported, exported, and used for analysis. More details on these processes can be found below and on the <a href="./dashboard.md">dashboard</a> page. 
+  <br></li>
+
+</ol>
+
+</div>
+!!! tip "Multi-tissue blocks (like-TMA)"
+  
+    The ROI selection feature is particularly useful for samples with multiple independent tissue punches (like TMAs) because it can allow independent export of the transcripts and cell IDS for each individual tissue punch for downstream analysis.
 
 --8<-- "_core/_partials/end_cap.md"

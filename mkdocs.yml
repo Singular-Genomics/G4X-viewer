@@ -18,7 +18,7 @@ nav:
   - G4X-viewer:
     - index.md
     - usage: usage.md
-    - analysis: analysis.md
+    - dashboard: dashboard.md
     - resources: resources.md
     - contribute: contributing.md
 
