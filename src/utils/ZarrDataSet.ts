@@ -320,11 +320,11 @@ export class ZarrDataSet {
 
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
-      const response = await axios.get(this.paths.misc.summary(), {
-        responseType: 'text',
-        headers: noCacheHeaders
-      });
-      return response.data;
+      const [dir, file] = ZARR_SUBPATHS.misc.summary.split('/');
+      const store = this.storeFactory(dir);
+      const data = await store.get(`/${file}`);
+      if (data) return new TextDecoder().decode(data);
+      return null;
     } catch (error) {
       console.error('Failed to fetch summary.html:', error);
       return null;
