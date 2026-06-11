@@ -15,16 +15,22 @@ theme:
     - navigation.indexes
 
 
-# region Nav
 nav:
   - Docs Home: https://docs.singulargenomics.com
-
   - G4X-helpers: https://docs.singulargenomics.com/G4X-helpers/
 
   - G4X-viewer:
-    - index.md
-    - usage: usage.md
-    - dashboard: dashboard.md
-    - resources: resources.md
-    - contribute: contributing.md
+    - Home: index.md
+    - Usage:
+      - Overview: usage/index.md
+      - source files: usage/source_files.md
+      - protein layer: usage/protein.md
+      - fH&E: usage/fhe.md
+      - transcript layer: usage/transcript.md
+      - segmentation: usage/segmentation.md
+      - flow cytometry filter: usage/flow_cytometry.md
+      - UMAP filter: usage/umap.md
+    - Dashboard: dashboard.md
+    - Resources: resources.md
+    - Contribute: contributing.md
 

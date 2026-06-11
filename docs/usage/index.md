@@ -14,85 +14,9 @@ Each file in the viewer adds a specific, interactable layer of information for y
 
 ## source files and layer controls {: .viewer-section .viewer-red }
 
-<div class="viewer-card viewer-red">
-
-This first section focuses on uploading your data and toggling which layers you want visible at any given time.
-
-<ol class="viewer-feature-list">
-  <li><strong>Viewer File Upload</strong>
-    The File Upload section of the G4X Viewer is where you will want to start. Depending upon the version that you are using, you'll have either a single file upload (Zarr, coming with Version 4.0.0) or a multi-file upload that utilizes files directly from the 
-    <a href="https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/">g4x_viewer</a> 
-    folder of your sample output. 
-
-    <p>Each file contains one of the layers of the G4X assay:</p>
-
-    <ul>
-      <li><code>&lt;sample_id&gt;.ome.tiff</code>: contains all protein image in a composite image</li>
-      <li><code>&lt;sample_id&gt;_HE.ome.tiff</code>: contains the fH&amp;E image</li>
-      <li><code>&lt;sample_id&gt;.bin</code>: contains the vertices of the segmentation mask</li>
-      <li><code>&lt;sample_id&gt;.tar</code>: contains transcript locations for the sample</li>
-      <li><code>&lt;sample_id&gt;_run_metadata.json</code>: contains sample and run metadata</li>
-    </ul>
-  <br>
-  </li>
-
-  <li><strong>T- and Z-Slice Control</strong>
-  If you upload a composite time course (T) or multi-level image (Z) with multiple stacked planes, this allows the viewer to jump between those image layers seamlessly. In typical G4X data, these features will be inaccessible and fixed to a single Z plane and time point. 
-  <br>
-  </li>
-
-  <li><strong>Image scaling</strong>
-  Here you can precisely set the image scale by manually inputting a distance scale for the scale bar in the bottom right of the viewer window. This value will also autoscale as you zoom in and our of the image.
-  <br>
-  </li>
-
-  <li><strong>Layer Toggles</strong>
-  These layer toggles allow you to turn on and off both segmentation and transcript layers. The protein layer is always on, as it is used as the base upon which other images are aligned and displayed.
-  <br></li>
-</ol>
-
-</div>
 
 ## protein layer settings {: .viewer-section .viewer-blue }
 
-<div class="viewer-card viewer-blue">
-
-This section explains the functions to manipulate and change the protein layer visualizations.
-
-<ol class="viewer-feature-list">
-  <li><strong>Protein Color Palette</strong>
-  This drop down allows you to select the color palette to be used for the protein images (from standard plotly palettes).
-  <br></li>
-
-  <li><strong>Overview Image Toggle</strong>
-  This toggles the visibility of the overview image window in the bottom left corner of your viewer instance. It displays a zoomed out perspective of the sample with a red box surrounding the current boundaries of your screen on the sample.
-  <br></li>
-
-  <li><strong>Lens Tool</strong>
-  The lens tool is a toggle that, once enabled, will open up a pane to allow you to select a protein channel. Once selected, it allows you to isolate your selected protein channel and visualize it in color while all other active protein channels are grayed out within the area of the lens. The lens will follow your cursor until you toggled off.
-  <br></li>
-
-  <li><strong>Import/Export Protein Settings</strong>
-  This setting allows the import and export of all settings pertaining to your proteins. Typically, we recommend finding the settings you like, then exporting and saving them so that you can use them on all samples going forward. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
-  <br></li>
-
-
-  <li><strong>Protein Channel Settings</strong>
-  <p>When visualizing proteins, there are a number of features to turn to enable you to visualize and interpret your data in exactly the way you want:</p>
-
-    <ul>
-      <li><code>Channel Toggle</code>: This is a check box in the top left of the channel settings, turns the channel on and off entirely</li>
-      <li><code>Protein Channel</code>: Dropdown for selection of which protein channel to visualize</li>
-      <li><code>Color Selection</code>: Click the three vertical dots next to the protein channel dropdown to select a color to use</li>
-      <li><code>Current Position Intensity</code>: Displayed as a floating point value below the channel selection pane. Lists the intensity of your cursor's current location for the specified protein channel (displays all channels simultaneously)</li>
-      <li><code>Set Protein Min/Max</code>: Can be adjusted by manually typing in a value or using the slider at the bottom of the protein channel settings</li>
-      <li><code>Isolate Protein Channel</code>: This is a check box near the Channel Toggle that allows you to turn off all channels except for your specified one</li>
-      <li><code>Add/Remove Channel</code>: To add a protein channel, click "+ Add Channel"  at the bottom of the pane. To remove a channel, click the "x" button on the top right of the individual protein channel window.</li>
-    </ul>
-  <br></li>
-</ol>
-
-</div>
 
 ## fH&E layer settings {: .viewer-section .viewer-teal }
 
