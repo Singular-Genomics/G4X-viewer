@@ -7,7 +7,7 @@ This first section focuses on uploading your data and toggling which layers you 
 ## reference image
 
 
-![G4X Viewer](./images/viewer_aggregate_image.png)
+![G4X Viewer](../images/source_controls.png)
 
 <br>
 
