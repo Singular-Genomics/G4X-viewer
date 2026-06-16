@@ -24,7 +24,6 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
-import { TranscriptTilesLoadingBar } from '../TranscriptTilesLoadingBar';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -100,7 +99,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   }, [loader.length]);
 
   useEffect(() => {
-    if (containerSize.width && containerSize.height) {
+    if (containerSize.width && containerSize.height && loader[0]?.shape?.length) {
       const width = containerSize.width;
       const height = containerSize.height;
 
@@ -190,7 +189,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       sx={sx.viewerContainer}
       ref={containerRef}
     >
-      {containerSize.width && containerSize.height && (
+      {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
@@ -245,7 +244,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               isViewerActive={isViewerActive}
             />
           )}
-          <TranscriptTilesLoadingBar />
           <Tooltip />
         </>
       )}

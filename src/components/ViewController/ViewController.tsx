@@ -20,6 +20,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
+import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -27,7 +28,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
-  const cellMasksFiles = useCellSegmentationLayerStore((store) => store.cellMasksData);
+  const hasSegmentationData = useZarrDataStore((store) => store.hasSegmentationData);
   const [isCellLayerOn, toggleCellLayer] = useCellSegmentationLayerStore(
     useShallow((store) => [store.isCellLayerOn, store.toggleCellLayer])
   );
@@ -41,7 +42,8 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
     useShallow((store) => [store.isLayerVisible, store.toggleLayerVisibility])
   );
   const metadata = useMetadata();
-  const hasSegmentationData = !!cellMasksFiles?.length;
+
+  useOnDemandDataLoader();
 
   useEffect(() => {
     window.dispatchEvent(new Event('onControllerToggle'));
@@ -129,7 +131,7 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
                   <GxCheckbox
                     checked={isCellLayerOn}
                     onChange={toggleCellLayer}
-                    disabled={!imageLoaded || !cellMasksFiles?.length}
+                    disabled={!imageLoaded || !hasSegmentationData}
                     disableTouchRipple
                     sx={sx.headerCheckbox}
                   />

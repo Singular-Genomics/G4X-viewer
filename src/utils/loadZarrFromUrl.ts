@@ -7,7 +7,6 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
-import { extractProteinNamesFromMetadata } from './ZarrCellsLoader';
 import type { ZarritaStoreFactory } from './ZarrDataSet.types';
 import { ZARR_SUBPATHS } from './ZarrPaths';
 
@@ -41,7 +40,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useTranscriptLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
   useBrightfieldImagesStore.getState().reset();
-  useViewerStore.setState({ physicalSize: null, isTranscriptTilesLoading: false, viewState: null });
+  useViewerStore.setState({
+    physicalSize: null,
+    isTranscriptTilesLoading: false,
+    viewState: null,
+    isViewerLoading: undefined
+  });
 
   const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) =>
     new FetchStore(cloudImageUrl.replace(/\/$/, '') + '/' + subpath);
@@ -57,31 +61,9 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   ]);
 
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+  useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
-  if (hasTranscriptsData) {
-    const layerConfig = await zarrDataSet.detectLayerConfig();
-    if (layerConfig) {
-      useZarrDataStore.getState().setLayerConfig(layerConfig);
-    }
-
-    const [transcriptColors, geneOrder] = await Promise.all([
-      zarrDataSet.fetchTranscriptColors(),
-      zarrDataSet.fetchTranscriptGeneOrder()
-    ]);
-    if (transcriptColors) {
-      const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
-        gene_name,
-        color
-      }));
-      if (geneOrder) {
-        const orderIndex = new Map(geneOrder.map((name, i) => [name, i]));
-        colorMapEntries.sort(
-          (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
-        );
-      }
-      useZarrDataStore.getState().setColormapConfig(colorMapEntries);
-    }
-  } else {
+  if (!hasTranscriptsData) {
     warningMessages.push(t('sourceFiles.transcriptsLoadError'));
   }
 
@@ -116,38 +98,16 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
         .map((label) => ({ label, folderName: cellsSegmentations.segmentationSources[label] }))
         .filter((seg) => !!seg.folderName);
 
-      const defaultSegmentation = availableSegmentations[0];
-      const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);
-
-      let proteinNames = cellsData.metadata.proteinNames;
-      if (proteinNames.length === 0 && runMetadataResult) {
-        proteinNames = extractProteinNamesFromMetadata(runMetadataResult.metadata);
-      }
-
-      const hasUmapData = cellsData.cellMasks.some(
-        (mask) => mask.umapValues.umapX !== 0 || mask.umapValues.umapY !== 0
-      );
+      if (availableSegmentations.length === 0) throw new Error('No segmentations found');
 
       useCellSegmentationLayerStore.setState({
-        cellMasksData: cellsData.cellMasks,
-        cellColormapConfig: cellsData.colormap,
-        fileName: zarrDir,
-        umapDataAvailable: hasUmapData,
-        segmentationMetadata: { ...cellsData.metadata, proteinNames },
         availableSegmentations,
-        selectedSegmentationLabel: defaultSegmentation.label,
-        availableClusterLabels: cellsData.clusterLabels,
-        selectedClusterLabelKey: cellsData.clusterLabels[0].key
+        selectedSegmentationLabel: availableSegmentations[0].label,
+        fileName: zarrDir
       });
-
-      successMessages.push(
-        t('sourceFiles.segmentationSuccess', {
-          count: cellsData.cellMasks.length,
-          filename: zarrDir
-        })
-      );
     } catch {
-      warningMessages.push(t('sourceFiles.segmentationLoadError'));
+      useZarrDataStore.getState().setHasSegmentationData(false);
+      warningMessages.push(t('sourceFiles.segmentationMissingData'));
     }
   } else {
     warningMessages.push(t('sourceFiles.segmentationMissingData'));

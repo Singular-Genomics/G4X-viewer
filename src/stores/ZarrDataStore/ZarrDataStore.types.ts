@@ -9,6 +9,9 @@ export type ZarrDataStoreValues = {
   colorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
   hasTranscriptsData: boolean;
+  hasSegmentationData: boolean;
+  transcriptConfigLoaded: boolean;
+  pendingTranscriptAttrs: Record<string, any> | null;
   zarrStoreFactory: ZarritaStoreFactory | undefined;
   zarrDataSet: ZarrDataSet | null;
 };
@@ -19,6 +22,9 @@ export type ZarrDataStoreMethods = {
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;
   setHasTranscriptsData: (hasTranscriptsData: boolean) => void;
+  setHasSegmentationData: (hasSegmentationData: boolean) => void;
+  setTranscriptConfigLoaded: (loaded: boolean) => void;
+  setPendingTranscriptAttrs: (attrs: Record<string, any> | null) => void;
   setZarrStoreFactory: (factory: ZarritaStoreFactory | undefined) => void;
   reset: () => void;
 };
