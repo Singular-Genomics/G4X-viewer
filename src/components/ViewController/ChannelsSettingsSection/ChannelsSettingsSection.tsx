@@ -7,6 +7,7 @@ import { ColormapSelector } from './ColormapSelector';
 import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
 import { InfoTooltip } from '../../InfoTooltip';
+import { ChannelSettingsImportExportButtons } from './ChannelControllers/ChannelSettingsImportExportButtons';
 
 export const ChannelsSettingsSection = () => {
   const { t } = useTranslation();
@@ -32,6 +33,7 @@ export const ChannelsSettingsSection = () => {
         <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
         <ChannelControllers />
         <AddChannel />
+        <ChannelSettingsImportExportButtons />
       </Box>
     </Box>
   );

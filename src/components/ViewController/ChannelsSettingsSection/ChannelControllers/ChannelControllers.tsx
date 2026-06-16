@@ -5,7 +5,6 @@ import { PropertiesUpdateType, useChannelsStore } from '../../../../stores/Chann
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useMetadata } from '../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../legacy/utils';
-import { ChannelSettingsImportExportButtons } from './ChannelSettingsImportExportButtons';
 import { CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK } from './ChannelController/ChannelController.helpers';
 
 export const ChannelControllers = () => {
@@ -62,8 +61,6 @@ export const ChannelControllers = () => {
 
   return (
     <Box sx={sx.channelControllersContainer}>
-      <ChannelSettingsImportExportButtons />
-
       {ids.map((id, index) => {
         const toggleIsOn = () => toggleIsOnSetter(index);
         const name = channelOptions[(selections as any)[index].c];
