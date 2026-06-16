@@ -1,4 +1,4 @@
-# G4X-viewer transcript layer
+# transcript layer
 ---
 
 <br>

@@ -1,4 +1,4 @@
-# G4X-viewer source files
+# source files
 ---
 
 <br>

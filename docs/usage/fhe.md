@@ -1,4 +1,4 @@
-# G4X-viewer fH&E layer
+# fH&E layer
 ---
 
 <br>

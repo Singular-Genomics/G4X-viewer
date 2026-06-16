@@ -1,4 +1,4 @@
-# G4X-viewer protein layer
+# protein layer
 ---
 
 <br>

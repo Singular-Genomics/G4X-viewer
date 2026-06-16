@@ -1,4 +1,4 @@
-# G4X-viewer segmentation layer
+# segmentation layer
 ---
 
 <br>

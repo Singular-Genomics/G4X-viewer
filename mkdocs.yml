@@ -24,12 +24,12 @@ nav:
     - Usage:
       - Overview: usage/index.md
       - source files: usage/source_files.md
-      - protein layer: usage/protein.md
+      - protein: usage/protein.md
       - fH&E: usage/fhe.md
-      - transcript layer: usage/transcript.md
+      - transcript: usage/transcript.md
       - segmentation: usage/segmentation.md
-      - flow cytometry filter: usage/flow_cytometry.md
       - UMAP filter: usage/umap.md
+      - flow cytometry filter: usage/flow_cytometry.md
     - Dashboard: dashboard.md
     - Resources: resources.md
     - Contribute: contributing.md
