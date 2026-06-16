@@ -14,6 +14,9 @@ const DEFAULT_ZARR_DATA_STORE_VALUES: ZarrDataStoreValues = {
   colorMapConfig: [],
   zarrUrl: undefined,
   hasTranscriptsData: false,
+  hasSegmentationData: false,
+  transcriptConfigLoaded: false,
+  pendingTranscriptAttrs: null,
   zarrStoreFactory: undefined,
   zarrDataSet: null
 };
@@ -25,6 +28,9 @@ export const useZarrDataStore = create<ZarrDataStore>((set) => ({
   setColormapConfig: (colorMapConfig) => set({ colorMapConfig }),
   setZarrUrl: (zarrUrl) => set({ zarrUrl }),
   setHasTranscriptsData: (hasTranscriptsData) => set({ hasTranscriptsData }),
+  setHasSegmentationData: (hasSegmentationData) => set({ hasSegmentationData }),
+  setTranscriptConfigLoaded: (transcriptConfigLoaded) => set({ transcriptConfigLoaded }),
+  setPendingTranscriptAttrs: (pendingTranscriptAttrs) => set({ pendingTranscriptAttrs }),
   setZarrStoreFactory: (zarrStoreFactory) => set({ zarrStoreFactory }),
   reset: () => set({ ...DEFAULT_ZARR_DATA_STORE_VALUES })
 }));

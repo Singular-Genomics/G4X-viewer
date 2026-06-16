@@ -94,7 +94,7 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!hasTranscriptsData && !zarrStoreFactory) {
+  if (!isTranscriptLayerOn || (!hasTranscriptsData && !zarrStoreFactory)) {
     return undefined;
   }
 
@@ -103,7 +103,7 @@ export const useTranscriptLayer = () => {
     zarrUrl,
     zarrStoreFactory,
     config: layerConfig,
-    visible: (!!hasTranscriptsData || !!zarrStoreFactory) && isTranscriptLayerOn,
+    visible: !!hasTranscriptsData || !!zarrStoreFactory,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,
