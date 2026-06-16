@@ -9,34 +9,59 @@ This first section focuses on uploading your data and toggling which layers you 
 
 ![G4X Viewer](../images/transcript_controls.png)
 
-<br><div class="viewer-card viewer-orange">
+## Features
 
-This section explains the functions to manipulate and change the transcript layer visualizations. All transcripts are displayed independent of whether or not they have been assigned to a cell.
+- <b><u>Transcript Sub-sampling Controls:</u></b>
 
-<ol class="viewer-feature-list">
-  <li><strong>Transcript Sub-sampling Controls</strong>
-  In a typical experiment, there will be >1 million transcripts obtained. Transcript sub-sampling is done to allow normal PCs to render the transcript spots in real time without crashing. By default, the G4X Viewer performs dynamic down sampling as you zoom and pan about the image. There are two controls to manually change these settings.
-  <br>
-  <br>
-  The first is a toggle which enables you to control this feature instead of letting our software independently perform down sampling to ensure responsiveness of the software. When you turn this on, a warning will pop up, notifying you that increasing the percentage of displayed transcripts can cause your browser to crash. The second control is a stepped slider that allows you to increase the percentage of transcripts displayed from 0.16% to 100%. We don't advise turning this to greater than 20% unless you've already restricted the transcripts displayed to a subset of transcript species.
-  <br></li>
+      Most G4X datasets contain more than one million transcripts. Transcript sub-sampling is used to reduce rendering load and maintain viewer responsiveness on standard desktop computers.
 
-  <li><strong>Edit point size</strong>
-  This setting enables changing of the size of dots for each transcript. It applies to all displayed transcripts. It can be changed by typing a number into the text box or by using the slider.
-  <br></li>
+      By default, the G4X Viewer automatically adjusts transcript density as you zoom and pan throughout the image.
 
-  <li><strong>Transcript Filter Toggles</strong>
-  The "Enable Filters" toggle turns on and off the filter that you've selected in the Transcript Filter Controls section below. The "Show Discarded" filter will display all content which was filtered out, but with white dots to indicate that it was removed.
-  <br></li>
+      Two controls are available for manual management of transcript rendering:
 
-  <li><strong>Import/Export Transcript Settings</strong>
-  This setting allows the import and export of all settings pertaining to your transcript filters. This includes color mapping and transcript species displayed. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
-  <br></li>
+      - **Manual Sub-sampling Toggle:** Enables manual control of transcript display density instead of automatic dynamic sub-sampling.
+      - **Display Percentage Slider:** Adjusts the percentage of displayed transcripts from **0.16%** to **100%**.
 
-  <li><strong>Transcript Filter Controls</strong>
-  Filtering of transcripts can be done either by scrolling through the alphabetized list or using the search bar. To add or remove a gene to your filter list, click the left-hand check box. Checked transcript species will display when the "APPLY" button is clicked or the "Enable Filter" toggle is turned on. Clearing the filter can be done with the "CLEAR" button. Clicking "Show active filters only" will display only selected transcript species, hiding all non-selected ones.
-  <br></li>
+      When manual control is enabled, a warning is displayed indicating that rendering large numbers of transcripts may cause browser instability or crashes.
 
-</ol>
+      We recommend keeping the display percentage below **20%** unless transcript display has already been restricted to a subset of transcript species.
 
-</div>
+- <b><u>Edit Point Size:</u></b>
+
+      Adjusts the size of transcript markers displayed in the viewer.
+
+      Point size can be modified by entering a value directly into the text field or by using the slider control. Changes are applied to all currently displayed transcripts.
+
+- <b><u>Transcript Filter Toggles:</u></b>
+
+      Controls whether transcript filtering is applied to the viewer.
+
+      - **Enable Filters:** Activates or disables the transcript filters configured in the Transcript Filter Controls section.
+      - **Show Discarded:** Displays filtered transcripts as white markers, allowing you to visualize transcripts that have been excluded by the current filter settings.
+
+- <b><u>Import/Export Transcript Settings:</u></b>
+
+      Import or export transcript visualization and filtering settings.
+
+      Exported settings include:
+
+      - Transcript color mappings
+      - Selected transcript species
+      - Filter configurations
+
+      - **Import:** Click the button and select a previously saved JSON configuration file.
+      - **Export:** Configure transcript settings as desired, then click **Export** and choose a save location and filename.
+
+- <b><u>Transcript Filter Controls:</u></b>
+
+      Filter transcripts by gene or transcript species using either the searchable list or by browsing the alphabetized transcript list.
+
+      - Use the search bar to quickly locate specific genes.
+      - Select or deselect transcript species using the checkbox next to each entry.
+      - Click **APPLY** or enable the filter toggle to display only the selected transcript species.
+      - Click **CLEAR** to remove all transcript selections and reset the filter.
+      - Enable **Show Active Filters Only** to display only selected transcript species while hiding all others.
+
+<br>
+
+--8<-- "_core/_partials/end_cap.md"

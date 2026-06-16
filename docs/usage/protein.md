@@ -13,41 +13,45 @@ This first section focuses on uploading your data and toggling which layers you 
 
 ## features
 
-<div class="viewer-card viewer-blue">
+- <b><u>Protein Color Palette:</u></b>
 
-This section explains the functions to manipulate and change the protein layer visualizations.
+      Select the color palette used to display protein images. Available palettes are based on standard Plotly color schemes.
 
-<ol class="viewer-feature-list">
-  <li><strong>Protein Color Palette</strong>
-  This drop down allows you to select the color palette to be used for the protein images (from standard plotly palettes).
-  <br></li>
+- <b><u>Overview Image Toggle:</u></b>
 
-  <li><strong>Overview Image Toggle</strong>
-  This toggles the visibility of the overview image window in the bottom left corner of your viewer instance. It displays a zoomed out perspective of the sample with a red box surrounding the current boundaries of your screen on the sample.
-  <br></li>
+      Toggles the visibility of the overview image window in the lower-left corner of the viewer.
 
-  <li><strong>Lens Tool</strong>
-  The lens tool is a toggle that, once enabled, will open up a pane to allow you to select a protein channel. Once selected, it allows you to isolate your selected protein channel and visualize it in color while all other active protein channels are grayed out within the area of the lens. The lens will follow your cursor until you toggled off.
-  <br></li>
+      The overview image provides a zoomed-out view of the entire sample and displays a red bounding box indicating the current visible region of the viewer.
 
-  <li><strong>Import/Export Protein Settings</strong>
-  This setting allows the import and export of all settings pertaining to your proteins. Typically, we recommend finding the settings you like, then exporting and saving them so that you can use them on all samples going forward. To import, click the button and navigate to the JSON file you've saved on your PC. To export, set up with the parameters/settings that you like, then click export, choosing a save location and name on your PC.
-  <br></li>
+- <b><u>Lens Tool:</u></b>
 
+      Enables the protein lens visualization tool.
 
-  <li><strong>Protein Channel Settings</strong>
-  <p>When visualizing proteins, there are a number of features to turn to enable you to visualize and interpret your data in exactly the way you want:</p>
+      When activated, a selection pane appears that allows you to choose a protein channel. The selected channel is displayed in color within the lens area, while all other active protein channels are shown in grayscale.
 
-    <ul>
-      <li><code>Channel Toggle</code>: This is a check box in the top left of the channel settings, turns the channel on and off entirely</li>
-      <li><code>Protein Channel</code>: Dropdown for selection of which protein channel to visualize</li>
-      <li><code>Color Selection</code>: Click the three vertical dots next to the protein channel dropdown to select a color to use</li>
-      <li><code>Current Position Intensity</code>: Displayed as a floating point value below the channel selection pane. Lists the intensity of your cursor's current location for the specified protein channel (displays all channels simultaneously)</li>
-      <li><code>Set Protein Min/Max</code>: Can be adjusted by manually typing in a value or using the slider at the bottom of the protein channel settings</li>
-      <li><code>Isolate Protein Channel</code>: This is a check box near the Channel Toggle that allows you to turn off all channels except for your specified one</li>
-      <li><code>Add/Remove Channel</code>: To add a protein channel, click "+ Add Channel"  at the bottom of the pane. To remove a channel, click the "x" button on the top right of the individual protein channel window.</li>
-    </ul>
-  <br></li>
-</ol>
+      The lens follows your cursor as you move across the sample and remains active until the tool is disabled.
 
-</div>
+- <b><u>Import/Export Protein Settings:</u></b>
+
+      Import or export all protein visualization settings.
+
+      We recommend configuring your preferred protein display settings, exporting them, and reusing the saved configuration for future samples.
+
+      - **Import:** Click the button and select a previously saved JSON configuration file.
+      - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
+
+- <b><u>Protein Channel Settings:</u></b>
+
+      Protein channels include several configurable options that allow you to customize how protein data is visualized and interpreted.
+
+      - **Channel Toggle:** Enables or disables the selected protein channel.
+      - **Protein Channel:** Dropdown menu used to select the protein channel to display.
+      - **Color Selection:** Click the three vertical dots next to the channel dropdown to choose a display color.
+      - **Current Position Intensity:** Displays the intensity value at the current cursor location for the selected protein channel. Values for all active channels are shown simultaneously.
+      - **Set Protein Min/Max:** Adjust the display intensity range by entering values manually or using the slider control.
+      - **Isolate Protein Channel:** Displays only the selected protein channel while hiding all others.
+      - **Add/Remove Channel:** Click **+ Add Channel** at the bottom of the panel to add a channel. To remove a channel, click the **×** button in the upper-right corner of the channel settings panel.
+
+<br>
+
+--8<-- "_core/_partials/end_cap.md"

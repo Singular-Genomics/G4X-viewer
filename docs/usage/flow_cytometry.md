@@ -11,61 +11,55 @@ This section focuses on uploading your data and toggling which layers you want v
 
 <br>
 
-<div class="viewer-card viewer-pink">
+## features
 
-This section explains how to use the flow cytometry filter controls to change which cells are displayed based on a subpopulation of the flow cytometry embedding that you select. This will appear as a resizable pop-up window with independent interactions that can be applied back to your loaded image.
+- <b><u>Protein Channel Selection:</u></b>
 
-<ol class="viewer-feature-list">
-  <li><strong>Protein Channel Selection</strong>
-  Here, you can choose any two proteins for which you want to compare cells-level intensity. The values used are mean intensity across all pixels in a cell. You cannot select the same protein quantification for both axes.
-  <br></li>
-  
-  <li><strong>Plot Settings</strong>
-  This menu is accessible by clicking the gear icon in the top right of the pane. Here, you can change many settings related to the way the plot looks. This includes graph type, colorscale, number of bins, subsampling, point size, logarithmic scaling, and more. Lastly, you can manually change the color scaling using the sliders along the bottom of the pane so that cells above or below a certain value will not be displayed on the plot.
-  <br></li>
-  
-  <li><strong>Plot Interaction Menu</strong>
-  This menu enables you to interact with the plot through a variety of functions including downloading the plot, zooming in/out (including on a specified area), panning across the image, selecting an ROI, and resetting axes. These are all standard plotly interactions.
-  <br>
-  <br>
-  Of particular note for the filtering we apply is the "Box Select," highlighted in the reference image. We will use this to filter for a subpopulation of cells.
-  <br></li>
+      Select two protein channels to compare cell-level protein intensity values.
 
-  <li><strong>Select ROI</strong>
-  Once you have clicked on the "Box Select" tool, you can navigate to location in the image that you want and draw a box around the cells you would like to filter for. Once drawn, the box will stay in place until you draw another or clear the filter.  On the bottom it will also display the X/Y limits of your selected area.
-  <br></li>
+      Protein intensity is calculated using the mean intensity across all pixels within each cell. The same protein channel cannot be selected for both axes.
 
-  <li><strong>Apply/Clear Filter</strong>
-  Once you're happy with your ROI selection, you can then click "APPLY" to make your selection display on the original G4X Viewer window. This will persist until you reopen the UMAP filter tool and select "CLEAR." This filter will interact with the other features in the same way as any other segmentation filter.
-  <br></li>
+- <b><u>Plot Settings:</u></b>
 
-</ol>
+      Access plot customization options by clicking the gear icon in the upper-right corner of the window.
 
-</div>
+      Available settings include:
 
-## on-screen features {: .viewer-section .viewer-gray }
+      - Graph type
+      - Color scale
+      - Number of bins
+      - Subsampling
+      - Point size
+      - Logarithmic scaling
+      - Additional plot display options
 
-<div class="viewer-card viewer-gray">
+      You can also manually adjust the color scaling range using the sliders at the bottom of the window to exclude cells above or below specified values from the visualization.
 
-These features are 
+- <b><u>Plot Interaction Menu:</u></b>
 
-<ol class="viewer-feature-list">
-  <li><strong>Screenshot Tool</strong>
-  This tool allows you to take screenshots directly from the viewer and save them to your local device. Screenshots display the current viewing area with all interaction elements removed (includes side panels, buttons). 
-  <br></li>
-  
-  <li><strong>Import/Export Polygons</strong>
-  These buttons allow you to take drawn ROIs and import or export their contents, vertices, and metadata as JSON/CSV files. If you draw ROIs that you like, then click export to download a CSV containing the vertex information
-  Of particular note for the filtering we apply is the "Box Select," highlighted in the reference image. We will use this to filter for a subpopulation of cells.
-  <br></li>
+      This menu provides a variety of standard Plotly interactions, including:
 
-  <li><strong>Draw Polygon (ROI Selection)</strong>
-  This tool enables ROI selection. There is no limit to the number of ROIs that can be drawn. Once the Draw Polygon button has been selected, an expanded menu will appear. To draw an ROI, left click the image area to place a vertex. Each subsequent left click will refine the polygon shape and extent by adding a vertex. The polygon finalizes when you double click the start vertex. Upon closure of the shape, your polygon will be analyzed for cells, transcripts, and protein information stored within it. ROIs can be edited, imported, exported, and used for analysis. More details on these processes can be found below and on the <a href="./dashboard.md">dashboard</a> page. 
-  <br></li>
+      - Downloading the plot
+      - Zooming in and out
+      - Zooming to a selected area
+      - Panning across the plot
+      - Selecting a region of interest (ROI)
+      - Resetting the plot axes
 
-</ol>
+      For filtering, the most important tool is **Box Select**, highlighted in the reference image. This tool is used to select a subpopulation of cells for downstream filtering.
 
-</div>
-!!! tip "Multi-tissue blocks (like-TMA)"
-  
-    The ROI selection feature is particularly useful for samples with multiple independent tissue punches (like TMAs) because it can allow independent export of the transcripts and cell IDS for each individual tissue punch for downstream analysis.
+- <b><u>Select ROI:</u></b>
+
+      After selecting the **Box Select** tool, navigate to the desired area of the plot and draw a box around the cells you would like to filter.
+
+      The selection box will remain visible until a new selection is made or the filter is cleared. The X- and Y-axis boundaries of the selected region are displayed at the bottom of the plot.
+
+- <b><u>Apply/Clear Filter:</u></b>
+
+      Once you are satisfied with your ROI selection, click **APPLY** to display the selected cells in the main G4X Viewer window.
+
+      The filter remains active until you reopen the Flow Cytometry Filter tool and click **CLEAR**. This filter behaves like any other segmentation filter and can be combined with other viewer filtering features.
+
+
+<br>
+--8<-- "_core/_partials/end_cap.md"

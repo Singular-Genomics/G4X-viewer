@@ -22,15 +22,22 @@ nav:
   - G4X-viewer:
     - Home: index.md
     - Usage:
-      - Overview: usage/index.md
+      - overview: usage/index.md
       - source files: usage/source_files.md
+      - on-screen controls: usage/on_screen_controls.md
       - protein: usage/protein.md
       - fH&E: usage/fhe.md
       - transcript: usage/transcript.md
       - segmentation: usage/segmentation.md
       - UMAP filter: usage/umap.md
       - flow cytometry filter: usage/flow_cytometry.md
-    - Dashboard: dashboard.md
+    - Dashboard:
+      - overview: dashboard/index.md
+      - ROI selection: dashboard/roi_selection.md
+      - expression box chart: dashboard/expression_box_chart.md
+      - pie chart: dashboard/pie_chart.md
+      - expression bar chart: dashboard/expression_bar_chart.md
+      - expression heatmap: dashboard/expression_heatmap.md
     - Resources: resources.md
     - Contribute: contributing.md
 

@@ -12,7 +12,7 @@ The G4X-Viewer Dashboard is an interactive space for basic analysis and comparis
 ---
 <br>
 
-In order to utilize the tools in the Dashboard, we have to start with ROIs for comparison and analysis. The feature is not just useful for built-in analysis, but can also assist with your independent analysis of multi-tissue FFPE blocks like TMAs. This can be done by selecting of each independent block as an ROI and exporting aggregated data for each. The tool for this is called [Draw Polygon](./usage.md/#on-screen-features), which is in the bottom, right corner of the display window displayed as a pencil icon. 
+In order to utilize the tools in the Dashboard, we have to start with ROIs for comparison and analysis. The feature is not just useful for built-in analysis, but can also assist with your independent analysis of multi-tissue FFPE blocks like TMAs. This can be done by selecting of each independent block as an ROI and exporting aggregated data for each. The tool for this is called [Draw Polygon](../usage/on_screen_controls.md), which is in the bottom, right corner of the display window displayed as a pencil icon. 
 
 <br>
 
