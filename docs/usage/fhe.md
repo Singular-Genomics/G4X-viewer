@@ -3,10 +3,9 @@
 
 <br>
 
-This section focuses on uploading uploading and interacting with the fH&E image and changing its visibility settings.
+This section describes the controls available for loading, displaying, and adjusting the fH&E image layer within the G4X Viewer.
 
 ## reference image
-
 
 ![G4X Viewer](../images/fhe_controls.png)
 
@@ -16,7 +15,7 @@ This section focuses on uploading uploading and interacting with the fH&E image 
 
 - <b><u>Layer Opacity:</u></b>
 
-      The layer opacity slider allows you to change the alpha (opacity) value of the fH&E layer.
+      Adjusts the transparency of the fH&E image layer.
 
 - <b><u>Toggle Visibility:</u></b>
 
@@ -24,11 +23,11 @@ This section focuses on uploading uploading and interacting with the fH&E image 
 
 - <b><u>Upload File:</u></b>
 
-      This pair of buttons can be used to load in your fH&E image. For Zarr format files, this will likely be automatically included. 
+      These controls are used to load an fH&E image into the viewer. For Zarr-based datasets, the fH&E image is typically loaded automatically.
 
-      - **Upload from Cloud** allows an image file to be selected from a cloud source such as an S3 bucket.
-      - **Upload from File** allows an image file to be selected from your locally accessible hard drives.
-
+      - **Upload from Cloud:** Select an image file from a cloud-based source, such as an Amazon S3 bucket.
+      - **Upload from File:** Select an image file from a locally accessible storage device.
 
 <br>
+
 --8<-- "_core/_partials/end_cap.md"

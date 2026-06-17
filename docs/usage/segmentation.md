@@ -1,11 +1,12 @@
 # segmentation layer
+
 ---
 
 <br>
-This first section focuses on uploading your data and toggling which layers you want visible at any given time.
+
+This section describes the controls available for visualizing and filtering cell segmentation data within the G4X Viewer.
 
 ## reference image
-
 
 ![G4X Viewer](../images/segmentation_controls.png)
 
@@ -17,12 +18,12 @@ This first section focuses on uploading your data and toggling which layers you 
 
       Controls the display of cell segmentation fills.
 
-      - **Cell Fill Toggle:** Enables or disables the filled segmentation masks. When disabled, only cell outlines are displayed.
+      - **Cell Fill Toggle:** Enables or disables filled segmentation masks. When disabled, only cell outlines are displayed.
       - **Opacity Slider:** Adjusts the transparency of cell fills when enabled. A value of **0** is fully transparent, while **100** is fully opaque.
 
 - <b><u>Segmentation Filter Toggles:</u></b>
 
-      Enable or disable cell-level filtering applied within the viewer.
+      Enable or disable cell-level filtering within the viewer.
 
       Supported filters include:
 
@@ -30,7 +31,7 @@ This first section focuses on uploading your data and toggling which layers you 
       - UMAP filtering
       - Flow cytometry filtering
 
-      When any filter is active, the **Show Discarded** option becomes available. This displays filtered cells as white segmentation masks, allowing you to visualize cells that have been excluded from the current filter selection.
+      When any filter is active, the **Show Discarded** option becomes available. This displays filtered cells as white segmentation masks, allowing you to visualize cells that have been excluded by the current filter selection.
 
 - <b><u>Import/Export Segmentation Settings:</u></b>
 
@@ -41,27 +42,26 @@ This first section focuses on uploading your data and toggling which layers you 
 
 - <b><u>Segmentation Filter Controls:</u></b>
 
-      Filter cells by cluster assignment using either the searchable list or by manually browsing the available clusters.
+      Filter cells by cluster assignment using either the searchable list or the complete cluster list.
 
       - Use the search bar to quickly locate specific clusters.
       - Clusters labeled **-1** were not assigned to a cluster, typically due to filtering or quality-control processes.
       - Select or deselect clusters using the checkbox next to each cluster ID.
       - Click **APPLY** or enable the filter toggle to display only the selected clusters.
       - Click **CLEAR** to remove all cluster selections and reset the filter.
-      - Enable **Show Active Filters Only** to display only the currently selected clusters and hide all others.
+      - Enable **Show Active Filters Only** to display only the selected clusters while hiding all others.
 
 - <b><u>Open UMAP Filter Panel:</u></b>
 
-      Opens the UMAP filtering interface for selecting cell populations based on their UMAP embedding.
+      Opens the UMAP filtering interface, allowing you to select cell populations based on their position within the UMAP embedding.
 
-      See [UMAP Cell Filtering](umap.md) for additional details.
+      See [UMAP filter](umap.md) for additional details.
 
 - <b><u>Open Flow Cytometry Filter Panel:</u></b>
 
-      Opens the flow cytometry filtering interface for selecting cell populations based on protein expression distributions.
+      Opens the flow cytometry filtering interface, allowing you to select cell populations based on protein expression distributions.
 
-      See [Flow Cytometry Cell Filtering](flow_cytometry.md) for additional details.
-
+      See [flow cytometry filter](flow_cytometry.md) for additional details.
 
 <br>
 

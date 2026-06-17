@@ -1,12 +1,12 @@
 # on-screen controls
+
 ---
 
 <br>
 
-This section focuses on the buttons and UI elements which are present on the display window. Many of these are described in more detail in the [dashboard](../dashboard.md) section.
+This section describes the buttons and interactive tools that are available directly within the viewer window. Additional information about many of these features can be found in the [dashboard](../dashboard/index.md) section.
 
 ## reference image
-
 
 ![G4X Viewer](../images/on_screen_controls.png)
 
@@ -18,7 +18,7 @@ This section focuses on the buttons and UI elements which are present on the dis
 
       Capture screenshots directly from the viewer and save them to your local device.
 
-      Screenshots include the current viewing area while excluding viewer interface elements such as side panels, menus, and buttons.
+      Screenshots include only the current viewing area and exclude viewer interface elements such as side panels, menus, and buttons.
 
 - <b><u>Import/Export Polygons:</u></b>
 
@@ -30,7 +30,7 @@ This section focuses on the buttons and UI elements which are present on the dis
       - ROI metadata
       - ROI contents
 
-      Supported export formats include **JSON** and **CSV**. Exported vertex coordinates can be reused later by importing the saved file back into the viewer.
+      Supported export formats include **JSON** and **CSV**. Exported polygon coordinates can be imported later to restore previously saved ROIs.
 
 - <b><u>Draw Polygon (ROI Selection):</u></b>
 
@@ -45,7 +45,7 @@ This section focuses on the buttons and UI elements which are present on the dis
 
       There is no limit to the number of ROIs that can be created.
 
-      Once completed, the ROI is automatically analyzed for the cells, transcripts, and protein information contained within its boundaries. ROIs can be edited, imported, exported, and used for downstream analysis.
+      Once completed, the ROI is automatically analyzed for the cells, transcripts, and proteins contained within its boundaries. ROIs can be edited, imported, exported, and used for downstream analysis.
 
 !!! tip "Multi-tissue Blocks (TMA-like Samples)"
 
@@ -54,4 +54,5 @@ This section focuses on the buttons and UI elements which are present on the dis
     Individual tissue punches can be outlined separately, allowing independent export of transcripts and cell IDs for downstream analysis.
 
 <br>
+
 --8<-- "_core/_partials/end_cap.md"

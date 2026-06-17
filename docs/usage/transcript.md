@@ -1,19 +1,20 @@
 # transcript layer
+
 ---
 
 <br>
-This first section focuses on uploading your data and toggling which layers you want visible at any given time.
+
+This section describes the controls available for visualizing and filtering transcript data within the G4X Viewer.
 
 ## reference image
 
-
 ![G4X Viewer](../images/transcript_controls.png)
 
-## Features
+## features
 
 - <b><u>Transcript Sub-sampling Controls:</u></b>
 
-      Most G4X datasets contain more than one million transcripts. Transcript sub-sampling is used to reduce rendering load and maintain viewer responsiveness on standard desktop computers.
+      Most G4X datasets contain more than one million transcripts. Transcript sub-sampling reduces rendering load and helps maintain viewer responsiveness on standard desktop computers.
 
       By default, the G4X Viewer automatically adjusts transcript density as you zoom and pan throughout the image.
 
@@ -30,13 +31,13 @@ This first section focuses on uploading your data and toggling which layers you 
 
       Adjusts the size of transcript markers displayed in the viewer.
 
-      Point size can be modified by entering a value directly into the text field or by using the slider control. Changes are applied to all currently displayed transcripts.
+      Point size can be modified by entering a value directly into the text field or by using the slider control. Changes are applied to all displayed transcripts.
 
 - <b><u>Transcript Filter Toggles:</u></b>
 
-      Controls whether transcript filtering is applied to the viewer.
+      Controls whether transcript filtering is applied within the viewer.
 
-      - **Enable Filters:** Activates or disables the transcript filters configured in the Transcript Filter Controls section.
+      - **Enable Filters:** Enables or disables the transcript filters configured in the Transcript Filter Controls section.
       - **Show Discarded:** Displays filtered transcripts as white markers, allowing you to visualize transcripts that have been excluded by the current filter settings.
 
 - <b><u>Import/Export Transcript Settings:</u></b>
@@ -54,7 +55,7 @@ This first section focuses on uploading your data and toggling which layers you 
 
 - <b><u>Transcript Filter Controls:</u></b>
 
-      Filter transcripts by gene or transcript species using either the searchable list or by browsing the alphabetized transcript list.
+      Filter transcripts by gene or transcript species using either the searchable list or the alphabetized transcript list.
 
       - Use the search bar to quickly locate specific genes.
       - Select or deselect transcript species using the checkbox next to each entry.

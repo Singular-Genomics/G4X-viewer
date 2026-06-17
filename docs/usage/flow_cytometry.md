@@ -2,10 +2,10 @@
 ---
 
 <br>
-This section focuses on uploading your data and toggling which layers you want visible at any given time.
+
+This section describes how to use the flow cytometry filtering tool to select and visualize cell populations based on protein expression patterns.
 
 ## reference image
-
 
 ![G4X Viewer](../images/flow_controls.png)
 
@@ -52,14 +52,14 @@ This section focuses on uploading your data and toggling which layers you want v
 
       After selecting the **Box Select** tool, navigate to the desired area of the plot and draw a box around the cells you would like to filter.
 
-      The selection box will remain visible until a new selection is made or the filter is cleared. The X- and Y-axis boundaries of the selected region are displayed at the bottom of the plot.
+      The selection box remains visible until a new selection is made or the filter is cleared. The X- and Y-axis boundaries of the selected region are displayed at the bottom of the plot.
 
 - <b><u>Apply/Clear Filter:</u></b>
 
       Once you are satisfied with your ROI selection, click **APPLY** to display the selected cells in the main G4X Viewer window.
 
-      The filter remains active until you reopen the Flow Cytometry Filter tool and click **CLEAR**. This filter behaves like any other segmentation filter and can be combined with other viewer filtering features.
-
+      The filter remains active until you reopen the Flow Cytometry Filter tool and click **CLEAR**. Flow cytometry filtering behaves like any other segmentation filter and can be combined with other viewer filtering features.
 
 <br>
+
 --8<-- "_core/_partials/end_cap.md"

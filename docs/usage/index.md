@@ -1,36 +1,45 @@
-# G4X-Viewer usage
+# G4X Viewer Usage
+
 ---
 
-This page will detail how to view the core output images from a G4X run on the viewer. This page assumes that you have access to the viewer either through local download or our hosted [URL](https://g4x-viewer.singulargenomics.com).
+This page describes how to visualize and interact with the core outputs of a G4X run using the G4X Viewer. It assumes that you have access to the viewer either through a local installation or via the hosted application at [g4x-viewer.singulargenomics.com](https://g4x-viewer.singulargenomics.com).
 
-Once you have opened the viewer, either locally or online, you will need to upload your data to begin interacting with it. Each sample output by the G4X contains a directory called `/g4x-viewer/`, described in detail in [data output](https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/) portion of our documentation. The specific output files differ slightly based on whether your data is from a transcript-only run or a multiomics run, but they are all compatible with the G4X Viewer.
+To begin exploring your data, first load your sample into the viewer. Each G4X sample output contains a `/g4x-viewer/` directory, which is described in detail in the [G4X Viewer output documentation](https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/).
 
-Each file in the viewer adds a specific, interactable layer of information for you to explore, allowing simultaneous visualization of RNA, segmentation, protein images, and our fH&E. Below, we'll go into a detailed explanation below of how to utilize the G4X-Viewer fully to explore your data.
+The files contained within this directory vary slightly between transcript-only and multiomics experiments, but all supported output formats are compatible with the G4X Viewer.
 
-## reference image
----
+Each file contributes a specific interactive layer to the visualization, enabling simultaneous exploration of transcripts, cell segmentations, protein images, and fH&E imagery. The sections below provide detailed guidance for loading data, configuring display settings, and using the available analysis and filtering tools.
 
-![G4X Viewer](./images/viewer_aggregate_image.png)
+## [source files](./source_files.md)
 
-## source files and layer controls {: .viewer-section .viewer-red }
+Learn how to load G4X data into the viewer and manage layer visibility using the available layer controls.
 
+## [on-screen controls](./on_screen_controls.md)
 
-## protein layer settings {: .viewer-section .viewer-blue }
+Learn how to use the viewer's on-screen tools, including ROI selection, screenshot capture, polygon management, and other interactive controls.
 
+## [protein](./protein.md)
 
-## fH&E layer settings {: .viewer-section .viewer-teal }
+Learn how to customize protein visualizations, including channel selection, color assignment, display ranges, channel isolation, and related settings.
 
+## [fH&E](./fhe.md)
 
-## transcript layer settings {: .viewer-section .viewer-orange }
+Learn how to load, display, and adjust the fH&E image layer.
 
+## [transcript](./transcript.md)
 
-## segmentation layer settings {: .viewer-section .viewer-green }
+Learn how to customize transcript visualization, including transcript display density, color settings, filtering options, and transcript-specific controls.
 
+## [segmentation](./segmentation.md)
 
-## UMAP cell filtering {: .viewer-section .viewer-purple }
+Learn how to customize cell segmentation displays, adjust mask appearance, and apply cell-level filtering based on clustering, protein expression, transcript abundance, and other analysis outputs.
 
+## [UMAP filter](./umap.md)
 
-## flow cytometry cell filtering {: .viewer-section .viewer-pink }
+Learn how to use the UMAP filtering tool to select and visualize cell populations based on their position within the UMAP embedding.
 
+## [flow cytometry filter](./flow_cytometry.md)
+
+Learn how to use the flow cytometry filtering tool to identify and visualize cell populations based on protein expression distributions.
 
 --8<-- "_core/_partials/end_cap.md"
