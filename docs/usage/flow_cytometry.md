@@ -13,7 +13,7 @@ This section describes how to use the flow cytometry filtering tool to select an
 
 ## features
 
-- <b><u>Protein Channel Selection:</u></b>
+- <b><u>Protein Channel (X/Y):</u></b>
 
       Select two protein channels to compare cell-level protein intensity values.
 
@@ -21,9 +21,7 @@ This section describes how to use the flow cytometry filtering tool to select an
 
 - <b><u>Plot Settings:</u></b>
 
-      Access plot customization options by clicking the gear icon in the upper-right corner of the window.
-
-      Available settings include:
+      You can access plot customization options by clicking the gear icon in the upper-right corner of the window. Available settings include:
 
       - Graph type
       - Color scale
@@ -33,30 +31,30 @@ This section describes how to use the flow cytometry filtering tool to select an
       - Logarithmic scaling
       - Additional plot display options
 
-      You can also manually adjust the color scaling range using the sliders at the bottom of the window to exclude cells above or below specified values from the visualization.
+- <b><u>Plot Interactions:</u></b>
 
-- <b><u>Plot Interaction Menu:</u></b>
+      This menu provides a variety of standard Plotly interactions. For filtering, the most important tool is **Box Select**, highlighted in the reference image. This tool is used to select a subpopulation of cells for downstream filtering. All interactions are detailed below:
 
-      This menu provides a variety of standard Plotly interactions, including:
+      - **Box Select:** Used to select cells to filter for segmentation display
+      - **Zoom Mode:** Allow dynamic scrolling in and out to change plot zoom level.
+      - **Zoom In:** Zooms in at set intervals.
+      - **Zoom Out:** Zooms out at set intervals.
+      - **Pan View:** Changes the mode to allow panning around the image with your cursor.
+      - **Autoscale Axes:** Autoscales axes to display all dots in the viewing area.
+      - **Reset View:** Return to default view for the plot.
+      - **Screenshot:** Takes a screenshot of the displayed plot area (without the tools and other UI elements displayed).
 
-      - Downloading the plot
-      - Zooming in and out
-      - Zooming to a selected area
-      - Panning across the plot
-      - Selecting a region of interest (ROI)
-      - Resetting the plot axes
+- <b><u>Selected Box:</u></b>
 
-      For filtering, the most important tool is **Box Select**, highlighted in the reference image. This tool is used to select a subpopulation of cells for downstream filtering.
+      When **Box Select** tool is clicked, you can then use your cursor the left click and drag to create a box around the cells you wish to filter for. This display shows an example of a box you may choose to select on this UMAP embedding.
 
-- <b><u>Select ROI:</u></b>
+- <b><u>Box Coordinates:</u></b>
 
-      After selecting the **Box Select** tool, navigate to the desired area of the plot and draw a box around the cells you would like to filter.
-
-      The selection box remains visible until a new selection is made or the filter is cleared. The X- and Y-axis boundaries of the selected region are displayed at the bottom of the plot.
+      This series of numbers describe the X and Y ranges of the box that you are applying the filter to. You can manually update these values if you desire.
 
 - <b><u>Apply/Clear Filter:</u></b>
 
-      Once you are satisfied with your ROI selection, click **APPLY** to display the selected cells in the main G4X Viewer window.
+      Once you are satisfied with your box selection, click **APPLY** to display the selected cells in the main G4X Viewer window.
 
       The filter remains active until you reopen the Flow Cytometry Filter tool and click **CLEAR**. Flow cytometry filtering behaves like any other segmentation filter and can be combined with other viewer filtering features.
 
