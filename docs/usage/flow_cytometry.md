@@ -46,7 +46,7 @@ This section describes how to use the flow cytometry filtering tool to select an
 
 - <b><u>Selected Box:</u></b>
 
-      When **Box Select** tool is clicked, you can then use your cursor the left click and drag to create a box around the cells you wish to filter for. This display shows an example of a box you may choose to select on this UMAP embedding.
+      After selecting the **Box Select** tool, you can then use your cursor the left click and drag to create a box around the cells you wish to filter for. This display shows an example of a box you may choose to select on this flow cytometry display.
 
 - <b><u>Box Coordinates:</u></b>
 
