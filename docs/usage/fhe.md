@@ -21,7 +21,7 @@ This section describes the controls available for loading, displaying, and adjus
 
       Toggles whether the fH&E image is displayed.
 
-- <b><u>Upload File:</u></b>
+- <b><u>Upload Data:</u></b>
 
       These controls are used to load an fH&E image into the viewer. For Zarr-based datasets, the fH&E image is typically loaded automatically.
 
