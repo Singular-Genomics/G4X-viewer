@@ -1,4 +1,5 @@
 # fH&E layer
+
 ---
 
 <br>
@@ -7,7 +8,7 @@ This section describes the controls available for loading, displaying, and adjus
 
 ## reference image
 
-![G4X Viewer](../images/fhe_controls.png)
+![fH&E layer controls](../images/fhe_controls.png)
 
 <br>
 
@@ -19,7 +20,7 @@ This section describes the controls available for loading, displaying, and adjus
 
 - <b><u>Toggle Visibility:</u></b>
 
-      Toggles whether the fH&E image is displayed.
+      Shows or hides the fH&E image.
 
 - <b><u>Upload Data:</u></b>
 

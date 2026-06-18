@@ -1,4 +1,5 @@
 # protein layer
+
 ---
 
 <br>
@@ -7,7 +8,7 @@ This section describes the controls available for visualizing and customizing pr
 
 ## reference image
 
-![G4X Viewer](../images/protein_controls.png)
+![protein layer controls](../images/protein_controls.png)
 
 <br>
 
@@ -27,9 +28,9 @@ This section describes the controls available for visualizing and customizing pr
       Import or export protein visualization settings.
 
       - **Import:** Click the button and select a previously saved JSON configuration file.
-      - **Export:** Configure the segmentation settings as desired, then click **Export** and choose a save location and filename.
+      - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
 
-!!! tip "Find and save your preferred settings"
+!!! tip "find and save your preferred settings"
       We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
 
 - <b><u>Protein Display Settings:</u></b>
@@ -43,7 +44,7 @@ This section describes the controls available for visualizing and customizing pr
       - **Channel Min/Max:** Adjust the display intensity range by entering values manually or using the slider control.
       - **Add Channel:** Adds an additional protein channel. A maximum of six protein channels are allowed simultaneously.
       - **Delete Channel:** Deletes the specific protein channel.
-      - **Change Channel Color:** Allows selection of the channel color from a pre-set list of color options for the specific channel. Repeat color selections are allowed.
+      - **Change Channel Color:** Allows selection of the channel color from a preset list of color options for the specific channel. Repeat color selections are allowed.
       - **Expand Range:** Expands the default protein intensity range slider to allow broader **Channel Min/Max** values to be set for the specific channel.
       - **Reset Default Range:** Resets **Channel Min/Max** values to default values for the specific channel.
 
