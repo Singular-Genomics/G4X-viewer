@@ -4,11 +4,13 @@
 
 <br>
 
-This section describes the controls available for visualizing and filtering transcript data within the G4X Viewer.
+This section describes how to customize transcript visualization, including transcript display density, color settings, filtering options, and transcript-specific controls.
 
 ## reference image
 
-![transcript layer controls](../images/transcript_controls.png)
+![transcript layer controls](../images/usage/transcript_controls.png)
+
+These controls balance transcript rendering performance with transcript display and filtering options.
 
 ## features
 

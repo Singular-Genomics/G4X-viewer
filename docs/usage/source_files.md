@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes how to load data into the G4X Viewer and manage the visibility of the available data layers.
+This section describes how to load G4X data into the viewer and manage layer visibility using the available layer controls.
 
 ## reference image
 
-![source file controls](../images/source_controls.png)
+![source file controls](../images/usage/source_controls.png)
 
 <br>
+
+These controls cover data loading, Z-plane navigation, scale adjustment, and layer visibility.
 
 ## features
 

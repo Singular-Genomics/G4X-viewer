@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes the controls available for visualizing and customizing protein image displays within the G4X Viewer.
+This section describes how to customize protein visualizations, including channel selection, color assignment, display ranges, channel isolation, and related settings.
 
 ## reference image
 
-![protein layer controls](../images/protein_controls.png)
+![protein layer controls](../images/usage/protein_controls.png)
 
 <br>
+
+These controls configure protein channel visibility, color, intensity range, and lens behavior.
 
 ## features
 

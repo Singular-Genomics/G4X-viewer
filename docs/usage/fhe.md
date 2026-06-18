@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes the controls available for loading, displaying, and adjusting the fH&E image layer within the G4X Viewer.
+This section describes how to load, display, and adjust the fH&E image layer.
 
 ## reference image
 
-![fH&E layer controls](../images/fhe_controls.png)
+![fH&E layer controls](../images/usage/fhe_controls.png)
 
 <br>
+
+These controls manage fH&E visibility, opacity, and optional image upload.
 
 ## features
 

@@ -8,11 +8,13 @@ This section describes how to use the UMAP filtering tool to select and visualiz
 
 ## reference image
 
-![UMAP filter controls](../images/umap_controls.png)
+![UMAP filter controls](../images/usage/umap_controls.png)
 
 <br>
 
 The UMAP filter is displayed as a resizable pop-up window with its own set of interactive controls. Selected cell populations can be applied directly to the main viewer, allowing you to focus on specific regions of the UMAP embedding.
+
+These controls configure the UMAP plot and apply selected cell populations back to the main viewer.
 
 ## features
 

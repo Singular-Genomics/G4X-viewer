@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes how to use the flow cytometry filtering tool to select and visualize cell populations based on protein expression patterns.
+This section describes how to use the flow cytometry filtering tool to identify and visualize cell populations based on protein expression distributions.
 
 ## reference image
 
-![flow cytometry filter controls](../images/flow_controls.png)
+![flow cytometry filter controls](../images/usage/flow_controls.png)
 
 <br>
+
+These controls configure the flow cytometry plot and apply selected protein-expression populations back to the main viewer.
 
 ## features
 

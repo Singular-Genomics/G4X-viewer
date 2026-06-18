@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes the controls available for visualizing and filtering cell segmentation data within the G4X Viewer.
+This section describes how to customize cell segmentation displays, adjust mask appearance, and apply cell-level filtering based on clustering, protein expression, transcript abundance, and other analysis outputs.
 
 ## reference image
 
-![segmentation layer controls](../images/segmentation_controls.png)
+![segmentation layer controls](../images/usage/segmentation_controls.png)
 
 <br>
+
+These controls select segmentation and cluster sources, style cell masks, and apply cell-level filters.
 
 ## features
 

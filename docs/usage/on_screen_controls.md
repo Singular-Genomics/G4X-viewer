@@ -4,13 +4,15 @@
 
 <br>
 
-This section describes the buttons and interactive tools that are available directly within the viewer window. Additional information about many of these features can be found in the [dashboard](../dashboard/index.md) section.
+This section describes how to use the viewer's on-screen tools, including ROI selection, screenshot capture, polygon management, and other interactive controls. Additional information about many of these features can be found in the [dashboard](../dashboard/index.md) section.
 
 ## reference image
 
-![on-screen controls](../images/on_screen_controls.png)
+![on-screen controls](../images/usage/on_screen_controls.png)
 
 <br>
+
+These controls sit directly in the viewer window and support dashboard access, ROI drawing, screenshot capture, and polygon management.
 
 ## features
 
