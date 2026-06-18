@@ -1,53 +1,33 @@
-<br>
+# G4X Viewer dashboard
 
-# :octicons-graph-24: G4X Viewer Dashboard
-#### Interactive Analysis Dashboard for G4X Data
 ---
 
-The G4X-Viewer Dashboard is an interactive space for basic analysis and comparison of ROIs that is built in to the G4X Viewer. This tab can be accessed by clicking on the Dashboard tab in the top left of a G4X Viewer instance, though most features require a loaded image and selected ROIs to utilize. On this page, we'll walk you through how to create, import, and export ROIs as well as how to perform analysis on the ROIs that you generate.
+This page describes how to use the G4X Viewer dashboard for basic analysis and comparison of user-selected regions of interest (ROIs). The dashboard is available from the **Dashboard** tab in the G4X Viewer, though most features require a loaded image and selected ROIs.
 
-<br>
+To begin using the dashboard, first create, import, or select ROIs in the viewer. ROI selection is useful for comparing regions within a sample and for independent analysis of multi-tissue FFPE blocks, such as tissue microarrays (TMAs).
 
-## Getting Started (ROI Selection)
----
-<br>
+Once ROIs are available, the dashboard can display multiple plot types for comparing transcript, cell, and protein information across selected regions. Dashboard plots can be moved, resized, reconfigured, and combined in the same workspace.
 
-In order to utilize the tools in the Dashboard, we have to start with ROIs for comparison and analysis. The feature is not just useful for built-in analysis, but can also assist with your independent analysis of multi-tissue FFPE blocks like TMAs. This can be done by selecting of each independent block as an ROI and exporting aggregated data for each. The tool for this is called [Draw Polygon](../usage/on_screen_controls.md), which is in the bottom, right corner of the display window displayed as a pencil icon. 
+The sections below provide detailed guidance for creating ROIs and using the available dashboard analysis tools.
 
-<br>
+## [ROI selection](./roi_selection.md)
 
-### Creating ROIs
+Learn how to create and manipulate ROIs for dashboard analyses.
 
-Once the Draw Polygon button has been selected, an expanded menu will appear. To draw an ROI, left click the image area to place a vertex. Each subsequent left click will refine the polygon shape and extent by adding a vertex. The polygon finalizes when you double click the start vertex. Upon closure of the shape, your polygon will be analyzed for cells, transcripts, and protein information stored within it. ROIs can be edited, imported, exported, and used for analysis. There is no limit to the number of ROIs that can be drawn. 
+## [expression box chart](./expression_box_chart.md)
 
-### Deleting ROIs
+Learn how to compare expression and protein intensity distributions across selected ROIs using box charts.
 
-There are two buttons used to remove ROIs, both represented by trash bin icons, described below:
+## [pie chart](./pie_chart.md)
 
-1. `Delete Polygon`: Deletes polygons one at a time by clicking on the one you wish to delete.
+Learn how to summarize ROI cluster composition using pie charts.
 
-2. `Clear All Polygons`: Deletes all polygons at once.
+## [expression bar chart](./expression_bar_chart.md)
 
-### Importing and Exporting ROIs
+Learn how to compare expression values or protein intensities across selected ROIs using bar charts.
 
-### Editing ROIs
+## [heatmap chart](./expression_heatmap.md)
 
-<br>
-
-## Dashboard Analysis
----
-<br>
-Once you start populating the dashboard with plots, you can dynamically move chart objects around the space, resize them, change parameters, and more. Additionally, you can open as many copies of the same plot types as you want or combine different plot types on the same dashboard, enabling you to adapt it your needs.
-
-<br>
-
-### Expression Box Charts
-
-### Pie Charts
-
-### Expression Bar Charts
-
-### Heatmap Charts
-
+Learn how to compare expression patterns across selected ROIs using heatmaps.
 
 --8<-- "_core/_partials/end_cap.md"
