@@ -32,8 +32,8 @@ These controls configure protein channel visibility, color, intensity range, and
       - **Import:** Click the button and select a previously saved JSON configuration file.
       - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
 
-!!! tip "find and save your preferred settings"
-      We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
+    !!! tip "Find and save your preferred settings"
+        We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
 
 - <b><u>Protein Display Settings:</u></b>
 

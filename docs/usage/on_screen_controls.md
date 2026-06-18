@@ -59,13 +59,10 @@ These controls sit directly in the viewer window and support dashboard access, R
 
     - **Disable Drawing:** Disables drawing mode and collapses the menu back to the first four elements.
 
+    !!! tip "Multi-tissue blocks (TMA-like samples)"
+        ROI selection is particularly useful for samples containing multiple independent tissue regions, such as tissue microarrays (TMAs).
 
-
-!!! tip "multi-tissue blocks (TMA-like samples)"
-
-    ROI selection is particularly useful for samples containing multiple independent tissue regions, such as tissue microarrays (TMAs).
-
-    Individual tissue punches can be outlined separately, allowing independent export of transcripts and cell IDs for downstream analysis.
+        Individual tissue punches can be outlined separately, allowing independent export of transcripts and cell IDs for downstream analysis.
 
 - <b><u>ROI Focus:</u></b>
 
