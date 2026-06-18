@@ -4,7 +4,11 @@
 
 <br>
 
+Learn how to summarize ROI cluster composition using pie charts.
+
 ## reference image
+
+![pie chart controls](../images/dashboard/pie_chart_controls.png)
 
 <br>
 

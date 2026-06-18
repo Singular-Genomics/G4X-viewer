@@ -12,7 +12,7 @@ The sections below provide detailed guidance for creating ROIs and using the ava
 
 ## [ROI selection](./roi_selection.md)
 
-Learn how to create and manipulate ROIs for dashboard analyses.
+Learn how to create and manipulate ROIs for dashboard analyses. If you're new to this process, start here.
 
 ## [expression box chart](./expression_box_chart.md)
 
