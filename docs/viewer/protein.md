@@ -8,7 +8,7 @@ This section describes how to customize protein visualizations, including channe
 
 ## reference image
 
-![protein layer controls](../images/usage/protein_controls.png)
+![protein layer controls](../images/viewer/protein_controls.png)
 
 <br>
 

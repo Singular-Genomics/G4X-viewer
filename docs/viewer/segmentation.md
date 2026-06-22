@@ -8,7 +8,7 @@ This section describes how to customize cell segmentation displays, adjust mask 
 
 ## reference image
 
-![segmentation layer controls](../images/usage/segmentation_controls.png)
+![segmentation layer controls](../images/viewer/segmentation_controls.png)
 
 <br>
 

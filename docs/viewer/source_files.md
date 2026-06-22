@@ -8,7 +8,7 @@ This section describes how to load G4X data into the viewer and manage layer vis
 
 ## reference image
 
-![source file controls](../images/usage/source_controls.png)
+![source file controls](../images/viewer/source_controls.png)
 
 <br>
 

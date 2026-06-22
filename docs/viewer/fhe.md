@@ -8,7 +8,7 @@ This section describes how to load, display, and adjust the fH&E image layer.
 
 ## reference image
 
-![fH&E layer controls](../images/usage/fhe_controls.png)
+![fH&E layer controls](../images/viewer/fhe_controls.png)
 
 <br>
 

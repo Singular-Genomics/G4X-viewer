@@ -8,7 +8,7 @@ This section describes how to customize transcript visualization, including tran
 
 ## reference image
 
-![transcript layer controls](../images/usage/transcript_controls.png)
+![transcript layer controls](../images/viewer/transcript_controls.png)
 
 These controls balance transcript rendering performance with transcript display and filtering options.
 

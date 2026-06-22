@@ -8,7 +8,7 @@ This section describes how to use the flow cytometry filtering tool to identify 
 
 ## reference image
 
-![flow cytometry filter controls](../images/usage/flow_controls.png)
+![flow cytometry filter controls](../images/viewer/flow_controls.png)
 
 <br>
 

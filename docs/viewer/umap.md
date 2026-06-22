@@ -8,7 +8,7 @@ This section describes how to use the UMAP filtering tool to select and visualiz
 
 ## reference image
 
-![UMAP filter controls](../images/usage/umap_controls.png)
+![UMAP filter controls](../images/viewer/umap_controls.png)
 
 <br>
 

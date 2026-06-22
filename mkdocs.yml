@@ -21,16 +21,16 @@ nav:
 
   - G4X-viewer:
     - home: index.md
-    - usage:
-      - overview: usage/index.md
-      - source files: usage/source_files.md
-      - on-screen controls: usage/on_screen_controls.md
-      - protein: usage/protein.md
-      - fH&E: usage/fhe.md
-      - transcript: usage/transcript.md
-      - segmentation: usage/segmentation.md
-      - UMAP filter: usage/umap.md
-      - flow cytometry filter: usage/flow_cytometry.md
+    - viewer:
+      - overview: viewer/index.md
+      - source files: viewer/source_files.md
+      - on-screen controls: viewer/on_screen_controls.md
+      - protein: viewer/protein.md
+      - fH&E: viewer/fhe.md
+      - transcript: viewer/transcript.md
+      - segmentation: viewer/segmentation.md
+      - UMAP filter: viewer/umap.md
+      - flow cytometry filter: viewer/flow_cytometry.md
     - dashboard:
       - overview: dashboard/index.md
       - ROI selection: dashboard/roi_selection.md

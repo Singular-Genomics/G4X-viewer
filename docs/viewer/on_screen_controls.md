@@ -8,7 +8,7 @@ This section describes how to use the viewer's on-screen tools, including ROI se
 
 ## reference image
 
-![on-screen controls](../images/usage/on_screen_controls.png)
+![on-screen controls](../images/viewer/on_screen_controls.png)
 
 <br>
 
