@@ -22,10 +22,10 @@ We provide a web-based version of the G4X-viewer that can be accessed through ou
 
 <br>
 
-### usage
+### viewer
 ---
 
-Navigate to the [usage](usage/index.md) page to learn how to interact with the G4X-viewer. These pages comprehensively go through all interactable elements on the viewer and how to use them, organized by which modalities/image layers are being manipulated.
+Navigate to the [viewer](viewer/index.md) page to learn how to interact with the G4X-viewer. These pages comprehensively go through all interactable elements on the viewer and how to use them, organized by which modalities/image layers are being manipulated.
 
 The covered pages include:
 
