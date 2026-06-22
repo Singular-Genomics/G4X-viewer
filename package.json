@@ -2,7 +2,7 @@
   "name": "g4x-viewer",
   "private": true,
   "version": "4.0.0-beta",
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@10.16.0",
   "type": "module",
   "engines": {
     "node": ">=20.19.0"
