@@ -35,7 +35,7 @@ A heatmap chart is most useful for quickly identifying patterns in RNA or protei
     - **Custom Title:** Input a string to display as your plot title.
     - **Colorscale:** Choose the color mapping to be used.
     - **Reverse Colorscale:** Allows the min/max color to be swapped.
-    - **Sort ROIs:** Places all ROI in sequential order in which they were drawn.
+    - **Sort ROIs:** Places all ROI in the order in which they were drawn.
     - **Normalization Method:** Allows you to choose how abundance data is normalized (none, min-max, and z-score).
 
 <br>

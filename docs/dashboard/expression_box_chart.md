@@ -38,7 +38,7 @@ An expression box plot is most useful for comparing the distribution and variabi
 
     - **Custom Title:** Input a string to display as your plot title.
     - **Swap Axis:** Allows swap of X and Y axes.
-    - **Sort ROIs:** Places all ROI in sequential order in which they were drawn.
+    - **Sort ROIs:** Places all ROI in the order in which they were drawn.
     - **Data Mode:** Changes what type of box chart display is used (all, outliers, suspected outliers, none).
 
 - <b><u>Legend Toggle:</u></b>
