@@ -20,8 +20,8 @@ nav:
   - G4X-helpers: https://docs.singulargenomics.com/G4X-helpers/
 
   - G4X-viewer:
-    - Home: index.md
-    - Usage:
+    - home: index.md
+    - usage:
       - overview: usage/index.md
       - source files: usage/source_files.md
       - on-screen controls: usage/on_screen_controls.md
@@ -31,13 +31,17 @@ nav:
       - segmentation: usage/segmentation.md
       - UMAP filter: usage/umap.md
       - flow cytometry filter: usage/flow_cytometry.md
-    - Dashboard:
+    - dashboard:
       - overview: dashboard/index.md
       - ROI selection: dashboard/roi_selection.md
       - expression box chart: dashboard/expression_box_chart.md
       - pie chart: dashboard/pie_chart.md
       - expression bar chart: dashboard/expression_bar_chart.md
       - heatmap chart: dashboard/expression_heatmap.md
-    - Resources: resources.md
-    - Contribute: contributing.md
+    - resources: resources.md
+    - contribute: contributing.md
+
+
+  - G4X-data: https://docs.singulargenomics.com/g4x_data/
+  - G4X-tutorials: https://docs.singulargenomics.com/g4x_tutorials/
 

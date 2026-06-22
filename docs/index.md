@@ -3,7 +3,7 @@
 <span style="margin-top:-3rem; display:block;"><a href="https://g4x-viewer.singulargenomics.com">g4x-viewer.singulargenomics.com</a></span>
 <br>
 
-#### Explore and visualize G4X-data
+#### Explore the G4X-Viewer
 
 ![G4X Viewer](./images/homepage.png)
 
@@ -23,30 +23,46 @@ We provide a web-based version of the G4X-viewer that can be accessed through ou
 <br>
 
 ### usage
+---
 
-Please navigate to the [usage](usage/index.md) page to see descriptions of the core files that are compatible with the G4x-viewer and how to load them into the viewer to start exploring your data. 
+Navigate to the [usage](usage/index.md) page to learn how to interact with the G4X-viewer. These pages comprehensively go through all interactable elements on the viewer and how to use them, organized by which modalities/image layers are being manipulated.
+
+The covered pages include:
+
++ uploading source files
++ on-screen controls
++ protein layer controls
++ fH&E layer controls
++ transcript layer controls
++ segmentation layer controls
++ UMAP cell filter
++ flow cytrometry cell filter
 
 <br>
 
 ### dashboard
+---
 
-Please navigate to the G4X-viewer [features](dashboard/index.md) to list out some of the core functionality of the viewer using the multimodal, multilayered images. 
+Navigate to the G4X-viewer [dashboard](dashboard/index.md) to learn how to use our viewer to perform basic analysis on your data natively. All dashboard features are instanced with your viewer window to allow you to seamlessly jump between looking at your data and performing rapid analysis.
 
-These features include:
-+ visual adjustments (contrast, marker colors, tx density)
-+ ROI selection (polygons, multi-select, import/export tx and cell IDs)
-+ simple plot generation (heatmaps, cell type composition)
-+ basic filtering (protein intensity, tx identity)
+The dashboard pages include:
+
++ ROI selection guide
++ expression box charts
++ pie charts
++ expression bar charts
++ heatmap charts
 
 <br>
 
 ### resources
+---
 
 Please navigate to the G4X-viewer [resources](./resources.md) to help you leverage the suite of tools available in the G4X-viewer
 
 <br>
 
-## support
+### support
 ---
 
 Got feedback or ideas for additional tutorials?  
