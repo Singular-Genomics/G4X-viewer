@@ -12,8 +12,6 @@ Learn how to create and manipulate ROIs for dashboard analyses. If you're new to
 
 ## getting started
 
-<br>
-
 In order to utilize the tools in the dashboard, you have to draw or import ROIs/Polygons that can be used for comparison and analysis. Some functions in the Viewer refer to ROIs as Polygons, but for all pages pertaining to Dashboard analysis we will refer to them as ROIs. 
 
 Most of the explanation of where these UI elements lie is detailed in the image above and in the [on-screen controls](../usage/on_screen_controls.md) page of the documentation. On this specific page, we will expand on the usage of the polygon manipulation tools and how they can be used for analysis in the Dashboard. All functions described on this page are found in the expanded, on-screen menu once Drawing Mode is enabled. Drawing Mode is enabled by clicking the **Draw Polygon** button, which will cause the button to turn teal.
