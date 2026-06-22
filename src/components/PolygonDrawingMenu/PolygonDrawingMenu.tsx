@@ -14,6 +14,7 @@ import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { PolygonImportExport } from '../PolygonImportExport';
 import { useEffect, useState, useCallback } from 'react';
 import { GxModal } from '../../shared/components/GxModal';
@@ -57,7 +58,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     ])
   );
 
-  const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
+  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -66,8 +68,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
   const sx = styles(theme);
 
   // Check if any data is loaded
-  const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
-  const hasAnyData = hasTranscriptsData || hasCellMaskData;
+  const hasCellMaskData = !!(cellMasksData && cellMasksData.length > 0);
+  const hasAnyData = (isTranscriptLayerOn && transcriptConfigLoaded) || hasCellMaskData;
 
   const handleClearPolygons = useCallback(() => {
     if (polygonFeatures.length > 1) {
