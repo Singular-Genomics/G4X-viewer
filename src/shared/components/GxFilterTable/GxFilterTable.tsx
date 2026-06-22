@@ -46,6 +46,22 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   return (
     <>
       <Box sx={sx.tableContainer}>
+        <Box sx={sx.buttonsWrapper}>
+          <Button
+            disabled={clearDisabled}
+            sx={sx.clearButton}
+            onClick={onClearFilteres}
+          >
+            {t('general.clear')}
+          </Button>
+          <Button
+            disabled={applyDisabled}
+            sx={sx.applyButton}
+            onClick={onApplyClick}
+          >
+            {t('general.apply')}
+          </Button>
+        </Box>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -88,22 +104,6 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
             />
           }
         />
-        <Box sx={sx.buttonsWrapper}>
-          <Button
-            disabled={clearDisabled}
-            sx={sx.clearButton}
-            onClick={onClearFilteres}
-          >
-            {t('general.clear')}
-          </Button>
-          <Button
-            disabled={applyDisabled}
-            sx={sx.applyButton}
-            onClick={onApplyClick}
-          >
-            {t('general.apply')}
-          </Button>
-        </Box>
       </Box>
     </>
   );
@@ -172,7 +172,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     display: 'flex',
     justifyContent: 'center',
     gap: '8px',
-    width: '100%'
+    width: '100%',
+    marginBottom: '8px'
   },
   clearButton: {
     width: '100%',
