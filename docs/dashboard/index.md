@@ -1,4 +1,4 @@
-# G4X Viewer dashboard
+# dashboard controls
 
 ---
 

@@ -1,4 +1,4 @@
-# G4X viewer usage
+# viewer controls
 
 ---
 
