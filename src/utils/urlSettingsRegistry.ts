@@ -1,3 +1,4 @@
+import { DETAIL_VIEW_ID } from '@hms-dbmi/viv';
 import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
@@ -74,6 +75,35 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       useViewerStore.setState((state) => ({
         globalSelection: { ...state.globalSelection, z: val as number }
       }))
+  },
+  {
+    key: 'cam',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { viewState } = useViewerStore.getState();
+      if (!viewState || !Array.isArray(viewState.target) || typeof viewState.zoom !== 'number') {
+        return '';
+      }
+      const [x, y] = viewState.target;
+      return `${Number(x.toFixed(2))},${Number(y.toFixed(2))},${Number(viewState.zoom.toFixed(4))}`;
+    },
+    write: (val) => {
+      if (!val || typeof val !== 'string') return;
+      const parts = (val as string).split(',').map(Number);
+      if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return;
+      const [x, y, zoom] = parts;
+      const current = useViewerStore.getState().viewState;
+      useViewerStore.setState({
+        viewState: {
+          ...(current ?? {}),
+          // id is required: PictureInPictureViewer matches viewState by id === DETAIL_VIEW_ID
+          id: DETAIL_VIEW_ID,
+          target: [x, y, 0],
+          zoom
+        }
+      });
+    }
   },
   {
     key: 'pol',
