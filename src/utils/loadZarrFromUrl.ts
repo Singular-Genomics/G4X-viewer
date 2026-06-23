@@ -65,12 +65,6 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
   useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
-  // Apply after hasTranscriptsData/hasSegmentationData are set so useOnDemandDataLoader fires with correct values.
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has(IMAGE_URL_PARAM)) {
-    applyUrlSettings(urlParams);
-  }
-
   if (!hasTranscriptsData) {
     warningMessages.push(t('sourceFiles.transcriptsLoadError'));
   }
@@ -119,6 +113,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     }
   } else {
     warningMessages.push(t('sourceFiles.segmentationMissingData'));
+  }
+
+  // Apply after availableSegmentations is populated so useOnDemandDataLoader finds segmentation data immediately.
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(IMAGE_URL_PARAM)) {
+    applyUrlSettings(urlParams);
   }
 
   successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));

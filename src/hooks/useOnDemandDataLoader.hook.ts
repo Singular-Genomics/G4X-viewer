@@ -12,6 +12,7 @@ export const useOnDemandDataLoader = () => {
 
   const isTranscriptLayerOn = useTranscriptLayerStore((s) => s.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((s) => s.isCellLayerOn);
+  const availableSegmentations = useCellSegmentationLayerStore((s) => s.availableSegmentations);
 
   useEffect(() => {
     if (!isTranscriptLayerOn) return;
@@ -75,16 +76,16 @@ export const useOnDemandDataLoader = () => {
 
   useEffect(() => {
     if (!isCellLayerOn) return;
+    if (availableSegmentations.length === 0) return;
 
     const { hasSegmentationData, zarrDataSet, zarrStoreFactory, fileName } = useZarrDataStore.getState();
-    const { cellMasksData, availableSegmentations } = useCellSegmentationLayerStore.getState();
+    const { cellMasksData } = useCellSegmentationLayerStore.getState();
 
     if (!hasSegmentationData || cellMasksData !== null) return;
 
     const load = async () => {
       try {
         const defaultSegmentation = availableSegmentations[0];
-        if (!defaultSegmentation) throw new Error('No segmentation available');
 
         const generalDetails = useViewerStore.getState().generalDetails;
 
@@ -151,5 +152,5 @@ export const useOnDemandDataLoader = () => {
     };
 
     load();
-  }, [isCellLayerOn, enqueueSnackbar, t]);
+  }, [isCellLayerOn, availableSegmentations, enqueueSnackbar, t]);
 };
