@@ -22,12 +22,12 @@ We provide a web-based version of the G4X-viewer that can be accessed through ou
 
 <br>
 
-### viewer
+### [viewer](viewer/index.md)
 ---
 
-Navigate to the [viewer](viewer/index.md) page to learn how to interact with the G4X-viewer. These pages comprehensively go through all interactable elements on the viewer and how to use them, organized by which modalities/image layers are being manipulated.
+Navigate to the [viewer](viewer/index.md) page to learn how to interact with the G4X-viewer's core functions. These pages comprehensively go through all interactable elements on the viewer tab and how to use them, organized by which modalities and image layers are being manipulated.
 
-The covered pages include:
+The viewer pages include:
 
 + uploading source files
 + on-screen controls
@@ -40,10 +40,10 @@ The covered pages include:
 
 <br>
 
-### dashboard
+### [dashboard](dashboard/index.md)
 ---
 
-Navigate to the G4X-viewer [dashboard](dashboard/index.md) to learn how to use our viewer to perform basic analysis on your data natively. All dashboard features are instanced with your viewer window to allow you to seamlessly jump between looking at your data and performing rapid analysis.
+Navigate to the [dashboard](dashboard/index.md) page to learn how to use the dashboard tab to perform basic analysis on your data without ever leaving the G4X-viewer. All dashboard features are instanced with your viewer window to allow you to seamlessly jump between looking at your data and performing rapid analysis.
 
 The dashboard pages include:
 
@@ -55,7 +55,7 @@ The dashboard pages include:
 
 <br>
 
-### resources
+### [resources](resources.md)
 ---
 
 Please navigate to the G4X-viewer [resources](./resources.md) to help you leverage the suite of tools available in the G4X-viewer
