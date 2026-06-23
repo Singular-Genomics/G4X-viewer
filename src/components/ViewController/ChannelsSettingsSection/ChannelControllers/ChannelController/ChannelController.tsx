@@ -60,8 +60,14 @@ export const ChannelController = ({
       result[isMorphology(opt) ? 0 : 1].push(opt);
       return result;
     },
-    [[], []]
+    [[], []] as [string[], string[]]
   );
+
+  morphologyOptions.sort((a, b) => {
+    const indexA = MORPHOLOGY_KEYWORDS.findIndex((kw) => a.toLowerCase().includes(kw));
+    const indexB = MORPHOLOGY_KEYWORDS.findIndex((kw) => b.toLowerCase().includes(kw));
+    return indexA - indexB;
+  });
 
   const [currentMinValue, currentMaxValue] = slider;
   const [domainMin, domainMax] = domain;
