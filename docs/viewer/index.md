@@ -8,7 +8,7 @@ To begin exploring your data, first load your sample into the viewer. Each G4X s
 
 The files contained within this directory vary slightly between transcript-only and multiomics experiments, but all supported output formats are compatible with the G4X Viewer.
 
-Each file contributes a specific interactive layer to the visualization, enabling simultaneous exploration of transcripts, cell segmentations, protein images, and fH&E imagery. The sections below provide detailed guidance for loading data, configuring display settings, and using the available analysis and filtering tools.
+Each file contributes a specific interactive layer to the visualization, enabling simultaneous exploration of transcripts, cell segmentation, protein, and fH&E images. The sections below provide detailed guidance for loading data, configuring display settings, and using the available analysis and filtering tools.
 
 ## [source files](./source_files.md)
 
