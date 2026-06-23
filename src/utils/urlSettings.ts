@@ -1,7 +1,10 @@
 import { SettingType } from './urlSettings.types';
 import { SETTINGS_REGISTRY } from './urlSettingsRegistry';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
+import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { decodeFilterIndices, decodeChangedColors } from './urlSettings.cellFilterHelpers';
+import { decodeTranscriptFilterIndices, decodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
 
 function serializeValue(val: boolean | number | string, type: SettingType): string {
   if (type === 'boolean') return val ? '1' : '0';
@@ -32,6 +35,23 @@ export function applyUrlSettings(params: URLSearchParams): void {
     if (raw !== null) {
       setting.write(deserializeValue(raw, setting.type));
     }
+  }
+}
+
+export function applyTranscriptFilterUrlSettings(params: URLSearchParams): void {
+  const { colorMapConfig } = useZarrDataStore.getState();
+  if (!colorMapConfig.length) return;
+
+  const rawFi = params.get('tr_fi');
+  if (rawFi) {
+    const filters = decodeTranscriptFilterIndices(rawFi, colorMapConfig);
+    if (filters.length) useTranscriptLayerStore.setState({ geneNameFilters: filters });
+  }
+
+  const rawFc = params.get('tr_fc');
+  if (rawFc) {
+    const updated = decodeTranscriptChangedColors(rawFc, colorMapConfig);
+    useZarrDataStore.setState({ colorMapConfig: updated });
   }
 }
 

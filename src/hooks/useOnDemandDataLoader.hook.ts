@@ -5,7 +5,7 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
-import { applyCellFilterUrlSettings } from '../utils/urlSettings';
+import { applyCellFilterUrlSettings, applyTranscriptFilterUrlSettings } from '../utils/urlSettings';
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -50,6 +50,7 @@ export const useOnDemandDataLoader = () => {
                 (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
               );
             }
+            useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
         } else if (pendingTranscriptAttrs) {
@@ -61,11 +62,13 @@ export const useOnDemandDataLoader = () => {
               gene_name,
               color: color as number[]
             }));
+            useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
         }
 
         useZarrDataStore.getState().setTranscriptConfigLoaded(true);
+        applyTranscriptFilterUrlSettings(new URLSearchParams(window.location.search));
       } catch {
         enqueueSnackbar(t('sourceFiles.transcriptsLoadError'), { variant: 'error' });
         useTranscriptLayerStore.getState().reset();

@@ -18,6 +18,8 @@ import {
   isDefaultSelectionIndices
 } from './urlSettings.channelHelpers';
 import { encodeFilterIndices, encodeChangedColors } from './urlSettings.cellFilterHelpers';
+import { encodeTranscriptFilterIndices, encodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
+import { useZarrDataStore } from '../stores/ZarrDataStore';
 
 export const SETTINGS_REGISTRY: SettingDef[] = [
   // Layer visibility
@@ -162,6 +164,30 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       if (n < 0) return;
       useTranscriptLayerStore.setState({ maxVisibleLayers: n });
     }
+  },
+  {
+    key: 'tr_fi',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { geneNameFilters } = useTranscriptLayerStore.getState();
+      if (!geneNameFilters.length) return '';
+      const { colorMapConfig } = useZarrDataStore.getState();
+      if (!colorMapConfig.length) return '';
+      return encodeTranscriptFilterIndices(geneNameFilters, colorMapConfig);
+    },
+    write: () => {}
+  },
+  {
+    key: 'tr_fc',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { colorMapConfig, loadedColorMapConfig } = useZarrDataStore.getState();
+      if (!colorMapConfig.length || !loadedColorMapConfig.length) return '';
+      return encodeTranscriptChangedColors(colorMapConfig, loadedColorMapConfig);
+    },
+    write: () => {}
   },
   // Cell segmentation settings
   {
