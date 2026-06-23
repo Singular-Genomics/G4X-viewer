@@ -20,6 +20,7 @@ import {
 import { encodeFilterIndices, encodeChangedColors } from './urlSettings.cellFilterHelpers';
 import { encodeTranscriptFilterIndices, encodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
+import { useUmapGraphStore } from '../stores/UmapGraphStore/UmapGraphStore';
 
 export const SETTINGS_REGISTRY: SettingDef[] = [
   // Layer visibility
@@ -188,6 +189,48 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       return encodeTranscriptChangedColors(colorMapConfig, loadedColorMapConfig);
     },
     write: () => {}
+  },
+  // UMAP settings
+  {
+    key: 'umap_r',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { ranges } = useUmapGraphStore.getState();
+      if (!ranges) return '';
+      const { xStart, xEnd, yStart, yEnd } = ranges;
+      return `${xStart.toFixed(4)},${xEnd.toFixed(4)},${yStart.toFixed(4)},${yEnd.toFixed(4)}`;
+    },
+    write: (val) => {
+      if (!val || typeof val !== 'string') return;
+      const parts = (val as string).split(',').map(Number);
+      if (parts.length !== 4 || parts.some(isNaN)) return;
+      const [xStart, xEnd, yStart, yEnd] = parts;
+      if (xStart >= xEnd || yEnd >= yStart) return;
+      useUmapGraphStore.setState({ ranges: { xStart, xEnd, yStart, yEnd } });
+    }
+  },
+  {
+    key: 'umap_ps',
+    type: 'number',
+    defaultValue: 1,
+    read: () => useUmapGraphStore.getState().settings.pointSize,
+    write: (val) => {
+      const n = val as number;
+      if (n < 1 || n > 10) return;
+      useUmapGraphStore.setState((state) => ({ settings: { ...state.settings, pointSize: n } }));
+    }
+  },
+  {
+    key: 'umap_ss',
+    type: 'number',
+    defaultValue: 2,
+    read: () => useUmapGraphStore.getState().settings.subsamplingValue,
+    write: (val) => {
+      const n = val as number;
+      if (n < 2 || n > 20) return;
+      useUmapGraphStore.setState((state) => ({ settings: { ...state.settings, subsamplingValue: n } }));
+    }
   },
   // Cell segmentation settings
   {
