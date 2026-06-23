@@ -17,6 +17,7 @@ import {
   encodeVisible,
   isDefaultSelectionIndices
 } from './urlSettings.channelHelpers';
+import { encodeFilterIndices, encodeChangedColors } from './urlSettings.cellFilterHelpers';
 
 export const SETTINGS_REGISTRY: SettingDef[] = [
   // Layer visibility
@@ -190,6 +191,45 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().isCellNameFilterOn,
     write: (val) => useCellSegmentationLayerStore.setState({ isCellNameFilterOn: val as boolean })
+  },
+  {
+    key: 'seg_ck',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { selectedClusterLabelKey, availableClusterLabels } = useCellSegmentationLayerStore.getState();
+      if (!availableClusterLabels.length || selectedClusterLabelKey === availableClusterLabels[0].key) return '';
+      return selectedClusterLabelKey;
+    },
+    write: () => {}
+  },
+  {
+    key: 'seg_fi',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { cellNameFilters, availableClusterLabels, selectedClusterLabelKey } =
+        useCellSegmentationLayerStore.getState();
+      if (!cellNameFilters.length) return '';
+      const label = availableClusterLabels.find((l) => l.key === selectedClusterLabelKey);
+      if (!label) return '';
+      return encodeFilterIndices(cellNameFilters, label.clusterIdOrder);
+    },
+    write: () => {}
+  },
+  {
+    key: 'seg_fc',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { cellColormapConfig, availableClusterLabels, selectedClusterLabelKey } =
+        useCellSegmentationLayerStore.getState();
+      if (!cellColormapConfig.length) return '';
+      const label = availableClusterLabels.find((l) => l.key === selectedClusterLabelKey);
+      if (!label) return '';
+      return encodeChangedColors(cellColormapConfig, label.clusterIdColors, label.clusterIdOrder);
+    },
+    write: () => {}
   },
   {
     key: 'seg_sf',

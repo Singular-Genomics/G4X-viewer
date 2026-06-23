@@ -1,5 +1,7 @@
 import { SettingType } from './urlSettings.types';
 import { SETTINGS_REGISTRY } from './urlSettingsRegistry';
+import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { decodeFilterIndices, decodeChangedColors } from './urlSettings.cellFilterHelpers';
 
 function serializeValue(val: boolean | number | string, type: SettingType): string {
   if (type === 'boolean') return val ? '1' : '0';
@@ -29,6 +31,36 @@ export function applyUrlSettings(params: URLSearchParams): void {
     const raw = params.get(setting.key);
     if (raw !== null) {
       setting.write(deserializeValue(raw, setting.type));
+    }
+  }
+}
+
+export function applyCellFilterUrlSettings(params: URLSearchParams): void {
+  const { availableClusterLabels } = useCellSegmentationLayerStore.getState();
+  if (!availableClusterLabels.length) return;
+
+  let label = availableClusterLabels[0];
+  const rawCk = params.get('seg_ck');
+  if (rawCk) {
+    const found = availableClusterLabels.find((l) => l.key === rawCk);
+    if (found) {
+      label = found;
+      useCellSegmentationLayerStore.setState({ selectedClusterLabelKey: rawCk });
+    }
+  }
+
+  const rawFi = params.get('seg_fi');
+  if (rawFi) {
+    const filters = decodeFilterIndices(rawFi, label.clusterIdOrder);
+    if (filters.length) useCellSegmentationLayerStore.setState({ cellNameFilters: filters });
+  }
+
+  const rawFc = params.get('seg_fc');
+  if (rawFc) {
+    const { cellColormapConfig } = useCellSegmentationLayerStore.getState();
+    if (cellColormapConfig.length) {
+      const updated = decodeChangedColors(rawFc, cellColormapConfig, label.clusterIdOrder);
+      useCellSegmentationLayerStore.setState({ cellColormapConfig: updated });
     }
   }
 }
