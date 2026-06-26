@@ -643,7 +643,16 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: (val) => {
       const index = val as number;
       if (index < 0) return;
-      useChannelsStore.getState().setSoloChannel(index);
+      // applyUrlSettings runs twice; setSoloChannel toggles, so set state idempotently.
+      useChannelsStore.setState((store) => {
+        if (index >= store.channelsVisible.length) return store;
+        return {
+          presoloChannelsVisible:
+            store.soloChannelIndex === null ? [...store.channelsVisible] : store.presoloChannelsVisible,
+          soloChannelIndex: index,
+          channelsVisible: store.channelsVisible.map((_, i) => i === index)
+        };
+      });
     }
   }
 ];
