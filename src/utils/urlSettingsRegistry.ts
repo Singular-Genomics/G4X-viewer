@@ -21,6 +21,13 @@ import { encodeFilterIndices, encodeChangedColors } from './urlSettings.cellFilt
 import { encodeTranscriptFilterIndices, encodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useUmapGraphStore } from '../stores/UmapGraphStore/UmapGraphStore';
+import { useCytometryGraphStore } from '../stores/CytometryGraphStore/CytometryGraphStore';
+import {
+  AVAILABLE_AXIS_TYPES,
+  AVAILABLE_COLORSCALES,
+  AVAILABLE_EXPONENT_FORMATS,
+  AVAILABLE_GRAPH_MODES
+} from '../stores/CytometryGraphStore/CytometryGraphStore.types';
 
 export const SETTINGS_REGISTRY: SettingDef[] = [
   // Layer visibility
@@ -231,6 +238,163 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       if (n < 2 || n > 20) return;
       useUmapGraphStore.setState((state) => ({ settings: { ...state.settings, subsamplingValue: n } }));
     }
+  },
+  // Cytometry settings
+  {
+    key: 'cyto_gm',
+    type: 'string',
+    defaultValue: 'scattergl',
+    read: () => useCytometryGraphStore.getState().settings.graphMode,
+    write: (val) => {
+      if (!AVAILABLE_GRAPH_MODES.includes(val as (typeof AVAILABLE_GRAPH_MODES)[number])) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, graphMode: val as (typeof AVAILABLE_GRAPH_MODES)[number] }
+      }));
+    }
+  },
+  {
+    key: 'cyto_ps',
+    type: 'number',
+    defaultValue: 2,
+    read: () => useCytometryGraphStore.getState().settings.pointSize,
+    write: (val) => {
+      const n = val as number;
+      if (n < 1 || n > 10) return;
+      useCytometryGraphStore.setState((state) => ({ settings: { ...state.settings, pointSize: n } }));
+    }
+  },
+  {
+    key: 'cyto_ss',
+    type: 'number',
+    defaultValue: 2,
+    read: () => useCytometryGraphStore.getState().settings.subsamplingValue,
+    write: (val) => {
+      const n = val as number;
+      if (n < 2 || n > 20) return;
+      useCytometryGraphStore.setState((state) => ({ settings: { ...state.settings, subsamplingValue: n } }));
+    }
+  },
+  {
+    key: 'cyto_bx',
+    type: 'number',
+    defaultValue: 100,
+    read: () => useCytometryGraphStore.getState().settings.binCountX,
+    write: (val) => {
+      const n = val as number;
+      if (n < 2) return;
+      useCytometryGraphStore.setState((state) => ({ settings: { ...state.settings, binCountX: n } }));
+    }
+  },
+  {
+    key: 'cyto_by',
+    type: 'number',
+    defaultValue: 100,
+    read: () => useCytometryGraphStore.getState().settings.binCountY,
+    write: (val) => {
+      const n = val as number;
+      if (n < 2) return;
+      useCytometryGraphStore.setState((state) => ({ settings: { ...state.settings, binCountY: n } }));
+    }
+  },
+  {
+    key: 'cyto_at',
+    type: 'string',
+    defaultValue: 'linear',
+    read: () => useCytometryGraphStore.getState().settings.axisType,
+    write: (val) => {
+      if (!AVAILABLE_AXIS_TYPES.includes(val as (typeof AVAILABLE_AXIS_TYPES)[number])) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, axisType: val as (typeof AVAILABLE_AXIS_TYPES)[number] }
+      }));
+    }
+  },
+  {
+    key: 'cyto_ef',
+    type: 'string',
+    defaultValue: 'none',
+    read: () => useCytometryGraphStore.getState().settings.exponentFormat,
+    write: (val) => {
+      if (!AVAILABLE_EXPONENT_FORMATS.includes(val as (typeof AVAILABLE_EXPONENT_FORMATS)[number])) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, exponentFormat: val as (typeof AVAILABLE_EXPONENT_FORMATS)[number] }
+      }));
+    }
+  },
+  {
+    key: 'cyto_cs',
+    type: 'string',
+    defaultValue: 'Singular',
+    read: () => useCytometryGraphStore.getState().settings.colorscale.label,
+    write: (val) => {
+      const scale = AVAILABLE_COLORSCALES.find((c) => c.label === val);
+      if (!scale) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: {
+          ...state.settings,
+          colorscale: { ...state.settings.colorscale, label: scale.label, value: scale.value }
+        }
+      }));
+    }
+  },
+  {
+    key: 'cyto_cr',
+    type: 'boolean',
+    defaultValue: false,
+    read: () => useCytometryGraphStore.getState().settings.colorscale.reversed,
+    write: (val) =>
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, colorscale: { ...state.settings.colorscale, reversed: val as boolean } }
+      }))
+  },
+  {
+    key: 'cyto_tl',
+    type: 'number',
+    defaultValue: -1,
+    read: () => useCytometryGraphStore.getState().settings.colorscale.lowerThreshold ?? -1,
+    write: (val) => {
+      const n = val as number;
+      if (n < 0 || n > 1) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, colorscale: { ...state.settings.colorscale, lowerThreshold: n } }
+      }));
+    }
+  },
+  {
+    key: 'cyto_tu',
+    type: 'number',
+    defaultValue: -1,
+    read: () => useCytometryGraphStore.getState().settings.colorscale.upperThreshold ?? -1,
+    write: (val) => {
+      const n = val as number;
+      if (n < 0 || n > 1) return;
+      useCytometryGraphStore.setState((state) => ({
+        settings: { ...state.settings, colorscale: { ...state.settings.colorscale, upperThreshold: n } }
+      }));
+    }
+  },
+  // Cytometry filter - applied after cell data loads (see applyCytometryFilterUrlSettings)
+  {
+    key: 'cyto_xy',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { xAxisIndex, yAxisIndex } = useCytometryGraphStore.getState().proteinIndices;
+      if (xAxisIndex < 0 || yAxisIndex < 0) return '';
+      return `${xAxisIndex},${yAxisIndex}`;
+    },
+    write: () => {}
+  },
+  {
+    key: 'cyto_r',
+    type: 'string',
+    defaultValue: '',
+    read: () => {
+      const { ranges } = useCytometryGraphStore.getState();
+      if (!ranges) return '';
+      const { xStart, xEnd, yStart, yEnd } = ranges;
+      return `${xStart.toFixed(4)},${xEnd.toFixed(4)},${yStart.toFixed(4)},${yEnd.toFixed(4)}`;
+    },
+    write: () => {}
   },
   // Cell segmentation settings
   {

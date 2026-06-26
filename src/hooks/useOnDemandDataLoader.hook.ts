@@ -5,7 +5,11 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
-import { applyCellFilterUrlSettings, applyTranscriptFilterUrlSettings } from '../utils/urlSettings';
+import {
+  applyCellFilterUrlSettings,
+  applyCytometryFilterUrlSettings,
+  applyTranscriptFilterUrlSettings
+} from '../utils/urlSettings';
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -116,6 +120,7 @@ export const useOnDemandDataLoader = () => {
             selectedClusterLabelKey: cellsData.clusterLabels[0].key
           });
           applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
+          applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));
         } else if (zarrStoreFactory) {
           const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
             await import('../utils/ZarrCellsLoader');
@@ -142,6 +147,7 @@ export const useOnDemandDataLoader = () => {
             selectedClusterLabelKey: cellsData.clusterLabels[0].key
           });
           applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
+          applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));
         }
 
         enqueueSnackbar(
