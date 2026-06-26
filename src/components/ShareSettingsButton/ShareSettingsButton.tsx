@@ -20,7 +20,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
-import { applyUrlSettings, serializeSettings } from '../../utils/urlSettings';
+import {
+  applyCellFilterUrlSettings,
+  applyCytometryFilterUrlSettings,
+  applyTranscriptFilterUrlSettings,
+  applyUrlSettings,
+  serializeSettings
+} from '../../utils/urlSettings';
 import { IMAGE_URL_PARAM } from '../../hooks/useCloudImageLoader.hook';
 import { loadZarrFromUrl } from '../../utils/loadZarrFromUrl';
 
@@ -96,7 +102,18 @@ export const ShareSettingsButton = () => {
   };
 
   const handleApplySettings = () => {
-    applyUrlSettings(new URLSearchParams(settingsInput));
+    const params = new URLSearchParams(settingsInput);
+
+    const imageUrl = new URLSearchParams(window.location.search).get(IMAGE_URL_PARAM);
+    if (imageUrl) params.set(IMAGE_URL_PARAM, imageUrl);
+
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+
+    applyUrlSettings(params);
+    applyCellFilterUrlSettings(params);
+    applyTranscriptFilterUrlSettings(params);
+    applyCytometryFilterUrlSettings(params);
+
     enqueueSnackbar({ message: t('general.shareSettingsApplied'), variant: 'success' });
     handleClose();
   };
