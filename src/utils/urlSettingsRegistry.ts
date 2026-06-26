@@ -27,32 +27,33 @@ import {
   AVAILABLE_EXPONENT_FORMATS,
   AVAILABLE_GRAPH_MODES
 } from '../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { URL_KEYS } from './urlSettings.keys';
 
 export const SETTINGS_REGISTRY: SettingDef[] = [
   // Layer visibility
   {
-    key: 'ch',
+    key: URL_KEYS.channelsVisible,
     type: 'boolean',
     defaultValue: true,
     read: () => useChannelsStore.getState().isLayerVisible,
     write: (val) => useChannelsStore.setState({ isLayerVisible: val as boolean })
   },
   {
-    key: 'he',
+    key: URL_KEYS.heVisible,
     type: 'boolean',
     defaultValue: true,
     read: () => useBrightfieldImagesStore.getState().isLayerVisible,
     write: (val) => useBrightfieldImagesStore.setState({ isLayerVisible: val as boolean })
   },
   {
-    key: 'tr',
+    key: URL_KEYS.transcriptOn,
     type: 'boolean',
     defaultValue: false,
     read: () => useTranscriptLayerStore.getState().isTranscriptLayerOn,
     write: (val) => useTranscriptLayerStore.setState({ isTranscriptLayerOn: val as boolean })
   },
   {
-    key: 'seg',
+    key: URL_KEYS.cellOn,
     type: 'boolean',
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().isCellLayerOn,
@@ -60,14 +61,14 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // View settings
   {
-    key: 'ov',
+    key: URL_KEYS.overview,
     type: 'boolean',
     defaultValue: true,
     read: () => useViewerStore.getState().isOverviewOn,
     write: (val) => useViewerStore.setState({ isOverviewOn: val as boolean })
   },
   {
-    key: 'gt',
+    key: URL_KEYS.globalT,
     type: 'number',
     defaultValue: 0,
     read: () => useViewerStore.getState().globalSelection.t ?? 0,
@@ -77,7 +78,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       }))
   },
   {
-    key: 'gz',
+    key: URL_KEYS.globalZ,
     type: 'number',
     defaultValue: 0,
     read: () => useViewerStore.getState().globalSelection.z ?? 0,
@@ -87,7 +88,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       }))
   },
   {
-    key: 'cam',
+    key: URL_KEYS.camera,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -116,14 +117,14 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'pol',
+    key: URL_KEYS.polygonVisible,
     type: 'boolean',
     defaultValue: true,
     read: () => usePolygonDrawingStore.getState().isPolygonLayerVisible,
     write: (val) => usePolygonDrawingStore.setState({ isPolygonLayerVisible: val as boolean })
   },
   {
-    key: 'poa',
+    key: URL_KEYS.polygonOpacity,
     type: 'number',
     defaultValue: 0.5,
     read: () => usePolygonDrawingStore.getState().polygonOpacity,
@@ -131,35 +132,35 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Transcript layer settings
   {
-    key: 'tr_gf',
+    key: URL_KEYS.transcriptGeneFilterActive,
     type: 'boolean',
     defaultValue: false,
     read: () => useTranscriptLayerStore.getState().isGeneNameFilterActive,
     write: (val) => useTranscriptLayerStore.setState({ isGeneNameFilterActive: val as boolean })
   },
   {
-    key: 'tr_sf',
+    key: URL_KEYS.transcriptShowFiltered,
     type: 'boolean',
     defaultValue: false,
     read: () => useTranscriptLayerStore.getState().showFilteredPoints,
     write: (val) => useTranscriptLayerStore.setState({ showFilteredPoints: val as boolean })
   },
   {
-    key: 'tr_ps',
+    key: URL_KEYS.transcriptPointSize,
     type: 'number',
     defaultValue: 1.5,
     read: () => useTranscriptLayerStore.getState().pointSize,
     write: (val) => useTranscriptLayerStore.setState({ pointSize: val as number })
   },
   {
-    key: 'tr_ol',
+    key: URL_KEYS.transcriptOverrideLayers,
     type: 'boolean',
     defaultValue: false,
     read: () => useTranscriptLayerStore.getState().overrideLayers,
     write: (val) => useTranscriptLayerStore.setState({ overrideLayers: val as boolean })
   },
   {
-    key: 'tr_ml',
+    key: URL_KEYS.transcriptMaxLayers,
     type: 'number',
     defaultValue: -1,
     read: () => {
@@ -173,7 +174,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'tr_fi',
+    key: URL_KEYS.transcriptFilterIndices,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -186,7 +187,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: () => {}
   },
   {
-    key: 'tr_fc',
+    key: URL_KEYS.transcriptFilterColors,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -198,7 +199,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // UMAP settings
   {
-    key: 'umap_r',
+    key: URL_KEYS.umapRanges,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -217,7 +218,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'umap_ps',
+    key: URL_KEYS.umapPointSize,
     type: 'number',
     defaultValue: 1,
     read: () => useUmapGraphStore.getState().settings.pointSize,
@@ -228,7 +229,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'umap_ss',
+    key: URL_KEYS.umapSubsampling,
     type: 'number',
     defaultValue: 2,
     read: () => useUmapGraphStore.getState().settings.subsamplingValue,
@@ -240,7 +241,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Cytometry settings
   {
-    key: 'cyto_gm',
+    key: URL_KEYS.cytoGraphMode,
     type: 'string',
     defaultValue: 'scattergl',
     read: () => useCytometryGraphStore.getState().settings.graphMode,
@@ -252,7 +253,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_ps',
+    key: URL_KEYS.cytoPointSize,
     type: 'number',
     defaultValue: 2,
     read: () => useCytometryGraphStore.getState().settings.pointSize,
@@ -263,7 +264,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_ss',
+    key: URL_KEYS.cytoSubsampling,
     type: 'number',
     defaultValue: 2,
     read: () => useCytometryGraphStore.getState().settings.subsamplingValue,
@@ -274,7 +275,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_bx',
+    key: URL_KEYS.cytoBinCountX,
     type: 'number',
     defaultValue: 100,
     read: () => useCytometryGraphStore.getState().settings.binCountX,
@@ -285,7 +286,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_by',
+    key: URL_KEYS.cytoBinCountY,
     type: 'number',
     defaultValue: 100,
     read: () => useCytometryGraphStore.getState().settings.binCountY,
@@ -296,7 +297,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_at',
+    key: URL_KEYS.cytoAxisType,
     type: 'string',
     defaultValue: 'linear',
     read: () => useCytometryGraphStore.getState().settings.axisType,
@@ -308,7 +309,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_ef',
+    key: URL_KEYS.cytoExponentFormat,
     type: 'string',
     defaultValue: 'none',
     read: () => useCytometryGraphStore.getState().settings.exponentFormat,
@@ -320,7 +321,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_cs',
+    key: URL_KEYS.cytoColorscale,
     type: 'string',
     defaultValue: 'Singular',
     read: () => useCytometryGraphStore.getState().settings.colorscale.label,
@@ -336,7 +337,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_cr',
+    key: URL_KEYS.cytoColorscaleReversed,
     type: 'boolean',
     defaultValue: false,
     read: () => useCytometryGraphStore.getState().settings.colorscale.reversed,
@@ -346,7 +347,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       }))
   },
   {
-    key: 'cyto_tl',
+    key: URL_KEYS.cytoLowerThreshold,
     type: 'number',
     defaultValue: -1,
     read: () => useCytometryGraphStore.getState().settings.colorscale.lowerThreshold ?? -1,
@@ -359,7 +360,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cyto_tu',
+    key: URL_KEYS.cytoUpperThreshold,
     type: 'number',
     defaultValue: -1,
     read: () => useCytometryGraphStore.getState().settings.colorscale.upperThreshold ?? -1,
@@ -373,7 +374,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Cytometry filter - applied after cell data loads (see applyCytometryFilterUrlSettings)
   {
-    key: 'cyto_xy',
+    key: URL_KEYS.cytoAxes,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -384,7 +385,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: () => {}
   },
   {
-    key: 'cyto_r',
+    key: URL_KEYS.cytoRanges,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -397,35 +398,35 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Cell segmentation settings
   {
-    key: 'seg_fo',
+    key: URL_KEYS.segFillOpacity,
     type: 'number',
     defaultValue: 0.2,
     read: () => useCellSegmentationLayerStore.getState().cellFillOpacity,
     write: (val) => useCellSegmentationLayerStore.setState({ cellFillOpacity: val as number })
   },
   {
-    key: 'seg_sb',
+    key: URL_KEYS.segShowBoundary,
     type: 'boolean',
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().showBoundary,
     write: (val) => useCellSegmentationLayerStore.setState({ showBoundary: val as boolean })
   },
   {
-    key: 'seg_bw',
+    key: URL_KEYS.segBoundaryWidth,
     type: 'number',
     defaultValue: 1,
     read: () => useCellSegmentationLayerStore.getState().boundaryWidth,
     write: (val) => useCellSegmentationLayerStore.setState({ boundaryWidth: val as number })
   },
   {
-    key: 'seg_cf',
+    key: URL_KEYS.segCellFilterOn,
     type: 'boolean',
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().isCellNameFilterOn,
     write: (val) => useCellSegmentationLayerStore.setState({ isCellNameFilterOn: val as boolean })
   },
   {
-    key: 'seg_ck',
+    key: URL_KEYS.segClusterKey,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -436,7 +437,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: () => {}
   },
   {
-    key: 'seg_fi',
+    key: URL_KEYS.segFilterIndices,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -450,7 +451,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: () => {}
   },
   {
-    key: 'seg_fc',
+    key: URL_KEYS.segFilterColors,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -464,7 +465,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     write: () => {}
   },
   {
-    key: 'seg_sf',
+    key: URL_KEYS.segShowFiltered,
     type: 'boolean',
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().showFilteredCells,
@@ -472,14 +473,14 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Brightfield images settings
   {
-    key: 'he_op',
+    key: URL_KEYS.heOpacity,
     type: 'number',
     defaultValue: 1,
     read: () => useBrightfieldImagesStore.getState().opacity,
     write: (val) => useBrightfieldImagesStore.setState({ opacity: val as number })
   },
   {
-    key: 'he_img',
+    key: URL_KEYS.heImage,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -496,7 +497,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Channel settings
   {
-    key: 'ch_n',
+    key: URL_KEYS.channelCount,
     type: 'number',
     defaultValue: -1,
     read: () => {
@@ -516,28 +517,28 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'cm',
+    key: URL_KEYS.colormap,
     type: 'string',
     defaultValue: '',
     read: () => useViewerStore.getState().colormap,
     write: (val) => useViewerStore.setState({ colormap: val as string })
   },
   {
-    key: 'ln',
+    key: URL_KEYS.lensOn,
     type: 'boolean',
     defaultValue: false,
     read: () => useViewerStore.getState().isLensOn,
     write: (val) => useViewerStore.setState({ isLensOn: val as boolean })
   },
   {
-    key: 'ls',
+    key: URL_KEYS.lensSelection,
     type: 'number',
     defaultValue: 0,
     read: () => useViewerStore.getState().lensSelection,
     write: (val) => useViewerStore.setState({ lensSelection: val as number })
   },
   {
-    key: 'ch_v',
+    key: URL_KEYS.channelVisibility,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -563,7 +564,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'ch_c',
+    key: URL_KEYS.channelColors,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -590,7 +591,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'ch_cl',
+    key: URL_KEYS.channelContrast,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -615,7 +616,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'ch_s',
+    key: URL_KEYS.channelSelections,
     type: 'string',
     defaultValue: '',
     read: () => {
@@ -639,7 +640,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     }
   },
   {
-    key: 'ch_si',
+    key: URL_KEYS.soloChannel,
     type: 'number',
     defaultValue: -1,
     read: () => {

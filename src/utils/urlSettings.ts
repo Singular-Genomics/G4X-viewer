@@ -6,6 +6,7 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { decodeFilterIndices, decodeChangedColors } from './urlSettings.cellFilterHelpers';
 import { decodeTranscriptFilterIndices, decodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
+import { URL_KEYS, URL_KEY_PREFIXES } from './urlSettings.keys';
 
 function serializeValue(val: boolean | number | string, type: SettingType): string {
   if (type === 'boolean') return val ? '1' : '0';
@@ -19,11 +20,12 @@ function deserializeValue(raw: string, type: SettingType): boolean | number | st
   return parseFloat(raw);
 }
 
-// Feature settings are irrelevant for datasets without that data — keep them out of the share URL
+// Skip feature settings whose data isn't in the dataset
 function isFeatureAvailable(key: string): boolean {
-  if (key.startsWith('tr_')) return useZarrDataStore.getState().hasTranscriptsData;
-  if (key.startsWith('umap_')) return useCellSegmentationLayerStore.getState().umapDataAvailable;
-  if (key.startsWith('cyto_') || key.startsWith('seg_')) return useZarrDataStore.getState().hasSegmentationData;
+  if (key.startsWith(URL_KEY_PREFIXES.transcript)) return useZarrDataStore.getState().hasTranscriptsData;
+  if (key.startsWith(URL_KEY_PREFIXES.umap)) return useCellSegmentationLayerStore.getState().umapDataAvailable;
+  if (key.startsWith(URL_KEY_PREFIXES.cytometry) || key.startsWith(URL_KEY_PREFIXES.segmentation))
+    return useZarrDataStore.getState().hasSegmentationData;
   return true;
 }
 
@@ -58,13 +60,13 @@ export function applyTranscriptFilterUrlSettings(params: URLSearchParams): void 
   const { colorMapConfig } = useZarrDataStore.getState();
   if (!colorMapConfig.length) return;
 
-  const rawFi = params.get('tr_fi');
+  const rawFi = params.get(URL_KEYS.transcriptFilterIndices);
   if (rawFi) {
     const filters = decodeTranscriptFilterIndices(rawFi, colorMapConfig);
     if (filters.length) useTranscriptLayerStore.setState({ geneNameFilters: filters });
   }
 
-  const rawFc = params.get('tr_fc');
+  const rawFc = params.get(URL_KEYS.transcriptFilterColors);
   if (rawFc) {
     const updated = decodeTranscriptChangedColors(rawFc, colorMapConfig);
     useZarrDataStore.setState({ colorMapConfig: updated });
@@ -76,7 +78,7 @@ export function applyCellFilterUrlSettings(params: URLSearchParams): void {
   if (!availableClusterLabels.length) return;
 
   let label = availableClusterLabels[0];
-  const rawCk = params.get('seg_ck');
+  const rawCk = params.get(URL_KEYS.segClusterKey);
   if (rawCk) {
     const found = availableClusterLabels.find((l) => l.key === rawCk);
     if (found) {
@@ -85,13 +87,13 @@ export function applyCellFilterUrlSettings(params: URLSearchParams): void {
     }
   }
 
-  const rawFi = params.get('seg_fi');
+  const rawFi = params.get(URL_KEYS.segFilterIndices);
   if (rawFi) {
     const filters = decodeFilterIndices(rawFi, label.clusterIdOrder);
     if (filters.length) useCellSegmentationLayerStore.setState({ cellNameFilters: filters });
   }
 
-  const rawFc = params.get('seg_fc');
+  const rawFc = params.get(URL_KEYS.segFilterColors);
   if (rawFc) {
     const { cellColormapConfig } = useCellSegmentationLayerStore.getState();
     if (cellColormapConfig.length) {
@@ -108,7 +110,7 @@ export function applyCytometryFilterUrlSettings(params: URLSearchParams): void {
 
   // Validate axes against loaded protein count
   let validIndices = false;
-  const rawXy = params.get('cyto_xy');
+  const rawXy = params.get(URL_KEYS.cytoAxes);
   if (rawXy) {
     const [x, y] = rawXy.split(',').map(Number);
     if (Number.isInteger(x) && Number.isInteger(y) && x >= 0 && y >= 0 && x < proteinCount && y < proteinCount) {
@@ -117,7 +119,7 @@ export function applyCytometryFilterUrlSettings(params: URLSearchParams): void {
     }
   }
 
-  const rawR = params.get('cyto_r');
+  const rawR = params.get(URL_KEYS.cytoRanges);
   if (rawR && validIndices) {
     const parts = rawR.split(',').map(Number);
     if (parts.length === 4 && !parts.some(isNaN)) {
