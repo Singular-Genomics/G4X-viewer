@@ -21,6 +21,7 @@ export type ChannelsStoreValues = {
   loadedColors: [number, number, number][];
   loadedContrastLimits: [number, number][];
   loadedChannelsVisible: boolean[];
+  loadedSelections: number[];
 };
 
 export type ChannelsStoreMethods = {
@@ -36,7 +37,8 @@ export type ChannelsStoreMethods = {
   setLoadedChannelDefaults: (
     colors: [number, number, number][],
     contrastLimits: [number, number][],
-    channelsVisible: boolean[]
+    channelsVisible: boolean[],
+    selections: number[]
   ) => void;
 };
 

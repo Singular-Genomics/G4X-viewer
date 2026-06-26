@@ -29,7 +29,8 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   presoloChannelsVisible: [],
   loadedColors: [],
   loadedContrastLimits: [],
-  loadedChannelsVisible: []
+  loadedChannelsVisible: [],
+  loadedSelections: []
 };
 
 export const useChannelsStore = create<ChannelsStore>((set, get) => ({
@@ -138,11 +139,12 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       presoloChannelsVisible[index] = !presoloChannelsVisible[index];
       return { ...store, presoloChannelsVisible };
     }),
-  setLoadedChannelDefaults: (colors, contrastLimits, channelsVisible) =>
+  setLoadedChannelDefaults: (colors, contrastLimits, channelsVisible, selections) =>
     set((store) => ({
       ...store,
       loadedColors: colors,
       loadedContrastLimits: contrastLimits,
-      loadedChannelsVisible: channelsVisible
+      loadedChannelsVisible: channelsVisible,
+      loadedSelections: selections
     }))
 }));

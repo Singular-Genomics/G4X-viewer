@@ -247,7 +247,12 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         channelsSettings
       });
 
-      useChannelsStore.getState().setLoadedChannelDefaults(newColors, newContrastLimits, newChannelsVisible);
+      useChannelsStore.getState().setLoadedChannelDefaults(
+        newColors,
+        newContrastLimits,
+        newChannelsVisible,
+        newSelections.map((sel: any, i: number) => sel.c ?? i)
+      );
 
       const currentLoading = useViewerStore.getState().isViewerLoading;
       useViewerStore.setState({

@@ -14,8 +14,7 @@ import {
   encodeColors,
   encodeContrastLimits,
   encodeSelectionIndices,
-  encodeVisible,
-  isDefaultSelectionIndices
+  encodeVisible
 } from './urlSettings.channelHelpers';
 import { encodeFilterIndices, encodeChangedColors } from './urlSettings.cellFilterHelpers';
 import { encodeTranscriptFilterIndices, encodeTranscriptChangedColors } from './urlSettings.transcriptHelpers';
@@ -501,7 +500,9 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     type: 'number',
     defaultValue: -1,
     read: () => {
-      const { channelsVisible } = useChannelsStore.getState();
+      const { channelsVisible, loadedChannelsVisible } = useChannelsStore.getState();
+      // Only when channels were removed from the loaded set
+      if (!loadedChannelsVisible.length || channelsVisible.length === loadedChannelsVisible.length) return -1;
       return channelsVisible.length;
     },
     write: (val) => {
@@ -618,9 +619,11 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     type: 'string',
     defaultValue: '',
     read: () => {
-      const { selections } = useChannelsStore.getState();
+      const { selections, loadedSelections } = useChannelsStore.getState();
       const indices = selections.map((s, i) => s.c ?? i);
-      return isDefaultSelectionIndices(indices) ? '' : encodeSelectionIndices(indices);
+      // Baseline is the loaded image's active channels, not 0..n
+      if (loadedSelections.length === indices.length && indices.every((v, i) => v === loadedSelections[i])) return '';
+      return encodeSelectionIndices(indices);
     },
     write: (val) => {
       if (!val) return;

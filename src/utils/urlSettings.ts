@@ -19,9 +19,18 @@ function deserializeValue(raw: string, type: SettingType): boolean | number | st
   return parseFloat(raw);
 }
 
+// Feature settings are irrelevant for datasets without that data — keep them out of the share URL
+function isFeatureAvailable(key: string): boolean {
+  if (key.startsWith('tr_')) return useZarrDataStore.getState().hasTranscriptsData;
+  if (key.startsWith('umap_')) return useCellSegmentationLayerStore.getState().umapDataAvailable;
+  if (key.startsWith('cyto_') || key.startsWith('seg_')) return useZarrDataStore.getState().hasSegmentationData;
+  return true;
+}
+
 export function serializeSettings(): URLSearchParams {
   const params = new URLSearchParams();
   for (const setting of SETTINGS_REGISTRY) {
+    if (!isFeatureAvailable(setting.key)) continue;
     const current = setting.read();
     if (current !== setting.defaultValue) {
       params.set(setting.key, serializeValue(current, setting.type));
