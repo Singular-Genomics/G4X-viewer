@@ -583,6 +583,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       const decoded = decodeColors(val as string);
       const count = Math.min(decoded.length, store.colors.length);
       for (let i = 0; i < count; i++) {
+        if (decoded[i].some((c) => !Number.isFinite(c))) continue;
         store.setPropertiesForChannel(i, { colors: decoded[i] });
       }
     }
@@ -607,6 +608,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       const decoded = decodeContrastLimits(val as string);
       const count = Math.min(decoded.length, store.contrastLimits.length);
       for (let i = 0; i < count; i++) {
+        if (decoded[i].some((c) => !Number.isFinite(c))) continue;
         store.setPropertiesForChannel(i, { contrastLimits: decoded[i] });
       }
     }
@@ -627,6 +629,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
       const decoded = decodeSelectionIndices(val as string);
       const count = Math.min(decoded.length, store.selections.length);
       for (let i = 0; i < count; i++) {
+        if (!Number.isInteger(decoded[i]) || decoded[i] < 0) continue;
         const c = channelOptions.length > 0 ? Math.min(decoded[i], channelOptions.length - 1) : decoded[i];
         store.setPropertiesForChannel(i, { selections: { ...store.selections[i], c } });
       }

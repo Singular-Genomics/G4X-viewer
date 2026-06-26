@@ -33,8 +33,14 @@ export function serializeSettings(): URLSearchParams {
 export function applyUrlSettings(params: URLSearchParams): void {
   for (const setting of SETTINGS_REGISTRY) {
     const raw = params.get(setting.key);
-    if (raw !== null) {
-      setting.write(deserializeValue(raw, setting.type));
+    if (raw === null) continue;
+    const value = deserializeValue(raw, setting.type);
+    // Skip NaN/Infinity
+    if (setting.type === 'number' && !Number.isFinite(value as number)) continue;
+    try {
+      setting.write(value);
+    } catch (error) {
+      console.warn(`Skipping invalid URL setting "${setting.key}"`, error);
     }
   }
 }
@@ -91,7 +97,7 @@ export function applyCytometryFilterUrlSettings(params: URLSearchParams): void {
   const proteinCount = segmentationMetadata?.proteinNames?.length ?? 0;
   if (!proteinCount) return;
 
-  // Axes index into proteinValues - validate against loaded protein count to avoid out-of-range filtering
+  // Validate axes against loaded protein count
   let validIndices = false;
   const rawXy = params.get('cyto_xy');
   if (rawXy) {
