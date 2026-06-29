@@ -31,38 +31,71 @@ export const useDirectoryPicker = () => {
       return;
     }
 
+    const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
+    const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
+    const imageAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.images);
+    const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
+
+    const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
+    const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
+    const availableSegmentations: SegmentationOption[] = segmentationOrder
+      .map((label) => ({ label, folderName: segmentationSources[label] }))
+      .filter((seg) => !!seg.folderName);
+
+    const hasImagesData = imageAttrs !== null;
+    const hasTranscriptsData = !!transcriptAttrs?.layer_config;
+    const hasSegmentationData = availableSegmentations.length > 0;
+
+    if (!hasImagesData && !hasTranscriptsData && !hasSegmentationData) {
+      enqueueSnackbar(t('sourceFiles.zarrCorrupted'), { variant: 'error' });
+      return;
+    }
+
     // Reset dependent stores
     useZarrDataStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
-    useViewerStore.setState({ physicalSize: null });
+    useViewerStore.setState({
+      physicalSize: null,
+      isTranscriptTilesLoading: false,
+      viewState: null,
+      isViewerLoading: undefined
+    });
 
     const { LocalFileStore, LocalFileHandleZarritaStore } = await import('../../../../loaders/LocalFileStore');
     const { LRUCacheStore } = await import('../../../../loaders/LRUCacheStore');
-
-    const lruStore = new LRUCacheStore(new LocalFileStore(handle));
 
     // Create zarrita store factory for local files
     const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) => new LocalFileHandleZarritaStore(handle, subpath);
 
     useZarrDataStore.getState().setFileName(handle.name);
     useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
-
-    const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
     useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
-    useZarrDataStore.getState().setHasTranscriptsData(!!transcriptAttrs?.layer_config);
+    useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+    useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
+
+    const successMessages: string[] = [];
+    const warningMessages: string[] = [];
 
     // Set the image source — createLoader will detect __localZarrStore
-    useViewerStore.setState({
-      source: {
-        urlOrFile: lruStore as any,
-        description: handle.name
-      }
-    });
+    if (hasImagesData) {
+      const lruStore = new LRUCacheStore(new LocalFileStore(handle));
+      useViewerStore.setState({
+        source: {
+          urlOrFile: lruStore as any,
+          description: handle.name
+        }
+      });
+    } else {
+      warningMessages.push(t('sourceFiles.imagesLoadError'));
+    }
+
+    if (!hasTranscriptsData) {
+      warningMessages.push(t('sourceFiles.transcriptsLoadError'));
+    }
 
     // Load run metadata from root .zattrs
-    const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
     if (rootAttrs?.run_metadata) {
       useViewerStore.getState().setGeneralDetails({
         fileName: ZARR_SUBPATHS.attrs.root,
@@ -72,7 +105,6 @@ export const useDirectoryPicker = () => {
     }
 
     // Load image axes metadata
-    const imageAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.images);
     if (imageAttrs?.axes?.pixel_per_um) {
       useViewerStore.setState({
         physicalSize: {
@@ -95,26 +127,15 @@ export const useDirectoryPicker = () => {
       // No H&E directory — skip
     }
 
-    const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
-    const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
-    const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
-    const availableSegmentations: SegmentationOption[] = segmentationOrder
-      .map((label) => ({ label, folderName: segmentationSources[label] }))
-      .filter((seg) => !!seg.folderName);
-
-    const hasSegmentationData = availableSegmentations.length > 0;
-    useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
-
     if (hasSegmentationData) {
       useCellSegmentationLayerStore.setState({
         availableSegmentations,
         selectedSegmentationLabel: availableSegmentations[0].label,
         fileName: handle.name
       });
+    } else {
+      warningMessages.push(t('sourceFiles.segmentationMissingData'));
     }
-
-    const successMessages: string[] = [];
-    const warningMessages: string[] = [];
 
     if (warningMessages.length === 0) {
       successMessages.push(t('sourceFiles.zarrSuccess', { filename: handle.name }));

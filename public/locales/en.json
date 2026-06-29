@@ -173,6 +173,7 @@
     "imageInputPlaceholder": "Enter URL to .ome.tiff or .zarr file",
     "imageInvalidFile": "Invalid input file name. Only .ome.tiff and .zarr extensions allowed",
     "imageLoadError": "Failed to load image. Please check the URL and try again.",
+    "imageLoadErrorLocal": "Failed to load image. Please check the folder and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
     "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
