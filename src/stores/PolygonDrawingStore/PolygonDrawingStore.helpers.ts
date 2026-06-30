@@ -2,7 +2,14 @@ import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useViewerStore } from '../ViewerStore';
 import { PolygonFeature, Point2D, LineSegment, IntersectionResult, BoundingBox } from './PolygonDrawingStore.types';
-import { CellsExportData, TranscriptsExportData } from '../../components/PolygonImportExport/PolygonImportExport.types';
+import {
+  CellsExportData,
+  TranscriptsExportData,
+  CellExportRecord,
+  RoiCellExport,
+  RoiTranscriptExport
+} from '../../components/PolygonImportExport/PolygonImportExport.types';
+import { SingleMask } from '../../shared/types';
 
 // Epsilon for floating point comparisons
 const EPSILON = 1e-10;
@@ -259,50 +266,117 @@ const generateExportJsonFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.json`;
 };
 
+// Builds the canonical per-ROI export data consumed by both the JSON (below) and CSV serializers.
+export const buildTranscriptExports = (
+  polygonFeatures: PolygonFeature[],
+  polygonNotes: Record<number, string> = {}
+): RoiTranscriptExport[] => {
+  const { selectedPoints } = useTranscriptLayerStore.getState();
+
+  return polygonFeatures.map((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const data = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      transcripts: data.map((t) => ({
+        geneName: t.geneName || 'unknown',
+        position: t.position || [],
+        cellId: t.cellId || ''
+      }))
+    };
+  });
+};
+
+export const buildCellExports = (
+  polygonFeatures: PolygonFeature[],
+  includeGenes: boolean,
+  polygonNotes: Record<number, string> = {}
+): RoiCellExport[] => {
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
+
+  const proteinNames = segmentationMetadata?.proteinNames || [];
+  const allGeneNames = segmentationMetadata?.geneNames || [];
+  // An empty array is truthy, so gate gene data on length - keeps JSON and CSV in sync
+  const includeGeneData = includeGenes && allGeneNames.length > 0;
+  const geneNames = includeGeneData ? allGeneNames : [];
+
+  return polygonFeatures.map((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const data = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      hasSegmentationMetadata: !!segmentationMetadata,
+      proteinNames,
+      geneNames,
+      cells: data.map((cell) => buildCellRecord(cell, proteinNames, geneNames, includeGeneData))
+    };
+  });
+};
+
+const buildCellRecord = (
+  cell: SingleMask,
+  proteinNames: string[],
+  geneNames: string[],
+  includeGeneData: boolean
+): CellExportRecord => {
+  const protein: Record<string, number> = {};
+  proteinNames.forEach((name, index) => {
+    protein[name] = cell.proteinValues[index];
+  });
+
+  let transcript: Record<string, number> | null = null;
+  if (includeGeneData) {
+    const transcriptMap: Record<string, number> = {};
+    cell.nonzeroGeneIndices.forEach((geneIndex, index) => {
+      const geneName = geneNames[geneIndex];
+      if (geneName !== undefined) {
+        transcriptMap[geneName] = cell.nonzeroGeneValues[index];
+      }
+    });
+    transcript = transcriptMap;
+  }
+
+  return {
+    cellId: cell.cellId,
+    area: cell.area,
+    totalCounts: cell.totalCounts,
+    totalGenes: cell.totalGenes,
+    clusterId: cell.clusterId,
+    vertices: cell.vertices,
+    umapValues: cell.umapValues,
+    protein,
+    transcript
+  };
+};
+
 export const exportPolygonsWithCells = (
   polygonFeatures: PolygonFeature[],
   includeGenes: boolean,
   polygonNotes: Record<number, string>
 ) => {
-  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
-
   const exportData: CellsExportData = {};
 
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const coordinates = feature.geometry.coordinates[0];
-
-    exportData[roiName] = {
-      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells:
-        selectedCells
-          .find((selection) => selection.roiId === polygonId)
-          ?.data.map((entry) => {
-            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
-            return {
-              ...exportObj,
-              ...(segmentationMetadata?.proteinNames
-                ? {
-                    protein: Object.fromEntries(
-                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
-                    )
-                  }
-                : {}),
-              ...(segmentationMetadata?.geneNames && includeGenes
-                ? {
-                    transcript: Object.fromEntries(
-                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
-                        segmentationMetadata.geneNames[geneIndex],
-                        entry.nonzeroGeneValues[index]
-                      ])
-                    )
-                  }
-                : {})
-            };
-          }) || [],
-      polygonId: polygonId,
-      notes: polygonNotes[polygonId] || ''
+  buildCellExports(polygonFeatures, includeGenes, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      cells: roi.cells.map((cell) => {
+        const { protein, transcript, ...rest } = cell;
+        return {
+          ...rest,
+          ...(roi.hasSegmentationMetadata ? { protein } : {}),
+          ...(transcript !== null ? { transcript } : {})
+        };
+      }),
+      polygonId: roi.polygonId,
+      notes: roi.notes
     };
   });
 
@@ -322,20 +396,14 @@ export const exportPolygonsWithTranscripts = (
   polygonFeatures: PolygonFeature[],
   polygonNotes: Record<number, string>
 ) => {
-  const { selectedPoints } = useTranscriptLayerStore.getState();
-
   const exportData: TranscriptsExportData = {};
 
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const coordinates = feature.geometry.coordinates[0];
-
-    exportData[roiName] = {
-      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      transcripts: selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [],
-      polygonId: polygonId,
-      notes: polygonNotes[polygonId] || ''
+  buildTranscriptExports(polygonFeatures, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      transcripts: roi.transcripts,
+      polygonId: roi.polygonId,
+      notes: roi.notes
     };
   });
 

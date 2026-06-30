@@ -224,8 +224,20 @@ export const PolygonImportExport = ({
           </FormControl>
 
           <Box sx={sx.exportGrid}>
-            {/* Segmentation Row */}
+            {/* Segmentation Section */}
             <Box>
+              <Typography
+                variant="subtitle2"
+                sx={sx.sectionTitle}
+              >
+                {t('general.segmentation')}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={sx.sectionDesc}
+              >
+                {t('viewer.exportSegmentationDesc')}
+              </Typography>
               <Box sx={sx.exportRow}>
                 <Button
                   variant="contained"
@@ -258,26 +270,40 @@ export const PolygonImportExport = ({
               />
             </Box>
 
-            {/* Transcripts Row */}
-            <Box sx={sx.exportRow}>
-              <Button
-                variant="contained"
-                onClick={handleJsonExportTranscripts}
-                sx={sx.formatButton}
-                fullWidth
-                disabled={!hasTranscriptData}
+            {/* Transcripts Section */}
+            <Box>
+              <Typography
+                variant="subtitle2"
+                sx={sx.sectionTitle}
               >
-                {`JSON - ${t('general.transcripts')}`}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleCsvExportTranscripts}
-                sx={sx.formatButton}
-                disabled={!hasTranscriptData}
-                fullWidth
+                {t('general.transcripts')}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={sx.sectionDesc}
               >
-                {`CSV - ${t('general.transcripts')}`}
-              </Button>
+                {t('viewer.exportTranscriptsDesc')}
+              </Typography>
+              <Box sx={sx.exportRow}>
+                <Button
+                  variant="contained"
+                  onClick={handleJsonExportTranscripts}
+                  sx={sx.formatButton}
+                  fullWidth
+                  disabled={!hasTranscriptData}
+                >
+                  {`JSON - ${t('general.transcripts')}`}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={handleCsvExportTranscripts}
+                  sx={sx.formatButton}
+                  disabled={!hasTranscriptData}
+                  fullWidth
+                >
+                  {`CSV - ${t('general.transcripts')}`}
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -343,12 +369,30 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   exportGrid: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    gap: '20px',
     marginBottom: '16px'
   },
   exportRow: {
     display: 'flex',
-    gap: '12px'
+    gap: '12px',
+    marginTop: '8px'
+  },
+  sectionTitle: {
+    color: theme.palette.gx.primary.black,
+    fontWeight: 600,
+    marginBottom: '2px'
+  },
+  sectionDesc: {
+    color: theme.palette.gx.darkGrey[900],
+    fontSize: '13px',
+    marginBottom: '0px'
+  },
+  reimportNote: {
+    display: 'block',
+    color: theme.palette.gx.accent.greenBlue,
+    fontSize: '12px',
+    marginTop: '4px',
+    opacity: 1
   },
   formatButtonsWrapper: {
     display: 'flex',
