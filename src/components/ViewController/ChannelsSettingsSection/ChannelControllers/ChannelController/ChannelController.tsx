@@ -184,6 +184,7 @@ export const ChannelController = ({
         </GxSelect>
         <Box>
           <ChannelOptions
+            color={color}
             slider={slider}
             domain={domain}
             handleColorSelect={handleColorSelect as any}

@@ -1,18 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ColorHex, GxColorPickerProps } from './GxColorPicker.types';
-import { CalculatePaletteColor, HsvToHex, isTouchEvent } from './GxColorPicker.helpers';
+import { CalculatePaletteColor, HsvToHex, RgbToHsv, isTouchEvent } from './GxColorPicker.helpers';
 import { useInteractiveColorPicker } from './GxColorPicker.hooks';
-import { Box, Button, Slider, Theme, useTheme } from '@mui/material';
+import { alpha, Box, Button, IconButton, Slider, Theme, useTheme } from '@mui/material';
+import LensIcon from '@mui/icons-material/Lens';
 import { useTranslation } from 'react-i18next';
 
-export const GxColorPicker = ({ color, handleColorChange, handleConfirm }: GxColorPickerProps) => {
+export const GxColorPicker = ({ color, handleColorChange, handleConfirm, predefinedColors }: GxColorPickerProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
   const paletteRef = useRef<HTMLDivElement>(null);
   const [paletteElement, setPaletteElement] = useState<HTMLDivElement | null>(null);
+  const [confirmedColor, setConfirmedColor] = useState(color);
 
   const { h: currentHue, s: currentSaturation, v: currentValue } = color;
+
+  const isColorUnchanged = color.h === confirmedColor.h && color.s === confirmedColor.s && color.v === confirmedColor.v;
+
+  const handleConfirmClick = () => {
+    handleConfirm();
+    setConfirmedColor(color);
+  };
 
   useEffect(() => {
     if (paletteRef.current) {
@@ -50,6 +59,11 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm }: GxCol
 
   useEffect(() => toggleDocumentEvents, [toggleDocumentEvents]);
 
+  const handlePredefinedColorSelect = (predefinedColor: number[]) => {
+    const [r, g, b] = predefinedColor;
+    handleColorChange(RgbToHsv({ r, g, b }));
+  };
+
   return (
     <Box sx={sx.colorPickerContainer}>
       <Box>
@@ -80,6 +94,23 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm }: GxCol
           />
         </Box>
       </Box>
+      {predefinedColors && predefinedColors.length > 0 && (
+        <Box sx={sx.predefinedColorsContainer}>
+          {predefinedColors.map((predefinedColor, index) => (
+            <IconButton
+              key={index}
+              sx={sx.predefinedColorButton}
+              onClick={() => handlePredefinedColorSelect(predefinedColor)}
+            >
+              <LensIcon
+                sx={sx.predefinedColorIcon}
+                fontSize="small"
+                style={{ color: `rgb(${predefinedColor})` }}
+              />
+            </IconButton>
+          ))}
+        </Box>
+      )}
       <Box sx={sx.hueSliderWrapper}>
         <Slider
           sx={sx.hueSlider(HsvToHex({ h: color.h, s: 1, v: 1 }))}
@@ -90,7 +121,8 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm }: GxCol
         />
         <Button
           sx={sx.confirmButton}
-          onClick={handleConfirm}
+          onClick={handleConfirmClick}
+          disabled={isColorUnchanged}
         >
           {t('general.confirm')}
         </Button>
@@ -127,7 +159,26 @@ const styles = (theme: Theme) => ({
     fontWeight: 600,
     '&:hover': {
       boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}`
+    },
+    '&.Mui-disabled': {
+      color: alpha(theme.palette.gx.primary.white, 0.5),
+      background: theme.palette.gx.darkGrey[300]
     }
+  },
+  predefinedColorsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'flex-start'
+  },
+  predefinedColorButton: {
+    padding: '4px',
+    height: '28px',
+    flex: '0 0 12.5%'
+  },
+  predefinedColorIcon: {
+    width: '24px',
+    height: '24px'
   },
   hueSliderWrapper: {
     padding: '0 6px'

@@ -6,6 +6,7 @@ import { GxColorPicker } from '../../GxColorPicker/GxColorPicker';
 import { ColorHsv } from '../../GxColorPicker/GxColorPicker.types';
 import { HsvToRgb, RgbToHsv } from '../../GxColorPicker/GxColorPicker.helpers';
 import { useTranslation } from 'react-i18next';
+import { COLOR_PALLETE } from '../../../constants';
 
 export const GxFilterTableColorCell = ({
   currentColor,
@@ -27,6 +28,16 @@ export const GxFilterTableColorCell = ({
     setIsOpen(false);
   };
 
+  const handleToggleOpen = () => {
+    setIsOpen((prev) => {
+      const nextOpen = !prev;
+      if (nextOpen) {
+        setColor(RgbToHsv({ r: currentColor[0], g: currentColor[1], b: currentColor[2] }));
+      }
+      return nextOpen;
+    });
+  };
+
   return (
     <>
       <Tooltip title={t('transcriptsSettings.clickToChange')}>
@@ -34,7 +45,7 @@ export const GxFilterTableColorCell = ({
           ref={anchorRef}
           onClick={(event) => {
             event.stopPropagation();
-            setIsOpen((prev) => !prev);
+            handleToggleOpen();
           }}
           sx={sx.colorButton}
         >
@@ -60,6 +71,7 @@ export const GxFilterTableColorCell = ({
               color={color}
               handleColorChange={setColor}
               handleConfirm={handleConfirm}
+              predefinedColors={COLOR_PALLETE}
             />
           </ClickAwayListener>
         </Box>
@@ -75,6 +87,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   paper: {
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
     padding: '8px',
-    width: '240px'
+    width: '272px'
   }
 });

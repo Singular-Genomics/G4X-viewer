@@ -1,4 +1,5 @@
 export type ChannelOptionsProps = {
+  color: [number, number, number];
   slider: [number, number];
   domain: [number, number];
   disabled: boolean;
