@@ -218,7 +218,10 @@
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}",
     "folderUploadButton": "Open Local Folder",
     "folderInvalidDirectory": "Selected folder is not a valid OME-Zarr directory",
-    "folderSuccess": "Successfully loaded image from folder: {{name}}"
+    "folderSuccess": "Successfully loaded image from folder: {{name}}",
+    "folderImagesAccessTitle": "Images folder access required",
+    "folderImagesAccessDescription": "This dataset links its images to another folder, which browsers cannot open automatically. Please select the images folder (or the original Zarr dataset that contains it) to finish loading.",
+    "folderImagesInvalid": "Selected folder does not contain a valid images directory"
   },
   "tooltip": {
     "objectLabel": "Object",
