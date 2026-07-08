@@ -199,7 +199,10 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm, default
             title={t('general.resetColorTooltip')}
             arrow
           >
-            <span style={{ display: 'flex', flex: 1 }}>
+            <Box
+              component="span"
+              sx={sx.resetButtonWrapper}
+            >
               <Button
                 sx={sx.resetButton}
                 onClick={handleResetClick}
@@ -207,7 +210,7 @@ export const GxColorPicker = ({ color, handleColorChange, handleConfirm, default
               >
                 {t('general.reset')}
               </Button>
-            </span>
+            </Box>
           </Tooltip>
         )}
         <Button
@@ -271,6 +274,10 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     gap: '8px',
     marginTop: '4px'
+  },
+  resetButtonWrapper: {
+    display: 'flex',
+    flex: 1
   },
   resetButton: {
     flex: 1,

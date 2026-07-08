@@ -88,6 +88,9 @@ export const ChannelControllers = () => {
             if (!channelsSettings[channelName].initialContrastLimits) {
               channelsSettings[channelName].initialContrastLimits = newContrastLimit as [number, number];
             }
+            if (!channelsSettings[channelName].initialColor && Channels[c].Color) {
+              channelsSettings[channelName].initialColor = Channels[c].Color.slice(0, -1) as [number, number, number];
+            }
             if (channelsSettings[channelName].minValue && channelsSettings[channelName].maxValue) {
               const settings = channelsSettings[channelName];
               newProps.contrastLimits = [settings.minValue, settings.maxValue] as [number, number];
