@@ -1,6 +1,6 @@
 import {
   ClickAwayListener,
-  Divider,
+  // Divider,
   IconButton,
   MenuList,
   Paper,
@@ -17,23 +17,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GxColorPicker } from '../../../../../shared/components/GxColorPicker/GxColorPicker';
 import { ColorHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.types';
 import { HsvToRgb, RgbToHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.helpers';
-import { COLOR_PALLETE } from '../../../../../shared/constants';
-import { SliderThreshold } from './SliderRange/SliderThreshold';
+// import { SliderThreshold } from './SliderRange/SliderThreshold';
 
-export const ChannelOptions = ({
-  color,
-  slider,
-  domain,
-  handleColorSelect,
-  disabled,
-  rangeMin,
-  rangeMax,
-  setRangeMin,
-  setRangeMax,
-  setMinInputValue,
-  setMaxInputValue,
-  handleSliderChange
-}: ChannelOptionsProps) => {
+export const ChannelOptions = ({ color, defaultColor, handleColorSelect, disabled }: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
@@ -85,9 +71,9 @@ export const ChannelOptions = ({
                 color={pickerColor}
                 handleColorChange={setPickerColor}
                 handleConfirm={handleConfirmColor}
-                predefinedColors={COLOR_PALLETE}
+                defaultColor={RgbToHsv({ r: defaultColor[0], g: defaultColor[1], b: defaultColor[2] })}
               />
-              <Divider sx={sx.divider} />
+              {/* <Divider sx={sx.divider} />
               <SliderThreshold
                 slider={slider}
                 domain={domain}
@@ -98,7 +84,7 @@ export const ChannelOptions = ({
                 setMinInputValue={setMinInputValue}
                 setMaxInputValue={setMaxInputValue}
                 handleSliderChange={handleSliderChange}
-              />
+              /> */}
             </MenuList>
           </ClickAwayListener>
         </Paper>

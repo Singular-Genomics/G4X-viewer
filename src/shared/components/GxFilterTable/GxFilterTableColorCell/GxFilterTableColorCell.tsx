@@ -6,7 +6,6 @@ import { GxColorPicker } from '../../GxColorPicker/GxColorPicker';
 import { ColorHsv } from '../../GxColorPicker/GxColorPicker.types';
 import { HsvToRgb, RgbToHsv } from '../../GxColorPicker/GxColorPicker.helpers';
 import { useTranslation } from 'react-i18next';
-import { COLOR_PALLETE } from '../../../constants';
 
 export const GxFilterTableColorCell = ({
   currentColor,
@@ -71,7 +70,6 @@ export const GxFilterTableColorCell = ({
               color={color}
               handleColorChange={setColor}
               handleConfirm={handleConfirm}
-              predefinedColors={COLOR_PALLETE}
             />
           </ClickAwayListener>
         </Box>

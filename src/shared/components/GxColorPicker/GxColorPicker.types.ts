@@ -2,7 +2,7 @@ export type GxColorPickerProps = {
   color: ColorHsv;
   handleColorChange: (color: ColorHsv) => void;
   handleConfirm: () => void;
-  predefinedColors?: number[][];
+  defaultColor?: ColorHsv;
 };
 
 export type ColorHex = string;

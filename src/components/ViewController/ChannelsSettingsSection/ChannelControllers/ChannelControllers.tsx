@@ -156,6 +156,7 @@ export const ChannelControllers = () => {
               pixelValue={pixelValues[index]}
               toggleIsOn={toggleIsOn}
               color={colors[index]}
+              defaultColor={(channelsSettings[name]?.initialColor ?? colors[index]) as [number, number, number]}
               isLoading={isChannelLoading[index]}
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
