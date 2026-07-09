@@ -12,12 +12,12 @@ A step-by-step [video walkthrough](https://go.singulargenomics.com/hubfs/2025%20
 
 <br>
 
-## G4X Viewer Introductary Slides
+## G4X Viewer Introductory Slides
 ---
 
 A [slide deck](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%20Training.pdf) to walk you through the core functions of the G4X Viewer, including how to load your data, navigate interfaces, and a set of helpful tips and tricks to make sure you know exactly how to get the most out of the G4X Viewer.
 
-[![G4X Viewer Introductary Slides](./images/g4x_slides_image.png)](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%20Training.pdf)
+[![G4X Viewer Introductory Slides](./images/g4x_slides_image.png)](https://go.singulargenomics.com/hubfs/2025%20External%20Resources/Training%20Resources/G4X%20Viewer%20Training.pdf)
 
 <br>
 

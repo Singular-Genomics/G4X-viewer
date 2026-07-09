@@ -30,12 +30,12 @@ A heatmap chart is most useful for quickly identifying patterns in RNA or protei
 
 - <b><u>Plot Settings:</u></b>
     
-    The settings menu changes structural aspects of the plot related to axes, colorbars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For barplots, the options are as follow:
+    The settings menu changes structural aspects of the plot related to axes, colorbars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For heatmap charts, the options are as follows:
 
     - **Custom Title:** Input a string to display as your plot title.
     - **Colorscale:** Choose the color mapping to be used.
     - **Reverse Colorscale:** Allows the min/max color to be swapped.
-    - **Sort ROIs:** Places all ROI in the order in which they were drawn.
+    - **Sort ROIs:** Places all ROIs in the order in which they were drawn.
     - **Normalization Method:** Allows you to choose how abundance data is normalized (none, min-max, and z-score).
 
 <br>

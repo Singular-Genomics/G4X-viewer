@@ -34,11 +34,11 @@ An expression box plot is most useful for comparing the distribution and variabi
 
 - <b><u>Plot Settings:</u></b>
     
-    The settings menu changes structural aspects of the plot related to axes, color bars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For box charts, the options are as follow:
+    The settings menu changes structural aspects of the plot related to axes, colorbars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For box charts, the options are as follows:
 
     - **Custom Title:** Input a string to display as your plot title.
     - **Swap Axis:** Allows swap of X and Y axes.
-    - **Sort ROIs:** Places all ROI in the order in which they were drawn.
+    - **Sort ROIs:** Places all ROIs in the order in which they were drawn.
     - **Data Mode:** Changes what type of box chart display is used (all, outliers, suspected outliers, none).
 
 - <b><u>Legend Toggle:</u></b>

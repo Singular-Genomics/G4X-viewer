@@ -53,7 +53,7 @@ If you want to use the same ROIs across samples, for serial sections or to compa
     - `JSON files:` Contains list of vertex (X,Y) coordinates, ROI metadata, and list of transcripts present with their position, cell id, and species.
 
 
-- **Import Polygons:** This function can only import JSONs formatted in the same way as the **Export Polygon** JSON files. Inputs can be either with or without transcript data. Imported polygons will appear on the image after loaded is complete.
+- **Import Polygons:** This function can only import JSONs formatted in the same way as the **Export Polygon** JSON files. Inputs can be either with or without transcript data. Imported polygons will appear on the image after loading is complete.
 
 
 Once you're happy with the ROIs you've selected, it's time to move on to the Dashboard tab to generate plots. For details on plot types, see the plot-specific pages.

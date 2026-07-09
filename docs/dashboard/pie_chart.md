@@ -22,9 +22,9 @@ A pie chart is most useful for showing the relative composition of each ROI acro
 
 - <b><u>Plot Settings:</u></b>
     
-    The settings menu changes structural aspects of the plot related to axes, colorbars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For barplots, the options are as follow:
+    The settings menu changes structural aspects of the plot related to axes, colorbars, and labels. This menu is shared across all plots. For each plot, the options are specific to the type of plot that is being made. For pie chart, the options are as follows:
 
-    - **Sort ROIs:** Places all ROI in the order in which they were drawn.
+    - **Sort ROIs:** Places all ROIs in the order in which they were drawn.
 
 
 - <b><u>Legend Toggle:</u></b>

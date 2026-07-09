@@ -35,7 +35,7 @@ The viewer pages include:
 + transcript layer controls
 + segmentation layer controls
 + UMAP cell filter
-+ flow cytrometry cell filter
++ flow cytometry cell filter
 
 <br>
 
