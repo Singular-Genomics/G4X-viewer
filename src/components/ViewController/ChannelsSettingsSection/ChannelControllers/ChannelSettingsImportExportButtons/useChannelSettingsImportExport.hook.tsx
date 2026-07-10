@@ -308,6 +308,7 @@ export const useChannelSettingsImportExport = () => {
 
               addIsChannelLoading(true);
               useChannelsStore.getState().addChannel({
+                ids: String(Math.random()),
                 selections: { c: channelIndex, z: 0 },
                 channelsVisible: channelData.visible ?? true,
                 colors: s?.color ?? [255, 255, 255],
@@ -317,16 +318,10 @@ export const useChannelSettingsImportExport = () => {
             });
 
             if (channelIndicesToLoad.length > 0) {
-              let loadedCount = 0;
               useViewerStore.setState({
                 onViewportLoad: () => {
-                  if (loadedCount < channelIndicesToLoad.length) {
-                    setIsChannelLoading(channelIndicesToLoad[loadedCount], false);
-                    loadedCount++;
-                    if (loadedCount === channelIndicesToLoad.length) {
-                      useViewerStore.setState({ onViewportLoad: () => {} });
-                    }
-                  }
+                  channelIndicesToLoad.forEach((channelIndex) => setIsChannelLoading(channelIndex, false));
+                  useViewerStore.setState({ onViewportLoad: () => {} });
                 }
               });
             }
