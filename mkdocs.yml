@@ -15,17 +15,33 @@ theme:
     - navigation.indexes
 
 
-# region Nav
 nav:
   - Docs Home: https://docs.singulargenomics.com
-
   - G4X-helpers: https://docs.singulargenomics.com/G4X-helpers/
 
   - G4X-viewer:
-    - index.md
-    - Resources: resources.md
-    - Contribute: contributing.md
-  
-  - G4X-data: https://docs.singulargenomics.com/g4x_data/
+    - home: index.md
+    - viewer:
+      - overview: viewer/index.md
+      - source files: viewer/source_files.md
+      - on-screen controls: viewer/on_screen_controls.md
+      - protein: viewer/protein.md
+      - fH&E: viewer/fhe.md
+      - transcript: viewer/transcript.md
+      - segmentation: viewer/segmentation.md
+      - UMAP filter: viewer/umap.md
+      - flow cytometry filter: viewer/flow_cytometry.md
+    - dashboard:
+      - overview: dashboard/index.md
+      - ROI selection: dashboard/roi_selection.md
+      - expression box chart: dashboard/expression_box_chart.md
+      - pie chart: dashboard/pie_chart.md
+      - expression bar chart: dashboard/expression_bar_chart.md
+      - heatmap chart: dashboard/expression_heatmap.md
+    - resources: resources.md
+    - contribute: contributing.md
 
+
+  - G4X-data: https://docs.singulargenomics.com/g4x_data/
   - G4X-tutorials: https://docs.singulargenomics.com/g4x_tutorials/
+
