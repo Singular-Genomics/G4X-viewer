@@ -4,13 +4,16 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { buildCellExports, buildTranscriptExports } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
+import { SingleMask } from '../../shared/types';
 import {
   TarFileEntry,
   ExportDataType,
   InternalDataType,
   RoiCellExport,
-  RoiTranscriptExport
+  RoiTranscriptExport,
+  CellsExportData,
+  TranscriptsExportData,
+  CellExportRecord
 } from './PolygonImportExport.types';
 
 const escapeCsvValue = (value: string | number) => {
@@ -120,6 +123,13 @@ const generateExportCsvFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.csv`;
 };
 
+const generateExportJsonFilename = (type: string): string => {
+  const viewerSource = useViewerStore.getState().source;
+  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
+  const date = new Date().toISOString().split('T')[0];
+  return `${ometiffName}_${type}_${date}.json`;
+};
+
 const generateExportTarFilename = (roiCount: number, type: ExportDataType): string => {
   const viewerSource = useViewerStore.getState().source;
   const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
@@ -148,6 +158,136 @@ const downloadZipFile = async (files: TarFileEntry[], fileName: string) => {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
+};
+
+// Builds the canonical per-ROI export data consumed by both the JSON and CSV serializers.
+const buildTranscriptExports = (
+  polygonFeatures: PolygonFeature[],
+  polygonNotes: Record<number, string> = {}
+): RoiTranscriptExport[] => {
+  const { selectedPoints } = useTranscriptLayerStore.getState();
+
+  return polygonFeatures.map((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const data = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      transcripts: data.map((t) => ({
+        geneName: t.geneName || 'unknown',
+        position: t.position || [],
+        cellId: t.cellId || ''
+      }))
+    };
+  });
+};
+
+const buildCellExports = (
+  polygonFeatures: PolygonFeature[],
+  includeGenes: boolean,
+  polygonNotes: Record<number, string> = {}
+): RoiCellExport[] => {
+  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
+
+  const proteinNames = segmentationMetadata?.proteinNames || [];
+  const allGeneNames = segmentationMetadata?.geneNames || [];
+  // An empty array is truthy, so gate gene data on length - keeps JSON and CSV in sync
+  const includeGeneData = includeGenes && allGeneNames.length > 0;
+  const geneNames = includeGeneData ? allGeneNames : [];
+
+  return polygonFeatures.map((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const data = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      hasSegmentationMetadata: !!segmentationMetadata,
+      proteinNames,
+      geneNames,
+      cells: data.map((cell) => buildCellRecord(cell, proteinNames, geneNames, includeGeneData))
+    };
+  });
+};
+
+const buildCellRecord = (
+  cell: SingleMask,
+  proteinNames: string[],
+  geneNames: string[],
+  includeGeneData: boolean
+): CellExportRecord => {
+  const protein: Record<string, number> = {};
+  proteinNames.forEach((name, index) => {
+    protein[name] = cell.proteinValues[index];
+  });
+
+  let transcript: Record<string, number> | null = null;
+  if (includeGeneData) {
+    const transcriptMap: Record<string, number> = {};
+    cell.nonzeroGeneIndices.forEach((geneIndex, index) => {
+      const geneName = geneNames[geneIndex];
+      if (geneName !== undefined) {
+        transcriptMap[geneName] = cell.nonzeroGeneValues[index];
+      }
+    });
+    transcript = transcriptMap;
+  }
+
+  return {
+    cellId: cell.cellId,
+    area: cell.area,
+    totalCounts: cell.totalCounts,
+    totalGenes: cell.totalGenes,
+    clusterId: cell.clusterId,
+    vertices: cell.vertices,
+    umapValues: cell.umapValues,
+    protein,
+    transcript
+  };
+};
+
+export const exportPolygonsWithCellsJSON = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  const exportData: CellsExportData = {};
+
+  buildCellExports(polygonFeatures, includeGenes, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      cells: roi.cells.map((cell) => {
+        const { protein, transcript, ...rest } = cell;
+        return {
+          ...rest,
+          ...(roi.hasSegmentationMetadata ? { protein } : {}),
+          ...(transcript !== null ? { transcript } : {})
+        };
+      }),
+      polygonId: roi.polygonId,
+      notes: roi.notes
+    };
+  });
+
+  downloadText(JSON.stringify(exportData, null, 2), generateExportJsonFilename('segmentation'), 'application/json');
+};
+
+export const exportPolygonsWithTranscriptsJSON = (polygonFeatures: PolygonFeature[]) => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  const exportData: TranscriptsExportData = {};
+
+  buildTranscriptExports(polygonFeatures, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      transcripts: roi.transcripts,
+      polygonId: roi.polygonId,
+      notes: roi.notes
+    };
+  });
+
+  downloadText(JSON.stringify(exportData, null, 2), generateExportJsonFilename('transcripts'), 'application/json');
 };
 
 // One ROI's cells -> CSV (gene/protein columns come from roi.geneNames/proteinNames)

@@ -23,6 +23,8 @@ import { GxModal } from '../../shared/components/GxModal';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
 import { PolygonImportExportProps, ExportFormat, EXPORT_FORMATS } from './PolygonImportExport.types';
 import {
+  exportPolygonsWithCellsJSON,
+  exportPolygonsWithTranscriptsJSON,
   exportPolygonsWithCellsCSV,
   exportPolygonsWithTranscriptsCSV,
   exportROIMetadataCSV,
@@ -37,12 +39,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useTranslation } from 'react-i18next';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 
-export const PolygonImportExport = ({
-  exportPolygonsWithCells,
-  exportPolygonsWithTranscripts,
-  polygonFeatures,
-  isDetecting = false
-}: PolygonImportExportProps) => {
+export const PolygonImportExport = ({ polygonFeatures, isDetecting = false }: PolygonImportExportProps) => {
   const { t } = useTranslation();
   const [isImporting, setIsImporting] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -71,12 +68,12 @@ export const PolygonImportExport = ({
   };
 
   const handleJsonExportCells = () => {
-    exportPolygonsWithCells(includeGenes);
+    exportPolygonsWithCellsJSON(polygonFeatures, includeGenes);
     setIsExportModalOpen(false);
   };
 
   const handleJsonExportTranscripts = () => {
-    exportPolygonsWithTranscripts();
+    exportPolygonsWithTranscriptsJSON(polygonFeatures);
     setIsExportModalOpen(false);
   };
 

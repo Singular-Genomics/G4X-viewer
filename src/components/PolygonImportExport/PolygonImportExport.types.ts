@@ -2,8 +2,6 @@ import { PointData, SingleMask, UmapEntry } from '../../shared/types';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export interface PolygonImportExportProps {
-  exportPolygonsWithCells: (includeGenes: boolean) => void;
-  exportPolygonsWithTranscripts: () => void;
   polygonFeatures: PolygonFeature[];
   isDetecting?: boolean;
 }
