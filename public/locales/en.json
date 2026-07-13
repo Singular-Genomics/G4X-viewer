@@ -79,7 +79,6 @@
     "protein": "Protein",
     "shareLinkCopied": "Link copied to clipboard",
     "shareSettings": "Share Settings",
-    "shareDialogTitle": "Share Settings",
     "shareFullLinkLabel": "Full Link",
     "shareFullLinkHelper": "Copy button generates a full URL you can open directly in a browser",
     "shareFullLinkLocalDisabled": "Not available for locally loaded datasets",

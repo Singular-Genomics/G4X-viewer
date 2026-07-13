@@ -1,5 +1,6 @@
 import { ColorMapEntry } from '../stores/ZarrDataStore/ZarrDataStore.types';
 import { encodeRanges, decodeRanges } from './urlSettings.cellFilterHelpers';
+import { HexToRgb, RgbToHex } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
 export function encodeTranscriptFilterIndices(filters: string[], colorMapConfig: ColorMapEntry[]): string {
   const indices = filters.map((name) => colorMapConfig.findIndex((e) => e.gene_name === name)).filter((i) => i !== -1);
@@ -21,7 +22,7 @@ export function encodeTranscriptChangedColors(current: ColorMapEntry[], defaults
     const [r, g, b] = cur.color;
     const [dr, dg, db] = def.color;
     if (r === dr && g === dg && b === db) continue;
-    const hex = [r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('');
+    const hex = RgbToHex({ r, g, b }).slice(1);
     parts.push(`${i}:${hex}`);
   }
   return parts.join(';');
@@ -36,9 +37,7 @@ export function decodeTranscriptChangedColors(encoded: string, current: ColorMap
     const idx = parseInt(part.slice(0, colon), 10);
     const hex = part.slice(colon + 1);
     if (isNaN(idx) || hex.length !== 6) continue;
-    const r = parseInt(hex.slice(0, 2), 16);
-    const g = parseInt(hex.slice(2, 4), 16);
-    const b = parseInt(hex.slice(4, 6), 16);
+    const { r, g, b } = HexToRgb(hex);
     overrides.set(idx, [r, g, b]);
   }
   if (overrides.size === 0) return current;

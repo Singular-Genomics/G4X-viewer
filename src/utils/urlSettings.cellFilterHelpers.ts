@@ -1,4 +1,5 @@
 import { CellSegmentationColormapEntry } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
+import { HexToRgb, RgbToHex } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
 export function encodeRanges(indices: number[]): string {
   if (indices.length === 0) return '';
@@ -62,7 +63,7 @@ export function encodeChangedColors(
     if (def[0] === r && def[1] === g && def[2] === b) continue;
     const idx = clusterIdOrder.indexOf(entry.clusterId);
     if (idx === -1) continue;
-    const hex = [r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('');
+    const hex = RgbToHex({ r, g, b }).slice(1);
     parts.push(`${idx}:${hex}`);
   }
   return parts.join(';');
@@ -83,9 +84,7 @@ export function decodeChangedColors(
     if (isNaN(idx) || hex.length !== 6) continue;
     const clusterId = clusterIdOrder[idx];
     if (!clusterId) continue;
-    const r = parseInt(hex.slice(0, 2), 16);
-    const g = parseInt(hex.slice(2, 4), 16);
-    const b = parseInt(hex.slice(4, 6), 16);
+    const { r, g, b } = HexToRgb(hex);
     overrides.set(clusterId, [r, g, b]);
   }
   if (overrides.size === 0) return config;

@@ -137,7 +137,7 @@ export const ShareSettingsButton = () => {
         sx={sx.dialog}
       >
         <DialogTitle sx={sx.dialogTitle}>
-          <Typography sx={sx.dialogTitleText}>{t('general.shareDialogTitle')}</Typography>
+          <Typography sx={sx.dialogTitleText}>{t('general.shareSettings')}</Typography>
           <IconButton
             onClick={handleClose}
             sx={sx.dialogCloseButton}
