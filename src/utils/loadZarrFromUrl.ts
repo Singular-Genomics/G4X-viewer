@@ -8,7 +8,6 @@ import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import type { ZarritaStoreFactory } from './ZarrDataSet.types';
-import { ZARR_SUBPATHS } from './ZarrPaths';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -74,7 +73,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   const runMetadataResult = await zarrDataSet.fetchRunMetadata();
   if (runMetadataResult) {
     useViewerStore.getState().setGeneralDetails({
-      fileName: ZARR_SUBPATHS.attrs.root,
+      fileName: zarrDir,
       data: runMetadataResult.metadata,
       smpInfoOrder: runMetadataResult.smpInfoOrder
     });

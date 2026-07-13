@@ -63,7 +63,7 @@ export const useDirectoryPicker = () => {
     const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
     if (rootAttrs?.run_metadata) {
       useViewerStore.getState().setGeneralDetails({
-        fileName: ZARR_SUBPATHS.attrs.root,
+        fileName: handle.name,
         data: rootAttrs.run_metadata,
         smpInfoOrder: rootAttrs.smp_info_order ?? []
       });
