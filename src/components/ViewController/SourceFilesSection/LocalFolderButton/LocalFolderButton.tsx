@@ -1,13 +1,14 @@
-import { Button, alpha, Box, Theme, useTheme, Tooltip } from '@mui/material';
+import { Button, alpha, Box, Theme, useTheme, Tooltip, Typography } from '@mui/material';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryPicker } from './useDirectoryPicker.hook';
+import { GxModal } from '../../../../shared/components/GxModal';
 
 export const LocalFolderButton = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
-  const { openDirectory } = useDirectoryPicker();
+  const { openDirectory, needsImagesAccess, selectImagesFolder, cancelImagesAccess } = useDirectoryPicker();
 
   const supported = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
 
@@ -28,6 +29,17 @@ export const LocalFolderButton = () => {
         >
           {t('sourceFiles.folderUploadButton')}
         </Button>
+        <GxModal
+          isOpen={needsImagesAccess}
+          title={t('sourceFiles.folderImagesAccessTitle')}
+          iconVariant="info"
+          colorVariant="info"
+          size="small"
+          onContinue={selectImagesFolder}
+          onClose={cancelImagesAccess}
+        >
+          <Typography sx={sx.imagesAccessDescription}>{t('sourceFiles.folderImagesAccessDescription')}</Typography>
+        </GxModal>
       </Box>
     </Tooltip>
   );
@@ -46,5 +58,8 @@ const styles = (theme: Theme) => ({
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     },
     transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease'
+  },
+  imagesAccessDescription: {
+    maxWidth: '700px'
   }
 });
