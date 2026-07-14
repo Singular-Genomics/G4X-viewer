@@ -13,7 +13,7 @@ import type {
   ZarrRunMetadata
 } from './ZarrDataSet.types';
 import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
-import { loadCellsFromZarr } from './ZarrCellsLoader';
+import { loadCellsFromZarr, loadCellsFromStoreFactory, fetchClusterIdsFromStoreFactory } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
 
@@ -55,6 +55,7 @@ export class ZarrDataSet {
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: ZarrTranscriptAttrs | null = null;
   private storeFactory: ZarritaStoreFactory;
+  private isCustomStore: boolean;
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
@@ -68,6 +69,7 @@ export class ZarrDataSet {
   constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
+    this.isCustomStore = !!storeFactory;
     this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
   }
 
@@ -306,10 +308,16 @@ export class ZarrDataSet {
   }
 
   public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
+    if (this.isCustomStore) {
+      return loadCellsFromStoreFactory(this.storeFactory, segmentationFolderName);
+    }
     return loadCellsFromZarr(this, segmentationFolderName);
   }
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
+    if (this.isCustomStore) {
+      return fetchClusterIdsFromStoreFactory(this.storeFactory, segmentationFolderName);
+    }
     const clusterIdArray = await open(
       new FetchStore(this.paths.cells.field(segmentationFolderName, ZARR_CELL_FIELDS.clusterId)),
       { kind: 'array' }
