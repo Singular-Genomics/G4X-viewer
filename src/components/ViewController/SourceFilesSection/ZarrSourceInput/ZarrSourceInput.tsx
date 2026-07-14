@@ -95,7 +95,7 @@ export default function ZarrSourceInput() {
       onChange={(e) => handleChange(e.target.value)}
       onKeyDown={handleKeyDown}
       placeholder={t('sourceFiles.zarrInputPlaceholder')}
-      helperText={submitted && imageName ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
+      helperText={imageName && (!cloudImageUrl || submitted) ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
       sx={sx.textField}
       slotProps={{ input: { endAdornment, inputRef } }}
     />

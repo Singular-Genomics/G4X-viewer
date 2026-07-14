@@ -7,6 +7,7 @@ import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { ZarrDataSet } from '../../../../utils/ZarrDataSet';
 import type { ZarritaStoreFactory } from '../../../../utils/ZarrDataSet.types';
 import type { SegmentationOption } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { ZARR_SUBPATHS } from '../../../../utils/ZarrPaths';
@@ -69,8 +70,11 @@ export const useDirectoryPicker = () => {
     // Create zarrita store factory for local files
     const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) => new LocalFileHandleZarritaStore(handle, subpath);
 
+    const zarrDataSet = new ZarrDataSet('', zarrStoreFactory);
+
     useZarrDataStore.getState().setFileName(handle.name);
     useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
+    useZarrDataStore.setState({ zarrDataSet });
     useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
     useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
     useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);

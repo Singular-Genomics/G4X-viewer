@@ -54,4 +54,5 @@ export type ChannelSettings = {
   maxValue?: number;
   minValue?: number;
   initialContrastLimits?: [number, number];
+  initialColor?: [number, number, number];
 };

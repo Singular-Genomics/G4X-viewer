@@ -227,7 +227,8 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           maxValue: undefined,
           minValue: undefined,
           initialContrastLimits:
-            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined
+            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined,
+          initialColor: selectionIndex >= 0 ? (newColors[selectionIndex] as [number, number, number]) : undefined
         };
       });
 
