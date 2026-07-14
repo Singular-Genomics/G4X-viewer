@@ -49,11 +49,17 @@ export const AddChannel = () => {
     }).then(({ domain, contrastLimits }) => {
       const { c } = selection;
       const channelName = metadata.Pixels.Channels[c]?.Name ?? `Channel ${c}`;
+      const { Channels } = metadata.Pixels;
+      const initialColor =
+        (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255]);
       if (!(channelName in channelsSettings)) {
         channelsSettings[channelName] = {};
       }
       if (!channelsSettings[channelName].initialContrastLimits) {
         channelsSettings[channelName].initialContrastLimits = contrastLimits as [number, number];
+      }
+      if (!channelsSettings[channelName].initialColor) {
+        channelsSettings[channelName].initialColor = initialColor as [number, number, number];
       }
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
@@ -67,12 +73,11 @@ export const AddChannel = () => {
         }
       });
       addIsChannelLoading(true);
-      const { Channels } = metadata.Pixels;
       addChannel({
         selections: selection,
         ids: String(Math.random()),
         channelsVisible: false,
-        colors: (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255])
+        colors: initialColor
       } as any);
     });
   }, [
@@ -91,7 +96,7 @@ export const AddChannel = () => {
   return (
     <Button
       disabled={
-        selections.length === MAX_CHANNELS ||
+        selections.length >= MAX_CHANNELS ||
         (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
       }
       onClick={handleChannelAdd}

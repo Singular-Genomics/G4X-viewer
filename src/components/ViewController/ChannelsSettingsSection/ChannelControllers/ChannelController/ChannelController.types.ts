@@ -2,6 +2,7 @@ export type SliderRangeMode = 'contract' | 'expanded';
 
 export type ChannelControllerProps = {
   color: [number, number, number];
+  defaultColor: [number, number, number];
   domain: [number, number];
   name: string;
   isLoading: boolean;

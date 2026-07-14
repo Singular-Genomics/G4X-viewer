@@ -1,11 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackbar.hook.tsx';
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { ZarrDataSet } from '../../../../utils/ZarrDataSet';
 import type { ZarritaStoreFactory } from '../../../../utils/ZarrDataSet.types';
 import type { SegmentationOption } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { ZARR_SUBPATHS } from '../../../../utils/ZarrPaths';
@@ -16,8 +18,24 @@ const stripImagesBase = (subpath: string) =>
 export const useDirectoryPicker = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
+  const { showConsolidatedMessages } = useConsolidatedSnackbar();
   const pendingRootHandleRef = useRef<FileSystemDirectoryHandle | null>(null);
+  const pendingWarningsRef = useRef<string[]>([]);
   const [needsImagesAccess, setNeedsImagesAccess] = useState(false);
+
+  const showLoadMessages = useCallback(
+    (filename: string, warningMessages: string[]) => {
+      if (warningMessages.length === 0) {
+        showConsolidatedMessages(
+          [t('sourceFiles.zarrSuccess', { filename })],
+          'success',
+          'sourceFiles.zarrLoadComplete'
+        );
+      }
+      showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
+    },
+    [showConsolidatedMessages, t]
+  );
 
   const finalizeImages = useCallback(
     async (rootHandle: FileSystemDirectoryHandle, imagesHandle: FileSystemDirectoryHandle) => {
@@ -63,10 +81,8 @@ export const useDirectoryPicker = () => {
       } catch {
         // No H&E directory — skip
       }
-
-      enqueueSnackbar(t('sourceFiles.zarrSuccess', { filename: rootHandle.name }), { variant: 'success' });
     },
-    [enqueueSnackbar, t]
+    []
   );
 
   const openDirectory = useCallback(async () => {
@@ -84,54 +100,20 @@ export const useDirectoryPicker = () => {
       return;
     }
 
-    // Reset dependent stores
-    useZarrDataStore.getState().reset();
-    useTranscriptLayerStore.getState().reset();
-    useCellSegmentationLayerStore.getState().reset();
-    useBrightfieldImagesStore.getState().reset();
-    useViewerStore.setState({ physicalSize: null });
-    pendingRootHandleRef.current = null;
-    setNeedsImagesAccess(false);
-
-    const { LocalFileHandleZarritaStore } = await import('../../../../loaders/LocalFileStore');
-
-    // Create zarrita store factory for local files
-    const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) => new LocalFileHandleZarritaStore(handle, subpath);
-
-    useZarrDataStore.getState().setFileName(handle.name);
-    useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
-
     const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
-    useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
-    useZarrDataStore.getState().setHasTranscriptsData(!!transcriptAttrs?.layer_config);
-
-    // Load run metadata from root .zattrs
     const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
-    if (rootAttrs?.run_metadata) {
-      useViewerStore.getState().setGeneralDetails({
-        fileName: ZARR_SUBPATHS.attrs.root,
-        data: rootAttrs.run_metadata,
-        smpInfoOrder: rootAttrs.smp_info_order ?? []
-      });
-    }
-
+    const imageAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.images);
     const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
+
     const segmentationOrder = (cellsAttrs?.segmentation_order ?? []) as string[];
     const segmentationSources = (cellsAttrs?.segmentation_sources ?? {}) as Record<string, string>;
     const availableSegmentations: SegmentationOption[] = segmentationOrder
       .map((label) => ({ label, folderName: segmentationSources[label] }))
       .filter((seg) => !!seg.folderName);
 
+    const hasImagesData = imageAttrs !== null;
+    const hasTranscriptsData = !!transcriptAttrs?.layer_config;
     const hasSegmentationData = availableSegmentations.length > 0;
-    useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
-
-    if (hasSegmentationData) {
-      useCellSegmentationLayerStore.setState({
-        availableSegmentations,
-        selectedSegmentationLabel: availableSegmentations[0].label,
-        fileName: handle.name
-      });
-    }
 
     // `images` may be a symlink, which the File System Access API cannot
     // traverse — ask the user to grant access to it separately.
@@ -141,14 +123,81 @@ export const useDirectoryPicker = () => {
     } catch {
       imagesHandle = null;
     }
+    const mayHaveSymlinkedImages = !imagesHandle;
+
+    if (!hasImagesData && !mayHaveSymlinkedImages && !hasTranscriptsData && !hasSegmentationData) {
+      enqueueSnackbar(t('sourceFiles.zarrCorrupted'), { variant: 'error' });
+      return;
+    }
+
+    // Reset dependent stores
+    useZarrDataStore.getState().reset();
+    useTranscriptLayerStore.getState().reset();
+    useCellSegmentationLayerStore.getState().reset();
+    useBrightfieldImagesStore.getState().reset();
+    useViewerStore.setState({
+      physicalSize: null,
+      isTranscriptTilesLoading: false,
+      viewState: null,
+      isViewerLoading: undefined
+    });
+    pendingRootHandleRef.current = null;
+    pendingWarningsRef.current = [];
+    setNeedsImagesAccess(false);
+
+    const { LocalFileHandleZarritaStore } = await import('../../../../loaders/LocalFileStore');
+
+    // Create zarrita store factory for local files
+    const zarrStoreFactory: ZarritaStoreFactory = (subpath: string) => new LocalFileHandleZarritaStore(handle, subpath);
+
+    const zarrDataSet = new ZarrDataSet('', zarrStoreFactory);
+
+    useZarrDataStore.getState().setFileName(handle.name);
+    useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
+    useZarrDataStore.setState({ zarrDataSet });
+    useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
+    useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+    useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
+
+    const warningMessages: string[] = [];
+
+    if (!hasTranscriptsData) {
+      warningMessages.push(t('sourceFiles.transcriptsLoadError'));
+    }
+
+    // Load run metadata from root .zattrs
+    if (rootAttrs?.run_metadata) {
+      useViewerStore.getState().setGeneralDetails({
+        fileName: handle.name,
+        data: rootAttrs.run_metadata,
+        smpInfoOrder: rootAttrs.smp_info_order ?? []
+      });
+    }
+
+    if (hasSegmentationData) {
+      useCellSegmentationLayerStore.setState({
+        availableSegmentations,
+        selectedSegmentationLabel: availableSegmentations[0].label,
+        fileName: handle.name
+      });
+    } else {
+      warningMessages.push(t('sourceFiles.segmentationMissingData'));
+    }
 
     if (imagesHandle) {
-      await finalizeImages(handle, imagesHandle);
+      if (hasImagesData) {
+        await finalizeImages(handle, imagesHandle);
+      } else {
+        warningMessages.push(t('sourceFiles.imagesLoadError'));
+      }
+      showLoadMessages(handle.name, warningMessages);
     } else {
+      // Defer load messages until the user grants (or declines) images access
       pendingRootHandleRef.current = handle;
+      pendingWarningsRef.current = warningMessages;
       setNeedsImagesAccess(true);
     }
-  }, [enqueueSnackbar, t, finalizeImages]);
+  }, [enqueueSnackbar, t, finalizeImages, showLoadMessages]);
 
   const selectImagesFolder = useCallback(async () => {
     const rootHandle = pendingRootHandleRef.current;
@@ -168,15 +217,24 @@ export const useDirectoryPicker = () => {
       return;
     }
 
+    const warningMessages = pendingWarningsRef.current;
     setNeedsImagesAccess(false);
     pendingRootHandleRef.current = null;
+    pendingWarningsRef.current = [];
     await finalizeImages(rootHandle, imagesHandle);
-  }, [enqueueSnackbar, t, finalizeImages]);
+    showLoadMessages(rootHandle.name, warningMessages);
+  }, [enqueueSnackbar, t, finalizeImages, showLoadMessages]);
 
   const cancelImagesAccess = useCallback(() => {
+    const rootHandle = pendingRootHandleRef.current;
+    const warningMessages = [...pendingWarningsRef.current, t('sourceFiles.imagesLoadError')];
     setNeedsImagesAccess(false);
     pendingRootHandleRef.current = null;
-  }, []);
+    pendingWarningsRef.current = [];
+    if (rootHandle) {
+      showLoadMessages(rootHandle.name, warningMessages);
+    }
+  }, [showLoadMessages, t]);
 
   return { openDirectory, needsImagesAccess, selectImagesFolder, cancelImagesAccess };
 };

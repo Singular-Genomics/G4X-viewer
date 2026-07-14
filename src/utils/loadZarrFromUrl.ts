@@ -8,7 +8,6 @@ import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import type { ZarritaStoreFactory } from './ZarrDataSet.types';
-import { ZARR_SUBPATHS } from './ZarrPaths';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -31,10 +30,33 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     };
   }
 
+  const isAccessible = await zarrDataSet.isAccessible();
+  if (!isAccessible) {
+    return {
+      successMessages: [],
+      warningMessages: [],
+      errorMessage: t('sourceFiles.zarrNotFound')
+    };
+  }
+
   const zarrDir = zarrDataSet.getZarrDirectoryName();
   const zarrMultiplexUrl = zarrDataSet.getMultiplexPath();
   const successMessages: string[] = [];
   const warningMessages: string[] = [];
+
+  const [hasImagesData, hasTranscriptsData, hasSegmentationData] = await Promise.all([
+    zarrDataSet.hasImagesData(),
+    zarrDataSet.hasTranscriptsData(),
+    zarrDataSet.hasSegmentationData()
+  ]);
+
+  if (!hasImagesData && !hasTranscriptsData && !hasSegmentationData) {
+    return {
+      successMessages: [],
+      warningMessages: [],
+      errorMessage: t('sourceFiles.zarrCorrupted')
+    };
+  }
 
   useZarrDataStore.getState().reset();
   useTranscriptLayerStore.getState().reset();
@@ -55,11 +77,6 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.getState().setZarrStoreFactory(zarrStoreFactory);
   useZarrDataStore.setState({ zarrDataSet });
 
-  const [hasTranscriptsData, hasSegmentationData] = await Promise.all([
-    zarrDataSet.hasTranscriptsData(),
-    zarrDataSet.hasSegmentationData()
-  ]);
-
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
   useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
@@ -67,14 +84,18 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     warningMessages.push(t('sourceFiles.transcriptsLoadError'));
   }
 
-  useViewerStore.setState({
-    source: { urlOrFile: zarrMultiplexUrl, description: zarrDir }
-  });
+  if (hasImagesData) {
+    useViewerStore.setState({
+      source: { urlOrFile: zarrMultiplexUrl, description: zarrDir }
+    });
+  } else {
+    warningMessages.push(t('sourceFiles.imagesLoadError'));
+  }
 
   const runMetadataResult = await zarrDataSet.fetchRunMetadata();
   if (runMetadataResult) {
     useViewerStore.getState().setGeneralDetails({
-      fileName: ZARR_SUBPATHS.attrs.root,
+      fileName: zarrDir,
       data: runMetadataResult.metadata,
       smpInfoOrder: runMetadataResult.smpInfoOrder
     });
@@ -83,11 +104,13 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   const hAndEUrl = zarrDataSet.getHAndEPath();
   useBrightfieldImagesStore.getState().addNewFile(hAndEUrl);
 
-  const imageAxes = await zarrDataSet.fetchImageAxesMetadata();
-  if (imageAxes) {
-    useViewerStore.setState({
-      physicalSize: { size: 1 / imageAxes.pixel_per_um, unit: imageAxes.unit }
-    });
+  if (hasImagesData) {
+    const imageAxes = await zarrDataSet.fetchImageAxesMetadata();
+    if (imageAxes) {
+      useViewerStore.setState({
+        physicalSize: { size: 1 / imageAxes.pixel_per_um, unit: imageAxes.unit }
+      });
+    }
   }
 
   if (hasSegmentationData) {
@@ -113,7 +136,9 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     warningMessages.push(t('sourceFiles.segmentationMissingData'));
   }
 
-  successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));
+  if (warningMessages.length === 0) {
+    successMessages.push(t('sourceFiles.zarrSuccess', { filename: zarrDir }));
+  }
 
   return {
     successMessages,

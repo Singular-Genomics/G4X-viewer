@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
+import { useConsolidatedSnackbar } from './useConsolidatedSnackbar.hook.tsx';
 import { loadZarrFromUrl } from '../utils/loadZarrFromUrl';
 
 export const IMAGE_URL_PARAM = 'imageUrl';
@@ -8,6 +9,7 @@ export const IMAGE_URL_PARAM = 'imageUrl';
 export const useCloudImageLoader = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const { showConsolidatedMessages } = useConsolidatedSnackbar();
   const hasLoadedFromUrl = useRef(false);
 
   useEffect(() => {
@@ -24,26 +26,15 @@ export const useCloudImageLoader = () => {
         t
       });
       if (errorMessage) {
-        enqueueSnackbar({
-          message: errorMessage,
-          variant: 'error'
-        });
+        enqueueSnackbar({ message: errorMessage, variant: 'error' });
         return;
       }
-      warningMessages.forEach((message) =>
-        enqueueSnackbar({
-          message,
-          variant: 'warning'
-        })
-      );
-      successMessages.forEach((message) =>
-        enqueueSnackbar({
-          message,
-          variant: 'success'
-        })
-      );
+      if (warningMessages.length === 0) {
+        showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+      }
+      showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
     };
 
     loadFromUrl();
-  }, [enqueueSnackbar, t]);
+  }, [enqueueSnackbar, showConsolidatedMessages, t]);
 };

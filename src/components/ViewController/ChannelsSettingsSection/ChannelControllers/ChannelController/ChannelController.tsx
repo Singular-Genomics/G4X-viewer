@@ -28,6 +28,7 @@ import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const ChannelController = ({
   color,
+  defaultColor,
   domain,
   name,
   isLoading,
@@ -184,6 +185,8 @@ export const ChannelController = ({
         </GxSelect>
         <Box>
           <ChannelOptions
+            color={color}
+            defaultColor={defaultColor}
             slider={slider}
             domain={domain}
             handleColorSelect={handleColorSelect as any}

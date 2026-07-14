@@ -42,7 +42,9 @@ export default function ZarrSourceInput() {
     window.history.replaceState({}, '', url);
 
     setSubmitted(true);
-    showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    if (warningMessages.length === 0) {
+      showConsolidatedMessages(successMessages, 'success', 'sourceFiles.zarrLoadComplete');
+    }
     showConsolidatedMessages(warningMessages, 'warning', 'sourceFiles.zarrLoadWarnings');
   };
 
@@ -93,7 +95,7 @@ export default function ZarrSourceInput() {
       onChange={(e) => handleChange(e.target.value)}
       onKeyDown={handleKeyDown}
       placeholder={t('sourceFiles.zarrInputPlaceholder')}
-      helperText={submitted && imageName ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
+      helperText={imageName && (!cloudImageUrl || submitted) ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
       sx={sx.textField}
       slotProps={{ input: { endAdornment, inputRef } }}
     />

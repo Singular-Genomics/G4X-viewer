@@ -65,7 +65,7 @@ export const useOnDemandDataLoader = () => {
 
         useZarrDataStore.getState().setTranscriptConfigLoaded(true);
       } catch {
-        enqueueSnackbar(t('sourceFiles.transcriptsLoadError'), { variant: 'error' });
+        enqueueSnackbar(t('sourceFiles.transcriptsConfigLoadError'), { variant: 'error' });
         useTranscriptLayerStore.getState().reset();
       }
     };
