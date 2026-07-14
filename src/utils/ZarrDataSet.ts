@@ -107,7 +107,8 @@ export class ZarrDataSet {
   }
 
   public async hasTranscriptsData(): Promise<boolean> {
-    return this.hasZarrNode(this.paths.attrs.transcripts());
+    const layerConfig = await this.fetchTranscriptLayerConfig();
+    return layerConfig !== null;
   }
 
   public async hasSegmentationData(): Promise<boolean> {

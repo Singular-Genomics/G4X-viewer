@@ -210,6 +210,7 @@
     "transcriptsFileInputLabel": "Transcript File Name",
     "transcriptsFileUploadButton": "Upload Transcript File",
     "transcriptsLoadError": "Transcript data is missing",
+    "transcriptsConfigLoadError": "Failed to load transcript configuration",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
