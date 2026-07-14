@@ -4,7 +4,17 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { TarFileEntry, ExportDataType, InternalDataType } from './PolygonImportExport.types';
+import { SingleMask } from '../../shared/types';
+import {
+  TarFileEntry,
+  ExportDataType,
+  InternalDataType,
+  RoiCellExport,
+  RoiTranscriptExport,
+  CellsExportData,
+  TranscriptsExportData,
+  CellExportRecord
+} from './PolygonImportExport.types';
 
 const escapeCsvValue = (value: string | number) => {
   const str = String(value ?? '');
@@ -113,6 +123,13 @@ const generateExportCsvFilename = (type: string): string => {
   return `${ometiffName}_${type}_${date}.csv`;
 };
 
+const generateExportJsonFilename = (type: string): string => {
+  const viewerSource = useViewerStore.getState().source;
+  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
+  const date = new Date().toISOString().split('T')[0];
+  return `${ometiffName}_${type}_${date}.json`;
+};
+
 const generateExportTarFilename = (roiCount: number, type: ExportDataType): string => {
   const viewerSource = useViewerStore.getState().source;
   const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
@@ -143,165 +160,206 @@ const downloadZipFile = async (files: TarFileEntry[], fileName: string) => {
   URL.revokeObjectURL(url);
 };
 
-export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], exportGenes: boolean) => {
+// Builds the canonical per-ROI export data consumed by both the JSON and CSV serializers.
+const buildTranscriptExports = (
+  polygonFeatures: PolygonFeature[],
+  polygonNotes: Record<number, string> = {}
+): RoiTranscriptExport[] => {
+  const { selectedPoints } = useTranscriptLayerStore.getState();
+
+  return polygonFeatures.map((feature) => {
+    const polygonId = feature.properties?.polygonId || 1;
+    const data = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
+
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      transcripts: data.map((t) => ({
+        geneName: t.geneName || 'unknown',
+        position: t.position || [],
+        cellId: t.cellId || ''
+      }))
+    };
+  });
+};
+
+const buildCellExports = (
+  polygonFeatures: PolygonFeature[],
+  includeGenes: boolean,
+  polygonNotes: Record<number, string> = {}
+): RoiCellExport[] => {
   const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
 
-  polygonFeatures.forEach((feature) => {
+  const proteinNames = segmentationMetadata?.proteinNames || [];
+  const allGeneNames = segmentationMetadata?.geneNames || [];
+  // An empty array is truthy, so gate gene data on length - keeps JSON and CSV in sync
+  const includeGeneData = includeGenes && allGeneNames.length > 0;
+  const geneNames = includeGeneData ? allGeneNames : [];
+
+  return polygonFeatures.map((feature) => {
     const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
+    const data = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
 
-    const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
+    return {
+      roiName: `ROI_${polygonId}`,
+      polygonId,
+      coordinates: feature.geometry.coordinates[0].map((coord: number[]) => coord as [number, number]),
+      notes: polygonNotes[polygonId] || '',
+      hasSegmentationMetadata: !!segmentationMetadata,
+      proteinNames,
+      geneNames,
+      cells: data.map((cell) => buildCellRecord(cell, proteinNames, geneNames, includeGeneData))
+    };
+  });
+};
 
-    const proteinColumns = segmentationMetadata?.proteinNames || [];
-    const genesColumns = segmentationMetadata?.geneNames && exportGenes ? segmentationMetadata?.geneNames : [];
+const buildCellRecord = (
+  cell: SingleMask,
+  proteinNames: string[],
+  geneNames: string[],
+  includeGeneData: boolean
+): CellExportRecord => {
+  const protein: Record<string, number> = {};
+  proteinNames.forEach((name, index) => {
+    protein[name] = cell.proteinValues[index];
+  });
 
-    const header = [
-      'cell_id',
-      'ROI',
-      'totalCounts',
-      'totalGenes',
-      'area',
-      'clusterId',
-      'umapX',
-      'umapY',
-      'vertices',
-      ...genesColumns,
-      ...proteinColumns
-    ];
-    const rows: (string | number)[][] = [header];
-
-    cellsInPolygon.forEach((cell) => {
-      let rowData = [
-        cell.cellId,
-        polygonId,
-        cell.totalCounts || 0,
-        cell.totalGenes || 0,
-        cell.area || 0,
-        cell.clusterId || '',
-        cell.umapValues?.umapX || 0,
-        cell.umapValues?.umapY || 0,
-        JSON.stringify(cell.vertices || [])
-      ] as (string | number)[];
-
-      if (genesColumns.length > 0) {
-        const genesArray = new Array<number>(genesColumns.length).fill(0);
-        cell.nonzeroGeneIndices.forEach((index, idx) => {
-          genesArray[index] = cell.nonzeroGeneValues[idx];
-        });
-        rowData = rowData.concat(genesArray);
+  let transcript: Record<string, number> | null = null;
+  if (includeGeneData) {
+    const transcriptMap: Record<string, number> = {};
+    cell.nonzeroGeneIndices.forEach((geneIndex, index) => {
+      const geneName = geneNames[geneIndex];
+      if (geneName !== undefined) {
+        transcriptMap[geneName] = cell.nonzeroGeneValues[index];
       }
-
-      if (proteinColumns.length > 0) {
-        rowData = rowData.concat(cell.proteinValues);
-      }
-
-      rows.push(rowData);
     });
+    transcript = transcriptMap;
+  }
 
-    const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-    downloadText(csv, generateExportCsvFilename(`${roiName}_segmentation`));
+  return {
+    cellId: cell.cellId,
+    area: cell.area,
+    totalCounts: cell.totalCounts,
+    totalGenes: cell.totalGenes,
+    clusterId: cell.clusterId,
+    vertices: cell.vertices,
+    umapValues: cell.umapValues,
+    protein,
+    transcript
+  };
+};
+
+export const exportPolygonsWithCellsJSON = (polygonFeatures: PolygonFeature[], includeGenes: boolean) => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  const exportData: CellsExportData = {};
+
+  buildCellExports(polygonFeatures, includeGenes, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      cells: roi.cells.map((cell) => {
+        const { protein, transcript, ...rest } = cell;
+        return {
+          ...rest,
+          ...(roi.hasSegmentationMetadata ? { protein } : {}),
+          ...(transcript !== null ? { transcript } : {})
+        };
+      }),
+      polygonId: roi.polygonId,
+      notes: roi.notes
+    };
+  });
+
+  downloadText(JSON.stringify(exportData, null, 2), generateExportJsonFilename('segmentation'), 'application/json');
+};
+
+export const exportPolygonsWithTranscriptsJSON = (polygonFeatures: PolygonFeature[]) => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  const exportData: TranscriptsExportData = {};
+
+  buildTranscriptExports(polygonFeatures, polygonNotes).forEach((roi) => {
+    exportData[roi.roiName] = {
+      coordinates: roi.coordinates,
+      transcripts: roi.transcripts,
+      polygonId: roi.polygonId,
+      notes: roi.notes
+    };
+  });
+
+  downloadText(JSON.stringify(exportData, null, 2), generateExportJsonFilename('transcripts'), 'application/json');
+};
+
+// One ROI's cells -> CSV (gene/protein columns come from roi.geneNames/proteinNames)
+const cellRoiToCsv = (roi: RoiCellExport): string => {
+  const header = [
+    'cell_id',
+    'ROI',
+    'totalCounts',
+    'totalGenes',
+    'area',
+    'clusterId',
+    'umapX',
+    'umapY',
+    'vertices',
+    ...roi.geneNames,
+    ...roi.proteinNames,
+    'notes'
+  ];
+  const rows: (string | number)[][] = [header];
+
+  roi.cells.forEach((cell) => {
+    const rowData: (string | number)[] = [
+      cell.cellId,
+      roi.polygonId,
+      cell.totalCounts || 0,
+      cell.totalGenes || 0,
+      cell.area || 0,
+      cell.clusterId || '',
+      cell.umapValues?.umapX || 0,
+      cell.umapValues?.umapY || 0,
+      JSON.stringify(cell.vertices || [])
+    ];
+
+    roi.geneNames.forEach((geneName) => rowData.push(cell.transcript?.[geneName] ?? 0));
+    roi.proteinNames.forEach((proteinName) => rowData.push(cell.protein[proteinName] ?? 0));
+    rowData.push(roi.notes);
+
+    rows.push(rowData);
+  });
+
+  return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
+};
+
+// One ROI's transcripts -> CSV
+const transcriptRoiToCsv = (roi: RoiTranscriptExport): string => {
+  const header = ['gene_name', 'ROI', 'position', 'cellId', 'notes'];
+  const rows: (string | number)[][] = [header];
+
+  roi.transcripts.forEach((transcript) => {
+    rows.push([transcript.geneName, roi.polygonId, JSON.stringify(transcript.position), transcript.cellId, roi.notes]);
+  });
+
+  return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
+};
+
+export const exportPolygonsWithCellsCSV = (polygonFeatures: PolygonFeature[], exportGenes: boolean) => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  buildCellExports(polygonFeatures, exportGenes, polygonNotes).forEach((roi) => {
+    downloadText(cellRoiToCsv(roi), generateExportCsvFilename(`${roi.roiName}_segmentation`));
   });
 };
 
 export const exportPolygonsWithTranscriptsCSV = (polygonFeatures: PolygonFeature[]) => {
-  const { selectedPoints } = useTranscriptLayerStore.getState();
-
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-
-    const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
-
-    const header = ['gene_name', 'ROI', 'position', 'cellId'];
-    const rows: (string | number)[][] = [header];
-
-    transcriptsInPolygon.forEach((transcript) => {
-      const geneName = transcript.geneName || 'unknown';
-      rows.push([geneName, polygonId, JSON.stringify(transcript.position || []), transcript.cellId || '']);
-    });
-
-    const csv = rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-    downloadText(csv, generateExportCsvFilename(`${roiName}_transcripts`));
+  const { polygonNotes } = usePolygonDrawingStore.getState();
+  buildTranscriptExports(polygonFeatures, polygonNotes).forEach((roi) => {
+    downloadText(transcriptRoiToCsv(roi), generateExportCsvFilename(`${roi.roiName}_transcripts`));
   });
 };
 
 export const exportROIMetadataCSV = (polygonFeatures: PolygonFeature[]) => {
   const csv = generateMetadataCSVContent(polygonFeatures);
   downloadText(csv, generateExportCsvFilename('ROI_metadata'));
-};
-
-const generateCsvContentForSinglePolygon = (
-  feature: PolygonFeature,
-  type: InternalDataType,
-  exportGenes: boolean = true
-): string => {
-  const polygonId = feature.properties?.polygonId || 1;
-
-  if (type === 'cells') {
-    const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
-    const cellsInPolygon = selectedCells.find((selection) => selection.roiId === polygonId)?.data || [];
-
-    const proteinColumns = segmentationMetadata?.proteinNames || [];
-    const genesColumns = segmentationMetadata?.geneNames && exportGenes ? segmentationMetadata?.geneNames : [];
-
-    const header = [
-      'cell_id',
-      'ROI',
-      'totalCounts',
-      'totalGenes',
-      'area',
-      'clusterId',
-      'umapX',
-      'umapY',
-      'vertices',
-      ...genesColumns,
-      ...proteinColumns
-    ];
-    const rows: (string | number)[][] = [header];
-
-    cellsInPolygon.forEach((cell) => {
-      let rowData = [
-        cell.cellId,
-        polygonId,
-        cell.totalCounts || 0,
-        cell.totalGenes || 0,
-        cell.area || 0,
-        cell.clusterId || '',
-        cell.umapValues?.umapX || 0,
-        cell.umapValues?.umapY || 0,
-        JSON.stringify(cell.vertices || [])
-      ] as (string | number)[];
-
-      if (genesColumns.length > 0) {
-        const genesArray = new Array<number>(genesColumns.length).fill(0);
-        cell.nonzeroGeneIndices.forEach((index, idx) => {
-          genesArray[index] = cell.nonzeroGeneValues[idx];
-        });
-        rowData = rowData.concat(genesArray);
-      }
-
-      if (proteinColumns.length > 0) {
-        rowData = rowData.concat(cell.proteinValues);
-      }
-
-      rows.push(rowData);
-    });
-
-    return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-  } else {
-    const { selectedPoints } = useTranscriptLayerStore.getState();
-    const transcriptsInPolygon = selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [];
-
-    const header = ['gene_name', 'ROI', 'position', 'cellId'];
-    const rows: (string | number)[][] = [header];
-
-    transcriptsInPolygon.forEach((transcript) => {
-      const geneName = transcript.geneName || 'unknown';
-      rows.push([geneName, polygonId, JSON.stringify(transcript.position || []), transcript.cellId || '']);
-    });
-
-    return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
-  }
 };
 
 const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string => {
@@ -346,20 +404,24 @@ const generateMetadataCSVContent = (polygonFeatures: PolygonFeature[]): string =
   return rows.map((r) => r.map(escapeCsvValue).join(',')).join('\n');
 };
 
-const createCSVTarFile = (polygonFeatures: PolygonFeature[], type: InternalDataType, exportGenes: boolean = true) => {
+// Per-ROI CSV files + shared ROI_metadata.csv, for tar/zip archives
+const buildCsvFiles = (
+  polygonFeatures: PolygonFeature[],
+  type: InternalDataType,
+  exportGenes: boolean
+): TarFileEntry[] => {
+  const { polygonNotes } = usePolygonDrawingStore.getState();
   const files: TarFileEntry[] = [];
 
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const csvContent = generateCsvContentForSinglePolygon(feature, type, exportGenes);
-    const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
-
-    files.push({
-      name: generateExportCsvFilename(`${roiName}_${fileType}`),
-      content: csvContent
+  if (type === 'cells') {
+    buildCellExports(polygonFeatures, exportGenes, polygonNotes).forEach((roi) => {
+      files.push({ name: generateExportCsvFilename(`${roi.roiName}_segmentation`), content: cellRoiToCsv(roi) });
     });
-  });
+  } else {
+    buildTranscriptExports(polygonFeatures, polygonNotes).forEach((roi) => {
+      files.push({ name: generateExportCsvFilename(`${roi.roiName}_transcripts`), content: transcriptRoiToCsv(roi) });
+    });
+  }
 
   // Add metadata CSV
   files.push({
@@ -367,6 +429,11 @@ const createCSVTarFile = (polygonFeatures: PolygonFeature[], type: InternalDataT
     content: generateMetadataCSVContent(polygonFeatures)
   });
 
+  return files;
+};
+
+const createCSVTarFile = (polygonFeatures: PolygonFeature[], type: InternalDataType, exportGenes: boolean = true) => {
+  const files = buildCsvFiles(polygonFeatures, type, exportGenes);
   const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
   const tarFileName = generateExportTarFilename(polygonFeatures.length, fileType);
   downloadTarFile(files, tarFileName);
@@ -377,26 +444,7 @@ const createCSVZipFile = async (
   type: InternalDataType,
   exportGenes: boolean = true
 ) => {
-  const files: TarFileEntry[] = [];
-
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const csvContent = generateCsvContentForSinglePolygon(feature, type, exportGenes);
-    const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
-
-    files.push({
-      name: generateExportCsvFilename(`${roiName}_${fileType}`),
-      content: csvContent
-    });
-  });
-
-  // Add metadata CSV
-  files.push({
-    name: generateExportCsvFilename('ROI_metadata'),
-    content: generateMetadataCSVContent(polygonFeatures)
-  });
-
+  const files = buildCsvFiles(polygonFeatures, type, exportGenes);
   const fileType = type === 'cells' ? 'segmentation' : 'transcripts';
   const zipFileName = generateExportZipFilename(polygonFeatures.length, fileType);
   await downloadZipFile(files, zipFileName);
