@@ -16,7 +16,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useState } from 'react';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
-import { ZarrDataSet } from '../../utils/ZarrDataSet';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 
@@ -29,9 +28,9 @@ export const SummaryButton = () => {
   const [htmlContent, setHtmlContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const zarrDataSet = useZarrDataStore((store) => store.zarrDataSet);
 
-  if (!zarrUrl) return null;
+  if (!zarrDataSet) return null;
 
   const handleSummaryClick = async () => {
     setIsSummaryDialogOpen(true);
@@ -39,7 +38,6 @@ export const SummaryButton = () => {
     setHtmlContent(null);
 
     try {
-      const zarrDataSet = new ZarrDataSet(zarrUrl);
       const summaryHtml = await zarrDataSet.fetchSummaryHtml();
 
       if (summaryHtml) {

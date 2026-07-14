@@ -1,4 +1,4 @@
-import { Box, Input, Typography } from '@mui/material';
+import { Box, Input, Theme, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { SliderThresholdProps } from './SliderThreshold.types';
 import { useMemo, ChangeEvent } from 'react';
@@ -19,6 +19,8 @@ export const SliderThreshold = ({
   handleSliderChange
 }: SliderThresholdProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const sx = styles(theme);
   const [currentMinValue, currentMaxValue] = slider;
   const [domainMin, domainMax] = domain;
 
@@ -59,56 +61,71 @@ export const SliderThreshold = ({
   };
 
   return (
-    <Box sx={sx.container}>
-      <Box sx={sx.inputGroup}>
-        <Typography
-          component="label"
-          htmlFor="slider_range_min"
-          sx={sx.label}
-        >
-          {t('channelSettings.sliderRangeMinLabel')}
-        </Typography>
-        <Input
-          id="slider_range_min"
-          type="number"
-          sx={sx.input}
-          value={rangeMin}
-          onChange={handleRangeMinInput}
-          inputProps={{
-            min: domainMin,
-            max: domainMax,
-            step: CHANNEL_STEP
-          }}
-        />
-      </Box>
-      <Box sx={sx.inputGroup}>
-        <Typography
-          component="label"
-          htmlFor="slider_range_max"
-          sx={sx.label}
-        >
-          {t('channelSettings.sliderRangeMaxLabel')}
-        </Typography>
-        <Input
-          id="slider_range_max"
-          type="number"
-          sx={sx.input}
-          value={rangeMax}
-          onChange={handleRangeMaxInput}
-          inputProps={{
-            min: domainMin,
-            max: domainMax,
-            step: CHANNEL_STEP
-          }}
-        />
+    <Box>
+      <Typography sx={sx.sectionHeader}>{t('channelSettings.sliderRangeSectionTitle')}</Typography>
+      <Box sx={sx.container}>
+        <Box sx={sx.inputGroup}>
+          <Typography
+            component="label"
+            htmlFor="slider_range_min"
+            sx={sx.label}
+          >
+            {t('channelSettings.sliderRangeMinLabel')}
+          </Typography>
+          <Input
+            id="slider_range_min"
+            type="number"
+            sx={sx.input}
+            value={rangeMin}
+            onChange={handleRangeMinInput}
+            inputProps={{
+              min: domainMin,
+              max: domainMax,
+              step: CHANNEL_STEP
+            }}
+          />
+        </Box>
+        <Box sx={sx.inputGroup}>
+          <Typography
+            component="label"
+            htmlFor="slider_range_max"
+            sx={sx.label}
+          >
+            {t('channelSettings.sliderRangeMaxLabel')}
+          </Typography>
+          <Input
+            id="slider_range_max"
+            type="number"
+            sx={sx.input}
+            value={rangeMax}
+            onChange={handleRangeMaxInput}
+            inputProps={{
+              min: domainMin,
+              max: domainMax,
+              step: CHANNEL_STEP
+            }}
+          />
+        </Box>
       </Box>
     </Box>
   );
 };
 
-const sx = {
-  container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, marginTop: 4 },
+const styles = (theme: Theme) => ({
+  sectionHeader: {
+    fontSize: '13px',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    color: theme.palette.gx.accent.greenBlue,
+    marginBottom: '8px'
+  },
+  container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 },
   inputGroup: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' },
-  label: { fontSize: 12, display: 'block', color: '#fff' },
-  input: { color: '#fff', input: { color: '#fff' } }
-};
+  label: { fontSize: 12, display: 'block', color: theme.palette.gx.primary.white },
+  input: {
+    color: theme.palette.gx.primary.white,
+    width: '60px',
+    input: { color: theme.palette.gx.primary.white, textAlign: 'left' }
+  }
+});

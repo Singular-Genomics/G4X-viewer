@@ -35,6 +35,18 @@ export async function loadCellsFromStoreFactory(
   return loadCellsFromGroup(cellsGroup);
 }
 
+export async function fetchClusterIdsFromStoreFactory(
+  storeFactory: ZarritaStoreFactory,
+  segmentationFolderName: string
+): Promise<{ data: any; columnCount: number }> {
+  const clusterIdArray = await open(
+    storeFactory(ZARR_SUBPATHS.cells.field(segmentationFolderName, ZARR_CELL_FIELDS.clusterId)) as any,
+    { kind: 'array' }
+  );
+  const chunk = await get(clusterIdArray);
+  return { data: chunk.data, columnCount: chunk.shape[1] };
+}
+
 async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
   try {
     const openAndGet = (location: Parameters<typeof open>[0]) => open(location, { kind: 'array' }).then(get);

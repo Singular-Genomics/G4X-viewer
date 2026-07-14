@@ -88,11 +88,11 @@ export const PointFilter = () => {
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <PointFilterOptions />
+        <PointFiltersTable />
         <GxFilterTableColormap
           onDrop={onDrop}
           onExport={onExport}
         />
-        <PointFiltersTable />
       </Box>
     </Box>
   );
@@ -121,5 +121,9 @@ const styles = (theme: Theme) => ({
   disabledSection: {
     pointerEvents: 'none',
     opacity: 0.5
+  },
+  colormapLabel: {
+    fontWeight: 600,
+    marginBottom: '4px'
   }
 });

@@ -36,6 +36,7 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
         });
 
         const { urlOrFile } = source;
+        const isLocalSource = !!(urlOrFile as any)?.__localZarrStore;
 
         // --------------------- LEGACY LOADER ----------------------
         const newLoader = await createLoader(
@@ -43,7 +44,8 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           () => {},
           (errorMessage: string | null) => {
             enqueueSnackbar({
-              message: errorMessage || t('sourceFiles.imageLoadError'),
+              message:
+                errorMessage || t(isLocalSource ? 'sourceFiles.imageLoadErrorLocal' : 'sourceFiles.imageLoadError'),
               variant: 'error',
               autoHideDuration: 5000
             });
@@ -225,7 +227,8 @@ export const useProteinImage = (source: ViewerSourceType | null) => {
           maxValue: undefined,
           minValue: undefined,
           initialContrastLimits:
-            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined
+            selectionIndex >= 0 ? (newContrastLimits[selectionIndex] as [number, number]) : undefined,
+          initialColor: selectionIndex >= 0 ? (newColors[selectionIndex] as [number, number, number]) : undefined
         };
       });
 
