@@ -316,7 +316,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     display: 'flex',
     justifyContent: 'space-between',
     gap: '16px',
-    marginBottom: '12px',
+    marginTop: '12px',
     width: '100%',
     padding: '0'
   },
