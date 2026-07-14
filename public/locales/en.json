@@ -341,6 +341,16 @@
     "cells": "Cells",
     "addNote": "Add note..."
   },
+  "changelog": {
+    "title": "What's New",
+    "gotIt": "Got it",
+    "versionLabel": "Version {{version}}",
+    "noEntries": "No release notes are available for this version.",
+    "legacyNote": "Looking for the previous version of the viewer?",
+    "legacyLinkLabel": "Open legacy viewer",
+    "docsLinkLabel": "Read the documentation",
+    "showChangelogAria": "Show release notes"
+  },
   "navigation": {
     "viewer": "Viewer",
     "dashboard": "Dashboard",

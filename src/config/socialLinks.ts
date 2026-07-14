@@ -4,5 +4,6 @@ export const socialLinks = {
   github: 'https://github.com/Singular-Genomics/G4X-viewer',
   x: 'https://x.com/SingularGenomic',
   email: 'mailto:care@singulargenomics.com',
-  docs: 'https://docs.singulargenomics.com/G4X-viewer/'
+  docs: 'https://docs.singulargenomics.com/G4X-viewer/',
+  legacy: 'https://g4x-viewer.legacy.singulargenomics.com/'
 };
