@@ -12,27 +12,34 @@ export const useConsolidatedSnackbar = () => {
   const showConsolidatedMessages = (messages: string[], variant: ConsolidatedSnackbarVariant, summaryKey: string) => {
     if (messages.length === 0) return;
 
+    if (messages.length === 1 && variant === 'success') {
+      enqueueSnackbar({ message: messages[0], variant });
+      return;
+    }
+
     if (messages.length === 1) {
       enqueueSnackbar({
-        message: messages[0],
-        variant
-      });
-    } else {
-      enqueueSnackbar({
-        message: t(summaryKey),
+        message: `${t(summaryKey)}. ${messages[0]}`,
         variant: 'gxSnackbar',
-        titleMode: variant,
-        customContent: (
-          <List dense>
-            {messages.map((msg, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={msg} />
-              </ListItem>
-            ))}
-          </List>
-        )
+        titleMode: variant
       });
+      return;
     }
+
+    enqueueSnackbar({
+      message: t(summaryKey),
+      variant: 'gxSnackbar',
+      titleMode: variant,
+      customContent: (
+        <List dense>
+          {messages.map((msg, index) => (
+            <ListItem key={index}>
+              <ListItemText primary={msg} />
+            </ListItem>
+          ))}
+        </List>
+      )
+    });
   };
 
   return { showConsolidatedMessages };
