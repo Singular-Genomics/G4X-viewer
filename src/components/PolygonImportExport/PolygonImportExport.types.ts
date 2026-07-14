@@ -1,9 +1,7 @@
-import { PointData, SingleMask } from '../../shared/types';
+import { PointData, SingleMask, UmapEntry } from '../../shared/types';
 import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
 
 export interface PolygonImportExportProps {
-  exportPolygonsWithCells: (includeGenes: boolean) => void;
-  exportPolygonsWithTranscripts: () => void;
   polygonFeatures: PolygonFeature[];
   isDetecting?: boolean;
 }
@@ -27,6 +25,39 @@ export type TranscriptsExportData = Record<
     notes?: string;
   }
 >;
+
+// Canonical per-ROI export data shared by the JSON and CSV serializers
+export type RoiTranscriptExport = {
+  roiName: string;
+  polygonId: number;
+  coordinates: [number, number][];
+  notes: string;
+  transcripts: PointData[];
+};
+
+export type CellExportRecord = {
+  cellId: string;
+  area: number;
+  totalCounts: number;
+  totalGenes: number;
+  clusterId: string;
+  vertices: number[];
+  umapValues: UmapEntry;
+  protein: Record<string, number>;
+  // null when gene expression is excluded (toggle off or no gene names)
+  transcript: Record<string, number> | null;
+};
+
+export type RoiCellExport = {
+  roiName: string;
+  polygonId: number;
+  coordinates: [number, number][];
+  notes: string;
+  hasSegmentationMetadata: boolean;
+  proteinNames: string[];
+  geneNames: string[];
+  cells: CellExportRecord[];
+};
 
 export type TarFileEntry = {
   name: string;

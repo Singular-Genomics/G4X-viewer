@@ -33,8 +33,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     isViewMode,
     isDeleteMode,
     clearPolygons,
-    exportPolygonsWithCells,
-    exportPolygonsWithTranscripts,
     polygonFeatures,
     isDetecting,
     showROINumbers
@@ -50,8 +48,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
       store.isViewMode,
       store.isDeleteMode,
       store.clearPolygons,
-      store.exportPolygonsWithCells,
-      store.exportPolygonsWithTranscripts,
       store.polygonFeatures,
       store.isDetecting,
       store.showROINumbers
@@ -216,8 +212,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
       </MuiTooltip>
 
       <PolygonImportExport
-        exportPolygonsWithCells={exportPolygonsWithCells}
-        exportPolygonsWithTranscripts={exportPolygonsWithTranscripts}
         polygonFeatures={polygonFeatures}
         isDetecting={isDetecting}
       />
