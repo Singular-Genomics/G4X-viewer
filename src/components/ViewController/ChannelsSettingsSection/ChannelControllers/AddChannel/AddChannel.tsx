@@ -96,7 +96,7 @@ export const AddChannel = () => {
   return (
     <Button
       disabled={
-        selections.length === MAX_CHANNELS ||
+        selections.length >= MAX_CHANNELS ||
         (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
       }
       onClick={handleChannelAdd}

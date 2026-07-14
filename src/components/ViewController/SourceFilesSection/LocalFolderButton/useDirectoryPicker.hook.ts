@@ -102,7 +102,7 @@ export const useDirectoryPicker = () => {
     // Load run metadata from root .zattrs
     if (rootAttrs?.run_metadata) {
       useViewerStore.getState().setGeneralDetails({
-        fileName: ZARR_SUBPATHS.attrs.root,
+        fileName: handle.name,
         data: rootAttrs.run_metadata,
         smpInfoOrder: rootAttrs.smp_info_order ?? []
       });
