@@ -9,7 +9,8 @@ import {
   DialogTitle,
   Typography,
   Button,
-  CircularProgress
+  CircularProgress,
+  Tooltip
 } from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
@@ -76,13 +77,18 @@ export const SummaryButton = () => {
 
   return (
     <Box>
-      <IconButton
-        onClick={handleSummaryClick}
-        size="small"
-        sx={sx.summaryButton}
+      <Tooltip
+        title={t('general.summaryReportTooltip')}
+        arrow
       >
-        <DescriptionIcon />
-      </IconButton>
+        <IconButton
+          onClick={handleSummaryClick}
+          size="small"
+          sx={sx.summaryButton}
+        >
+          <DescriptionIcon />
+        </IconButton>
+      </Tooltip>
 
       <Dialog
         open={isSummaryDialogOpen}
