@@ -7,12 +7,14 @@ import { PercentageOfTranscripts } from './PercentageOfTranscripts';
 import { HoverInfo } from './HoverInfo/HoverInfo';
 import { useShallow } from 'zustand/react/shallow';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 
 export const ImageInfo = () => {
   const theme = useTheme();
   const sx = styles(theme);
   const pyramidResolution = useViewerStore(useShallow((store) => store.pyramidResolution));
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
 
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
@@ -24,7 +26,7 @@ export const ImageInfo = () => {
         <>
           <Box sx={sx.footerWrapper}>
             <HoverInfo />
-            {hasTranscriptsData && <PercentageOfTranscripts />}
+            {hasTranscriptsData && isTranscriptLayerOn && <PercentageOfTranscripts />}
           </Box>
           <MobileChannelLegend />
           <ScaleBar />
