@@ -74,7 +74,7 @@ export const useOnDemandDataLoader = () => {
         useZarrDataStore.getState().setTranscriptConfigLoaded(true);
         applyTranscriptFilterUrlSettings(new URLSearchParams(window.location.search));
       } catch {
-        enqueueSnackbar(t('sourceFiles.transcriptsLoadError'), { variant: 'error' });
+        enqueueSnackbar(t('sourceFiles.transcriptsConfigLoadError'), { variant: 'error' });
         useTranscriptLayerStore.getState().reset();
       }
     };

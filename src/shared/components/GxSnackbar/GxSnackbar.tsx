@@ -99,12 +99,12 @@ const styles = (theme: Theme) => ({
     background: 'transparent',
     borderRadius: '8px',
     overflow: 'hidden',
+    minWidth: '300px',
+    maxWidth: '600px',
     zIndex: '9999'
   },
   snackbarTitle: {
     padding: '8px 16px',
-    minWidth: '300px',
-    maxWidth: '600px',
     color: theme.palette.gx.primary.white,
     fontWeight: '700',
     display: 'flex',
@@ -121,7 +121,8 @@ const styles = (theme: Theme) => ({
     }
   },
   iconButtonsWrapper: {
-    marginLeft: '8px'
+    marginLeft: 'auto !important',
+    paddingLeft: '8px'
   },
   iconButton: {
     color: theme.palette.gx.primary.white,

@@ -13,7 +13,7 @@ import type {
   ZarrRunMetadata
 } from './ZarrDataSet.types';
 import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
-import { loadCellsFromZarr } from './ZarrCellsLoader';
+import { loadCellsFromZarr, loadCellsFromStoreFactory, fetchClusterIdsFromStoreFactory } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
 
@@ -55,11 +55,13 @@ export class ZarrDataSet {
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: ZarrTranscriptAttrs | null = null;
   private storeFactory: ZarritaStoreFactory;
+  private isCustomStore: boolean;
 
   private async hasZarrNode(path: string): Promise<boolean> {
     try {
-      await axios.head(path, { headers: noCacheHeaders });
-      return true;
+      const response = await axios.head(path, { headers: noCacheHeaders });
+      const contentType = response.headers['content-type'] ?? '';
+      return !contentType.includes('text/html');
     } catch {
       return false;
     }
@@ -68,6 +70,7 @@ export class ZarrDataSet {
   constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
+    this.isCustomStore = !!storeFactory;
     this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
   }
 
@@ -76,7 +79,7 @@ export class ZarrDataSet {
   }
 
   public isValid(): boolean {
-    return this.zarrURL.includes('.zarr');
+    return /\.zarr\/?$/.test(this.zarrURL);
   }
 
   public getZarrDirectoryName(): string {
@@ -93,8 +96,21 @@ export class ZarrDataSet {
     return this.paths.images.h_and_e();
   }
 
+  public async isAccessible(): Promise<boolean> {
+    const [hasGroup, hasAttrs] = await Promise.all([
+      this.hasZarrNode(this.paths.attrs.group()),
+      this.hasZarrNode(this.paths.attrs.root())
+    ]);
+    return hasGroup || hasAttrs;
+  }
+
+  public async hasImagesData(): Promise<boolean> {
+    return this.hasZarrNode(this.paths.attrs.images());
+  }
+
   public async hasTranscriptsData(): Promise<boolean> {
-    return this.hasZarrNode(this.paths.attrs.transcripts());
+    const layerConfig = await this.fetchTranscriptLayerConfig();
+    return layerConfig !== null;
   }
 
   public async hasSegmentationData(): Promise<boolean> {
@@ -306,10 +322,16 @@ export class ZarrDataSet {
   }
 
   public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
+    if (this.isCustomStore) {
+      return loadCellsFromStoreFactory(this.storeFactory, segmentationFolderName);
+    }
     return loadCellsFromZarr(this, segmentationFolderName);
   }
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {
+    if (this.isCustomStore) {
+      return fetchClusterIdsFromStoreFactory(this.storeFactory, segmentationFolderName);
+    }
     const clusterIdArray = await open(
       new FetchStore(this.paths.cells.field(segmentationFolderName, ZARR_CELL_FIELDS.clusterId)),
       { kind: 'array' }
@@ -320,11 +342,11 @@ export class ZarrDataSet {
 
   public async fetchSummaryHtml(): Promise<string | null> {
     try {
-      const response = await axios.get(this.paths.misc.summary(), {
-        responseType: 'text',
-        headers: noCacheHeaders
-      });
-      return response.data;
+      const [dir, file] = ZARR_SUBPATHS.misc.summary.split('/');
+      const store = this.storeFactory(dir);
+      const data = await store.get(`/${file}`);
+      if (data) return new TextDecoder().decode(data);
+      return null;
     } catch (error) {
       console.error('Failed to fetch summary.html:', error);
       return null;

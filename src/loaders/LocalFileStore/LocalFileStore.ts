@@ -9,17 +9,26 @@ type ValidStoreType = ArrayBuffer;
  */
 export class LocalFileStore {
   private rootHandle: FileSystemDirectoryHandle;
+  private overrides: Record<string, FileSystemDirectoryHandle>;
 
-  constructor(rootHandle: FileSystemDirectoryHandle) {
+  constructor(rootHandle: FileSystemDirectoryHandle, overrides: Record<string, FileSystemDirectoryHandle> = {}) {
     this.rootHandle = rootHandle;
+    this.overrides = overrides;
   }
 
   async getItem(key: string): Promise<ValidStoreType> {
     try {
       const parts = key.split('/').filter(Boolean);
       let dirHandle: FileSystemDirectoryHandle = this.rootHandle;
+      let startIndex = 0;
 
-      for (const part of parts.slice(0, -1)) {
+      const override = parts.length > 0 ? this.overrides[parts[0]] : undefined;
+      if (override) {
+        dirHandle = override;
+        startIndex = 1;
+      }
+
+      for (const part of parts.slice(startIndex, -1)) {
         dirHandle = await dirHandle.getDirectoryHandle(part);
       }
 
