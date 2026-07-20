@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { GlobalSelectionSliders } from './GlobalSelectionSliders';
+import { ImageDetails } from './ImageDetails';
 import { PolygonLayerToggle } from './PolygonLayerToggle';
 import { ZoomInput } from './ZoomInput';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
@@ -11,6 +12,7 @@ export const ViewControlsSection = () => {
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
   return (
     <Box sx={sx.sectionContainer}>
+      <ImageDetails />
       <GlobalSelectionSliders />
       <Box>
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
