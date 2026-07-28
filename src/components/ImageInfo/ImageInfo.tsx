@@ -1,4 +1,4 @@
-import { Box, Theme, Typography, alpha, useTheme } from '@mui/material';
+import { Box, Theme, alpha, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 import { ScaleBar } from '../ScaleBar';
@@ -6,15 +6,15 @@ import { MobileChannelLegend } from '../MobileChannelLegend';
 import { PercentageOfTranscripts } from './PercentageOfTranscripts';
 import { HoverInfo } from './HoverInfo/HoverInfo';
 import { useShallow } from 'zustand/react/shallow';
-import { useTranslation } from 'react-i18next';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 
 export const ImageInfo = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
   const pyramidResolution = useViewerStore(useShallow((store) => store.pyramidResolution));
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
 
   const getLoader = useChannelsStore((store) => store.getLoader);
   const loader = getLoader();
@@ -26,11 +26,7 @@ export const ImageInfo = () => {
         <>
           <Box sx={sx.footerWrapper}>
             <HoverInfo />
-            <Typography
-              sx={sx.footerText}
-            >{`${t('general.layers')}: ${pyramidResolution + 1}/${loader.length}`}</Typography>
-            <Typography sx={sx.footerText}>{`${t('general.shape')}: ${level.shape.join(', ')}`}</Typography>
-            {hasTranscriptsData && <PercentageOfTranscripts />}
+            {hasTranscriptsData && isTranscriptLayerOn && <PercentageOfTranscripts />}
           </Box>
           <MobileChannelLegend />
           <ScaleBar />
@@ -53,8 +49,5 @@ const styles = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
       display: 'flex'
     }
-  },
-  footerText: {
-    color: theme.palette.gx.primary.white
   }
 });
