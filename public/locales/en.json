@@ -296,6 +296,7 @@
   "viewSettings": {
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
+    "imageDetails": "Image Details",
     "layerToggles": "Layer Toggles",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
