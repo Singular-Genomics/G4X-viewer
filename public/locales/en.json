@@ -350,6 +350,7 @@
     "legacyNote": "Looking for the previous version of the viewer?",
     "legacyLinkLabel": "Open legacy viewer",
     "docsLinkLabel": "Read the documentation",
+    "historyLinkLabel": "See all changes history",
     "showChangelogAria": "Show release notes"
   },
   "navigation": {

@@ -70,6 +70,15 @@ export const ChangelogModal = ({ isOpen, onClose, entry }: ChangelogModalProps) 
           >
             {t('changelog.docsLinkLabel')}
           </Link>
+          <Link
+            href={socialLinks.changelogHistory}
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="none"
+            sx={sx.link}
+          >
+            {t('changelog.historyLinkLabel')}
+          </Link>
         </Box>
       </Box>
     </GxModal>
@@ -82,7 +91,7 @@ const styles = (theme: Theme) => ({
     flexDirection: 'column',
     gap: '16px',
     minWidth: { md: '500px' },
-    maxHeight: '85vh',
+    maxHeight: '70vh',
     overflowY: 'auto'
   },
   versionHeader: {

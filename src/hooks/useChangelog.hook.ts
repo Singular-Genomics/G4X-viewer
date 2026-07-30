@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getChangelogEntry } from '../config/changelog';
+import { getChangelogEntry } from '../config/changelog.helpers';
 
 const LAST_SEEN_VERSION_KEY = 'lastSeenAppVersion';
 
