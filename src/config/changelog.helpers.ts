@@ -4,7 +4,7 @@ import { ChangelogEntry, ChangelogSection } from './changelog.types';
 const VERSION_HEADING_REGEX = /^## \[(.+?)\] - (.+)$/;
 const SECTION_HEADING_REGEX = /^### (.+)$/;
 const LIST_ITEM_REGEX = /^-\s+(.+)$/;
-const MAX_LISTED_VERSIONS = 10;
+const MAX_LISTED_VERSIONS = 5;
 
 const parseChangelog = (markdown: string): ChangelogEntry[] => {
   const entries: ChangelogEntry[] = [];
