@@ -1,21 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getChangelogEntry } from '../config/changelog.helpers';
+import { getChangelogEntries } from '../config/changelog.helpers';
 
 const LAST_SEEN_VERSION_KEY = 'lastSeenAppVersion';
 
 export const useChangelog = () => {
   const appVersion = process.env.APP_VERSION;
-  const currentEntry = getChangelogEntry(appVersion);
-
-  const [isOpen, setIsOpen] = useState(
-    () => !!currentEntry && localStorage.getItem(LAST_SEEN_VERSION_KEY) !== appVersion
-  );
+  const lastSeenAppVersion = localStorage.getItem(LAST_SEEN_VERSION_KEY);
 
   useEffect(() => {
-    if (!currentEntry && appVersion && localStorage.getItem(LAST_SEEN_VERSION_KEY) !== appVersion) {
-      localStorage.setItem(LAST_SEEN_VERSION_KEY, appVersion);
+    if (!appVersion && !lastSeenAppVersion) {
+      console.error('No source for changelog data could be found');
     }
-  }, [currentEntry, appVersion]);
+    //eslint-disable-next-line
+  }, []);
+
+  const markdownParse = getChangelogEntries(lastSeenAppVersion ?? '');
+
+  const [isOpen, setIsOpen] = useState(() => !!markdownParse?.entries.length && lastSeenAppVersion !== appVersion);
 
   const openChangelog = useCallback(() => setIsOpen(true), []);
 
@@ -26,5 +27,11 @@ export const useChangelog = () => {
     setIsOpen(false);
   }, [appVersion]);
 
-  return { isOpen, currentEntry, openChangelog, closeChangelog };
+  return {
+    isOpen,
+    currentEntries: markdownParse?.entries,
+    showMore: markdownParse?.wasLimited,
+    openChangelog,
+    closeChangelog
+  };
 };

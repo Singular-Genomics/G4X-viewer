@@ -16,7 +16,7 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const sx = styles(theme);
   const { t } = useTranslation();
   const app_version = process.env.APP_VERSION;
-  const { isOpen, currentEntry, openChangelog, closeChangelog } = useChangelog();
+  const { isOpen, currentEntries, showMore, openChangelog, closeChangelog } = useChangelog();
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: NavigationView) => {
     onViewChange(newValue);
@@ -89,7 +89,8 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
       <ChangelogModal
         isOpen={isOpen}
         onClose={closeChangelog}
-        entry={currentEntry}
+        entries={currentEntries}
+        showMore={!!showMore}
       />
     </Box>
   );
