@@ -28,6 +28,7 @@
     "highlightedChannel": "Highlighted Channel",
     "lens": "Lens",
     "overview": "Overview",
+    "overviewDisabledWhileDrawing": "Overview is hidden while ROI drawing is enabled",
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
     "sliderRangeSectionTitle": "Slider Range",
