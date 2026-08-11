@@ -24,7 +24,9 @@ export const GlobalSelectionSliders = () => {
   const loader = getLoader();
   const { shape, labels } = loader[0];
 
-  const globalControlLabels = labels.filter((label: any) => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label));
+  const globalControlLabels = labels
+    .filter((label: any) => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label))
+    .filter((label: any) => shape[labels.indexOf(label)] - 1 > 0);
   const isAnyChannelLoading = isChannelLoading.some((loading) => loading);
 
   const changeSelection = debounce(
