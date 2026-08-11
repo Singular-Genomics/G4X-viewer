@@ -40,9 +40,7 @@ export const DashboardView = () => {
 
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
-  const handleLayoutChange = (layout: Layout[]) => {
-    console.log('Layout changed:', layout);
-  };
+  const handleLayoutChange = (_layout: Layout[]) => {};
 
   const handleRemoveItem = (itemId: string) => {
     setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
