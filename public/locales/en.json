@@ -31,8 +31,8 @@
     "removeChannel": "Remove Channel",
     "sectionTitle": "Channel Settings",
     "sliderRangeSectionTitle": "Slider Range",
-    "sliderRangeMinLabel":"Range Min",
-    "sliderRangeMaxLabel":"Range Max",
+    "sliderRangeMinLabel": "Range Min",
+    "sliderRangeMaxLabel": "Range Max",
     "sliderRangeModeExpanded": "Expanded Range",
     "sliderRangeModeContract": "Contract Range",
     "resetSlider": "Reset to default range",
@@ -195,7 +195,7 @@
     "metadataUploadSuccess": "General details file loaded successfully",
     "multiFileButtonLabel": "Multi-file",
     "notReadableErrorWarning": "Error loading transcript file. In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
-    "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file.  You may need to quit the browser application and restart it if this issue persists.",
+    "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file. You may need to quit the browser application and restart it if this issue persists.",
     "sectionTitle": "Source Files",
     "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
     "proteinNamesExtractionError": "Failed to extract protein names from metadata",
@@ -234,7 +234,7 @@
     "folderInvalidDirectory": "Selected folder is not a valid OME-Zarr directory",
     "folderSuccess": "Successfully loaded image from folder: {{name}}",
     "folderImagesAccessTitle": "Access to images folder required",
-    "folderImagesAccessDescription": "This dataset loads images from an another folder.  Please select the images folder (or the original Zarr dataset) to finish loading.  See documentation for more info.",
+    "folderImagesAccessDescription": "This dataset loads images from an another folder. Please select the images folder (or the original Zarr dataset) to finish loading. See documentation for more info.",
     "folderImagesInvalid": "Selected folder does not contain a valid images directory"
   },
   "tooltip": {
@@ -294,6 +294,7 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
+    "brightfieldLayer": "Brightfield Layer",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "imageDetails": "Image Details",
@@ -303,6 +304,8 @@
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
+    "segmentationLayer": "Segmentation Layer",
+    "transcriptLayer": "Transcript Layer",
     "zoomControl": "Zoom Control"
   },
   "activeFilters": {
@@ -332,7 +335,7 @@
   "hiddenLayers": {
     "title": "Hidden Layers",
     "transcriptLayer": "Transcript Layer",
-    "segmentationLayer": "Segmentation Layer", 
+    "segmentationLayer": "Segmentation Layer",
     "channelsLayer": "Channels Layer",
     "brightfieldLayer": "Brightfield Layer",
     "polygonLayer": "ROI Polygons Layer"
@@ -381,7 +384,7 @@
     "protein": "Protein",
     "noROIAvailableError": "No ROI data available. Please create or import ROIs."
   },
-    "pieChart": {
+  "pieChart": {
     "title": "Pie Chart",
     "polygonNotFound": "ROI #{{polygonId}} not found",
     "noDataForPolygon": "No data available for this ROI",
@@ -391,11 +394,11 @@
     "hoverCount": "Count",
     "hoverPercent": "Percent"
   },
-   "boxChart": {
+  "boxChart": {
     "title": "Expression Box Chart"
   },
   "barChart": {
-    "title": "Expression Bar Chart", 
+    "title": "Expression Bar Chart",
     "barModeLabel": "Bar Mode"
   },
   "heatmapChart": {
