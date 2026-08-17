@@ -160,7 +160,7 @@ export const useCellSegmentationLayer = () => {
     const n = cellMasksData.length;
     const fv = new Uint8Array(n);
 
-    const allowed = isCellNameFilterOn && cellNameFilters.length > 0 ? new Set(cellNameFilters) : null;
+    const allowed = isCellNameFilterOn && cellNameFilters.size > 0 ? cellNameFilters : null;
     const cytoActive = !!ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0;
     const umapActive = !!umapRange;
 

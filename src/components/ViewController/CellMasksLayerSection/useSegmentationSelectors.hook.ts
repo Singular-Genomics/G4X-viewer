@@ -72,7 +72,7 @@ export const useSegmentationSelectors = () => {
           availableClusterLabels: cellsData.clusterLabels,
           selectedSegmentationLabel: newLabel,
           selectedClusterLabelKey: cellsData.clusterLabels[0].key,
-          cellNameFilters: [],
+          cellNameFilters: new Set<string>(),
           selectedCells: []
         });
       } finally {
@@ -109,7 +109,7 @@ export const useSegmentationSelectors = () => {
           cellMasksData: updatedMasks,
           cellColormapConfig: buildColormap(targetLabel),
           selectedClusterLabelKey: newKey,
-          cellNameFilters: [],
+          cellNameFilters: new Set<string>(),
           selectedCells: []
         });
       } finally {

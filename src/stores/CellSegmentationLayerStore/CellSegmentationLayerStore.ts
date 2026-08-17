@@ -11,7 +11,7 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   showBoundary: false,
   boundaryWidth: 1,
   cellColormapConfig: [],
-  cellNameFilters: [],
+  cellNameFilters: new Set<string>(),
   selectedCells: [],
   umapDataAvailable: false,
   segmentationMetadata: undefined,
@@ -31,7 +31,7 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   setBoundaryWidth: (width) => set({ boundaryWidth: width }),
   setCellColormapConfig: (config) => set({ cellColormapConfig: config }),
   setCellNameFilter: (cellNames) => set({ cellNameFilters: cellNames }),
-  clearCellNameFilter: () => set({ cellNameFilters: [] }),
+  clearCellNameFilter: () => set({ cellNameFilters: new Set<string>() }),
   setSelectedCells: (selectionData) => set({ selectedCells: selectionData }),
   addSelectedCells: (newSelectionData) =>
     set((store) => ({ selectedCells: [...store.selectedCells, newSelectionData] })),
