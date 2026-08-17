@@ -3,11 +3,11 @@ import { ChannelControllerProps, SliderRangeMode } from './ChannelController.typ
 import {
   Box,
   Divider,
-  Grid,
   IconButton,
   ListSubheader,
   MenuItem,
   Radio,
+  SxProps,
   Theme,
   Tooltip,
   Typography,
@@ -104,12 +104,7 @@ export const ChannelController = ({
   };
 
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="center"
-      gap={0.5}
-    >
+    <>
       <Box sx={sx.headerWrapper}>
         <Tooltip
           title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
@@ -267,11 +262,11 @@ export const ChannelController = ({
           </Tooltip>
         </Box>
       </Box>
-    </Grid>
+    </>
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   soloRadio: {
     padding: '8px',
     paddingRight: '2px',
@@ -294,7 +289,8 @@ const styles = (theme: Theme) => ({
   headerWrapper: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px'
+    gap: '4px',
+    marginBlock: '0 4px'
   },
   valueWrapper: {
     display: 'flex',
