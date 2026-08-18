@@ -1,6 +1,7 @@
-import { Box } from '@mui/material';
+import { Box, Theme, Typography } from '@mui/material';
 import { BarChartPlotProps } from './BarChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBarChartPlotDataParser } from './BarChartPlot.helpers';
 import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
@@ -13,6 +14,7 @@ export const BarChartPlot = ({
   selectedHue,
   settings
 }: BarChartPlotProps) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { parseCellsByRoi } = useBarChartPlotDataParser();
@@ -80,27 +82,33 @@ export const BarChartPlot = ({
       ref={containerRef}
       sx={sx.plotContainer}
     >
-      <Plot
-        data={barPlotData}
-        layout={layout}
-        style={{ width: '100%', height: '100%' }}
-        useResizeHandler={true}
-        config={{
-          scrollZoom: false,
-          displayModeBar: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: [
-            'pan2d',
-            'lasso2d',
-            'select2d',
-            'zoom2d',
-            'zoomIn2d',
-            'zoomOut2d',
-            'autoScale2d',
-            'resetScale2d'
-          ]
-        }}
-      />
+      {selectedROIs.length === 0 ? (
+        <Box sx={sx.container}>
+          <Typography sx={sx.emptyStateText}>{t('dashboard.noROISelectedError')}</Typography>
+        </Box>
+      ) : (
+        <Plot
+          data={barPlotData}
+          layout={layout}
+          style={{ width: '100%', height: '100%' }}
+          useResizeHandler={true}
+          config={{
+            scrollZoom: false,
+            displayModeBar: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: [
+              'pan2d',
+              'lasso2d',
+              'select2d',
+              'zoom2d',
+              'zoomIn2d',
+              'zoomOut2d',
+              'autoScale2d',
+              'resetScale2d'
+            ]
+          }}
+        />
+      )}
     </Box>
   );
 };
@@ -110,7 +118,10 @@ const sx = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
+    width: '100%',
+    textAlign: 'center',
+    padding: 3
   },
   plotContainer: {
     width: '100%',
@@ -118,5 +129,8 @@ const sx = {
     display: 'flex',
     overflow: 'hidden',
     padding: 2
-  }
+  },
+  emptyStateText: (theme: Theme) => ({
+    color: theme.palette.gx.lightGrey[500]
+  })
 };

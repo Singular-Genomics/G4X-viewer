@@ -383,7 +383,8 @@
     "graphOptions_boxGraph": "Intensity Box Graph",
     "gene": "Gene",
     "protein": "Protein",
-    "noROIAvailableError": "No ROI data available. Please create or import ROIs."
+    "noROIAvailableError": "No ROI available yet. Draw or import an ROI in the Viewer, then come back to add a chart. <docsLink>Learn how to select ROIs</docsLink>",
+    "noROISelectedError": "No ROI selected. Select at least one ROI above to display this chart."
   },
   "pieChart": {
     "title": "Pie Chart",

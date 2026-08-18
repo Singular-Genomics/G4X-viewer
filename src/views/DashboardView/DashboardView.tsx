@@ -4,13 +4,14 @@ import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 import { BarChart } from '../../components/DashboardCharts/BarChart';
 import { HeatmapChart } from '../../components/DashboardCharts/HeatmapChart';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useSnackbar } from 'notistack';
+import { socialLinks } from '../../config/socialLinks';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -49,11 +50,26 @@ export const DashboardView = () => {
   const handleAddGraph = (graphId: string) => {
     // Check if there are any ROI polygons available
     if (!polygonFeatures || polygonFeatures.length === 0) {
-      enqueueSnackbar(t('dashboard.noROIAvailableError'), {
-        variant: 'gxSnackbar',
-        titleMode: 'error',
-        iconMode: 'error'
-      });
+      enqueueSnackbar(
+        <Trans
+          i18nKey="dashboard.noROIAvailableError"
+          components={{
+            docsLink: (
+              <a
+                href={socialLinks.docsRoiSelection}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            )
+          }}
+        />,
+        {
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          iconMode: 'error',
+          persist: true
+        }
+      );
       return;
     }
 

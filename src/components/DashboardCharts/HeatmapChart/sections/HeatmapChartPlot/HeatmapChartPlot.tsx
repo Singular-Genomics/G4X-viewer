@@ -1,6 +1,7 @@
-import { Box, SxProps } from '@mui/material';
+import { Box, SxProps, Theme, Typography } from '@mui/material';
 import { HeatmapChartPlotProps } from './HeatmapChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHeatmapChartPlotDataParser } from './HeatmapChartPlot.helpers';
 import Plot from 'react-plotly.js';
 import { Layout } from 'plotly.js';
@@ -13,6 +14,7 @@ export const HeatmapChartPlot = ({
   selectedValues,
   settings
 }: HeatmapChartPlotProps) => {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [threshold, setThreshold] = useState<{ lower?: number; upper?: number }>({});
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -90,45 +92,53 @@ export const HeatmapChartPlot = ({
         ref={containerRef}
         sx={sx.plotContainer}
       >
-        <Plot
-          data={heatmapData}
-          layout={layout}
-          style={{ width: '100%', height: '100%' }}
-          useResizeHandler={true}
-          config={{
-            scrollZoom: false,
-            displayModeBar: true,
-            displaylogo: false,
-            modeBarButtonsToRemove: [
-              'pan2d',
-              'lasso2d',
-              'select2d',
-              'zoom2d',
-              'zoomIn2d',
-              'zoomOut2d',
-              'autoScale2d',
-              'resetScale2d'
-            ]
-          }}
-        />
+        {selectedROIs.length === 0 ? (
+          <Box sx={sx.emptyState}>
+            <Typography sx={sx.emptyStateText}>{t('dashboard.noROISelectedError')}</Typography>
+          </Box>
+        ) : (
+          <Plot
+            data={heatmapData}
+            layout={layout}
+            style={{ width: '100%', height: '100%' }}
+            useResizeHandler={true}
+            config={{
+              scrollZoom: false,
+              displayModeBar: true,
+              displaylogo: false,
+              modeBarButtonsToRemove: [
+                'pan2d',
+                'lasso2d',
+                'select2d',
+                'zoom2d',
+                'zoomIn2d',
+                'zoomOut2d',
+                'autoScale2d',
+                'resetScale2d'
+              ]
+            }}
+          />
+        )}
       </Box>
-      <Box sx={sx.sliderWrapper}>
-        <GxColorscaleSlider
-          scaleMax={maxZValue}
-          scaleMin={minZValue}
-          colorscale={settings.colorscale}
-          lowerThreshold={threshold.lower}
-          upperThreshold={threshold.upper}
-          onThresholdChange={(lower, upper) => {
-            setThreshold({ lower, upper });
-          }}
-        />
-      </Box>
+      {selectedROIs.length > 0 && (
+        <Box sx={sx.sliderWrapper}>
+          <GxColorscaleSlider
+            scaleMax={maxZValue}
+            scaleMin={minZValue}
+            colorscale={settings.colorscale}
+            lowerThreshold={threshold.lower}
+            upperThreshold={threshold.upper}
+            onThresholdChange={(lower, upper) => {
+              setThreshold({ lower, upper });
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
 
-const sx: Record<string, SxProps> = {
+const sx: Record<string, SxProps<Theme>> = {
   container: {
     width: '100%',
     height: '100%',
@@ -143,6 +153,18 @@ const sx: Record<string, SxProps> = {
     position: 'relative',
     overflow: 'hidden'
   },
+  emptyState: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    padding: 3
+  },
+  emptyStateText: (theme: Theme) => ({
+    color: theme.palette.gx.lightGrey[500]
+  }),
   sliderWrapper: {
     width: '100%',
     backgroundColor: 'white',
