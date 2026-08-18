@@ -58,6 +58,7 @@ export const ChannelControllers = () => {
   const loader = getLoader();
   const metadata = useMetadata();
   const sx = styles(theme);
+  const areChannelControlsDisabled = isChannelLoading.some(Boolean);
 
   return (
     <Box sx={sx.channelControllersContainer}>
@@ -65,17 +66,20 @@ export const ChannelControllers = () => {
         const toggleIsOn = () => toggleIsOnSetter(index);
         const name = channelOptions[(selections as any)[index].c];
 
-        const onSelectionChange = (channelName: string) => {
+        const onSelectionChange = async (channelName: string) => {
+          if (useViewerStore.getState().isChannelLoading.some(Boolean)) return;
+
           const selection = {
             ...selections[index],
             c: channelOptions.indexOf(channelName)
           };
           setIsChannelLoading(index, true);
 
-          getSingleSelectionStats({
-            loader,
-            selection
-          }).then(({ domain, contrastLimits: newContrastLimit }) => {
+          try {
+            const { domain, contrastLimits: newContrastLimit } = await getSingleSelectionStats({
+              loader,
+              selection
+            });
             const {
               Pixels: { Channels }
             } = metadata;
@@ -114,7 +118,10 @@ export const ChannelControllers = () => {
               }
             });
             setPropertiesForChannel(index, { selections: selection });
-          });
+          } catch (error) {
+            console.error('Failed to load channel:', error);
+            setIsChannelLoading(index, false);
+          }
         };
 
         const handleRemoveChannel = () => {
@@ -161,6 +168,7 @@ export const ChannelControllers = () => {
               color={colors[index]}
               defaultColor={(channelsSettings[name]?.initialColor ?? colors[index]) as [number, number, number]}
               isLoading={isChannelLoading[index]}
+              disabled={areChannelControlsDisabled}
               handleColorSelect={handleColorSelect}
               handleRemoveChannel={handleRemoveChannel}
               slider={contrastLimits[index]}

@@ -6,6 +6,7 @@ export type ChannelControllerProps = {
   domain: [number, number];
   name: string;
   isLoading: boolean;
+  disabled: boolean;
   pixelValue: string;
   channelVisible: boolean;
   slider: [number, number];
