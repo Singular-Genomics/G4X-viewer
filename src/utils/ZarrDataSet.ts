@@ -340,16 +340,15 @@ export class ZarrDataSet {
     return { data: chunk.data, columnCount: chunk.shape[1] };
   }
 
-  public async fetchSummaryHtml(): Promise<string | null> {
-    try {
-      const [dir, file] = ZARR_SUBPATHS.misc.summary.split('/');
-      const store = this.storeFactory(dir);
-      const data = await store.get(`/${file}`);
-      if (data) return new TextDecoder().decode(data);
-      return null;
-    } catch (error) {
-      console.error('Failed to fetch summary.html:', error);
-      return null;
-    }
+  public async fetchSummaryHtmlBlob(): Promise<Blob | null> {
+    const [dir, file] = ZARR_SUBPATHS.misc.summary.split('/');
+    const store = this.storeFactory(dir);
+    const data = await store.get(`/${file}`);
+    if (!data) return null;
+
+    const content =
+      data.buffer instanceof ArrayBuffer ? new Uint8Array(data.buffer, data.byteOffset, data.byteLength) : data.slice();
+
+    return new Blob([content], { type: 'text/html;charset=utf-8' });
   }
 }

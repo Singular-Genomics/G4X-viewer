@@ -14,7 +14,7 @@ import {
 import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
@@ -25,53 +25,80 @@ export const SummaryButton = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [isSummaryDialogOpen, setIsSummaryDialogOpen] = useState(false);
-  const [htmlContent, setHtmlContent] = useState<string | null>(null);
+  const [summaryUrl, setSummaryUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const summaryUrlRef = useRef<string | null>(null);
+  const loadRequestIdRef = useRef(0);
 
   const zarrDataSet = useZarrDataStore((store) => store.zarrDataSet);
+
+  const replaceSummaryUrl = (newUrl: string | null) => {
+    const previousUrl = summaryUrlRef.current;
+    summaryUrlRef.current = newUrl;
+    setSummaryUrl(newUrl);
+    if (previousUrl) URL.revokeObjectURL(previousUrl);
+  };
+
+  useEffect(
+    () => () => {
+      loadRequestIdRef.current += 1;
+      if (summaryUrlRef.current) URL.revokeObjectURL(summaryUrlRef.current);
+    },
+    []
+  );
 
   if (!zarrDataSet) return null;
 
   const handleSummaryClick = async () => {
+    const requestId = ++loadRequestIdRef.current;
     setIsSummaryDialogOpen(true);
     setIsLoading(true);
-    setHtmlContent(null);
+    setLoadError(null);
+    replaceSummaryUrl(null);
 
     try {
-      const summaryHtml = await zarrDataSet.fetchSummaryHtml();
+      const summaryBlob = await zarrDataSet.fetchSummaryHtmlBlob();
+      if (requestId !== loadRequestIdRef.current) return;
 
-      if (summaryHtml) {
-        setHtmlContent(summaryHtml);
+      if (summaryBlob) {
+        replaceSummaryUrl(URL.createObjectURL(summaryBlob));
       } else {
+        const message = t('general.summaryUnavailableError');
         setIsLoading(false);
+        setLoadError(message);
         enqueueSnackbar({
           variant: 'gxSnackbar',
           titleMode: 'error',
-          message: t('general.summaryLoadError')
+          message
         });
       }
     } catch (error) {
+      if (requestId !== loadRequestIdRef.current) return;
+      console.error('Failed to load summary report:', error);
+      const message = t('general.summaryLoadError');
       setIsLoading(false);
+      setLoadError(message);
       enqueueSnackbar({
         variant: 'gxSnackbar',
         titleMode: 'error',
-        message: t('general.summaryLoadError')
+        message
       });
     }
   };
 
   const handleSummaryClose = () => {
+    loadRequestIdRef.current += 1;
     setIsSummaryDialogOpen(false);
-    setHtmlContent(null);
+    replaceSummaryUrl(null);
     setIsLoading(false);
+    setLoadError(null);
   };
 
   const handleOpenInNewTab = () => {
-    if (!htmlContent) return;
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
-    setTimeout(() => URL.revokeObjectURL(url), 100);
+    if (!summaryUrl || isLoading) return;
+    const newTab = window.open(summaryUrl, '_blank');
+    if (newTab) newTab.opener = null;
   };
 
   return (
@@ -96,6 +123,7 @@ export const SummaryButton = () => {
           <Box sx={sx.dialogTitleActions}>
             <Button
               onClick={handleOpenInNewTab}
+              disabled={isLoading || !summaryUrl}
               startIcon={<OpenInNewIcon />}
               sx={sx.openInNewTabButton}
               size="small"
@@ -119,9 +147,14 @@ export const SummaryButton = () => {
               />
             </Box>
           )}
-          {htmlContent && (
+          {loadError && (
+            <Box sx={sx.errorContainer}>
+              <Typography>{loadError}</Typography>
+            </Box>
+          )}
+          {summaryUrl && (
             <iframe
-              srcDoc={htmlContent}
+              src={summaryUrl}
               style={{
                 width: '100%',
                 height: 'calc(100% + 2px)',
@@ -186,6 +219,9 @@ const styles = (theme: Theme) => ({
     '&:hover': {
       borderColor: theme.palette.gx.primary.white,
       backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+    },
+    '&.Mui-disabled': {
+      color: alpha(theme.palette.gx.primary.white, 0.45)
     }
   },
   dialogCloseButton: {
@@ -207,5 +243,15 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.palette.gx.lightGrey[100]
+  },
+  errorContainer: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '24px',
+    textAlign: 'center',
+    color: theme.palette.gx.darkGrey[300]
   }
 });
