@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -13,10 +14,9 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import LinkIcon from '@mui/icons-material/Link';
+import ShareIcon from '@mui/icons-material/Share';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CheckIcon from '@mui/icons-material/Check';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
@@ -54,7 +54,7 @@ export const ShareSettingsButton = () => {
     const params = new URLSearchParams();
     if (zarrUrl) params.set(IMAGE_URL_PARAM, zarrUrl);
     settings.forEach((value, key) => params.set(key, value));
-    setFullLinkInput(buildFullUrl(params.toString()));
+    setFullLinkInput(isLocalZarr ? '' : buildFullUrl(params.toString()));
     setSettingsInput(settings.toString());
     setIsDialogOpen(true);
   };
@@ -120,14 +120,16 @@ export const ShareSettingsButton = () => {
 
   return (
     <Box>
-      <IconButton
-        onClick={handleOpen}
-        size="small"
-        sx={sx.shareButton}
-        title={t('general.shareSettings')}
-      >
-        <LinkIcon />
-      </IconButton>
+      <Tooltip title={t('general.shareSettings')}>
+        <IconButton
+          onClick={handleOpen}
+          size="small"
+          sx={sx.shareButton}
+          aria-label={t('general.shareSettings')}
+        >
+          <ShareIcon />
+        </IconButton>
+      </Tooltip>
 
       <Dialog
         open={isDialogOpen}
@@ -141,54 +143,54 @@ export const ShareSettingsButton = () => {
           <IconButton
             onClick={handleClose}
             sx={sx.dialogCloseButton}
+            aria-label={t('general.closeShareSettings')}
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
 
         <DialogContent sx={sx.dialogContent}>
-          <Typography sx={sx.sectionLabel}>{t('general.shareFullLinkLabel')}</Typography>
-          <Typography sx={sx.helperText}>
-            {isLocalZarr ? t('general.shareFullLinkLocalDisabled') : t('general.shareFullLinkHelper')}
-          </Typography>
-          <Box sx={sx.inputRow}>
-            <TextField
-              fullWidth
-              size="small"
-              value={fullLinkInput}
-              onChange={(e) => setFullLinkInput(e.target.value)}
-              sx={sx.textField}
-              disabled={isLocalZarr}
-            />
-            <Tooltip title={isLocalZarr ? t('general.shareFullLinkLocalDisabled') : ''}>
-              <span>
-                <IconButton
-                  onClick={handleCopyFull}
+          {!isLocalZarr && (
+            <>
+              <Typography sx={sx.sectionLabel}>{t('general.shareFullLinkLabel')}</Typography>
+              <Typography sx={sx.helperText}>{t('general.shareFullLinkHelper')}</Typography>
+              <Box sx={sx.inputRow}>
+                <TextField
+                  fullWidth
                   size="small"
-                  sx={sx.actionButton}
-                  title={t('general.shareLinkCopied')}
-                  disabled={isLocalZarr}
-                >
-                  <ContentCopyIcon fontSize="small" />
-                </IconButton>
-              </span>
-            </Tooltip>
-            <Tooltip title={isLocalZarr ? t('general.shareFullLinkLocalDisabled') : ''}>
-              <span>
-                <IconButton
+                  value={fullLinkInput}
+                  onChange={(e) => setFullLinkInput(e.target.value)}
+                  sx={sx.textField}
+                  slotProps={{ htmlInput: { 'aria-label': t('general.shareFullLinkLabel') } }}
+                />
+                <Tooltip title={t('general.copyFullLink')}>
+                  <span>
+                    <IconButton
+                      onClick={handleCopyFull}
+                      size="small"
+                      sx={sx.actionButton}
+                      aria-label={t('general.copyFullLink')}
+                      disabled={!fullLinkInput.trim()}
+                    >
+                      <ContentCopyIcon fontSize="small" />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+                <Button
                   onClick={handleApplyFull}
                   size="small"
-                  sx={sx.actionButton}
-                  title={t('general.shareFullLinkApplied')}
-                  disabled={isLocalZarr}
+                  variant="contained"
+                  sx={sx.applyButton}
+                  aria-label={t('general.applyFullLink')}
+                  disabled={!fullLinkInput.trim()}
                 >
-                  <CheckIcon fontSize="small" />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </Box>
+                  {t('general.apply')}
+                </Button>
+              </Box>
 
-          <Divider sx={sx.divider} />
+              <Divider sx={sx.divider} />
+            </>
+          )}
 
           <Typography sx={sx.sectionLabel}>{t('general.shareSettingsOnlyLabel')}</Typography>
           <Typography sx={sx.helperText}>{t('general.shareSettingsOnlyHelper')}</Typography>
@@ -199,23 +201,31 @@ export const ShareSettingsButton = () => {
               value={settingsInput}
               onChange={(e) => setSettingsInput(e.target.value)}
               sx={sx.textField}
+              slotProps={{ htmlInput: { 'aria-label': t('general.shareSettingsOnlyLabel') } }}
             />
-            <IconButton
-              onClick={handleCopySettings}
-              size="small"
-              sx={sx.actionButton}
-              title={t('general.shareLinkCopied')}
-            >
-              <ContentCopyIcon fontSize="small" />
-            </IconButton>
-            <IconButton
+            <Tooltip title={t('general.copySettings')}>
+              <span>
+                <IconButton
+                  onClick={handleCopySettings}
+                  size="small"
+                  sx={sx.actionButton}
+                  aria-label={t('general.copySettings')}
+                  disabled={!settingsInput.trim()}
+                >
+                  <ContentCopyIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Button
               onClick={handleApplySettings}
               size="small"
-              sx={sx.actionButton}
-              title={t('general.shareSettingsApplied')}
+              variant="contained"
+              sx={sx.applyButton}
+              aria-label={t('general.applySettings')}
+              disabled={!settingsInput.trim()}
             >
-              <CheckIcon fontSize="small" />
-            </IconButton>
+              {t('general.apply')}
+            </Button>
           </Box>
         </DialogContent>
       </Dialog>
@@ -287,6 +297,17 @@ const styles = (theme: Theme) => ({
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1),
       color: theme.palette.gx.accent.greenBlue
+    }
+  },
+  applyButton: {
+    alignSelf: 'stretch',
+    minWidth: '72px',
+    background: theme.palette.gx.gradients.brand(),
+    color: theme.palette.gx.primary.white,
+    fontWeight: 600,
+    '&.Mui-disabled': {
+      background: theme.palette.gx.mediumGrey[300],
+      color: theme.palette.gx.primary.white
     }
   },
   divider: {
