@@ -157,6 +157,10 @@ export const CytometryGraph = () => {
       subsamplingStep: settings.subsamplingValue,
       graphMode: settings.graphMode
     });
+
+    return () => {
+      worker.terminateWorker();
+    };
   }, [
     cellMasksData,
     proteinIndices,
