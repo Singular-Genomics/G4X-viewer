@@ -1,5 +1,4 @@
 import {
-  Badge,
   Box,
   Button,
   Divider,
@@ -39,8 +38,6 @@ export const MobileLayerControls = () => {
 
   if (!hasTranscriptsData && !hasSegmentationData) return null;
 
-  const activeLayerCount =
-    Number(hasTranscriptsData && isTranscriptLayerOn) + Number(hasSegmentationData && isCellLayerOn);
   const isOpen = Boolean(anchorEl?.isConnected);
 
   return (
@@ -50,15 +47,7 @@ export const MobileLayerControls = () => {
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         onClick={(event) => setAnchorEl(event.currentTarget)}
-        startIcon={
-          <Badge
-            badgeContent={activeLayerCount}
-            invisible={activeLayerCount === 0}
-            sx={sx.badge}
-          >
-            <LayersOutlinedIcon />
-          </Badge>
-        }
+        startIcon={<LayersOutlinedIcon />}
         sx={sx.layersButton}
       >
         {t('general.layers')}
@@ -133,8 +122,8 @@ export const MobileLayerControls = () => {
 
 const styles = (theme: Theme) => ({
   layersButton: {
-    position: 'absolute',
-    top: 8,
+    position: 'fixed',
+    top: '90px',
     right: 8,
     minWidth: 0,
     padding: '6px 12px',
@@ -149,17 +138,6 @@ const styles = (theme: Theme) => ({
     zIndex: 20,
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.primary.black, 0.78)
-    }
-  },
-  badge: {
-    '& .MuiBadge-badge': {
-      minWidth: 15,
-      height: 15,
-      padding: 0,
-      backgroundColor: theme.palette.gx.accent.greenBlue,
-      color: theme.palette.gx.primary.white,
-      fontSize: '9px',
-      fontWeight: 700
     }
   },
   popoverPaper: {
