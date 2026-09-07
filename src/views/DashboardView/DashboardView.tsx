@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { alpha, Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
-import { Layout } from 'react-grid-layout';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
@@ -42,8 +41,6 @@ export const DashboardView = () => {
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
   const hasNoROI = !polygonFeatures || polygonFeatures.length === 0;
-
-  const handleLayoutChange = (_layout: Layout[]) => {};
 
   const handleRemoveItem = (itemId: string) => {
     setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
@@ -161,7 +158,6 @@ export const DashboardView = () => {
         <Box sx={sx.gridContainer}>
           <DashboardGrid
             items={gridItems}
-            onLayoutChange={handleLayoutChange}
             onRemoveItem={handleRemoveItem}
           />
         </Box>
