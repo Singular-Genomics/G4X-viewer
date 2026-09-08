@@ -1,5 +1,12 @@
 import { fromBlob, fromUrl } from 'geotiff';
-import { loadOmeTiff, loadBioformatsZarr, loadOmeZarr, loadMultiTiff, getChannelStats } from '@hms-dbmi/viv';
+import {
+  loadOmeTiff,
+  DEPRECATED_loadBioformatsZarr,
+  loadOmeZarr,
+  loadOmeZarrFromStore,
+  loadMultiTiff,
+  getChannelStats
+} from '@hms-dbmi/viv';
 import axios from 'axios';
 import { HexToRgb } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
@@ -149,6 +156,24 @@ async function fetchSingleFileOmeTiffOffsets(url) {
 }
 
 /**
+ * Normalizes OME-NGFF `omero` attrs into the `Pixels.Channels` shape the app consumes.
+ */
+function omeroToPixels(omero) {
+  const channels = omero?.channels ?? [];
+  return {
+    Pixels: {
+      Channels: channels.map((c) => ({
+        Name: c.label,
+        SamplesPerPixel: 1,
+        Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
+        Active: c.active ?? false,
+        Window: c.window ?? undefined
+      }))
+    }
+  };
+}
+
+/**
  * Given an image source, creates a PixelSource[] and returns XML-meta
  *
  * @param {string | File | File[]} urlOrFile
@@ -159,8 +184,8 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
   try {
     // Local OME-NGFF directory — either via FileSystemDirectoryHandle or pre-built store
     if (urlOrFile && urlOrFile.__localZarrStore) {
-      const { loadLocalOmeZarr } = await import('../loaders/loadLocalOmeZarr');
-      return await loadLocalOmeZarr(urlOrFile, urlOrFile.__localZarrPath || 'images/multiplex');
+      const res = await loadOmeZarrFromStore(urlOrFile);
+      return { data: res.data, metadata: omeroToPixels(res.metadata.omero) };
     }
 
     // OME-TIFF
@@ -213,7 +238,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
 
     if (!isOmeZarrPath) {
       try {
-        return await loadBioformatsZarr(urlOrFile);
+        return await DEPRECATED_loadBioformatsZarr(urlOrFile);
       } catch (e) {
         if (isZodError(e)) {
           throw e;
@@ -222,20 +247,7 @@ export async function createLoader(urlOrFile, handleOffsetsNotFound, handleLoade
     }
 
     const res = await loadOmeZarr(urlOrFile, { type: 'multiscales' });
-    return {
-      data: res.data,
-      metadata: {
-        Pixels: {
-          Channels: res.metadata.omero.channels.map((c) => ({
-            Name: c.label,
-            SamplesPerPixel: 1,
-            Color: c.color ? Object.values(HexToRgb(c.color)).concat(255) : undefined,
-            Active: c.active ?? false,
-            Window: c.window ?? undefined
-          }))
-        }
-      }
-    };
+    return { data: res.data, metadata: omeroToPixels(res.metadata.omero) };
   } catch (e) {
     if (e instanceof UnsupportedBrowserError) {
       handleLoaderError(e.message);
