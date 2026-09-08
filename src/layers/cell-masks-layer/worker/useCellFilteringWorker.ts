@@ -3,11 +3,12 @@ import type { CellFilteringWorkerMessage, CellFilteringWorkerResponse } from './
 import { SingleMask } from '../../../shared/types';
 import { HeatmapRanges, ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { UmapRange } from '../../../stores/UmapGraphStore/UmapGraphStore.types';
+import { CellNameFilterType } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
 export type CellFilteringWorkerHook = {
   filterCells: (
     cellsData: SingleMask[],
-    cellNameFilters?: string[] | 'all',
+    cellNameFilters?: CellNameFilterType | 'all',
     cytometryFilter?: {
       proteins: ProteinIndices;
       range?: HeatmapRanges;
@@ -34,7 +35,7 @@ export const useCellFilteringWorker = (): CellFilteringWorkerHook => {
   const filterCells = useCallback(
     (
       cellsData: SingleMask[],
-      cellNameFilters?: string[] | 'all',
+      cellNameFilters?: CellNameFilterType | 'all',
       cytometryFilter?: {
         proteins: ProteinIndices;
         range?: HeatmapRanges;

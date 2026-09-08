@@ -101,8 +101,10 @@ export const ROIDetailsPanel = () => {
             size="small"
             sx={sx.select}
             MenuProps={{
-              PaperProps: {
-                sx: sx.selectMenu
+              slotProps: {
+                paper: {
+                  sx: sx.selectMenu
+                }
               }
             }}
           >
@@ -111,7 +113,7 @@ export const ROIDetailsPanel = () => {
                 key={id}
                 value={id}
               >
-                ROI {id}
+                {t('general.roiEntry', { index: id })}
               </MenuItem>
             ))}
           </Select>

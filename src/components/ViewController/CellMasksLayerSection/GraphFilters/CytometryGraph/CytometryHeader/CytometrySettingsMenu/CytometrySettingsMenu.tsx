@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Box, Grid, IconButton, MenuItem, Popover, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, MenuItem, Popover, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { ColorScaleOption } from './CytometrySettingsMenu.types';
 import { debounce } from 'lodash';
@@ -164,7 +164,7 @@ export const CytometrySettingsMenu = () => {
           {/* Graph Mode Select */}
           <Grid
             size={1}
-            alignContent={'center'}
+            sx={sx.labelWrapper}
           >
             <Typography>{t('segmentationSettings.cytometryMenuMode')}:</Typography>
           </Grid>
@@ -188,8 +188,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Colorscale Select */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuColorscale')}:`}</Typography>
           </Grid>
@@ -213,8 +213,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Reverse Colorscale Checkbox*/}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuReverseColorscale')}:`}</Typography>
           </Grid>
@@ -226,8 +226,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Bin Count X */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuBinCount')} (X):`}</Typography>
             <Typography sx={sx.helperText}>Min 2</Typography>
@@ -244,8 +244,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Bin Count Y */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuBinCount')} (Y):`}</Typography>
             <Typography sx={sx.helperText}>Min 2</Typography>
@@ -262,8 +262,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Subsampling Input */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuSubsamplingStep')}:`}</Typography>
             <Typography sx={sx.helperText}>{`Min. ${MIN_SUBSAMPLE_VALUE} | Max. ${MAX_SUBSAMPLE_VALUE}`}</Typography>
@@ -280,8 +280,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Point Size Input */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuPointSize')}:`}</Typography>
             <Typography sx={sx.helperText}>{`Min. ${MIN_POINT_SIZE} | Max. ${MAX_POINT_SIZE}`}</Typography>
@@ -298,8 +298,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Axis Type Select */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuAxisTypeLabel')}:`}</Typography>
           </Grid>
@@ -323,8 +323,8 @@ export const CytometrySettingsMenu = () => {
           </Grid>
           {/* Exponent Format Select */}
           <Grid
-            alignContent={'center'}
             size={1}
+            sx={sx.labelWrapper}
           >
             <Typography>{`${t('segmentationSettings.cytometryMenuFormatLabel')}:`}</Typography>
           </Grid>
@@ -352,7 +352,7 @@ export const CytometrySettingsMenu = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   settingsButtonWrapper: {
     height: '100%',
     width: 'min-fit',
@@ -366,6 +366,9 @@ const styles = (theme: Theme) => ({
     '& .MuiPaper-root': {
       padding: '8px'
     }
+  },
+  labelWrapper: {
+    alignItems: 'center'
   },
   helperText: {
     fontSize: '11px',
