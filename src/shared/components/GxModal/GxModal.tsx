@@ -194,7 +194,7 @@ const styles = (theme: Theme, size: string) => {
 const colorVariants = {
   danger: {
     banner: {
-      background: 'linear-gradient(90deg, rgba(251,0,0,1) 0%, rgba(135,0,0,1) 63%, rgba(96,0,0,1) 100%)'
+      background: (theme: Theme) => theme.palette.gx.gradients.danger()
     },
     button: {
       background: (theme: Theme) => theme.palette.gx.gradients.danger()
@@ -202,7 +202,7 @@ const colorVariants = {
   },
   warning: {
     banner: {
-      background: 'linear-gradient(90deg, rgba(251,202,0,1) 0%, rgba(245,185,0,1) 38%, rgba(177,128,0,1) 100%);'
+      background: (theme: Theme) => theme.palette.gx.gradients.warning()
     },
     button: {
       background: (theme: Theme) => theme.palette.gx.gradients.warning()
@@ -210,7 +210,7 @@ const colorVariants = {
   },
   info: {
     banner: {
-      background: 'linear-gradient(90deg, rgba(0,102,251,1) 0%, rgba(0,77,189,1) 63%, rgba(0,52,127,1) 100%)'
+      background: (theme: Theme) => theme.palette.gx.gradients.info()
     },
     button: {
       background: (theme: Theme) => theme.palette.gx.gradients.info()
@@ -218,7 +218,7 @@ const colorVariants = {
   },
   singular: {
     banner: {
-      background: 'linear-gradient(90deg, rgba(0,177,164,1) 0%, rgba(0,151,140,1) 63%, rgba(0,95,88,1) 100%);'
+      background: (theme: Theme) => theme.palette.gx.gradients.brand()
     },
     button: {
       background: (theme: Theme) => theme.palette.gx.gradients.brand()

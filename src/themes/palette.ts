@@ -1,48 +1,107 @@
 import { PaletteOptions } from '@mui/material';
 import { GxPalette } from './types';
 
+// SG colors: use the reference's HEX labels as the source of truth.
+const primary = {
+  white: '#FFFFFF',
+  black: '#000000',
+  greyDark: '#1E1E1E',
+  greyMedium: '#CCCCCC',
+  greyLight: '#F2F2F2',
+  greyExtraLight: '#F8F8F8'
+};
+
+const darkGrey = {
+  100: '#212426',
+  300: '#2E3337',
+  500: '#3F4447',
+  700: '#515558',
+  900: '#626668'
+};
+
+const blue = {
+  200: '#182F3E',
+  400: '#123F5D',
+  600: '#0C507D',
+  800: '#06609C',
+  main: '#0071BC'
+};
+
+const blueGreen = {
+  200: '#007EB7',
+  400: '#008BB2',
+  600: '#0097AE',
+  800: '#00B1A4'
+};
+
+const green = {
+  200: '#184137',
+  400: '#12644F',
+  600: '#0C8668',
+  800: '#06A980',
+  main: '#00CC99'
+};
+
+const accents = {
+  purple: '#A661FF',
+  magenta: '#DA54A4',
+  red: '#F45959',
+  redDark: '#CB4A4A',
+  orange: '#F28622',
+  yellow: '#FFB800'
+};
+
+const gradient =
+  (start: string, end: string) =>
+  (angle = 90) =>
+    `linear-gradient(${angle}deg, ${start} 0%, ${end} 100%)`;
+
 export const colors: GxPalette = {
-  primary: {
-    white: 'rgb(255, 255, 255)',
-    black: 'rgb(0, 0, 0)'
-  },
+  primary,
   lightGrey: {
-    100: 'rgb(208, 208, 208)',
-    300: 'rgb(215, 215, 215)',
-    500: 'rgb(223, 223, 223)',
-    700: 'rgb(231, 231, 231)',
-    900: 'rgb(238, 238, 238)'
+    100: '#D0D0D0',
+    300: '#D7D7D7',
+    500: '#DFDFDF',
+    700: '#E7E7E7',
+    900: '#EEEEEE'
   },
   mediumGrey: {
-    100: 'rgba(125, 127, 129, 1)',
-    300: 'rgba(142, 144, 146, 1)',
-    500: 'rgba(160, 161, 162, 1)',
-    700: 'rgba(178, 178, 179, 1)',
-    900: 'rgba(195, 195, 196, 1)'
+    100: '#7D7F81',
+    300: '#8E9092',
+    500: '#A0A1A2',
+    700: '#B2B2B3',
+    900: '#C3C3C4'
   },
-  darkGrey: {
-    100: 'rgb(30, 30, 30)',
-    300: 'rgb(46, 51, 55)',
-    500: 'rgb(63, 68, 71)',
-    700: 'rgb(81, 85, 88)',
-    900: 'rgb(98, 102, 104)'
-  },
+  darkGrey,
+  blue,
+  blueGreen,
+  green,
   accent: {
-    greenBlue: 'rgb(0, 177, 164)',
-    darkGold: 'rgb(177, 146, 24)',
-    error: 'rgb(255, 0, 0)',
-    info: 'rgb(30, 103, 178)'
+    ...accents,
+    greenBlue: blueGreen[800],
+    darkGold: accents.yellow,
+    error: accents.red,
+    info: blue.main
   },
   gradients: {
-    default: (angle = 90) => `linear-gradient(${angle}deg, rgba(63,68,71,1) 0%, rgba(30,30,30,1) 100%)`,
-    success: (angle = 90) => `linear-gradient(${angle}deg, rgba(67,160,71,1) 0%, rgba(46,113,49,1) 100%)`,
-    warning: (angle = 90) => `linear-gradient(${angle}deg, rgba(251,202,0,1) 0%, rgba(177,128,0,1) 100%)`,
-    danger: (angle = 90) => `linear-gradient(${angle}deg, rgba(251,0,0,1) 0%, rgba(135,0,0,1) 100%)`,
-    info: (angle = 90) => `linear-gradient(${angle}deg, rgba(0,102,251,1) 0%, rgba(0,52,127,1) 100%)`,
-    brand: (angle = 90) => `linear-gradient(${angle}deg, rgba(0,177,164,1) 0%, rgba(0,95,88,1) 100%)`
+    default: gradient(darkGrey[500], primary.greyDark),
+    success: gradient(green.main, green[600]),
+    warning: gradient(accents.yellow, accents.orange),
+    danger: gradient(accents.red, accents.redDark),
+    info: gradient(blue.main, blue[600]),
+    brand: gradient(blue.main, green.main),
+    blueGreen: gradient(blueGreen[200], blueGreen[800]),
+    // The purple sample has no HEX label for its blue endpoint; use SG Blue.
+    purpleBlue: gradient(accents.purple, blue.main)
   }
 };
 
-export const gxColorPalette = {
-  gx: colors
-} as PaletteOptions;
+export const gxColorPalette: PaletteOptions = {
+  gx: colors,
+  primary: { main: blueGreen[800], light: green.main, dark: green[600] },
+  secondary: { main: accents.purple },
+  success: { main: green.main, light: green.main, dark: green[600] },
+  warning: { main: accents.orange, light: accents.yellow, dark: accents.orange },
+  error: { main: accents.red, light: accents.red, dark: accents.redDark },
+  info: { main: blue.main, light: blue.main, dark: blue[600] }
+};
