@@ -5,6 +5,7 @@ export type UmapEntry = {
 
 export type SingleMask = {
   vertices: number[];
+  centroid: [number, number];
   area: number;
   totalCounts: number;
   totalGenes: number;
