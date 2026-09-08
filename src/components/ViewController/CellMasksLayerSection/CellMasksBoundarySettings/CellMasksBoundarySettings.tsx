@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, Grid, Input, Theme, Typography, useTheme } from '@mui/material';
+import { Box, FormControlLabel, Grid, Input, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxSwitch } from '../../../../shared/components/GxSwitch';
@@ -54,8 +54,6 @@ export const CellMasksBoundarySettings = () => {
         <Grid
           container
           direction="row"
-          justifyContent="space-between"
-          alignItems="center"
           sx={sx.sliderInputContainer}
         >
           <Grid size={1}>
@@ -68,10 +66,12 @@ export const CellMasksBoundarySettings = () => {
                 max: MAX_BOUNDARY_WIDTH.toString(),
                 min: MIN_BOUNDARY_WIDTH.toString()
               }}
-              sx={{
-                ...sx.textFieldBase,
-                ...(showBoundary && sx.textFieldEnabled)
-              }}
+              sx={
+                {
+                  ...sx.textFieldBase,
+                  ...(showBoundary && sx.textFieldEnabled)
+                } as SxProps
+              }
               disabled
             />
           </Grid>
@@ -120,7 +120,7 @@ export const CellMasksBoundarySettings = () => {
     </>
   );
 };
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   strokeSettingsContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -131,7 +131,9 @@ const styles = (theme: Theme) => ({
     paddingLeft: '8px'
   },
   sliderInputContainer: {
-    paddingLeft: '8px'
+    paddingLeft: '8px',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   sliderInputItem: {
     padding: '0px 8px 0px 16px'

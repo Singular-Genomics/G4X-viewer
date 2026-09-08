@@ -1,33 +1,24 @@
 import { Box, Button, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
-import { GridToolbarQuickFilter } from '@mui/x-data-grid';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridSlotProps } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
 import { GxCheckbox } from '../GxCheckbox';
 import { useTranslation } from 'react-i18next';
 
-const GxFiltersSearch = () => {
-  const theme = useTheme();
-  const sx = styles(theme);
-
+function GridCheckbox({ slotProps, ...rest }: GridSlotProps['baseCheckbox']) {
   return (
-    <GridToolbarQuickFilter
-      quickFilterParser={(searchInput: string) =>
-        searchInput
-          .split(',')
-          .map((value) => value.trim())
-          .filter((value) => value !== '')
-      }
-      sx={sx.searchToolbar}
+    <GxCheckbox
+      {...rest}
+      slotProps={{ input: slotProps?.htmlInput }}
     />
   );
-};
+}
 
 export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   columns,
   rows,
   activeFilters,
-  onClearFilteres,
+  onClearFilters,
   onSetFilter,
   onApplyClick,
   clearDisabled,
@@ -39,7 +30,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   const [activeOnly, setActiveOnly] = useState<boolean>(false);
 
   rows = useMemo(
-    () => (activeOnly ? rows.filter((item) => activeFilters.includes(item.id)) : rows),
+    () => (activeOnly ? rows.filter((item) => activeFilters.has(item.id)) : rows),
     [activeOnly, activeFilters, rows]
   );
 
@@ -50,7 +41,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
           <Button
             disabled={clearDisabled}
             sx={sx.clearButton}
-            onClick={onClearFilteres}
+            onClick={onClearFilters}
           >
             {t('general.clear')}
           </Button>
@@ -68,21 +59,21 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
           density="compact"
           disableColumnMenu
           disableColumnResize
-          disableColumnSorting
           pageSizeOptions={[100]}
-          rowSelectionModel={activeFilters}
+          showToolbar
+          disableColumnSelector
+          rowSelectionModel={{ ids: activeFilters, type: 'include' }}
           onRowSelectionModelChange={(newSelection) => {
-            if (newSelection.length === 0 || newSelection.length === rows.length) {
-              onClearFilteres();
+            if (newSelection.ids.size === 0 || newSelection.ids.size === rows.length) {
+              onClearFilters();
             } else {
-              onSetFilter(newSelection as string[]);
+              onSetFilter(newSelection.ids as Set<string>);
             }
           }}
           keepNonExistentRowsSelected
           checkboxSelection
           slots={{
-            baseCheckbox: GxCheckbox,
-            toolbar: GxFiltersSearch
+            baseCheckbox: GridCheckbox
           }}
           slotProps={{
             toolbar: {
@@ -110,25 +101,11 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
 };
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
-  searchToolbar: {
-    marginBottom: '8px',
-    '& .MuiInputBase-root': {
-      backgroundColor: theme.palette.gx.primary.white,
-      padding: '8px',
-      '&:hover:not(.Mui-disabled, .Mui-error):before': {
-        borderColor: theme.palette.gx.mediumGrey[300]
-      },
-      '&:after': {
-        borderColor: theme.palette.gx.accent.greenBlue
-      }
-    }
-  },
   tableContainer: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'end',
     alignItems: 'end',
-
     '& .MuiDataGrid-root': {
       borderWidth: '0px',
       width: '100%',
@@ -155,6 +132,9 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiDataGrid-footerContainer': {
       background: theme.palette.gx.lightGrey[900]
+    },
+    '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiCheckbox-root': {
+      color: theme.palette.gx.accent.greenBlue
     }
   },
   filtersTable: {

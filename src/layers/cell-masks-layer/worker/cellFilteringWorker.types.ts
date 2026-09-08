@@ -1,4 +1,5 @@
 import { SingleMask } from '../../../shared/types';
+import { CellNameFilterType } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { HeatmapRanges, ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
 import { UmapRange } from '../../../stores/UmapGraphStore/UmapGraphStore.types';
 
@@ -6,7 +7,7 @@ export type CellFilteringWorkerMessage = {
   type: 'filterCells';
   payload: {
     cellsData: SingleMask[];
-    cellNameFilters?: string[] | 'all';
+    cellNameFilters?: CellNameFilterType | 'all';
     cytometryFilter?: {
       proteins: ProteinIndices;
       range?: HeatmapRanges;

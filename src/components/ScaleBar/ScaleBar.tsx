@@ -35,8 +35,10 @@ export function ScaleBar() {
         <ScaleBarIcon width={barWidthInPixels} />
       </Box>
       <Typography
-        sx={sx.text}
-        fontSize={isDesktop ? '14px' : '11px'}
+        sx={{
+          ...sx.text,
+          fontSize: isDesktop ? '14px' : '11px'
+        }}
       >
         {formattedNumber} {displayUnit}
       </Typography>
