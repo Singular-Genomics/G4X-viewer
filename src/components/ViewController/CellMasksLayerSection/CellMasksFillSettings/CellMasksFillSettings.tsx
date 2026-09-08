@@ -2,7 +2,7 @@ import { Box, Grid, Input, Theme, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -16,6 +16,10 @@ export const CellMasksFillSettings = () => {
   );
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
+
+  useEffect(() => {
+    setSliderValue(cellFillOpacity);
+  }, [cellFillOpacity]);
 
   return (
     <Box sx={sx.strokeSettingsContainer}>

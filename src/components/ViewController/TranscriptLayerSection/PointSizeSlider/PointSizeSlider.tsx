@@ -2,7 +2,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Grid, Input, Theme, useTheme } from '@mui/material';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MIN_POINT_SIZE = 0.1;
 const MAX_POINT_SIZE = 10;
@@ -16,6 +16,10 @@ export const PointSizeSlider = () => {
   );
 
   const [sliderValue, setSliderValue] = useState<number>(pointSize);
+
+  useEffect(() => {
+    setSliderValue(pointSize);
+  }, [pointSize]);
 
   return (
     <Grid

@@ -8,6 +8,8 @@ import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
 import type { ZarritaStoreFactory } from './ZarrDataSet.types';
+import { applyUrlSettings } from './urlSettings';
+import { IMAGE_URL_PARAM } from '../hooks/useCloudImageLoader.hook';
 
 type LoadZarrFromUrlParams = {
   cloudImageUrl: string;
@@ -134,6 +136,12 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
     }
   } else {
     warningMessages.push(t('sourceFiles.segmentationMissingData'));
+  }
+
+  // Apply after availableSegmentations is populated so useOnDemandDataLoader finds segmentation data immediately.
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has(IMAGE_URL_PARAM)) {
+    applyUrlSettings(urlParams);
   }
 
   if (warningMessages.length === 0) {

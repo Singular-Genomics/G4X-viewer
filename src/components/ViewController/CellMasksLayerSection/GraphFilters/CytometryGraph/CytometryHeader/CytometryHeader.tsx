@@ -22,12 +22,10 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
     const { proteinIndices } = useCytometryGraphStore.getState();
 
     if (
-      !proteinIndices.xAxisIndex ||
-      !proteinIndices.yAxisIndex ||
       proteinIndices.xAxisIndex < 0 ||
-      proteinIndices.xAxisIndex > availableProteinNames.length ||
+      proteinIndices.xAxisIndex >= availableProteinNames.length ||
       proteinIndices.yAxisIndex < 0 ||
-      proteinIndices.yAxisIndex > availableProteinNames.length
+      proteinIndices.yAxisIndex >= availableProteinNames.length
     ) {
       setXAxisProtein(availableProteinNames[0]);
       setYAxisProtein(availableProteinNames[1]);

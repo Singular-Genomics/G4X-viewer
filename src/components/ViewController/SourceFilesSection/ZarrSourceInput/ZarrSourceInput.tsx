@@ -37,9 +37,7 @@ export default function ZarrSourceInput() {
       return;
     }
 
-    const url = new URL(window.location.href);
-    url.searchParams.delete(IMAGE_URL_PARAM);
-    window.history.replaceState({}, '', url);
+    window.history.replaceState({}, '', window.location.pathname);
 
     setSubmitted(true);
     if (warningMessages.length === 0) {
