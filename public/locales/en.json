@@ -78,6 +78,7 @@
     "invalidURL": "Please enter a valid URL",
     "invalidValue": "Invalid Value",
     "layers": "Layers",
+    "more": "More",
     "multiSelectPlaceholder": "Select options...",
     "noFileSelected": "No file selected",
     "none": "None",
@@ -343,6 +344,17 @@
     "title": "ROI Details",
     "cells": "Cells",
     "addNote": "Add note..."
+  },
+  "changelog": {
+    "title": "What's New",
+    "gotIt": "Got it",
+    "noEntries": "No release notes are available for this version.",
+    "legacyNote": "Looking for the previous version of the viewer?",
+    "legacyLinkLabel": "Open legacy viewer",
+    "moreDescription": "Due to large amount of changes only most recent release updates have been shown. For more info go down tho the full changes history using the link below",
+    "docsLinkLabel": "Read the documentation",
+    "historyLinkLabel": "See all changes history",
+    "showChangelogAria": "Show release notes"
   },
   "navigation": {
     "viewer": "Viewer",

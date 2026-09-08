@@ -5,6 +5,8 @@ import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
 import { NavigationRunInfo } from './NavigationRunInfo';
+import { ChangelogModal } from '../ChangelogModal';
+import { useChangelog } from '../../hooks/useChangelog.hook';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
@@ -14,6 +16,7 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
   const sx = styles(theme);
   const { t } = useTranslation();
   const app_version = process.env.APP_VERSION;
+  const { isOpen, currentEntries, showMore, openChangelog, closeChangelog } = useChangelog();
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: NavigationView) => {
     onViewChange(newValue);
@@ -29,7 +32,14 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
           />
           <Box sx={sx.logoTextWrapper}>
             <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
-            <Typography sx={sx.versionText}>{app_version}</Typography>
+            <Typography
+              component="button"
+              onClick={openChangelog}
+              aria-label={t('changelog.showChangelogAria')}
+              sx={sx.versionText}
+            >
+              {app_version}
+            </Typography>
           </Box>
         </Box>
         <NavigationRunInfo />
@@ -76,6 +86,12 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
         </Box>
         <SocialIcons />
       </Box>
+      <ChangelogModal
+        isOpen={isOpen}
+        onClose={closeChangelog}
+        entries={currentEntries}
+        showMore={!!showMore}
+      />
     </Box>
   );
 };
@@ -150,7 +166,18 @@ const styles = (theme: Theme) => ({
     fontSize: '12px',
     lineHeight: '12px',
     color: theme.palette.gx.lightGrey[500],
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    fontFamily: 'inherit',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    textDecorationColor: 'transparent',
+    transition: 'text-decoration-color 0.2s ease',
+    '&:hover': {
+      textDecorationColor: theme.palette.gx.lightGrey[500]
+    }
   },
   tabsSection: {
     display: 'none',
