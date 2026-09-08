@@ -1,7 +1,7 @@
 import { alpha, Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Layout } from 'plotly.js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useCellSegmentationLayerStore } from '../../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { GraphRangeInputs } from '../GraphRangeInputs';
 import { useSnackbar } from 'notistack';
@@ -101,14 +101,34 @@ export const CytometryGraph = () => {
     }
   }, [cellMasksData, enqueueSnackbar, t, segmentationMetadata]);
 
+  // Send only the columns the worker reads, not the whole SingleMask[]
+  const sampledColumns = useMemo(() => {
+    const { xAxisIndex, yAxisIndex } = proteinIndices;
+    const step = settings.subsamplingValue;
+
+    if (!cellMasksData?.length || xAxisIndex < 0 || yAxisIndex < 0 || step <= 0) {
+      return undefined;
+    }
+
+    const sampledLength = Math.ceil(cellMasksData.length / step);
+    const xValues = new Float32Array(sampledLength);
+    const yValues = new Float32Array(sampledLength);
+    const cellIds = new Array<string>(sampledLength);
+
+    let sampleIndex = 0;
+    for (let i = 0; i < cellMasksData.length; i += step) {
+      const mask = cellMasksData[i];
+      xValues[sampleIndex] = mask.proteinValues[xAxisIndex] + 1;
+      yValues[sampleIndex] = mask.proteinValues[yAxisIndex] + 1;
+      cellIds[sampleIndex] = mask.cellId;
+      sampleIndex++;
+    }
+
+    return { xValues, yValues, cellIds };
+  }, [cellMasksData, proteinIndices, settings.subsamplingValue]);
+
   useEffect(() => {
-    if (
-      !cellMasksData ||
-      proteinIndices.xAxisIndex < 0 ||
-      proteinIndices.yAxisIndex < 0 ||
-      !settings.binCountX ||
-      !settings.binCountY
-    ) {
+    if (!cellMasksData || !sampledColumns || !settings.binCountX || !settings.binCountY) {
       return;
     }
 
@@ -148,27 +168,27 @@ export const CytometryGraph = () => {
     });
     worker.onError((error: any) => console.error(error));
     worker.postMessage({
-      maskData: cellMasksData,
-      xProteinIndex: proteinIndices.xAxisIndex,
-      yProteinIndex: proteinIndices.yAxisIndex,
+      xValues: sampledColumns.xValues,
+      yValues: sampledColumns.yValues,
+      cellIds: sampledColumns.cellIds,
       binXCount: settings.binCountX,
       binYCount: settings.binCountY,
       axisType: settings.axisType,
-      subsamplingStep: settings.subsamplingValue,
       graphMode: settings.graphMode
     });
+
+    return () => {
+      worker.terminateWorker();
+    };
   }, [
+    sampledColumns,
     cellMasksData,
     proteinIndices,
-    proteinIndices.xAxisIndex,
-    proteinIndices.yAxisIndex,
     settings.binCountX,
     settings.binCountY,
     settings.axisType,
-    settings.subsamplingValue,
     settings.graphMode,
     enqueueSnackbar,
-    availableProteinNames,
     t
   ]);
 

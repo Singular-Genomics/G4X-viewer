@@ -4,6 +4,7 @@ import { UmapClusterPoint } from './UmapGraph.types';
 
 export async function getPlotData(
   cellMasksData: SingleMask[],
+  colorMapConfig: CellSegmentationColormapEntry[],
   subsamplingValue: number = 1
 ): Promise<UmapClusterPoint[]> {
   return new Promise((resolve, reject) => {
@@ -32,28 +33,20 @@ export async function getPlotData(
       umapData.set(clusterId, entry);
     }
 
-    const result = [...umapData.values()].sort(sortUmapData);
+    // Match the CellsFilterTable's order, independent of subsampling
+    const clusterOrder = new Map(colorMapConfig.map((entry, index) => [entry.clusterId, index]));
+    const result = [...umapData.values()].sort((a, b) => {
+      const orderA = clusterOrder.get(a.clusterId);
+      const orderB = clusterOrder.get(b.clusterId);
+
+      if (orderA !== undefined && orderB !== undefined) return orderA - orderB;
+      if (orderA !== undefined) return -1;
+      if (orderB !== undefined) return 1;
+
+      return a.clusterId.localeCompare(b.clusterId);
+    });
     resolve(result);
   });
-}
-
-// sort UmapData base on clusterId to match the order in the CellsFilterTable
-function sortUmapData(a: UmapClusterPoint, b: UmapClusterPoint) {
-  const idA = Number(a.clusterId);
-  const idB = Number(b.clusterId);
-
-  const isNegA = idA < 0;
-  const isNegB = idB < 0;
-
-  // Both negative → normal ascending
-  if (isNegA && isNegB) return idA - idB;
-
-  // One negative → push it to the end
-  if (isNegA && !isNegB) return 1;
-  if (!isNegA && isNegB) return -1;
-
-  // Both non-negative → normal ascending
-  return idA - idB;
 }
 
 export function buildColorLookup(colorMap: CellSegmentationColormapEntry[]) {
