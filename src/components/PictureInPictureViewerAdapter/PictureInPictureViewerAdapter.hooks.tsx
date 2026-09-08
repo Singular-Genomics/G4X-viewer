@@ -27,6 +27,19 @@ import { List, ListItem } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
 
+const updatePolygonProperties = <T,>(
+  results: { polygon: PolygonFeature; result: T }[],
+  getProperties: (result: T) => Record<string, unknown>
+) => {
+  const updates = new Map(results.map(({ polygon, result }) => [polygon.properties?.polygonId, getProperties(result)]));
+  usePolygonDrawingStore.setState((state) => ({
+    polygonFeatures: state.polygonFeatures.map((polygon) => {
+      const properties = updates.get(polygon.properties?.polygonId);
+      return properties ? { ...polygon, properties: { ...polygon.properties, ...properties } } : polygon;
+    })
+  }));
+};
+
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = useState<{
@@ -293,6 +306,7 @@ export const usePolygonDrawingLayer = () => {
   );
 
   const [layerConfig, zarrUrl] = useZarrDataStore(useShallow((store) => [store.layerConfig, store.zarrUrl]));
+  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,
@@ -301,8 +315,10 @@ export const usePolygonDrawingLayer = () => {
       store.deleteSelectedPoints
     ])
   );
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
 
   const [cellMasksData] = useCellSegmentationLayerStore(useShallow((store) => [store.cellMasksData]));
+  const isCellLayerOn = useCellSegmentationLayerStore((store) => store.isCellLayerOn);
   const [setSelectedCells, updateSelectedCells, addSelectedCells, deleteSelectedCells] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.setSelectedCells,
@@ -316,17 +332,12 @@ export const usePolygonDrawingLayer = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const polygonFeaturesBeforeEdit = useRef<PolygonFeature[]>([]);
-  const isCellMasksInitialLoad = useRef(true);
 
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastClickedPolygonRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (isCellMasksInitialLoad.current) {
-      isCellMasksInitialLoad.current = false;
-      return;
-    }
-    if (!cellMasksData) return;
+    if (!isCellLayerOn || !cellMasksData) return;
 
     const currentPolygons = usePolygonDrawingStore.getState().polygonFeatures;
     if (currentPolygons.length === 0) return;
@@ -334,28 +345,20 @@ export const usePolygonDrawingLayer = () => {
     const redetect = async () => {
       setDetecting(true);
 
-      const results = await Promise.all(
-        currentPolygons.map(async (polygon) => {
-          const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
-          return { polygon, result };
-        })
-      );
-
-      const updatedFeatures = results.map(({ polygon, result }) => ({
-        ...polygon,
-        properties: {
-          ...polygon.properties,
-          cellPolygonCount: result.cellPolygonCount,
-          cellClusterDistribution: result.cellClusterDistribution
-        }
-      }));
+      const results = [];
+      for (const polygon of currentPolygons) {
+        const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
+        results.push({ polygon, result });
+      }
 
       const newSelectedCells = results.map(({ polygon, result }) => ({
         roiId: polygon.properties?.polygonId as number,
         data: result.cellPolygonsInDrawnPolygon
       }));
-
-      usePolygonDrawingStore.setState({ polygonFeatures: updatedFeatures });
+      updatePolygonProperties(results, (result) => ({
+        cellPolygonCount: result.cellPolygonCount,
+        cellClusterDistribution: result.cellClusterDistribution
+      }));
       setSelectedCells(newSelectedCells);
       setDetecting(false);
     };
@@ -364,7 +367,48 @@ export const usePolygonDrawingLayer = () => {
       console.error('Error re-detecting cells after segmentation change:', error);
       setDetecting(false);
     });
-  }, [cellMasksData, detectCellPolygonsInPolygon, setDetecting, setSelectedCells]);
+  }, [cellMasksData, detectCellPolygonsInPolygon, isCellLayerOn, setDetecting, setSelectedCells]);
+
+  useEffect(() => {
+    if (!isTranscriptLayerOn || !transcriptConfigLoaded || !zarrUrl) return;
+
+    const currentPolygons = usePolygonDrawingStore.getState().polygonFeatures;
+    if (currentPolygons.length === 0) return;
+
+    const redetect = async () => {
+      setDetecting(true);
+
+      const results = [];
+      for (const polygon of currentPolygons) {
+        const result = await detectPointsInPolygon(polygon, layerConfig, zarrUrl);
+        results.push({ polygon, result });
+      }
+      updatePolygonProperties(results, (result) => ({
+        pointCount: result.pointCount,
+        geneDistribution: result.geneDistribution
+      }));
+      setSelectedPoints(
+        results.map(({ polygon, result }) => ({
+          roiId: polygon.properties?.polygonId as number,
+          data: result.pointsInPolygon
+        }))
+      );
+      setDetecting(false);
+    };
+
+    redetect().catch((error) => {
+      console.error('Error re-detecting transcripts after layer change:', error);
+      setDetecting(false);
+    });
+  }, [
+    detectPointsInPolygon,
+    isTranscriptLayerOn,
+    layerConfig,
+    setDetecting,
+    setSelectedPoints,
+    transcriptConfigLoaded,
+    zarrUrl
+  ]);
 
   const getPolygonColor = (
     feature: any,

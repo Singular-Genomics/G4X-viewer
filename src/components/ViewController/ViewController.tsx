@@ -20,7 +20,6 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
-import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const theme = useTheme();
@@ -42,8 +41,6 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
     useShallow((store) => [store.isLayerVisible, store.toggleLayerVisibility])
   );
   const metadata = useMetadata();
-
-  useOnDemandDataLoader();
 
   useEffect(() => {
     window.dispatchEvent(new Event('onControllerToggle'));

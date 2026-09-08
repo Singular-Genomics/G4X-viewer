@@ -1,4 +1,4 @@
-import { Box, SxProps, Theme, useTheme } from '@mui/material';
+import { Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Plot from 'react-plotly.js';
@@ -197,18 +197,24 @@ export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
       ref={containerRef}
       sx={sx.plotContainer}
     >
-      <Plot
-        data={pieChartData}
-        layout={layout}
-        style={{ width: '100%', height: '100%' }}
-        useResizeHandler={true}
-        config={{
-          scrollZoom: false,
-          displayModeBar: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['lasso2d', 'select2d', 'zoom2d', 'pan2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d']
-        }}
-      />
+      {orderedRois.length === 0 ? (
+        <Box sx={sx.emptyState}>
+          <Typography sx={sx.emptyStateText}>{t('dashboard.noROISelectedError')}</Typography>
+        </Box>
+      ) : (
+        <Plot
+          data={pieChartData}
+          layout={layout}
+          style={{ width: '100%', height: '100%' }}
+          useResizeHandler={true}
+          config={{
+            scrollZoom: false,
+            displayModeBar: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: ['lasso2d', 'select2d', 'zoom2d', 'pan2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d']
+          }}
+        />
+      )}
     </Box>
   );
 };
@@ -220,5 +226,17 @@ const sx: Record<string, SxProps<Theme>> = {
     display: 'flex',
     overflow: 'hidden',
     padding: 2
-  }
+  },
+  emptyState: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    padding: 3
+  },
+  emptyStateText: (theme: Theme) => ({
+    color: theme.palette.gx.lightGrey[500]
+  })
 };
