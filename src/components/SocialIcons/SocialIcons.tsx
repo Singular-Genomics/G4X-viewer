@@ -51,6 +51,7 @@ export const SocialIcons = () => {
     <Box sx={sx.socialIconsContainer}>
       {socialsData.map((entry) => (
         <Tooltip
+          key={entry.link}
           title={entry.title}
           arrow
         >

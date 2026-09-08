@@ -28,7 +28,7 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DownloadIcon from '@mui/icons-material/Download';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
@@ -99,7 +99,7 @@ const ICONS = [
   { Icon: CloudUploadIcon, name: 'CloudUpload' },
   { Icon: CreateIcon, name: 'Create' },
   { Icon: DeleteIcon, name: 'Delete' },
-  { Icon: DeleteOutlineIcon, name: 'DeleteOutline' },
+  { Icon: DeleteOutlinedIcon, name: 'DeleteOutlined' },
   { Icon: DescriptionIcon, name: 'Description' },
   { Icon: DownloadIcon, name: 'Download' },
   { Icon: DragIndicatorIcon, name: 'DragIndicator' },
@@ -245,7 +245,7 @@ export const ComponentsShowcaseView = () => {
     setChannels((prev) => prev.map((channel) => (channel.id === id ? { ...channel, ...patch } : channel)));
 
   const [filterTableRows, setFilterTableRows] = useState<FilterTableRow[]>(INITIAL_FILTER_TABLE_ROWS);
-  const [activeTableFilters, setActiveTableFilters] = useState<string[]>(['CD3', 'CD8']);
+  const [activeTableFilters, setActiveTableFilters] = useState<Set<string>>(() => new Set(['CD3', 'CD8']));
 
   const handleFilterTableColorUpdate = (newColor: number[], geneName: string) =>
     setFilterTableRows((prev) =>
@@ -324,7 +324,7 @@ export const ComponentsShowcaseView = () => {
           </Button>
           <Button
             sx={sx.dangerButton}
-            startIcon={<DeleteOutlineIcon />}
+            startIcon={<DeleteOutlinedIcon />}
           >
             Danger
           </Button>
@@ -620,10 +620,10 @@ export const ComponentsShowcaseView = () => {
             columns={filterTableColumns}
             rows={filterTableRows}
             activeFilters={activeTableFilters}
-            onClearFilteres={() => setActiveTableFilters([])}
+            onClearFilters={() => setActiveTableFilters(new Set())}
             onSetFilter={setActiveTableFilters}
             onApplyClick={() =>
-              enqueueSnackbar({ message: `Applied filter: ${activeTableFilters.join(', ')}`, variant: 'success' })
+              enqueueSnackbar({ message: `Applied filter: ${[...activeTableFilters].join(', ')}`, variant: 'success' })
             }
           />
         </Box>
