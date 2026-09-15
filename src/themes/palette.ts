@@ -56,6 +56,8 @@ const gradient =
   (angle = 90) =>
     `linear-gradient(${angle}deg, ${start} 0%, ${end} 100%)`;
 
+// Mode-invariant brand colors. Mode-aware roles (background/text/divider)
+// live in lightPalette/darkPalette below, not here.
 export const colors: GxPalette = {
   primary,
   lightGrey: {
@@ -96,7 +98,7 @@ export const colors: GxPalette = {
   }
 };
 
-export const gxColorPalette: PaletteOptions = {
+const commonPalette = {
   gx: colors,
   primary: { main: blueGreen[800], light: green.main, dark: green[600] },
   secondary: { main: accents.purple },
@@ -104,4 +106,20 @@ export const gxColorPalette: PaletteOptions = {
   warning: { main: accents.orange, light: accents.yellow, dark: accents.orange },
   error: { main: accents.red, light: accents.red, dark: accents.redDark },
   info: { main: blue.main, light: blue.main, dark: blue[600] }
+};
+
+export const lightPalette: PaletteOptions = {
+  ...commonPalette,
+  mode: 'light',
+  background: { default: colors.lightGrey[100], paper: primary.white },
+  text: { primary: darkGrey[100], secondary: colors.mediumGrey[100] },
+  divider: colors.mediumGrey[500]
+};
+
+export const darkPalette: PaletteOptions = {
+  ...commonPalette,
+  mode: 'dark',
+  background: { default: darkGrey[100], paper: darkGrey[300] },
+  text: { primary: colors.lightGrey[900], secondary: colors.mediumGrey[900] },
+  divider: colors.mediumGrey[500]
 };

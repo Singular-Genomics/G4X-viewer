@@ -12,6 +12,7 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
+import { useColorScheme } from '@mui/material/styles';
 import { useSnackbar } from 'notistack';
 import { useDropzone } from 'react-dropzone';
 import { GridColDef } from '@mui/x-data-grid';
@@ -76,6 +77,7 @@ import { GxRadio } from '../../shared/components/GxRadio';
 import { GxSelect } from '../../shared/components/GxSelect';
 import { GxSlider } from '../../shared/components/GxSlider';
 import { GxSwitch } from '../../shared/components/GxSwitch';
+import { GxThemeModeToggle } from '../../shared/components/GxThemeModeToggle';
 import { GxWindow } from '../../shared/components/GxWindow';
 import { InfoTooltip } from '../../components/InfoTooltip';
 import { Navigation } from '../../components/Navigation';
@@ -214,8 +216,8 @@ export const ComponentsShowcaseView = () => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const sx = styles(theme, isDarkMode);
+  const { colorScheme } = useColorScheme();
+  const sx = styles(theme);
 
   const [rangeValue, setRangeValue] = useState<number[]>([20, 70]);
   const [singleValue, setSingleValue] = useState<number>(40);
@@ -282,17 +284,12 @@ export const ComponentsShowcaseView = () => {
   return (
     <Box sx={sx.page}>
       <Box sx={sx.themeToggle}>
-        <Typography sx={sx.themeToggleLabel}>Light</Typography>
-        <GxSwitch
-          checked={isDarkMode}
-          onChange={(e) => setIsDarkMode(e.target.checked)}
-        />
-        <Typography sx={sx.themeToggleLabel}>Dark</Typography>
+        <GxThemeModeToggle />
       </Box>
 
       <Box sx={sx.header}>
         <GxLogo
-          version={isDarkMode ? 'light' : 'dark'}
+          version={colorScheme === 'dark' ? 'light' : 'dark'}
           size={40}
         />
         <Box>
@@ -730,15 +727,15 @@ const ShowcaseRow = ({ children }: React.PropsWithChildren) => {
   return <Box sx={sx.row}>{children}</Box>;
 };
 
-const styles = (theme: Theme, isDarkMode = false) => ({
+const styles = (theme: Theme) => ({
   page: {
     minHeight: '100dvh',
     width: '100%',
     boxSizing: 'border-box',
     position: 'relative',
     padding: { xs: '24px 16px', md: '40px 64px' },
-    background: isDarkMode ? theme.palette.gx.darkGrey[100] : theme.palette.gx.lightGrey[100],
-    color: isDarkMode ? theme.palette.gx.lightGrey[900] : theme.palette.gx.darkGrey[100],
+    background: theme.palette.background.default,
+    color: theme.palette.text.primary,
     display: 'flex',
     flexDirection: 'column',
     gap: 4
@@ -753,13 +750,9 @@ const styles = (theme: Theme, isDarkMode = false) => ({
     padding: '4px 12px',
     borderRadius: '999px',
     border: `1px solid ${theme.palette.gx.mediumGrey[500]}`,
-    background: isDarkMode ? theme.palette.gx.darkGrey[300] : theme.palette.gx.primary.white,
+    background: theme.palette.background.paper,
     boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.25)',
     zIndex: 1000
-  },
-  themeToggleLabel: {
-    fontSize: '12px',
-    fontWeight: 600
   },
   header: {
     display: 'flex',
@@ -774,7 +767,7 @@ const styles = (theme: Theme, isDarkMode = false) => ({
   },
   pageSubtitle: {
     fontSize: '13px',
-    color: isDarkMode ? theme.palette.gx.mediumGrey[900] : theme.palette.gx.mediumGrey[100],
+    color: theme.palette.text.secondary,
     maxWidth: 640
   },
   section: {
@@ -808,7 +801,7 @@ const styles = (theme: Theme, isDarkMode = false) => ({
     borderRadius: '8px',
     padding: '16px',
     width: 'fit-content',
-    border: isDarkMode ? `1px solid ${theme.palette.gx.darkGrey[500]}` : 'none'
+    border: `1px solid ${theme.palette.gx.darkGrey[500]}`
   },
   sidebarPanel: {
     background: theme.palette.gx.lightGrey[100],
@@ -846,11 +839,11 @@ const styles = (theme: Theme, isDarkMode = false) => ({
     '&:hover': { boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}` }
   },
   outlinedButton: {
-    color: isDarkMode ? theme.palette.gx.lightGrey[900] : theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     borderColor: theme.palette.gx.mediumGrey[500],
     '&:hover': { borderColor: theme.palette.gx.accent.greenBlue },
     '&.Mui-disabled': {
-      color: isDarkMode ? theme.palette.gx.mediumGrey[700] : theme.palette.gx.mediumGrey[300],
+      color: theme.palette.text.disabled,
       borderColor: theme.palette.gx.mediumGrey[700]
     }
   },
@@ -870,7 +863,7 @@ const styles = (theme: Theme, isDarkMode = false) => ({
     background: theme.palette.gx.gradients.info()
   },
   iconButtonDemo: {
-    color: isDarkMode ? theme.palette.gx.lightGrey[900] : theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     border: `1px solid ${theme.palette.gx.mediumGrey[500]}`
   },
   gridItemPlaceholder: {
@@ -902,11 +895,11 @@ const styles = (theme: Theme, isDarkMode = false) => ({
     '&:hover': { borderColor: theme.palette.gx.accent.greenBlue }
   },
   iconGlyph: {
-    color: isDarkMode ? theme.palette.gx.lightGrey[900] : theme.palette.gx.darkGrey[100]
+    color: theme.palette.text.primary
   },
   iconLabel: {
     fontSize: '10px',
-    color: isDarkMode ? theme.palette.gx.mediumGrey[900] : theme.palette.gx.mediumGrey[100],
+    color: theme.palette.text.secondary,
     textAlign: 'center',
     wordBreak: 'break-word'
   }
