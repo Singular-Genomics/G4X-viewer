@@ -17,7 +17,8 @@ export const GxModal = ({
   colorVariant = 'singular',
   iconVariant = 'info',
   dontShowFlag,
-  hideCancel = false
+  hideCancel = false,
+  continueText
 }: GxModalProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -66,7 +67,7 @@ export const GxModal = ({
                 }}
                 onClick={handleContinue}
               >
-                Confirm
+                {continueText ?? t('general.confirm')}
               </Button>
             )}
             {!hideCancel && (
