@@ -59,10 +59,10 @@ export const useResizableContainer = () => {
   useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);
-    window.addEventListener('onControllerToggle', handleResize);
+    window.addEventListener('onControllerResize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('onControllerToggle', handleResize);
+      window.removeEventListener('onControllerResize', handleResize);
     };
   }, [handleResize]);
 
