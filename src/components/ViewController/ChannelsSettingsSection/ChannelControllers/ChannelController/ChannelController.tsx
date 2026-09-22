@@ -109,7 +109,6 @@ export const ChannelController = ({
       <Box sx={sx.headerWrapper}>
         <Tooltip
           title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
-          enterDelay={300}
           arrow
         >
           <Radio

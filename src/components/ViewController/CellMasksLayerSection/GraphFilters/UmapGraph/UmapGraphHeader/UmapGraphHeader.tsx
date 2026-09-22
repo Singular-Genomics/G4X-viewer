@@ -102,7 +102,6 @@ export const UmapGraphHeader = () => {
         <Tooltip
           placement="top"
           arrow
-          enterDelay={250}
           title={t('segmentationSettings.umapMenuSubsamplingStepTooltip')}
         >
           <HelpIcon sx={sx.helpIcon} />

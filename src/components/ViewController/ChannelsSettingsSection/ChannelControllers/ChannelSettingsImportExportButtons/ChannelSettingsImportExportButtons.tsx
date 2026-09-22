@@ -37,8 +37,6 @@ export const ChannelSettingsImportExportButtons = () => {
         title={t('tooltips.channelSettings.export')}
         arrow
         placement="top"
-        enterDelay={500}
-        leaveDelay={50}
       >
         <Button
           startIcon={<DownloadIcon />}
@@ -53,8 +51,6 @@ export const ChannelSettingsImportExportButtons = () => {
         title={t('tooltips.channelSettings.import')}
         arrow
         placement="top"
-        enterDelay={500}
-        leaveDelay={50}
       >
         <Button
           startIcon={<UploadIcon />}
