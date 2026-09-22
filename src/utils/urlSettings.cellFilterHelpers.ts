@@ -39,8 +39,8 @@ export function decodeRanges(encoded: string): number[] {
   return indices;
 }
 
-export function encodeFilterIndices(filters: string[], clusterIdOrder: string[]): string {
-  const indices = filters.map((id) => clusterIdOrder.indexOf(id)).filter((i) => i !== -1);
+export function encodeFilterIndices(filters: Iterable<string>, clusterIdOrder: string[]): string {
+  const indices = Array.from(filters, (id) => clusterIdOrder.indexOf(id)).filter((i) => i !== -1);
   return encodeRanges(indices);
 }
 

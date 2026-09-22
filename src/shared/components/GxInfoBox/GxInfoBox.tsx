@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Collapse, Typography, Theme, useTheme } from '@mui/material';
+import { Box, Button, Collapse, Typography, Theme, useTheme, SxProps } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GxInfoBoxProps } from './GxInfoBox.types';
 
@@ -50,12 +50,7 @@ export const GxInfoBox = ({
         disableTouchRipple
       >
         <Box sx={sx.headerContent}>
-          <Typography
-            variant="subtitle2"
-            fontWeight="bold"
-          >
-            {title}
-          </Typography>
+          <Typography variant="subtitle2">{title}</Typography>
           {tag !== undefined && (
             <Typography
               variant="body2"
@@ -70,8 +65,8 @@ export const GxInfoBox = ({
           sx={{
             ...sx.expandIcon,
             transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            opacity: expanded ? 1 : sx.expandIcon.opacity,
-            width: expanded ? '24px' : sx.expandIcon.width
+            opacity: expanded ? 1 : 0,
+            width: expanded ? '24px' : 0
           }}
         />
       </Button>
@@ -85,8 +80,7 @@ export const GxInfoBox = ({
   );
 };
 
-const styles = (theme: Theme) => ({
-  // TODO: Review background contrast during design refactor
+const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
     backgroundColor: theme.palette.gx.darkGrey[100],
     borderRadius: 2,
@@ -112,6 +106,9 @@ const styles = (theme: Theme) => ({
       backgroundColor: theme.palette.gx.darkGrey[300]
     }
   },
+  title: {
+    fontWeight: 700
+  },
   headerContent: {
     display: 'flex',
     alignItems: 'center',
@@ -128,10 +125,8 @@ const styles = (theme: Theme) => ({
     textAlign: 'center'
   },
   expandIcon: {
-    opacity: 0,
     transform: 'translateX(-10px)',
     transition: 'all 300ms ease-in-out',
-    width: 0,
     overflow: 'hidden'
   },
   contentContainer: {

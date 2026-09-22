@@ -63,7 +63,7 @@ export function applyTranscriptFilterUrlSettings(params: URLSearchParams): void 
   const rawFi = params.get(URL_KEYS.transcriptFilterIndices);
   if (rawFi) {
     const filters = decodeTranscriptFilterIndices(rawFi, colorMapConfig);
-    if (filters.length) useTranscriptLayerStore.setState({ geneNameFilters: filters });
+    if (filters.length) useTranscriptLayerStore.setState({ geneNameFilters: new Set(filters) });
   }
 
   const rawFc = params.get(URL_KEYS.transcriptFilterColors);
@@ -90,7 +90,7 @@ export function applyCellFilterUrlSettings(params: URLSearchParams): void {
   const rawFi = params.get(URL_KEYS.segFilterIndices);
   if (rawFi) {
     const filters = decodeFilterIndices(rawFi, label.clusterIdOrder);
-    if (filters.length) useCellSegmentationLayerStore.setState({ cellNameFilters: filters });
+    if (filters.length) useCellSegmentationLayerStore.setState({ cellNameFilters: new Set(filters) });
   }
 
   const rawFc = params.get(URL_KEYS.segFilterColors);

@@ -179,7 +179,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     defaultValue: '',
     read: () => {
       const { geneNameFilters } = useTranscriptLayerStore.getState();
-      if (!geneNameFilters.length) return '';
+      if (!geneNameFilters.size) return '';
       const { colorMapConfig } = useZarrDataStore.getState();
       if (!colorMapConfig.length) return '';
       return encodeTranscriptFilterIndices(geneNameFilters, colorMapConfig);
@@ -443,7 +443,7 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     read: () => {
       const { cellNameFilters, availableClusterLabels, selectedClusterLabelKey } =
         useCellSegmentationLayerStore.getState();
-      if (!cellNameFilters.length) return '';
+      if (!cellNameFilters.size) return '';
       const label = availableClusterLabels.find((l) => l.key === selectedClusterLabelKey);
       if (!label) return '';
       return encodeFilterIndices(cellNameFilters, label.clusterIdOrder);

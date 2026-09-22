@@ -2,8 +2,10 @@ import { ColorMapEntry } from '../stores/ZarrDataStore/ZarrDataStore.types';
 import { encodeRanges, decodeRanges } from './urlSettings.cellFilterHelpers';
 import { HexToRgb, RgbToHex } from '../shared/components/GxColorPicker/GxColorPicker.helpers';
 
-export function encodeTranscriptFilterIndices(filters: string[], colorMapConfig: ColorMapEntry[]): string {
-  const indices = filters.map((name) => colorMapConfig.findIndex((e) => e.gene_name === name)).filter((i) => i !== -1);
+export function encodeTranscriptFilterIndices(filters: Iterable<string>, colorMapConfig: ColorMapEntry[]): string {
+  const indices = Array.from(filters, (name) => colorMapConfig.findIndex((e) => e.gene_name === name)).filter(
+    (i) => i !== -1
+  );
   return encodeRanges(indices);
 }
 

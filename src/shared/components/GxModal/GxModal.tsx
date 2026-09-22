@@ -75,7 +75,7 @@ export const GxModal = ({
                 sx={{ ...sx.modalButtonBase, ...sx.cancelButton }}
                 onClick={onClose}
               >
-                Cancel
+                {t('general.cancel')}
               </Button>
             )}
           </Box>
@@ -86,7 +86,15 @@ export const GxModal = ({
               <FormControlLabel
                 sx={sx.chechboxWrapper}
                 label={t('general.dontAskAgain')}
-                control={<GxCheckbox inputRef={checkboxRef} />}
+                control={
+                  <GxCheckbox
+                    slotProps={{
+                      input: {
+                        ref: checkboxRef
+                      }
+                    }}
+                  />
+                }
               />
             </>
           )}

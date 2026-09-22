@@ -6,6 +6,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 import { ZarrTranscriptLoader } from './zarr-transcript-loader';
+import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 
 class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
   renderLayers() {
@@ -132,9 +133,9 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
 
           if (this.props.geneFilters === 'all') {
             pointsData = metadata.pointsData;
-          } else {
+          } else if (typeof this.props.geneFilters !== 'string') {
             [pointsData, outlierPointsData] = partition(metadata.pointsData, (data) =>
-              this.props.geneFilters.includes(data.geneName)
+              (this.props.geneFilters as GeneNameFilterType).has(data.geneName)
             );
           }
 
