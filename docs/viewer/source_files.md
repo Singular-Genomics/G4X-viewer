@@ -37,9 +37,9 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
       For additional information about viewer-compatible output files, see the [g4x_viewer output documentation](https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/).
 
-- <b><u>Z-Layer Control:</u></b>
+- <b><u>Image Size/Layer:</u></b>
 
-      Enables navigation between image Z planes in multidimensional image datasets. Standard G4X datasets typically contain a single Z plane, so these controls are usually fixed or unavailable during normal use.
+      Displayes current image size and dimensions along with how many layers are currently loaded in the viewer.
 
 - <b><u>Manual Scaling:</u></b>
 

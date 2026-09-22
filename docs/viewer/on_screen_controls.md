@@ -20,6 +20,10 @@ These controls sit directly in the viewer window and support dashboard access, R
 
     Opens the [dashboard](../dashboard/index.md) for analysis of user-selected ROIs. Switching between **Dashboard** and **Viewer** keeps the same session and shared save state.
 
+- <b><u>Share All Settings:</u></b>
+
+    this button opens a small interace that allows you to import or export all current viewer settings via a G4X-viewer URL or a settings string. Both can be shared with other users or copied to make your viewer instance idententical between sessions and across samples. If you are importing a settings string or URL, paste into the associated box and click "Apply" to load the new settings. 
+
 - <b><u>View G4X Summary Report:</u></b>
 
     Opens the G4X Sample Summary Report HTML file. This report details core run statistics and information to help you assess data quality. The report is also available in the root directory for each sample. For more details on standard output files, see [G4X data](https://docs.singulargenomics.com/g4x_data/).

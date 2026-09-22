@@ -25,16 +25,6 @@ These controls configure protein channel visibility, color, intensity range, and
 
       Enables the protein lens visualization tool. When activated, a selection panel appears, allowing you to choose a protein channel to focus on with the **Lens** tool. The selected channel is displayed in color within the lens area (the lens tracks your cursor position), while all other active protein channels are displayed in grayscale.
 
-- <b><u>Import/Export Protein Settings:</u></b>
-
-      Import or export protein visualization settings.
-
-      - **Import:** Click the button and select a previously saved JSON configuration file.
-      - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
-
-    !!! tip "Find and save your preferred settings"
-        We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
-
 - <b><u>Protein Display Settings:</u></b>
 
       This section includes several configurable options that allow you to customize how protein data is displayed and interpreted.
@@ -49,6 +39,16 @@ These controls configure protein channel visibility, color, intensity range, and
       - **Change Channel Color:** Allows selection of the channel color from a preset list of color options for the specific channel. Repeat color selections are allowed.
       - **Expand Range:** Expands the default protein intensity range slider to allow broader **Channel Min/Max** values to be set for the specific channel.
       - **Reset Default Range:** Resets **Channel Min/Max** values to default values for the specific channel.
+
+- <b><u>Import/Export Protein Settings:</u></b>
+
+      Import or export protein visualization settings.
+
+      - **Import:** Click the button and select a previously saved JSON configuration file.
+      - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
+
+    !!! tip "Find and save your preferred settings"
+        We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
 
 <br>
 
