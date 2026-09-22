@@ -80,7 +80,7 @@ export const colors: GxPalette = {
   green,
   accent: {
     ...accents,
-    greenBlue: blueGreen[800],
+    greenBlue: blue.main,
     darkGold: accents.yellow,
     error: accents.red,
     info: blue.main
@@ -91,7 +91,7 @@ export const colors: GxPalette = {
     warning: gradient(accents.yellow, accents.orange),
     danger: gradient(accents.red, accents.redDark),
     info: gradient(blue.main, blue[600]),
-    brand: gradient(blue.main, green.main),
+    brand: gradient(blue.main, accents.purple),
     blueGreen: gradient(blueGreen[200], blueGreen[800]),
     // The purple sample has no HEX label for its blue endpoint; use SG Blue.
     purpleBlue: gradient(accents.purple, blue.main)
@@ -100,7 +100,7 @@ export const colors: GxPalette = {
 
 const commonPalette = {
   gx: colors,
-  primary: { main: blueGreen[800], light: green.main, dark: green[600] },
+  primary: { main: blue.main, light: blue.main, dark: blue[600] },
   secondary: { main: accents.purple },
   success: { main: green.main, light: green.main, dark: green[600] },
   warning: { main: accents.orange, light: accents.yellow, dark: accents.orange },
