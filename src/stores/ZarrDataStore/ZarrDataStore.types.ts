@@ -7,6 +7,7 @@ export type ZarrDataStoreValues = {
   fileName: string;
   layerConfig: LayerConfig;
   colorMapConfig: ColorMapEntry[];
+  loadedColorMapConfig: ColorMapEntry[];
   zarrUrl: string | undefined;
   hasTranscriptsData: boolean;
   hasSegmentationData: boolean;
@@ -20,6 +21,7 @@ export type ZarrDataStoreMethods = {
   setFileName: (newFileName: string) => void;
   setLayerConfig: (layerConfig: LayerConfig) => void;
   setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void;
+  setLoadedColorMapConfig: (loadedColorMapConfig: ColorMapEntry[]) => void;
   setZarrUrl: (zarrUrl: string | undefined) => void;
   setHasTranscriptsData: (hasTranscriptsData: boolean) => void;
   setHasSegmentationData: (hasSegmentationData: boolean) => void;

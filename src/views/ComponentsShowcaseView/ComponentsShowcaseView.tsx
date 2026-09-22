@@ -572,6 +572,7 @@ export const ComponentsShowcaseView = () => {
                     color={channel.color}
                     defaultColor={channel.defaultColor}
                     isLoading={false}
+                    disabled={false}
                     handleColorSelect={(newColor) =>
                       updateChannel(channel.id, { color: newColor as [number, number, number] })
                     }

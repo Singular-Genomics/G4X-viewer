@@ -10,6 +10,7 @@ import { useBrightfieldImage } from '../../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { DetailsPopup } from '../../components/DetailsPopup';
 import { SummaryButton } from '../../components/SummaryButton';
+import { ShareSettingsButton } from '../../components/ShareSettingsButton';
 import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
@@ -18,6 +19,8 @@ import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
 import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { MobileLayerControls } from '../../components/MobileLayerControls';
+import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 // Delay prevents loader flicker for very short transcript tile requests.
 const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
@@ -37,6 +40,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   );
 
   useCloudImageLoader();
+  useOnDemandDataLoader();
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
@@ -52,6 +56,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
             <>
               <PictureInPictureViewerAdapter isViewerActive={isViewerActive} />
               <ImageInfo />
+              {!isDesktop && <MobileLayerControls />}
             </>
           ) : (
             !isViewerLoading && (
@@ -83,6 +88,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
             />
           </Box>
           {isDesktop && <SummaryButton />}
+          {isDesktop && <ShareSettingsButton />}
           {isDesktop && <DetailsPopup />}
         </>
       </Box>

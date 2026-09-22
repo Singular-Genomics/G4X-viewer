@@ -12,9 +12,7 @@ import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 import { ZarrDataSet } from '../../../utils/ZarrDataSet';
 import {
   getPolygonBoundingBox,
-  isPointInSelection,
-  isPolygonInSelection,
-  isPolygonWithinBoundingBox
+  isPointInSelection
 } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 
 const getZarrIntersectingTileCoordinates = (
@@ -209,14 +207,8 @@ const detectCellPolygonsInPolygon = async (
   try {
     const cellPolygonsInDrawnPolygon: SingleMask[] = [];
     for (const cellMask of cellMasksData) {
-      if (cellMask.vertices) {
-        if (!isPolygonWithinBoundingBox(cellMask.vertices, polygonBoundingBox)) {
-          continue;
-        }
-
-        if (isPolygonInSelection(cellMask.vertices, polygon.geometry.coordinates[0], polygonBoundingBox)) {
-          cellPolygonsInDrawnPolygon.push(cellMask);
-        }
+      if (isPointInSelection(cellMask.centroid, polygon.geometry.coordinates[0], polygonBoundingBox)) {
+        cellPolygonsInDrawnPolygon.push(cellMask);
       }
     }
 

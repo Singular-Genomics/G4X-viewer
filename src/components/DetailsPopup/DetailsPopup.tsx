@@ -1,13 +1,15 @@
-import { Box, IconButton, Typography, Popover, Theme, useTheme, alpha } from '@mui/material';
+import { Box, IconButton, Typography, Popover, Theme, useTheme, alpha, Tooltip } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { formatDetailsPopupData } from './DetailsPopup.helpers';
 import { useViewerStore } from '../../stores/ViewerStore';
+import { useTranslation } from 'react-i18next';
 
 export const DetailsPopup = () => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const detailsData = useViewerStore((state) => state.generalDetails);
@@ -46,13 +48,18 @@ export const DetailsPopup = () => {
 
   return (
     <Box>
-      <IconButton
-        onClick={handleClick}
-        size="small"
-        sx={sx.infoButton}
+      <Tooltip
+        title={t('general.runMetadataTooltip')}
+        arrow
       >
-        <InfoIcon />
-      </IconButton>
+        <IconButton
+          onClick={handleClick}
+          size="small"
+          sx={sx.infoButton}
+        >
+          <InfoIcon />
+        </IconButton>
+      </Tooltip>
       <Popover
         open={!!anchorEl}
         anchorEl={anchorEl}

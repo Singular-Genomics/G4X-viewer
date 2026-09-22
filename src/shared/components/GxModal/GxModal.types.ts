@@ -11,6 +11,7 @@ export type GxModalProps = {
   dontShowFlag?: string;
   size?: GxModalSize;
   hideCancel?: boolean;
+  continueText?: string;
 };
 
 type GxModalColorVaraints = 'danger' | 'warning' | 'info' | 'singular';

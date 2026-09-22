@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { alpha, Box, SxProps, Theme, useTheme } from '@mui/material';
-import { Layout } from 'react-grid-layout';
+import { alpha, Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { DashboardGrid, DashboardGridItem } from '../../components/DashboardGrid';
 import { PieChart } from '../../components/DashboardCharts/PieChart';
 import { AddGraphButton } from '../../components/AddGraphButton';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { DASHBOARD_CHARTS_CONFIG } from '../../components/DashboardCharts/DashboardPlots.helpers';
 import { BoxChart } from '../../components/DashboardCharts/BoxChart';
 import { BarChart } from '../../components/DashboardCharts/BarChart';
 import { HeatmapChart } from '../../components/DashboardCharts/HeatmapChart';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useSnackbar } from 'notistack';
+import { socialLinks } from '../../config/socialLinks';
 
 export const DashboardView = () => {
   const theme = useTheme();
@@ -40,9 +40,7 @@ export const DashboardView = () => {
 
   const [gridItems, setGridItems] = useState<DashboardGridItem[]>([]);
 
-  const handleLayoutChange = (layout: Layout[]) => {
-    console.log('Layout changed:', layout);
-  };
+  const hasNoROI = !polygonFeatures || polygonFeatures.length === 0;
 
   const handleRemoveItem = (itemId: string) => {
     setGridItems((prev) => prev.filter((item) => item.props.id !== itemId));
@@ -51,11 +49,26 @@ export const DashboardView = () => {
   const handleAddGraph = (graphId: string) => {
     // Check if there are any ROI polygons available
     if (!polygonFeatures || polygonFeatures.length === 0) {
-      enqueueSnackbar(t('dashboard.noROIAvailableError'), {
-        variant: 'gxSnackbar',
-        titleMode: 'error',
-        iconMode: 'error'
-      });
+      enqueueSnackbar(
+        <Trans
+          i18nKey="dashboard.noROIAvailableError"
+          components={{
+            docsLink: (
+              <a
+                href={socialLinks.docsRoiSelection}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            )
+          }}
+        />,
+        {
+          variant: 'gxSnackbar',
+          titleMode: 'error',
+          iconMode: 'error',
+          persist: true
+        }
+      );
       return;
     }
 
@@ -124,13 +137,31 @@ export const DashboardView = () => {
           buttonText={t('dashboard.addGraphButton')}
         />
       </Box>
-      <Box sx={sx.gridContainer}>
-        <DashboardGrid
-          items={gridItems}
-          onLayoutChange={handleLayoutChange}
-          onRemoveItem={handleRemoveItem}
-        />
-      </Box>
+      {hasNoROI ? (
+        <Box sx={sx.noRoiMessage}>
+          <Typography sx={sx.noRoiMessageText}>
+            <Trans
+              i18nKey="dashboard.noROIAvailableError"
+              components={{
+                docsLink: (
+                  <a
+                    href={socialLinks.docsRoiSelection}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                )
+              }}
+            />
+          </Typography>
+        </Box>
+      ) : (
+        <Box sx={sx.gridContainer}>
+          <DashboardGrid
+            items={gridItems}
+            onRemoveItem={handleRemoveItem}
+          />
+        </Box>
+      )}
     </Box>
   );
 };
@@ -150,6 +181,22 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   gridContainer: {
     flex: 1
+  },
+  noRoiMessage: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    padding: 3
+  },
+  noRoiMessageText: {
+    color: theme.palette.gx.lightGrey[500],
+    maxWidth: '480px',
+    '& a': {
+      color: theme.palette.gx.lightGrey[500],
+      textDecoration: 'underline'
+    }
   },
   header: {
     padding: '24px 24px 16px',

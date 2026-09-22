@@ -5,6 +5,11 @@ import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
+import {
+  applyCellFilterUrlSettings,
+  applyCytometryFilterUrlSettings,
+  applyTranscriptFilterUrlSettings
+} from '../utils/urlSettings';
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -12,6 +17,7 @@ export const useOnDemandDataLoader = () => {
 
   const isTranscriptLayerOn = useTranscriptLayerStore((s) => s.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((s) => s.isCellLayerOn);
+  const availableSegmentations = useCellSegmentationLayerStore((s) => s.availableSegmentations);
 
   useEffect(() => {
     if (!isTranscriptLayerOn) return;
@@ -48,6 +54,7 @@ export const useOnDemandDataLoader = () => {
                 (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
               );
             }
+            useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
         } else if (pendingTranscriptAttrs) {
@@ -59,11 +66,13 @@ export const useOnDemandDataLoader = () => {
               gene_name,
               color: color as number[]
             }));
+            useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
         }
 
         useZarrDataStore.getState().setTranscriptConfigLoaded(true);
+        applyTranscriptFilterUrlSettings(new URLSearchParams(window.location.search));
       } catch {
         enqueueSnackbar(t('sourceFiles.transcriptsConfigLoadError'), { variant: 'error' });
         useTranscriptLayerStore.getState().reset();
@@ -75,16 +84,16 @@ export const useOnDemandDataLoader = () => {
 
   useEffect(() => {
     if (!isCellLayerOn) return;
+    if (availableSegmentations.length === 0) return;
 
     const { hasSegmentationData, zarrDataSet, zarrStoreFactory, fileName } = useZarrDataStore.getState();
-    const { cellMasksData, availableSegmentations } = useCellSegmentationLayerStore.getState();
+    const { cellMasksData } = useCellSegmentationLayerStore.getState();
 
     if (!hasSegmentationData || cellMasksData !== null) return;
 
     const load = async () => {
       try {
         const defaultSegmentation = availableSegmentations[0];
-        if (!defaultSegmentation) throw new Error('No segmentation available');
 
         const generalDetails = useViewerStore.getState().generalDetails;
 
@@ -110,6 +119,8 @@ export const useOnDemandDataLoader = () => {
             availableClusterLabels: cellsData.clusterLabels,
             selectedClusterLabelKey: cellsData.clusterLabels[0].key
           });
+          applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
+          applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));
         } else if (zarrStoreFactory) {
           const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
             await import('../utils/ZarrCellsLoader');
@@ -135,6 +146,8 @@ export const useOnDemandDataLoader = () => {
             availableClusterLabels: cellsData.clusterLabels,
             selectedClusterLabelKey: cellsData.clusterLabels[0].key
           });
+          applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
+          applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));
         }
 
         enqueueSnackbar(
@@ -151,5 +164,5 @@ export const useOnDemandDataLoader = () => {
     };
 
     load();
-  }, [isCellLayerOn, enqueueSnackbar, t]);
+  }, [isCellLayerOn, availableSegmentations, enqueueSnackbar, t]);
 };

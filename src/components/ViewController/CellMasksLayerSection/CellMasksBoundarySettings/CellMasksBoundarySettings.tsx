@@ -3,7 +3,7 @@ import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentati
 import { useShallow } from 'zustand/react/shallow';
 import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GxModal } from '../../../../shared/components/GxModal';
 
@@ -22,6 +22,10 @@ export const CellMasksBoundarySettings = () => {
 
   const [sliderValue, setSliderValue] = useState<number>(boundaryWidth);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    setSliderValue(boundaryWidth);
+  }, [boundaryWidth]);
 
   const handleToggleBoundary = () => {
     const disableModal = localStorage.getItem('disableBoundaryWarning_DSA');

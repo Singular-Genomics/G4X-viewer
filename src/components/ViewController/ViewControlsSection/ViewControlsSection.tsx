@@ -14,7 +14,7 @@ export const ViewControlsSection = () => {
     <Box sx={sx.sectionContainer}>
       <ImageDetails />
       <GlobalSelectionSliders />
-      <Box>
+      <Box sx={sx.zoomControlContainer}>
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.zoomControl')}</Typography>
         <ZoomInput />
       </Box>
@@ -43,6 +43,9 @@ const sx = {
     fontWeight: 700,
     paddingLeft: '8px',
     marginBottom: '8px'
+  },
+  zoomControlContainer: {
+    marginTop: '8px'
   },
   togglesSubSection: {
     display: 'flex',

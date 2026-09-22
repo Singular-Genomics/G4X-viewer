@@ -32,6 +32,7 @@ export const ChannelController = ({
   domain,
   name,
   isLoading,
+  disabled,
   pixelValue,
   channelVisible,
   slider,
@@ -114,6 +115,7 @@ export const ChannelController = ({
           <Radio
             checked={isSoloed}
             onClick={onSoloToggle}
+            disabled={disabled}
             size="small"
             disableTouchRipple
             sx={sx.soloRadio}
@@ -122,7 +124,7 @@ export const ChannelController = ({
         <Box sx={isSoloMode ? sx.selectDimmed : undefined}>
           <GxCheckbox
             onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
-            disabled={isLoading}
+            disabled={disabled}
             checked={isSoloMode ? presoloVisible : channelVisible}
             disableTouchRipple
           />
@@ -135,7 +137,7 @@ export const ChannelController = ({
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
           sx={sx.channelSelect}
-          disabled={isLoading}
+          disabled={disabled}
         >
           {morphologyOptions.length > 0 && [
             <ListSubheader
@@ -146,7 +148,7 @@ export const ChannelController = ({
             </ListSubheader>,
             ...morphologyOptions.map((opt) => (
               <MenuItem
-                disabled={isLoading}
+                disabled={disabled}
                 key={opt}
                 value={opt}
               >
@@ -169,7 +171,7 @@ export const ChannelController = ({
             </ListSubheader>,
             ...proteinOptions.map((opt) => (
               <MenuItem
-                disabled={isLoading}
+                disabled={disabled}
                 key={opt}
                 value={opt}
               >
@@ -185,7 +187,7 @@ export const ChannelController = ({
             slider={slider}
             domain={domain}
             handleColorSelect={handleColorSelect as any}
-            disabled={isLoading}
+            disabled={disabled}
             rangeMin={rangeMin}
             rangeMax={rangeMax}
             setRangeMin={setRangeMin}
@@ -202,6 +204,7 @@ export const ChannelController = ({
               component="span"
               size="small"
               onClick={handleRemoveChannel}
+              disabled={disabled}
               sx={sx.removeChannelButton}
             >
               <HighlightOffIcon fontSize="small" />
@@ -215,7 +218,7 @@ export const ChannelController = ({
           slider={slider}
           domain={domain}
           handleSliderChange={handleSliderChange}
-          isLoading={isLoading}
+          isLoading={disabled}
           visibleMin={visibleRange.min}
           visibleMax={visibleRange.max}
           minInputValue={minInputValue}
@@ -235,7 +238,7 @@ export const ChannelController = ({
             <IconButton
               size="small"
               onClick={handleModeToggle}
-              disabled={isLoading}
+              disabled={disabled}
               sx={sx.modeToggleButton}
             >
               {sliderRangeMode === 'expanded' ? (
@@ -253,7 +256,7 @@ export const ChannelController = ({
               <IconButton
                 size="small"
                 onClick={handleResetSlider}
-                disabled={isLoading || (slider[0] === defaultSlider[0] && slider[1] === defaultSlider[1])}
+                disabled={disabled || (slider[0] === defaultSlider[0] && slider[1] === defaultSlider[1])}
                 sx={sx.sliderRowButton}
               >
                 <RestartAltIcon fontSize="small" />

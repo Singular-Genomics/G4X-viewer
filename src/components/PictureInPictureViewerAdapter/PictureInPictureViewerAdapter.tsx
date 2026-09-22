@@ -12,7 +12,7 @@ import {
   usePolygonDrawingLayer,
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
+import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -77,7 +78,38 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       ])
     );
 
-  const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
+  const [isPolygonDrawingEnabled, isDetecting, polygonDrawingMode, setDrawPolygonMode] = usePolygonDrawingStore(
+    useShallow((store) => [store.isPolygonDrawingEnabled, store.isDetecting, store.mode, store.setDrawPolygonMode])
+  );
+
+  const canCancelPolygonDrawing = (eventTarget: EventTarget | null) => {
+    const deckCanvas = deckGLRef.current?.deck?.canvas;
+    return (
+      eventTarget === deckCanvas &&
+      isViewerActive &&
+      isPolygonDrawingEnabled &&
+      !isDetecting &&
+      polygonDrawingMode instanceof DrawPolygonMode
+    );
+  };
+
+  const handlePointerDownCapture = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 2 || !canCancelPolygonDrawing(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setDrawPolygonMode();
+  };
+
+  const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    if (!canCancelPolygonDrawing(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+  };
 
   useEffect(() => {
     debouncedUpdateRef.current = debounce(
@@ -188,6 +220,8 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     <Box
       sx={sx.viewerContainer}
       ref={containerRef}
+      onPointerDownCapture={handlePointerDownCapture}
+      onContextMenu={handleContextMenu}
     >
       {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
