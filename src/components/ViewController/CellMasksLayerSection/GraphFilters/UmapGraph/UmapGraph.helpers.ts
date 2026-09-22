@@ -21,11 +21,10 @@ export async function getPlotData(
     }
 
     for (let i = 0; i < cellMasksData.length; i += subsamplingValue) {
-      const mask = cellMasksData[i];
       const {
         clusterId,
         umapValues: { umapX, umapY }
-      } = mask;
+      } = cellMasksData[i];
       const entry = umapData.get(clusterId) ?? { x: [], y: [], clusterId };
 
       entry.x.push(umapX);
