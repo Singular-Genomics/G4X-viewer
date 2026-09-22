@@ -1,8 +1,8 @@
 import { useShallow } from 'zustand/react/shallow';
-import { Grid, Input, Theme, useTheme } from '@mui/material';
+import { Grid, Input, SxProps, Theme, useTheme } from '@mui/material';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MIN_POINT_SIZE = 0.1;
 const MAX_POINT_SIZE = 10;
@@ -17,12 +17,14 @@ export const PointSizeSlider = () => {
 
   const [sliderValue, setSliderValue] = useState<number>(pointSize);
 
+  useEffect(() => {
+    setSliderValue(pointSize);
+  }, [pointSize]);
+
   return (
     <Grid
       container
       direction="row"
-      justifyContent="space-between"
-      alignItems="center"
       sx={sx.sliderInputContainer}
     >
       <Grid size={1}>
@@ -58,13 +60,15 @@ export const PointSizeSlider = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   sliderInputContainer: {
     paddingLeft: '8px',
     paddingRight: '16px'
   },
   sliderInputItem: {
-    padding: '0px 8px 0px 16px'
+    padding: '0px 8px 0px 16px',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   textField: {
     marginBottom: '8px',

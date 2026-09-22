@@ -149,16 +149,6 @@ export const isPointWitinBoundingBox = (point: [number, number], boundingBox: Bo
   );
 };
 
-// Check if polygon is fullt inside a rectangular bounding box
-export const isPolygonWithinBoundingBox = (cellVertices: number[], boundingBox: BoundingBox): boolean => {
-  for (let i = 0; i < cellVertices.length; i += 2) {
-    if (!isPointWitinBoundingBox([cellVertices[i], cellVertices[i + 1]], boundingBox)) {
-      return false;
-    }
-  }
-  return true;
-};
-
 // Ray Casting Algorithm with early exit optimization: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
 export const isPointInSelection = (point: [number, number], coordinates: number[][], boundingBox: BoundingBox) => {
@@ -179,22 +169,6 @@ export const isPointInSelection = (point: [number, number], coordinates: number[
     }
   }
   return inside;
-};
-
-export const isPolygonInSelection = (cellVertices: number[], coordinates: number[][], boundingBox: BoundingBox) => {
-  if (!cellVertices || cellVertices.length < 6) return false;
-
-  // Check each vertex of the cell polygon
-  for (let i = 0; i < cellVertices.length; i += 2) {
-    const x = cellVertices[i];
-    const y = cellVertices[i + 1];
-
-    if (!isPointInSelection([x, y], coordinates, boundingBox)) {
-      return false;
-    }
-  }
-
-  return true;
 };
 
 export const removeDuplicates = (points: any[]) => {

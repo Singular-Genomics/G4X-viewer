@@ -2,10 +2,11 @@ import type { CellFilteringWorkerMessage, CellFilteringWorkerResponse } from './
 import { SingleMask } from '../../../shared/types';
 import { partition } from 'lodash';
 import { ProteinIndices } from '../../../stores/CytometryGraphStore/CytometryGraphStore.types';
+import { CellNameFilterType } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 
 const filterCells = (
   cellsData: SingleMask[],
-  cellNameFilters?: string[] | 'all',
+  cellNameFilters?: CellNameFilterType | 'all',
   cytometryFilter?: {
     proteins: ProteinIndices;
     range?: { xStart: number; xEnd: number; yStart: number; yEnd: number };
@@ -19,8 +20,8 @@ const filterCells = (
     // Apply cell name filters first
     if (cellNameFilters === 'all') {
       filteredCellsData = cellsData;
-    } else if (cellNameFilters && cellNameFilters.length > 0) {
-      [filteredCellsData, outlierCellsData] = partition(cellsData, (data) => cellNameFilters.includes(data.clusterId));
+    } else if (cellNameFilters && cellNameFilters.size > 0) {
+      [filteredCellsData, outlierCellsData] = partition(cellsData, (data) => cellNameFilters.has(data.clusterId));
     } else {
       filteredCellsData = cellsData;
     }

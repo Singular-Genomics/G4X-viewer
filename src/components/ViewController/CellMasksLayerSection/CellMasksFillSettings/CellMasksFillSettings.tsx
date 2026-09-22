@@ -1,8 +1,8 @@
-import { Box, Grid, Input, Theme, useTheme } from '@mui/material';
+import { Box, Grid, Input, SxProps, Theme, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxSlider } from '../../../../shared/components/GxSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const MIN_FILL_OPACITY = 1;
 const MAX_FILL_OPACITY = 100;
@@ -17,13 +17,15 @@ export const CellMasksFillSettings = () => {
 
   const [sliderValue, setSliderValue] = useState<number>(cellFillOpacity);
 
+  useEffect(() => {
+    setSliderValue(cellFillOpacity);
+  }, [cellFillOpacity]);
+
   return (
     <Box sx={sx.strokeSettingsContainer}>
       <Grid
         container
         direction="row"
-        justifyContent="space-between"
-        alignItems="center"
         sx={sx.sliderInputContainer}
       >
         <Grid size={1}>
@@ -64,7 +66,7 @@ export const CellMasksFillSettings = () => {
   );
 };
 
-const styles = (_theme: Theme) => ({
+const styles = (_theme: Theme): Record<string, SxProps> => ({
   strokeSettingsContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -72,7 +74,9 @@ const styles = (_theme: Theme) => ({
     marginBottom: '8px'
   },
   sliderInputContainer: {
-    paddingLeft: '8px'
+    paddingLeft: '8px',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   sliderInputItem: {
     padding: '0px 8px 0px 16px'

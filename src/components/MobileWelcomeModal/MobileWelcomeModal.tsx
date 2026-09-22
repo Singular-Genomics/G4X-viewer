@@ -1,4 +1,4 @@
-import { Typography, useMediaQuery, useTheme } from '@mui/material';
+import { SxProps, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GxModal } from '../../shared/components/GxModal';
@@ -29,8 +29,14 @@ export const MobileWelcomeModal = () => {
       size="small"
       hideCancel
     >
-      <Typography fontSize={14}>{t('navigation.mobilePreviewTooltip')}</Typography>
-      <Typography fontSize={14}>{t('viewer.mobileWelcomeDesktopHint')}</Typography>
+      <Typography sx={sx.modalLabel}>{t('navigation.mobilePreviewTooltip')}</Typography>
+      <Typography sx={sx.modalLabel}>{t('viewer.mobileWelcomeDesktopHint')}</Typography>
     </GxModal>
   );
+};
+
+const sx: Record<string, SxProps> = {
+  modalLabel: {
+    fontSize: '14px'
+  }
 };

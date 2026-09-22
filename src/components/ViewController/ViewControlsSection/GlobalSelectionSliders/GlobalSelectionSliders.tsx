@@ -1,4 +1,4 @@
-import { Box, Grid, Slider, Theme, Typography, alpha, useTheme } from '@mui/material';
+import { Box, Grid, Slider, SxProps, Theme, Typography, alpha, useTheme } from '@mui/material';
 import { GLOBAL_SLIDER_DIMENSION_FIELDS, getMultiSelectionStats, range } from '../../../../legacy/utils';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useChannelsStore } from '../../../../stores/ChannelsStore/ChannelsStore';
@@ -24,7 +24,9 @@ export const GlobalSelectionSliders = () => {
   const loader = getLoader();
   const { shape, labels } = loader[0];
 
-  const globalControlLabels = labels.filter((label: any) => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label));
+  const globalControlLabels = labels.filter(
+    (label: any, index: number) => GLOBAL_SLIDER_DIMENSION_FIELDS.includes(label) && shape[index] - 1 > 0
+  );
   const isAnyChannelLoading = isChannelLoading.some((loading) => loading);
 
   const changeSelection = debounce(
@@ -92,8 +94,6 @@ export const GlobalSelectionSliders = () => {
             key={label}
             container
             direction="row"
-            justifyContent="space-between"
-            alignItems="center"
           >
             <Grid size={1}>
               <Typography sx={sx.selectionLabel}>{label}</Typography>
@@ -140,7 +140,11 @@ export const GlobalSelectionSliders = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
+  sectionWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   subsectionTitle: {
     fontWeight: 700,
     paddingLeft: '8px',

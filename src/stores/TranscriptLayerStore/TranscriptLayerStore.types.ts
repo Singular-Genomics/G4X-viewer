@@ -17,7 +17,7 @@ export type TranscriptLayerStoreValues = {
   selectedPoints: SelectionData<PointData>[];
 };
 
-export type GeneNameFilterType = string[];
+export type GeneNameFilterType = Set<string>;
 
 export type TranscriptLayerStoreMethods = {
   toggleTranscriptLayer: () => void;

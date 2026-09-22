@@ -24,7 +24,6 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
         {/* Custom Title  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.customTitle')}:</Typography>
@@ -44,7 +43,6 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
         {/* Axis Swap  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.plotSwapAxisLabel')}:</Typography>
@@ -63,7 +61,6 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
         {/* Sort ROIs  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.plotSortRoisLabel')}:</Typography>
@@ -82,7 +79,6 @@ export const BoxChartSettings = ({ settings, onChangeSettings }: BoxChartSetting
         {/* Box point type  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.plotDataModeLabel')}:</Typography>
@@ -124,6 +120,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderColor: theme.palette.gx.mediumGrey[500],
     textWrap: 'nowrap',
     textAlign: 'end',
-    paddingInlineEnd: '8px'
+    paddingInlineEnd: '8px',
+    alignContent: 'center'
   }
 });

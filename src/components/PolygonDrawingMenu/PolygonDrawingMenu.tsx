@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import CreateIcon from '@mui/icons-material/Create';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -308,7 +308,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
               color="primary"
               disabled={isDetecting}
             >
-              <DeleteOutlineIcon />
+              <DeleteForeverOutlinedIcon />
             </IconButton>
           </MuiTooltip>
 

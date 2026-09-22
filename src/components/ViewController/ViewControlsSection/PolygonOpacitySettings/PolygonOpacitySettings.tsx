@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Input, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 import { GxSlider } from '../../../../shared/components/GxSlider';
@@ -26,8 +26,7 @@ export const PolygonOpacitySettings = () => {
       <Grid
         container
         direction="row"
-        justifyContent="space-between"
-        alignItems="center"
+        sx={sx}
       >
         <Grid size={1}>
           <Input
@@ -67,7 +66,7 @@ export const PolygonOpacitySettings = () => {
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   opacitySettingsContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -78,7 +77,10 @@ const styles = (theme: Theme) => ({
     fontWeight: 700,
     marginBottom: '8px'
   },
-
+  controlsWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   sliderInputItem: {
     padding: '0px 8px 0px 16px'
   },
