@@ -1,5 +1,5 @@
 import { TextField, Theme, useTheme, InputAdornment, IconButton, SxProps } from '@mui/material';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -21,9 +21,19 @@ export default function ZarrSourceInput() {
   const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
   const [submitted, setSubmitted] = useState(!!getInitialCloudImageUrl());
   const imageName = useViewerStore((store) => store.source?.description);
+  const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
+  const previousZarrUrlRef = useRef(zarrUrl);
 
   const { enqueueSnackbar } = useSnackbar();
   const { showConsolidatedMessages } = useConsolidatedSnackbar();
+
+  // Skip initial render to keep a deep-linked ?imageUrl in the field
+  useEffect(() => {
+    if (previousZarrUrlRef.current === zarrUrl) return;
+    previousZarrUrlRef.current = zarrUrl;
+    setCloudImageUrl(zarrUrl ?? '');
+    setSubmitted(!!zarrUrl);
+  }, [zarrUrl]);
 
   const handleSubmit = async () => {
     if (!cloudImageUrl.trim()) return;

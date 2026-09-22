@@ -19,6 +19,8 @@ import { MobileWelcomeModal } from '../../components/MobileWelcomeModal';
 import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { MobileLayerControls } from '../../components/MobileLayerControls';
+import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 // Delay prevents loader flicker for very short transcript tile requests.
 const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
@@ -38,6 +40,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   );
 
   useCloudImageLoader();
+  useOnDemandDataLoader();
 
   useProteinImage(source);
   useBrightfieldImage(brightfieldImageSource);
@@ -53,6 +56,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
             <>
               <PictureInPictureViewerAdapter isViewerActive={isViewerActive} />
               <ImageInfo />
+              {!isDesktop && <MobileLayerControls />}
             </>
           ) : (
             !isViewerLoading && (
