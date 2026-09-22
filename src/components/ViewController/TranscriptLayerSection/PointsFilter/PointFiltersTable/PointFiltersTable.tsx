@@ -20,8 +20,8 @@ export const PointFiltersTable = () => {
   );
 
   useEffect(() => {
-    setActiveFilters(new Set(useTranscriptLayerStore.getState().geneNameFilters));
-  }, []);
+    setActiveFilters(new Set(geneNameFilters));
+  }, [geneNameFilters]);
 
   const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
 

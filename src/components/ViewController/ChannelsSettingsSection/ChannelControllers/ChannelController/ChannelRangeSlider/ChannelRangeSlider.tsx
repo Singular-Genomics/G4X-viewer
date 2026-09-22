@@ -83,6 +83,7 @@ export const ChannelRangeSlider = ({
       <Input
         id="channel_min"
         type="number"
+        disabled={isLoading}
         sx={sx.textField}
         value={minInputValue}
         onChange={handleMinInputChange}
@@ -106,6 +107,7 @@ export const ChannelRangeSlider = ({
       <Input
         id="channel_max"
         type="number"
+        disabled={isLoading}
         sx={sx.textField}
         value={maxInputValue}
         onChange={handleMaxInputChange}

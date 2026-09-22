@@ -1,43 +1,36 @@
-import { ZARR_SUBPATHS } from '../../utils/ZarrPaths';
-
-type ValidStoreType = ArrayBuffer;
+type StoreValue = Uint8Array | undefined;
 
 type InnerStore = {
-  getItem(key: string): Promise<ValidStoreType>;
-  setItem(key: string, value: ValidStoreType): Promise<boolean>;
-  deleteItem(key: string): Promise<boolean>;
-  containsItem(key: string): Promise<boolean>;
-  keys(): Promise<string[]>;
+  get(key: string): Promise<StoreValue>;
 };
 
 /**
- * Wraps any zarr-compatible store with an LRU cache (Map with size limit).
+ * Wraps any zarrita-compatible store with an LRU cache (Map with size limit).
  * Prevents redundant disk reads when panning back over viewed regions.
+ * Misses are cached too — zarrita repeatedly probes keys that do not exist.
  */
 export class LRUCacheStore {
   readonly __localZarrStore = true;
-  readonly __localZarrPath: string;
   private inner: InnerStore;
-  private cache: Map<string, ValidStoreType>;
+  private cache: Map<string, StoreValue>;
   private maxSize: number;
 
-  constructor(inner: InnerStore, maxSize = 100, path: string = ZARR_SUBPATHS.images.multiplex()) {
+  constructor(inner: InnerStore, maxSize = 100) {
     this.inner = inner;
     this.cache = new Map();
     this.maxSize = maxSize;
-    this.__localZarrPath = path;
   }
 
-  async getItem(key: string): Promise<ValidStoreType> {
+  async get(key: string): Promise<StoreValue> {
     if (this.cache.has(key)) {
-      const value = this.cache.get(key)!;
+      const value = this.cache.get(key);
       // Move to end (most recently used)
       this.cache.delete(key);
       this.cache.set(key, value);
       return value;
     }
 
-    const value = await this.inner.getItem(key);
+    const value = await this.inner.get(key);
     this.cache.set(key, value);
 
     if (this.cache.size > this.maxSize) {
@@ -49,21 +42,5 @@ export class LRUCacheStore {
     }
 
     return value;
-  }
-
-  async containsItem(key: string): Promise<boolean> {
-    return this.inner.containsItem(key);
-  }
-
-  async setItem(key: string, value: ValidStoreType): Promise<boolean> {
-    return this.inner.setItem(key, value);
-  }
-
-  async deleteItem(key: string): Promise<boolean> {
-    return this.inner.deleteItem(key);
-  }
-
-  async keys(): Promise<string[]> {
-    return this.inner.keys();
   }
 }

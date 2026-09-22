@@ -196,14 +196,7 @@ export const CytometryGraph = () => {
 
   const handleConfirmFilter = () => {
     if (selectionRange) {
-      useCytometryGraphStore.setState({
-        ranges: {
-          xStart: selectionRange.xStart - 1,
-          yStart: selectionRange.yStart - 1,
-          xEnd: selectionRange.xEnd - 1,
-          yEnd: selectionRange.yEnd - 1
-        }
-      });
+      useCytometryGraphStore.setState({ ranges: selectionRange });
     }
   };
 

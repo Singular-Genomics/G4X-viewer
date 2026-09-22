@@ -39,12 +39,14 @@ export const useDirectoryPicker = () => {
 
   const finalizeImages = useCallback(
     async (rootHandle: FileSystemDirectoryHandle, imagesHandle: FileSystemDirectoryHandle) => {
-      const { LocalFileStore } = await import('../../../../loaders/LocalFileStore');
+      const { LocalFileHandleZarritaStore } = await import('../../../../loaders/LocalFileStore');
       const { LRUCacheStore } = await import('../../../../loaders/LRUCacheStore');
 
       const overrides = { [ZARR_SUBPATHS.images.base]: imagesHandle };
 
-      const lruStore = new LRUCacheStore(new LocalFileStore(rootHandle, overrides));
+      const lruStore = new LRUCacheStore(
+        new LocalFileHandleZarritaStore(rootHandle, ZARR_SUBPATHS.images.multiplex(), overrides)
+      );
 
       // Set the image source — createLoader will detect __localZarrStore
       useViewerStore.setState({
@@ -69,9 +71,7 @@ export const useDirectoryPicker = () => {
       try {
         await getDirectoryAt(imagesHandle, stripImagesBase(ZARR_SUBPATHS.images.h_and_e()));
         const heStore = new LRUCacheStore(
-          new LocalFileStore(rootHandle, overrides),
-          100,
-          ZARR_SUBPATHS.images.h_and_e()
+          new LocalFileHandleZarritaStore(rootHandle, ZARR_SUBPATHS.images.h_and_e(), overrides)
         );
         useBrightfieldImagesStore.getState().addNewFile({
           __localZarrImage: true,

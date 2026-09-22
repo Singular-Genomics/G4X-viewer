@@ -1,8 +1,8 @@
-import { GeoJsonEditMode, FeatureOf, Polygon } from '@deck.gl-community/editable-layers';
+import { DrawPolygonMode, ModifyMode, Feature, Polygon } from '@deck.gl-community/editable-layers';
 
 export type PolygonDrawingStore = PolygonDrawingStoreValues & PolygonDrawingStoreMethods;
 
-export type PolygonFeature = FeatureOf<Polygon>;
+export type PolygonFeature = Feature<Polygon>;
 
 export type Point2D = [number, number];
 
@@ -33,7 +33,9 @@ export type PolygonDrawingStoreValues = {
   isPolygonLayerVisible: boolean;
   polygonFeatures: PolygonFeature[];
   selectedFeatureIndex: number | null;
-  mode: GeoJsonEditMode;
+  // Union, not the GeoJsonEditMode base: in editable-layers 9.3 the subclasses
+  // narrow their props and are no longer assignable to it. undefined = view/delete.
+  mode: DrawPolygonMode | ModifyMode | undefined;
   isDetecting: boolean;
   isViewMode: boolean;
   isDeleteMode: boolean;
