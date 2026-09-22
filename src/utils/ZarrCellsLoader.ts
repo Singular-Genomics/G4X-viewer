@@ -61,6 +61,7 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
       totalCountsChunk,
       totalGenesChunk,
       umapChunk,
+      positionChunk,
       proteinNamesChunk
     ] = await Promise.all([
       openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.cellId)),
@@ -72,6 +73,7 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
       openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.totalCounts)),
       openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.totalGenes)),
       openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.umap)),
+      openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.position)),
       openAndGet(cellsGroup.resolve(ZARR_CELL_FIELDS.proteinNames))
     ]);
 
@@ -92,6 +94,7 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
     const totalCounts = totalCountsChunk.data as Uint16Array;
     const totalGenes = totalGenesChunk.data as Uint16Array;
     const umapData = umapChunk.data as Float16Array;
+    const positionData = positionChunk.data as Float16Array;
 
     const proteinNames = extractStringArray(proteinNamesChunk);
     const geneNames = extractStringArray(geneNamesChunk);
@@ -147,6 +150,7 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
         area: areas[i],
         clusterId: getClusterId(i, defaultLabel.index),
         vertices,
+        centroid: [positionData[i * 2], positionData[i * 2 + 1]],
         proteinValues: proteinVals,
         totalCounts: totalCounts[i],
         totalGenes: totalGenes[i],
