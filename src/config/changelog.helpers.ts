@@ -4,6 +4,7 @@ import { ChangelogEntry, ChangelogSection } from './changelog.types';
 const VERSION_HEADING_REGEX = /^## \[(.+?)\] - (.+)$/;
 const SECTION_HEADING_REGEX = /^### (.+)$/;
 const LIST_ITEM_REGEX = /^-\s+(.+)$/;
+const VERSION_REGEX = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/;
 const MAX_LISTED_VERSIONS = 5;
 
 const parseChangelog = (markdown: string): ChangelogEntry[] => {
@@ -36,19 +37,26 @@ const parseChangelog = (markdown: string): ChangelogEntry[] => {
   return entries;
 };
 
-type ParsedVersion = [major: number, minor: number, patch: number];
+type ParsedVersion = [major: number, minor: number, patch: number, preRelease?: string];
 
 const parseVersion = (version: string): ParsedVersion | undefined => {
-  const parts = version.trim().split('.');
-  if (parts.length !== 3) return undefined;
+  const match = version.trim().match(VERSION_REGEX);
+  if (!match) return undefined;
 
-  const [major, minor, patch] = parts.map((part) => Number.parseInt(part, 10));
-  if ([major, minor, patch].some(Number.isNaN)) return undefined;
-
-  return [major, minor, patch];
+  const [, major, minor, patch, preRelease] = match;
+  return [Number(major), Number(minor), Number(patch), preRelease];
 };
 
-const compareVersions = (a: ParsedVersion, b: ParsedVersion): number => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+// A bare release outranks any pre-release of the same version (4.0.0-beta < 4.0.0).
+const comparePreRelease = (a?: string, b?: string): number => {
+  if (a === b) return 0;
+  if (a === undefined) return 1;
+  if (b === undefined) return -1;
+  return a.localeCompare(b, undefined, { numeric: true });
+};
+
+const compareVersions = (a: ParsedVersion, b: ParsedVersion): number =>
+  a[0] - b[0] || a[1] - b[1] || a[2] - b[2] || comparePreRelease(a[3], b[3]);
 
 export const getChangelogEntries = (
   versionSince?: string
