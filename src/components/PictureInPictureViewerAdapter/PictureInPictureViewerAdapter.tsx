@@ -258,7 +258,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
                 handleValue: (values: any) =>
                   useViewerStore.setState({
                     pixelValues: values.map((value: any) =>
-                      Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
+                      Number.isInteger(value) ? value.toString() : FILL_PIXEL_VALUE
                     )
                   }),
                 handleCoordnate: (coords: number[]) =>
