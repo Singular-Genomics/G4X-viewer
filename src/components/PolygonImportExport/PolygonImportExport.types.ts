@@ -10,7 +10,7 @@ export type CellsExportData = Record<
   string,
   {
     coordinates: [number, number][];
-    cells: Omit<SingleMask, 'nonzeroGeneIndices' | 'nonzeroGeneValues' | 'proteinValues'>[];
+    cells: Omit<SingleMask, 'nonzeroGeneIndices' | 'nonzeroGeneValues' | 'proteinValues' | 'centroid'>[];
     polygonId: number;
     notes?: string;
   }

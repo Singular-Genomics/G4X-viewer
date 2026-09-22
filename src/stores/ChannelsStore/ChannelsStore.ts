@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { ChannelsStore, ChannelsStoreValues } from './ChannelsStore.types';
 
+export const DEFAULT_CHANNEL_COLOR: [number, number, number] = [255, 255, 255];
+export const DEFAULT_CHANNEL_CONTRAST: [number, number] = [0, 65535];
+
 const DEFAUlT_CHANNEL_VALUES = {
   channelsVisible: [true],
   contrastLimits: [[0, 65535]],
@@ -23,7 +26,11 @@ const DEFAULT_CHANNEL_STORE_STATE: ChannelsStoreValues = {
   channelsSettings: {},
   channelSelectionMode: 'multiselect',
   soloChannelIndex: null,
-  presoloChannelsVisible: []
+  presoloChannelsVisible: [],
+  loadedColors: [],
+  loadedContrastLimits: [],
+  loadedChannelsVisible: [],
+  loadedSelections: []
 };
 
 export const useChannelsStore = create<ChannelsStore>((set, get) => ({
@@ -131,5 +138,13 @@ export const useChannelsStore = create<ChannelsStore>((set, get) => ({
       const presoloChannelsVisible = [...store.presoloChannelsVisible];
       presoloChannelsVisible[index] = !presoloChannelsVisible[index];
       return { ...store, presoloChannelsVisible };
-    })
+    }),
+  setLoadedChannelDefaults: (colors, contrastLimits, channelsVisible, selections) =>
+    set((store) => ({
+      ...store,
+      loadedColors: colors,
+      loadedContrastLimits: contrastLimits,
+      loadedChannelsVisible: channelsVisible,
+      loadedSelections: selections
+    }))
 }));

@@ -43,6 +43,7 @@ export const ZARR_CELL_FIELDS = {
   totalCounts: 'total_counts',
   totalGenes: 'total_genes',
   umap: 'umap',
+  position: 'position', // cell centroid
   proteinNames: 'protein_names',
   geneNames: 'gene_names',
   geneCounts: 'gene_counts',

@@ -7,5 +7,7 @@ export const socialLinks = {
   x: 'https://x.com/SingularGenomic',
   email: 'mailto:care@singulargenomics.com',
   docs: docsBaseUrl,
-  docsRoiSelection: `${docsBaseUrl}dashboard/roi_selection/`
+  docsRoiSelection: `${docsBaseUrl}dashboard/roi_selection/`,
+  legacy: 'https://g4x-viewer.legacy.singulargenomics.com/',
+  changelogHistory: 'https://github.com/Singular-Genomics/G4X-viewer/blob/main/CHANGELOG.md'
 };
