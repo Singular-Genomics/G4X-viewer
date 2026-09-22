@@ -47,13 +47,14 @@ export function GraphRangeInputs({
   rangeSource,
   savedRange,
   inputPrecission,
+  compact = false,
   onUpdateRange,
   onClear,
   onConfirm
 }: GraphRangeInputsProps) {
   const { t } = useTranslation();
   const theme = useTheme();
-  const sx = styles(theme);
+  const sx = styles(theme, compact);
 
   const [rangeInput, setRangeInput] = useState<InputRange>({
     xStart: '',
@@ -167,10 +168,10 @@ export function GraphRangeInputs({
   );
 }
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme, compact: boolean) => ({
   inputWrapper: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr) 100px 100px',
+    gridTemplateColumns: compact ? 'repeat(4, 96px) 84px 84px' : 'repeat(4, 1fr) 100px 100px',
     justifyContent: 'space-between',
     alignItems: 'start',
     gap: '8px',
