@@ -40,15 +40,15 @@ These controls configure protein channel visibility, color, intensity range, and
       - **Expand Range:** Expands the default protein intensity range slider to allow broader **Channel Min/Max** values to be set for the specific channel.
       - **Reset Default Range:** Resets **Channel Min/Max** values to default values for the specific channel.
 
-- <b><u>Import/Export Protein Settings:</u></b>
+- <b><u>Import/Export Settings:</u></b>
 
-      Import or export protein visualization settings.
+      Import or export protein channel settings as a JSON configuration file.
 
-      - **Import:** Click the button and select a previously saved JSON configuration file.
-      - **Export:** Configure the protein settings as desired, then click **Export** and choose a save location and filename.
+      - **Import:** Click **Import**, then select a previously saved JSON configuration file.
+      - **Export:** Configure the protein channels as desired, then click **Export** and choose a save location and filename.
 
     !!! tip "Find and save your preferred settings"
-        We recommend configuring your preferred protein display settings once, then exporting and reusing the saved configuration for future samples to save time!
+        Configure your preferred protein display settings once, then export and reuse the saved configuration for future samples.
 
 <br>
 

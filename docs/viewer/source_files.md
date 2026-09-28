@@ -20,7 +20,7 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
     Use this button to paste a cloud storage link and stream data into the viewer in real time.
 
-- <b><u>File Upload:</u></b>
+- <b><u>Local Upload:</u></b>
 
     Use this button to upload files from local storage. Depending on the viewer version, you can:
 
@@ -39,7 +39,7 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
 - <b><u>Image Size/Layer:</u></b>
 
-      Displayes current image size and dimensions along with how many layers are currently loaded in the viewer.
+      Displays the current layer, total layer count, and image dimensions.
 
 - <b><u>Manual Scaling:</u></b>
 
@@ -54,7 +54,7 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
       Shows or hides image layers displayed in the viewer.
 
       - **Channel Settings:** Shows or hides protein image layers.
-      - **Brightfield Image Settings:** Shows or hides the fH&E layer.
+      - **Brightfield Images Settings:** Shows or hides the fH&E layer.
       - **Transcript Layer Settings:** Shows or hides transcript dots.
       - **Segmentation Layer Settings:** Shows or hides cell segmentation masks.
 

@@ -24,6 +24,9 @@ Everything below here assumes Drawing Mode is enabled.
 
 To begin drawing an ROI, make sure the **Draw Polygon** button is highlighted in teal. Left click the image area to place a vertex. Each subsequent left click will refine the polygon shape and extent by adding another vertex. The polygon finalizes when you double click the start vertex. Upon closure of the shape, your polygon will be analyzed for cells, transcripts, and protein information stored within it. ROIs can be edited, imported, exported, and used for analysis. There is no limit to the number of ROIs that can be drawn.
 
+!!! note "How is it determined if a cell is in an ROI?"
+    A cell is counted within an ROI when its centroid falls inside the ROI boundary. A cell whose centroid lies outside the boundary is not counted, even if most of the cell overlaps the ROI.
+
 
 ### Editing ROIs
 
