@@ -314,11 +314,14 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
+    "appearance": "Appearance",
     "brightfieldLayer": "Brightfield Layer",
+    "darkMode": "Dark",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "imageDetails": "Image Details",
     "layerToggles": "Layer Toggles",
+    "lightMode": "Light",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",

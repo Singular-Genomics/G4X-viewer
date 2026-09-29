@@ -1,33 +1,48 @@
-import { Box, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useColorScheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 import { GxSwitch } from '../GxSwitch';
 
 export const GxThemeModeToggle = () => {
-  const theme = useTheme();
-  const sx = styles(theme);
+  const { t } = useTranslation();
   const { colorScheme, setMode } = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
 
   return (
-    <Box sx={sx.wrapper}>
-      <Typography sx={sx.label}>Light</Typography>
+    <Box
+      component="label"
+      sx={sx.wrapper}
+    >
+      <Typography sx={{ ...sx.modeText, ...(!isDarkMode ? sx.activeModeText : {}) }}>
+        {t('viewSettings.lightMode')}
+      </Typography>
       <GxSwitch
-        checked={colorScheme === 'dark'}
+        checked={isDarkMode}
         onChange={(e) => setMode(e.target.checked ? 'dark' : 'light')}
+        slotProps={{ input: { 'aria-label': t('viewSettings.appearance') } }}
       />
-      <Typography sx={sx.label}>Dark</Typography>
+      <Typography sx={{ ...sx.modeText, ...(isDarkMode ? sx.activeModeText : {}) }}>
+        {t('viewSettings.darkMode')}
+      </Typography>
     </Box>
   );
 };
 
-const styles = (theme: Theme) => ({
+const sx = {
   wrapper: {
     display: 'flex',
     alignItems: 'center',
-    gap: 1
+    gap: '4px',
+    width: 'fit-content',
+    cursor: 'pointer'
   },
-  label: {
-    fontSize: '12px',
-    fontWeight: 600,
-    color: theme.palette.text.primary
+  modeText: {
+    color: 'text.secondary',
+    fontSize: '1rem',
+    fontWeight: 400,
+    transition: 'color 150ms ease'
+  },
+  activeModeText: {
+    color: 'text.primary'
   }
-});
+};
