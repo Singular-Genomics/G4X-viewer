@@ -133,10 +133,12 @@ const styles = (theme: Theme) => ({
     textAlign: 'right',
     textWrap: 'nowrap',
     fontWeight: 'bold',
-    marginTop: '10px'
+    fontSize: '14px',
+    marginTop: '6px'
   },
   helpIcon: {
-    marginTop: '10px',
+    marginTop: '6px',
+    fontSize: '20px',
     color: theme.palette.gx.mediumGrey[100]
   },
   subsamplingWrapper: {
@@ -144,10 +146,12 @@ const styles = (theme: Theme) => ({
     gap: '8px'
   },
   inputField: {
-    width: '104px',
+    width: '80px',
     flexShrink: 0,
-    '& .MuiOutlinedInput-root': {
-      height: '40px'
+    // Not .MuiOutlinedInput-root - GxInput overrides that key.
+    '& .MuiInputBase-root': {
+      height: '32px',
+      fontSize: '14px'
     },
     '& .MuiOutlinedInput-input': {
       textAlign: 'center'

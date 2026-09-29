@@ -185,7 +185,6 @@ export const UmapGraph = () => {
         onClear={handleClearSelection}
         onConfirm={() => useUmapGraphStore.setState({ ranges: selectionRange })}
         inputPrecission={3}
-        compact
       />
     </Box>
   );

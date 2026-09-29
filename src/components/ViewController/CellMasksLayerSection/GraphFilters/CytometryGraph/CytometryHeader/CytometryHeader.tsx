@@ -59,7 +59,9 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
         <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphXAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
+          size="small"
           value={xAxisProtein}
+          sx={sx.select}
           onChange={(e) => {
             setXAxisProtein(e.target.value as string);
             handleProteinChange(e.target.value as string, 'x');
@@ -78,7 +80,9 @@ export const CytometryHeader = ({ availableProteinNames }: CytometryHeaderProps)
         <Typography sx={sx.selectLabel}>{`${t('segmentationSettings.cytometryGraphYAxisSource')}:`}</Typography>
         <GxSelect
           fullWidth
+          size="small"
           value={yAxisProtein}
+          sx={sx.select}
           onChange={(e) => {
             setYAxisProtein(e.target.value as string);
             handleProteinChange(e.target.value as string, 'y');
@@ -111,12 +115,16 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     width: '100%',
     backgroundColor: theme.palette.gx.primary.white,
-    gap: '16px',
+    gap: '8px',
     padding: '8px'
   },
   selectLabel: {
     textAlign: 'right',
     textWrap: 'nowrap',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize: '14px'
+  },
+  select: {
+    height: '32px'
   }
 });

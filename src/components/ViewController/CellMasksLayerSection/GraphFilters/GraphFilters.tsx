@@ -9,10 +9,10 @@ import { useTranslation } from 'react-i18next';
 type GraphMode = undefined | 'flow_cytometry' | 'umap';
 
 const GRAPH_WINDOW_CONFIG = {
-  startWidth: 672,
-  startHeight: 378,
-  minWidth: 608,
-  minHeight: 342,
+  startWidth: 608,
+  startHeight: 456,
+  minWidth: 480,
+  minHeight: 360,
   maxWidth: 1280,
   maxHeight: 720,
   startY: 100
