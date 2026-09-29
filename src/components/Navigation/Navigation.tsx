@@ -87,20 +87,27 @@ export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onTogg
           </Tabs>
         </Box>
         <Box sx={sx.actionsSection}>
-          {currentView === 'viewer' && (
-            <Tooltip title={t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')}>
-              <IconButton
-                onClick={onToggleViewerUi}
-                sx={sx.viewerUiButton}
-              >
-                {isViewerUiHidden ? (
-                  <VisibilityOutlinedIcon fontSize="small" />
-                ) : (
-                  <VisibilityOffOutlinedIcon fontSize="small" />
-                )}
-              </IconButton>
-            </Tooltip>
-          )}
+          <Tooltip
+            title={
+              currentView === 'viewer'
+                ? t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')
+                : ''
+            }
+          >
+            <IconButton
+              onClick={currentView === 'viewer' ? onToggleViewerUi : undefined}
+              sx={{
+                ...sx.viewerUiButton,
+                ...(currentView === 'dashboard' ? sx.viewerUiButtonPlaceholder : {})
+              }}
+            >
+              {isViewerUiHidden ? (
+                <VisibilityOutlinedIcon fontSize="small" />
+              ) : (
+                <VisibilityOffOutlinedIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
           <SocialIcons />
         </Box>
       </Box>
@@ -157,6 +164,7 @@ const styles = (theme: Theme) => ({
     display: 'none',
     alignItems: 'center',
     gap: '40px',
+    paddingRight: '8px',
     pointerEvents: 'auto',
     [theme.breakpoints.up('md')]: {
       display: 'flex'
@@ -217,6 +225,10 @@ const styles = (theme: Theme) => ({
       color: theme.palette.gx.lightGrey[300],
       backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
     }
+  },
+  viewerUiButtonPlaceholder: {
+    visibility: 'hidden',
+    pointerEvents: 'none'
   },
   tabs: {
     minHeight: '48px',

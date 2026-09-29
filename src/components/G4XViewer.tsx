@@ -17,9 +17,6 @@ export default function G4XViewer() {
     if (currentView === 'dashboard' && dashboardRef.current) {
       setDashboardScrollPosition(dashboardRef.current.scrollTop);
     }
-    if (view !== 'viewer') {
-      setIsViewerUiHidden(false);
-    }
     setCurrentView(view);
   };
 
