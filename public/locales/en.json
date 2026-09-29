@@ -375,6 +375,8 @@
     "showChangelogAria": "Show release notes"
   },
   "navigation": {
+    "hideViewerUi": "Hide viewer controls",
+    "showViewerUi": "Show viewer controls",
     "viewer": "Viewer",
     "dashboard": "Dashboard",
     "mobilePreview": "Mobile preview",

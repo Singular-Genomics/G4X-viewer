@@ -20,7 +20,7 @@ import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 
-const SIDE_PANEL_DEFAULT_WIDTH = 540;
+export const SIDE_PANEL_DEFAULT_WIDTH = 540;
 const SIDE_PANEL_MIN_WIDTH = 380;
 const SIDE_PANEL_MAX_WIDTH = 800;
 const VIEWER_MIN_WIDTH = 320;
@@ -30,11 +30,10 @@ const getMaxPanelWidth = () =>
 
 const clampPanelWidth = (width: number) => Math.min(Math.max(width, SIDE_PANEL_MIN_WIDTH), getMaxPanelWidth());
 
-export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
+export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: ViewControllerProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const sx = styles(theme);
-  const [panelWidth, setPanelWidth] = useState(SIDE_PANEL_DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
   const resizeStartRef = useRef({ pointerX: 0, panelWidth: SIDE_PANEL_DEFAULT_WIDTH });
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
@@ -63,11 +62,14 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
     [panelWidth]
   );
 
-  const handleResize = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
-    const offset = resizeStartRef.current.pointerX - event.clientX;
-    setPanelWidth(clampPanelWidth(resizeStartRef.current.panelWidth + offset));
-  }, []);
+  const handleResize = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+      const offset = resizeStartRef.current.pointerX - event.clientX;
+      onPanelWidthChange(clampPanelWidth(resizeStartRef.current.panelWidth + offset));
+    },
+    [onPanelWidthChange]
+  );
 
   const handleResizeEnd = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -77,14 +79,12 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   }, []);
 
   useEffect(() => {
-    const handleWindowResize = () => setPanelWidth((currentWidth) => clampPanelWidth(currentWidth));
+    const handleWindowResize = () => onPanelWidthChange((currentWidth) => clampPanelWidth(currentWidth));
+    // Window may have been resized while the panel was hidden.
+    handleWindowResize();
     window.addEventListener('resize', handleWindowResize);
     return () => window.removeEventListener('resize', handleWindowResize);
-  }, []);
-
-  useEffect(() => {
-    window.dispatchEvent(new Event('onControllerResize'));
-  }, [panelWidth]);
+  }, [onPanelWidthChange]);
 
   useEffect(() => {
     if (!isResizing) return;

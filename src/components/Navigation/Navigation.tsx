@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
@@ -7,11 +7,13 @@ import { SocialIcons } from '../SocialIcons/SocialIcons';
 import { NavigationRunInfo } from './NavigationRunInfo';
 import { ChangelogModal } from '../ChangelogModal';
 import { useChangelog } from '../../hooks/useChangelog.hook';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
 
-export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
+export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onToggleViewerUi }: NavigationProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
@@ -84,7 +86,23 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             />
           </Tabs>
         </Box>
-        <SocialIcons />
+        <Box sx={sx.actionsSection}>
+          {currentView === 'viewer' && (
+            <Tooltip title={t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')}>
+              <IconButton
+                onClick={onToggleViewerUi}
+                sx={sx.viewerUiButton}
+              >
+                {isViewerUiHidden ? (
+                  <VisibilityOutlinedIcon fontSize="small" />
+                ) : (
+                  <VisibilityOffOutlinedIcon fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+          )}
+          <SocialIcons />
+        </Box>
       </Box>
       <ChangelogModal
         isOpen={isOpen}
@@ -185,6 +203,19 @@ const styles = (theme: Theme) => ({
     pointerEvents: 'auto',
     [theme.breakpoints.up('md')]: {
       display: 'flex'
+    }
+  },
+  actionsSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  viewerUiButton: {
+    padding: '8px',
+    color: theme.palette.gx.lightGrey[500],
+    '&:hover': {
+      color: theme.palette.gx.lightGrey[300],
+      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
     }
   },
   tabs: {

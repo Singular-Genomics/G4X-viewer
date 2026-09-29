@@ -26,7 +26,10 @@ import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdap
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
 
-export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+export const PictureInPictureViewerAdapter = ({
+  isViewerActive = true,
+  isUiHidden = false
+}: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -232,7 +235,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
-            overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
+            overviewOn={!isUiHidden && isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
             extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
@@ -272,13 +275,13 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               } as any
             }
           />
-          {isDesktop && (
+          {!isUiHidden && isDesktop && (
             <PolygonDrawingMenu
               takeScreenshot={takeScreenshot}
               isViewerActive={isViewerActive}
             />
           )}
-          <Tooltip />
+          {!isUiHidden && <Tooltip />}
         </>
       )}
     </Box>

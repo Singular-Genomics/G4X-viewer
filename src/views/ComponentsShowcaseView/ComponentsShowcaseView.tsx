@@ -234,6 +234,7 @@ export const ComponentsShowcaseView = () => {
   const [showWindow, setShowWindow] = useState(false);
 
   const [navView, setNavView] = useState<NavigationView>('viewer');
+  const [isViewerUiHidden, setIsViewerUiHidden] = useState(false);
 
   const [channels, setChannels] = useState<DummyChannel[]>(INITIAL_CHANNELS);
   const [soloChannelId, setSoloChannelId] = useState<string | null>(null);
@@ -305,7 +306,9 @@ export const ComponentsShowcaseView = () => {
         <Box sx={sx.navigationWrapper}>
           <Navigation
             currentView={navView}
+            isViewerUiHidden={isViewerUiHidden}
             onViewChange={setNavView}
+            onToggleViewerUi={() => setIsViewerUiHidden((isHidden) => !isHidden)}
           />
         </Box>
       </ShowcaseSection>

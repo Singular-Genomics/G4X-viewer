@@ -8,6 +8,7 @@ export default function G4XViewer() {
   const sx = styles();
 
   const [currentView, setCurrentView] = useState<NavigationView>('viewer');
+  const [isViewerUiHidden, setIsViewerUiHidden] = useState(false);
   const [dashboardScrollPosition, setDashboardScrollPosition] = useState(0);
   const dashboardRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<HTMLDivElement>(null);
@@ -15,6 +16,9 @@ export default function G4XViewer() {
   const handleViewChange = (view: NavigationView) => {
     if (currentView === 'dashboard' && dashboardRef.current) {
       setDashboardScrollPosition(dashboardRef.current.scrollTop);
+    }
+    if (view !== 'viewer') {
+      setIsViewerUiHidden(false);
     }
     setCurrentView(view);
   };
@@ -40,7 +44,9 @@ export default function G4XViewer() {
     <Box sx={sx.mainContainer}>
       <Navigation
         currentView={currentView}
+        isViewerUiHidden={isViewerUiHidden}
         onViewChange={handleViewChange}
+        onToggleViewerUi={() => setIsViewerUiHidden((isHidden) => !isHidden)}
       />
       <Box sx={sx.contentContainer}>
         <Box
@@ -53,7 +59,10 @@ export default function G4XViewer() {
           ref={viewerRef}
           sx={getViewStyle('viewer')}
         >
-          <ViewerView isViewerActive={currentView === 'viewer'} />
+          <ViewerView
+            isViewerActive={currentView === 'viewer'}
+            isUiHidden={isViewerUiHidden}
+          />
         </Box>
       </Box>
     </Box>
