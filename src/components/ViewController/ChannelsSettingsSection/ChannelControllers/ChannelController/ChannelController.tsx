@@ -109,7 +109,6 @@ export const ChannelController = ({
       <Box sx={sx.headerWrapper}>
         <Tooltip
           title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
-          enterDelay={300}
           arrow
         >
           <Radio
@@ -303,8 +302,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderRadius: '8px',
     background: theme.palette.gx.primary.white,
     flexGrow: 0.5,
-    minWidth: '110px',
-    maxWidth: '110px'
+    minWidth: '90px',
+    maxWidth: '90px'
   },
   channelSelect: {
     flexGrow: 1,

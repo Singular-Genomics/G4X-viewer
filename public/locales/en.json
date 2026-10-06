@@ -49,6 +49,7 @@
     "appTitle": "G4X-viewer",
     "cancel": "Cancel",
     "clear": "Clear",
+    "close": "Close",
     "closeShareSettings": "Close share settings",
     "cloudUpload": "Cloud Upload",
     "clusterEntry": "Cluster {{index}}",
@@ -147,6 +148,7 @@
     "cellFillShow": "Show cell fill",
     "boundaryLabel": "Cell Boundary",
     "boundaryShow": "Show boundary",
+    "boundaryHide": "Hide boundary",
     "boundaryPerformanceWarning": "Rendering cell boundaries with large datasets (>100k cells) is computationally intensive:",
     "boundaryPerformanceWarningCaseOne": "Requires a powerful GPU for smooth rendering",
     "boundaryPerformanceWarningCaseTwo": "Performance depends on your hardware capabilities and dataset size",
@@ -312,11 +314,14 @@
     "screenshotTooltip": "Screenshot (S)"
   },
   "viewSettings": {
+    "appearance": "Appearance",
     "brightfieldLayer": "Brightfield Layer",
+    "darkMode": "Dark",
     "globalSelection": "Global Selection",
     "globalSelectionNoData": "No global selection data",
     "imageDetails": "Image Details",
     "layerToggles": "Layer Toggles",
+    "lightMode": "Light",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
     "polygonLayerOpacity": "ROI Polygons Opacity",
@@ -375,6 +380,8 @@
     "showChangelogAria": "Show release notes"
   },
   "navigation": {
+    "hideViewerUi": "Hide viewer controls",
+    "showViewerUi": "Show viewer controls",
     "viewer": "Viewer",
     "dashboard": "Dashboard",
     "mobilePreview": "Mobile preview",
@@ -463,6 +470,7 @@
     }
   },
   "socialLinks": {
+    "title": "Social links",
     "website": "Website",
     "linkedin": "LinkedIn",
     "x": "X (Twitter)",

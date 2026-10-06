@@ -139,6 +139,7 @@ export const SummaryButton = () => {
             <IconButton
               onClick={handleSummaryClose}
               sx={sx.dialogCloseButton}
+              aria-label={t('general.close')}
             >
               <CloseIcon />
             </IconButton>
@@ -191,7 +192,7 @@ const styles = (theme: Theme) => ({
   },
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: theme.palette.gx.primary.white,
+      backgroundColor: theme.palette.background.paper,
       maxHeight: '95vh',
       height: '95vh',
       display: 'flex',
@@ -203,7 +204,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    background: theme.palette.gx.gradients.brand(),
     color: theme.palette.gx.primary.white,
     fontWeight: 700,
     padding: '16px 24px',
@@ -240,7 +241,7 @@ const styles = (theme: Theme) => ({
     padding: '0 !important',
     overflow: 'hidden',
     flex: 1,
-    backgroundColor: theme.palette.gx.lightGrey[100]
+    backgroundColor: theme.palette.background.default
   },
   loadingContainer: {
     width: '100%',
@@ -248,7 +249,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.gx.lightGrey[100]
+    backgroundColor: theme.palette.background.default
   },
   errorContainer: {
     width: '100%',
@@ -258,6 +259,6 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center',
     padding: '24px',
     textAlign: 'center',
-    color: theme.palette.gx.darkGrey[300]
+    color: theme.palette.text.secondary
   }
 });

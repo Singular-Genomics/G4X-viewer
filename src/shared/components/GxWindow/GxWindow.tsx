@@ -189,11 +189,11 @@ const styles = (theme: Theme) => ({
   iconButton: {
     marginLeft: 'auto',
     color: theme.palette.gx.primary.black,
-    backgroundColor: theme.palette.gx.mediumGrey[500],
+    backgroundColor: 'transparent',
     padding: '2px',
     marginBlock: '4px',
     '&:hover': {
-      backgroundColor: theme.palette.gx.mediumGrey[100]
+      backgroundColor: theme.palette.gx.mediumGrey[500]
     }
   }
 });

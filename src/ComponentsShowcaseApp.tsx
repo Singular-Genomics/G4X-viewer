@@ -1,0 +1,39 @@
+import { ThemeProvider } from '@mui/material';
+import { SnackbarProvider } from 'notistack';
+import { initReactI18next } from 'react-i18next';
+import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
+import i18n from 'i18next';
+import { gxTheme } from './themes/theme';
+import { GxSnackbar } from './shared/components/GxSnackbar/GxSnackbar';
+import { ComponentsShowcaseView } from './views/ComponentsShowcaseView';
+
+i18n
+  .use(HttpBackend)
+  .use(initReactI18next)
+  .init<HttpBackendOptions>({
+    backend: {
+      loadPath: '/locales/{{lng}}.json'
+    },
+    lng: 'en',
+    fallbackLng: 'en'
+  });
+
+export const ComponentsShowcaseApp = () => {
+  return (
+    <ThemeProvider theme={gxTheme}>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        autoHideDuration={3000}
+        maxSnack={3}
+        Components={{
+          gxSnackbar: GxSnackbar
+        }}
+      >
+        <ComponentsShowcaseView />
+      </SnackbarProvider>
+    </ThemeProvider>
+  );
+};
