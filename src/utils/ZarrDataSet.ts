@@ -231,10 +231,12 @@ export class ZarrDataSet {
       const tileField = (field: 'cell_id' | 'gene_name' | 'position') =>
         ZARR_SUBPATHS.transcripts.tileField({ z: invertedZ, y, x, field });
 
+      // open.v2 + attrs: false skips the .zattrs request (tile arrays have none, so it always ends in a 404 round trip)
+      // and the Zarr v3 fallback probe for missing tiles. Transcript data is Zarr v2 only.
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(this.storeFactory(tileField('cell_id')) as any, { kind: 'array' }).catch(() => null),
-        open(this.storeFactory(tileField('gene_name')) as any, { kind: 'array' }).catch(() => null),
-        open(this.storeFactory(tileField('position')) as any, { kind: 'array' }).catch(() => null)
+        open.v2(this.storeFactory(tileField('cell_id')) as any, { kind: 'array', attrs: false }).catch(() => null),
+        open.v2(this.storeFactory(tileField('gene_name')) as any, { kind: 'array', attrs: false }).catch(() => null),
+        open.v2(this.storeFactory(tileField('position')) as any, { kind: 'array', attrs: false }).catch(() => null)
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
