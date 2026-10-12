@@ -1,0 +1,42 @@
+name: Setup project environment
+description: Checkout repo + optional docs core assets, set up project with uv
+
+inputs:
+  docs-deploy-key:
+    description: Read-only deploy key for docs_core_assets
+    required: false
+    default: ''
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 1
+        clean: false
+
+    - name: Load docs core assets deploy key
+      if: ${{ inputs.docs-deploy-key != '' }}
+      uses: webfactory/ssh-agent@v0.10.0
+      with:
+        ssh-private-key: ${{ inputs.docs-deploy-key }}
+
+    - name: Clone docs core assets
+      if: ${{ inputs.docs-deploy-key != '' }}
+      shell: bash
+      run: |
+        rm -rf docs/_core
+        git clone --depth 1 --branch main \
+          git@github.com:Singular-Genomics/docs_core_assets.git \
+          docs/_core
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v10.0.1
+      with:
+        version-file: pyproject.toml
+
+    - name: Sync documentation environment
+      shell: bash
+      run: uv sync --no-progress
