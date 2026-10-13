@@ -1,5 +1,6 @@
 import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
 import { PointSizeSlider } from './PointSizeSlider';
+import { PointOutlineToggle } from './PointOutlineToggle';
 import { PointFilter } from './PointsFilter/PointFilter';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useTranscriptSource } from './TranscriptSourceContext';
@@ -24,7 +25,7 @@ const DisabledLayerWarning = () => {
 
 export const TranscriptLayerSection = () => {
   const { t } = useTranslation();
-  const { useLayerStore } = useTranscriptSource();
+  const { useLayerStore, hasPointOutline } = useTranscriptSource();
   const [isTranscriptLayerOn, isGeneNameFilterActive] = useLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.isGeneNameFilterActive])
   );
@@ -39,6 +40,12 @@ export const TranscriptLayerSection = () => {
         <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointSize')}</Typography>
         <PointSizeSlider />
       </Box>
+      {hasPointOutline && (
+        <Box>
+          <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointOutline')}</Typography>
+          <PointOutlineToggle />
+        </Box>
+      )}
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointFilters')}</Typography>

@@ -13,6 +13,7 @@ type TranscriptSourceBinding = {
   useLayersCount: () => number;
   colormapExportFileName: string;
   nameColumnLabelKey: string;
+  hasPointOutline: boolean;
 };
 
 const useTranscriptsColorMap: TranscriptSourceBinding['useColorMap'] = () =>
@@ -36,14 +37,16 @@ const TRANSCRIPT_SOURCE_BINDINGS: Record<TranscriptSource, TranscriptSourceBindi
     useColorMap: useTranscriptsColorMap,
     useLayersCount: () => useZarrDataStore((store) => store.layerConfig.layers),
     colormapExportFileName: 'custom_transcripts-colormap',
-    nameColumnLabelKey: 'transcript.geneName'
+    nameColumnLabelKey: 'transcript.geneName',
+    hasPointOutline: false
   },
   directSeq: {
     useLayerStore: useDirectSeqLayerStore,
     useColorMap: useDirectSeqColorMap,
     useLayersCount: () => useZarrDataStore((store) => store.directSeq.layerConfig.layers),
     colormapExportFileName: 'custom_direct-seq-colormap',
-    nameColumnLabelKey: 'transcript.targetName'
+    nameColumnLabelKey: 'transcript.targetName',
+    hasPointOutline: true
   }
 };
 

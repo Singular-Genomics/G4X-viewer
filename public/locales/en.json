@@ -274,6 +274,8 @@
     "disabledLayerWarning": "Transcript layer is disabled",
     "pointFilters": "Point Filters",
     "pointSize": "Point Size",
+    "pointOutline": "Point Outline",
+    "pointOutlineLabel": "Show white outline around points",
     "sectionTitle": "Transcript Layer Settings",
     "clickToChange": "Click to change",
     "subsamplingControlLabel": "Enable transcript subsampling control",

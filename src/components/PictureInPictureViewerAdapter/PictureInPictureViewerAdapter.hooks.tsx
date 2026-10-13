@@ -162,6 +162,7 @@ export const useDirectSeqLayer = () => {
     targetFilters,
     isTargetFilterActive,
     showFilteredPoints,
+    showPointOutline,
     overrideLayers,
     maxVisibleLayers
   ] = useDirectSeqLayerStore(
@@ -173,6 +174,7 @@ export const useDirectSeqLayer = () => {
       store.geneNameFilters,
       store.isGeneNameFilterActive,
       store.showFilteredPoints,
+      store.showPointOutline,
       store.overrideLayers,
       store.maxVisibleLayers
     ])
@@ -195,6 +197,7 @@ export const useDirectSeqLayer = () => {
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
+    showOutline: showPointOutline,
     overrideLayers,
     maxVisibleLayers: maxVisibleLayers ?? directSeq.layerConfig.layers,
     colormap: directSeq.colorMapConfig,

@@ -10,6 +10,7 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showBoundries: boolean;
   showData: boolean;
   showDiscardedPoints: boolean;
+  showOutline: boolean;
   disabledTiledView: boolean;
   parsedColorMap: Record<string, number[]>;
 };
@@ -33,6 +34,7 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showTilesBoundries: boolean;
   showTilesData: boolean;
   showDiscardedPoints: boolean;
+  showOutline?: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
   colormap: ColorMapEntry[];
