@@ -2,7 +2,7 @@ import { PickingInfo } from '@deck.gl/core';
 import { ColorMapEntry, LayerConfig } from '../../stores/ZarrDataStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import { PointData } from '../../shared/types';
-import type { ZarritaStoreFactory } from '../../utils/ZarrDataSet.types';
+import type { ZarritaStoreFactory, ZarrTranscriptSource } from '../../utils/ZarrDataSet.types';
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -26,6 +26,7 @@ export type LayerDataItem = {
 export type TranscriptLayerProps = CompositeLayerProps & {
   zarrUrl?: string | null;
   zarrStoreFactory?: ZarritaStoreFactory;
+  source?: ZarrTranscriptSource;
   config: LayerConfig;
   geneFilters: GeneNameFilterType | 'all';
   pointSize: number;

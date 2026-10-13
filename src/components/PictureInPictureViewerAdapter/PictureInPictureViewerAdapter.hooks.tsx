@@ -2,6 +2,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { DETAIL_VIEW_ID, MultiscaleImageLayer } from '@hms-dbmi/viv';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../../stores/DirectSeqLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
@@ -72,6 +73,17 @@ export const useResizableContainer = () => {
   };
 };
 
+// Viewer-wide loading flag, on while any transcript layer is loading
+const loadingTranscriptSources = new Set<string>();
+const reportTranscriptTilesLoading = (source: string, isLoading: boolean) => {
+  if (isLoading) {
+    loadingTranscriptSources.add(source);
+  } else {
+    loadingTranscriptSources.delete(source);
+  }
+  useViewerStore.getState().setIsTranscriptTilesLoading(loadingTranscriptSources.size > 0);
+};
+
 export const useTranscriptLayer = () => {
   const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData, zarrStoreFactory] = useZarrDataStore(
     useShallow((store) => [
@@ -125,7 +137,7 @@ export const useTranscriptLayer = () => {
     overrideLayers: overrideLayers,
     maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
     colormap: colorMapConfig,
-    onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
+    onLoadingStateChange: (isLoading) => reportTranscriptTilesLoading('transcripts', isLoading),
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -135,6 +147,65 @@ export const useTranscriptLayer = () => {
   });
 
   return metadataLayer;
+};
+
+export const useDirectSeqLayer = () => {
+  const [directSeq, zarrUrl, zarrStoreFactory] = useZarrDataStore(
+    useShallow((store) => [store.directSeq, store.zarrUrl, store.zarrStoreFactory])
+  );
+
+  const [
+    isDirectSeqLayerOn,
+    pointSize,
+    showTilesBoundries,
+    showTilesData,
+    targetFilters,
+    isTargetFilterActive,
+    showFilteredPoints,
+    overrideLayers,
+    maxVisibleLayers
+  ] = useDirectSeqLayerStore(
+    useShallow((store) => [
+      store.isTranscriptLayerOn,
+      store.pointSize,
+      store.showTilesBoundries,
+      store.showTilesData,
+      store.geneNameFilters,
+      store.isGeneNameFilterActive,
+      store.showFilteredPoints,
+      store.overrideLayers,
+      store.maxVisibleLayers
+    ])
+  );
+
+  // Config and colors load on demand
+  if (!isDirectSeqLayerOn || !directSeq.hasData || !directSeq.configLoaded) {
+    return undefined;
+  }
+
+  return new TranscriptLayer({
+    id: `${getVivId(DETAIL_VIEW_ID)}-direct-seq-layer`,
+    source: 'directSeq',
+    zarrUrl,
+    zarrStoreFactory,
+    config: directSeq.layerConfig,
+    visible: true,
+    geneFilters: isTargetFilterActive ? targetFilters : 'all',
+    pointSize,
+    showTilesBoundries,
+    showTilesData,
+    showDiscardedPoints: showFilteredPoints,
+    overrideLayers,
+    maxVisibleLayers: maxVisibleLayers ?? directSeq.layerConfig.layers,
+    colormap: directSeq.colorMapConfig,
+    onLoadingStateChange: (isLoading) => reportTranscriptTilesLoading('directSeq', isLoading),
+    onHover: (pickingInfo) =>
+      useTooltipStore.setState({
+        position: { x: pickingInfo.x, y: pickingInfo.y },
+        object: pickingInfo.object,
+        type: 'DirectSeq'
+      })
+  });
 };
 
 export const useCellSegmentationLayer = () => {

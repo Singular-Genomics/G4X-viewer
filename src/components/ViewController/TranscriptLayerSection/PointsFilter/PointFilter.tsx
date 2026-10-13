@@ -2,7 +2,7 @@ import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { PointFilterOptions } from './PointFilterOptions';
 import { PointFiltersTable } from './PointFiltersTable';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
+import { useTranscriptSource } from '../TranscriptSourceContext';
 import { useTranslation } from 'react-i18next';
 import { GxFilterTableColormap } from '../../../../shared/components/GxFilterTable/GxFilterTableColormap/GxFilterTableColormap';
 import { useSnackbar } from 'notistack';
@@ -12,7 +12,8 @@ export const PointFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { colorMapConfig, setColormapConfig } = useZarrDataStore();
+  const { useColorMap, colormapExportFileName } = useTranscriptSource();
+  const { colorMapConfig, setColormapConfig } = useColorMap();
 
   const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
 
@@ -60,7 +61,7 @@ export const PointFilter = () => {
     const blob = new Blob([jsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
-    const fileName = 'custom_transcripts-colormap';
+    const fileName = colormapExportFileName;
 
     const a = document.createElement('a');
     a.href = url;

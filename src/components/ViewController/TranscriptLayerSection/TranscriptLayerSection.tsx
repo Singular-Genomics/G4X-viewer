@@ -2,7 +2,7 @@ import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
 import { PointSizeSlider } from './PointSizeSlider';
 import { PointFilter } from './PointsFilter/PointFilter';
 import WarningIcon from '@mui/icons-material/Warning';
-import { useTranscriptLayerStore } from '../../../stores/TranscriptLayerStore';
+import { useTranscriptSource } from './TranscriptSourceContext';
 import { useShallow } from 'zustand/react/shallow';
 import { AdvancedViewOptions } from './AdvancedViewOptions';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,8 @@ const DisabledLayerWarning = () => {
 
 export const TranscriptLayerSection = () => {
   const { t } = useTranslation();
-  const [isTranscriptLayerOn, isGeneNameFilterActive] = useTranscriptLayerStore(
+  const { useLayerStore } = useTranscriptSource();
+  const [isTranscriptLayerOn, isGeneNameFilterActive] = useLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.isGeneNameFilterActive])
   );
 
