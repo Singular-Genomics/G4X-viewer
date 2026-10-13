@@ -2,20 +2,32 @@ import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../stores/DirectSeqLayerStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
+import type { ColorMapEntry } from '../stores/ZarrDataStore';
 import {
   applyCellFilterUrlSettings,
   applyCytometryFilterUrlSettings,
   applyTranscriptFilterUrlSettings
 } from '../utils/urlSettings';
 
+const toColorMapEntries = (colors: Record<string, number[]>, order: string[] | null): ColorMapEntry[] => {
+  const entries = Object.entries(colors).map(([gene_name, color]) => ({ gene_name, color }));
+  if (order) {
+    const orderIndex = new Map(order.map((name, i) => [name, i]));
+    entries.sort((a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity));
+  }
+  return entries;
+};
+
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
   const isTranscriptLayerOn = useTranscriptLayerStore((s) => s.isTranscriptLayerOn);
+  const isDirectSeqLayerOn = useDirectSeqLayerStore((s) => s.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((s) => s.isCellLayerOn);
   const availableSegmentations = useCellSegmentationLayerStore((s) => s.availableSegmentations);
 
@@ -44,16 +56,7 @@ export const useOnDemandDataLoader = () => {
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
           if (transcriptColors) {
-            const colorMapEntries = Object.entries(transcriptColors).map(([gene_name, color]) => ({
-              gene_name,
-              color
-            }));
-            if (geneOrder) {
-              const orderIndex = new Map(geneOrder.map((name, i) => [name, i]));
-              colorMapEntries.sort(
-                (a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity)
-              );
-            }
+            const colorMapEntries = toColorMapEntries(transcriptColors, geneOrder);
             useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
@@ -81,6 +84,42 @@ export const useOnDemandDataLoader = () => {
 
     load();
   }, [isTranscriptLayerOn, enqueueSnackbar, t]);
+
+  // Direct-Seq config, same flow as transcripts
+  useEffect(() => {
+    if (!isDirectSeqLayerOn) return;
+
+    const { directSeq, zarrDataSet, setDirectSeqData } = useZarrDataStore.getState();
+
+    if (!directSeq.hasData || directSeq.configLoaded) return;
+
+    const load = async () => {
+      try {
+        if (zarrDataSet) {
+          const layerConfig = await zarrDataSet.detectLayerConfig('directSeq');
+          if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
+
+          const [targetColors, targetOrder] = await Promise.all([
+            zarrDataSet.fetchTranscriptColors('directSeq'),
+            zarrDataSet.fetchTranscriptGeneOrder('directSeq')
+          ]);
+          if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
+
+          setDirectSeqData({
+            ...(layerConfig && { layerConfig }),
+            ...(targetColors && { colorMapConfig: toColorMapEntries(targetColors, targetOrder) })
+          });
+        }
+
+        setDirectSeqData({ configLoaded: true });
+      } catch {
+        enqueueSnackbar(t('sourceFiles.directSeqConfigLoadError'), { variant: 'error' });
+        useDirectSeqLayerStore.getState().reset();
+      }
+    };
+
+    load();
+  }, [isDirectSeqLayerOn, enqueueSnackbar, t]);
 
   useEffect(() => {
     if (!isCellLayerOn) return;

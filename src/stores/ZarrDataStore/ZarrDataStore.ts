@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ZarrDataStore, ZarrDataStoreValues, LayerConfig } from './ZarrDataStore.types';
+import { ZarrDataStore, ZarrDataStoreValues, LayerConfig, DirectSeqData } from './ZarrDataStore.types';
 
 const defaultLayerConfig: LayerConfig = {
   layer_width: 16000,
@@ -8,7 +8,14 @@ const defaultLayerConfig: LayerConfig = {
   tile_size: 4096
 };
 
-const DEFAULT_ZARR_DATA_STORE_VALUES: ZarrDataStoreValues = {
+const createDefaultDirectSeqData = (): DirectSeqData => ({
+  hasData: false,
+  configLoaded: false,
+  layerConfig: defaultLayerConfig,
+  colorMapConfig: []
+});
+
+const createDefaultZarrDataStoreValues = (): ZarrDataStoreValues => ({
   fileName: '',
   layerConfig: defaultLayerConfig,
   colorMapConfig: [],
@@ -19,11 +26,12 @@ const DEFAULT_ZARR_DATA_STORE_VALUES: ZarrDataStoreValues = {
   transcriptConfigLoaded: false,
   pendingTranscriptAttrs: null,
   zarrStoreFactory: undefined,
-  zarrDataSet: null
-};
+  zarrDataSet: null,
+  directSeq: createDefaultDirectSeqData()
+});
 
 export const useZarrDataStore = create<ZarrDataStore>((set) => ({
-  ...DEFAULT_ZARR_DATA_STORE_VALUES,
+  ...createDefaultZarrDataStoreValues(),
   setFileName: (newFileName) => set({ fileName: newFileName }),
   setLayerConfig: (layerConfig) => set({ layerConfig }),
   setColormapConfig: (colorMapConfig) => set({ colorMapConfig }),
@@ -34,5 +42,6 @@ export const useZarrDataStore = create<ZarrDataStore>((set) => ({
   setTranscriptConfigLoaded: (transcriptConfigLoaded) => set({ transcriptConfigLoaded }),
   setPendingTranscriptAttrs: (pendingTranscriptAttrs) => set({ pendingTranscriptAttrs }),
   setZarrStoreFactory: (zarrStoreFactory) => set({ zarrStoreFactory }),
-  reset: () => set({ ...DEFAULT_ZARR_DATA_STORE_VALUES })
+  setDirectSeqData: (data) => set((store) => ({ directSeq: { ...store.directSeq, ...data } })),
+  reset: () => set({ ...createDefaultZarrDataStoreValues() })
 }));
