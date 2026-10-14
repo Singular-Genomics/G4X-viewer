@@ -369,9 +369,11 @@
     "noEntries": "No release notes are available for this version.",
     "legacyNote": "Looking for the previous version of the viewer?",
     "legacyLinkLabel": "Open legacy viewer",
-    "moreDescription": "Due to large amount of changes only most recent release updates have been shown. For more info go down tho the full changes history using the link below",
+    "moreDescription": "Only the most recent releases are shown here. Older releases are available on GitHub using the link below.",
     "docsLinkLabel": "Read the documentation",
-    "historyLinkLabel": "See all changes history",
+    "latestReleaseLinkLabel": "View latest release notes",
+    "showAllChanges": "Show all {{total}} changes",
+    "showFewerChanges": "Show fewer changes",
     "showChangelogAria": "Show release notes"
   },
   "navigation": {
