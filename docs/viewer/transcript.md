@@ -34,27 +34,29 @@ These controls balance transcript rendering performance with transcript display 
 
 - <b><u>Display Filtered Tx:</u></b>
 
-      Shows or hides transcript species specified by the filters below. The **Display Filtered Tx** option is available only when a filter is actively applied to the image.
-
-- <b><u>Import/Export Colormap:</u></b>
-
-      Import or export transcript visualization settings and colormap configurations.
-
-      - **Import:** Click the button and select a previously saved JSON configuration file.
-      - **Export:** Configure the transcript settings as desired, then click **Export** and choose a save location and filename.
+      Shows or hides transcripts excluded by the active filter. This option is available only when a filter is actively applied to the image.
 
 - <b><u>Transcript Filter Settings:</u></b>
 
       These features specify the filter state for transcript overlays. All transcripts are displayed regardless of whether they are assigned to a cell.
 
-      - **Search Genes:** Search gene species identified in your data.
+      - **Apply Filter:** Applies the current filter to the displayed image.
+      - **Clear Filter:** Clears the current filter from the displayed image.
+      - **Search Genes:** Searches the gene targets identified in your data.
+      - **Export Colormap:** Exports the displayed gene and color data.
+      - **Advanced Filter:** Opens additional options for filtering the gene table.
       - **Toggle All:** Toggles selection of all genes on or off.
       - **Toggle Gene:** Toggles selection for a single gene.
       - **Change Gene Color:** Changes the color selection for a given gene.
       - **Show Selected:** Hides all non-selected genes.
-      - **Change Page:** Changes the displayed page when there are too many genes to display at once.
-      - **Apply Filter:** Applies the current filter to the displayed image.
-      - **Clear Filter:** Clears the current filter from the displayed image.
+      - **Change Page:** Moves between pages when there are too many genes to display at once.
+
+- <b><u>Import/Export Colormap:</u></b>
+
+      Import or export the gene colormap as a JSON configuration file.
+
+      - **Import:** Click **Import**, then select a previously saved JSON configuration file.
+      - **Export:** Configure the gene colors as desired, then click **Export** and choose a save location and filename.
 
 <br>
 

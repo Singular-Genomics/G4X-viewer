@@ -16,39 +16,17 @@ permissions:
 concurrency: docs        # auto-cancel superseded runs
 
 jobs:
-  Initialize-Docs-Deployment:
+  deploy_docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo with submodule
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          submodules: recursive  # fetch submodules as well
-          token: ${{ secrets.CORE_DOCS_ASSETS_READ }}
+      - name: Checkout repo
+        uses: actions/checkout@v5
 
-      - name: Pull latest changes for submodules
-        run: |
-          git submodule update --init --recursive docs/_core
-          cd docs/_core
-          git fetch origin
-          git checkout main
-          git pull origin main
-      
-      - name: Checkout repo again to restore default GITHUB_TOKEN
-        uses: actions/checkout@v4
+      - name: Setup Project Environment
+        uses: ./.github/actions/setup-project
         with:
-          fetch-depth: 1
-          clean: false
-
-      - name: "Set up Python"
-        uses: actions/setup-python@v5
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v6
-        with:
-          version-file: "pyproject.toml"
-          enable-cache: false
+          docs-deploy-key: ${{ secrets.CORE_DOCS_ASSETS_DEPLOY_KEY }}
 
       - name: Deploy to GitHub Pages
         env:
