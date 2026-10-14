@@ -30,7 +30,7 @@ export const useActiveFilters = () => {
     const transcriptFilters: string[] = [];
     if (isGeneNameFilterActive) {
       transcriptFilters.push(
-        t('activeFilters.geneFilter', { count: geneNameFilters.length, gene: geneNameFilters[0] })
+        t('activeFilters.geneFilter', { count: geneNameFilters.size, gene: geneNameFilters.values().next() })
       );
     }
     if (showFilteredPoints) {
@@ -44,7 +44,7 @@ export const useActiveFilters = () => {
     const segmentationFilters: string[] = [];
     if (isCellNameFilterOn) {
       segmentationFilters.push(
-        t('activeFilters.clusterFilter', { count: cellNameFilters.length, clusterId: cellNameFilters[0] })
+        t('activeFilters.clusterFilter', { count: cellNameFilters.size, clusterId: cellNameFilters.values().next() })
       );
     }
     if (showFilteredCells) {
@@ -82,7 +82,8 @@ export const useHiddenLayers = () => {
   const { t } = useTranslation();
   const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
   const isCellLayerOn = useCellSegmentationLayerStore((store) => store.isCellLayerOn);
-  const isLayerVisible = useBrightfieldImagesStore((store) => store.isLayerVisible);
+  const isBrightfieldLayerVisible = useBrightfieldImagesStore((store) => store.isLayerVisible);
+  const isChannelLayerVisible = useChannelsStore((store) => store.isLayerVisible);
   const isPolygonLayerVisible = usePolygonDrawingStore((store) => store.isPolygonLayerVisible);
 
   const getHiddenLayers = () => {
@@ -93,7 +94,10 @@ export const useHiddenLayers = () => {
     if (!isCellLayerOn) {
       hiddenLayers.push(t('hiddenLayers.segmentationLayer'));
     }
-    if (!isLayerVisible) {
+    if (!isChannelLayerVisible) {
+      hiddenLayers.push(t('hiddenLayers.channelsLayer'));
+    }
+    if (!isBrightfieldLayerVisible) {
       hiddenLayers.push(t('hiddenLayers.brightfieldLayer'));
     }
     if (!isPolygonLayerVisible) {

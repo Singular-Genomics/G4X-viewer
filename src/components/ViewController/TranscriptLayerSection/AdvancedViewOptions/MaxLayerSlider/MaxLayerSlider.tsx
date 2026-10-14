@@ -1,6 +1,6 @@
 import { Box, Theme, Tooltip, tooltipClasses, Typography } from '@mui/material';
 import { GxSlider } from '../../../../../shared/components/GxSlider';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
@@ -12,28 +12,33 @@ import { useTranslation } from 'react-i18next';
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const { t } = useTranslation();
   const [sliderValuer, setSliderValue] = useState(0);
-  const { layers } = useBinaryFilesStore((store) => store.layerConfig);
+  const { layers } = useZarrDataStore((store) => store.layerConfig);
   const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
 
   useEffect(() => {
-    if (maxVisibleLayers) {
-      setSliderValue(maxVisibleLayers);
+    if (maxVisibleLayers === null) {
+      useTranscriptLayerStore.setState({ maxVisibleLayers: layers });
+    } else {
+      setSliderValue(layers - maxVisibleLayers);
     }
-  }, [maxVisibleLayers]);
+  }, [maxVisibleLayers, layers]);
 
   const sliderMarks: MaxLayerSliderMark[] = useMemo(
     () =>
       Array.from({ length: layers + 1 }, (_, i) => ({
-        value: i,
+        value: layers - i,
         label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
       })),
     [layers]
   );
 
-  const onMaxLayerChange = useCallback((newValue: number) => {
-    useTranscriptLayerStore.setState({ maxVisibleLayers: newValue });
-    triggerViewerRerender();
-  }, []);
+  const onMaxLayerChange = useCallback(
+    (newValue: number) => {
+      useTranscriptLayerStore.setState({ maxVisibleLayers: layers - newValue });
+      triggerViewerRerender();
+    },
+    [layers]
+  );
 
   return (
     <Box sx={sx.sliderWrapper}>

@@ -1,5 +1,8 @@
 export type ChannelOptionsProps = {
+  color: [number, number, number];
+  defaultColor: [number, number, number];
   slider: [number, number];
+  domain: [number, number];
   disabled: boolean;
   handleColorSelect: (newColor: number[]) => void;
   rangeMin: string;

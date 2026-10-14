@@ -1,4 +1,4 @@
-import { Box, Grid, MenuItem, Theme, Typography, useTheme } from '@mui/material';
+import { Box, Grid, MenuItem, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import {
   HeatmapChartNormalizationAxisOption,
   HeatmapChartNormalizationOption,
@@ -72,7 +72,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         {/* Custom Title  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.customTitle')}:</Typography>
@@ -91,7 +90,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         </Grid>
         {/* Colorscale Select */}
         <Grid
-          alignContent={'center'}
           sx={sx.settingLabel}
           size={1}
         >
@@ -117,7 +115,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         </Grid>
         {/* Reverse Colorscale Checkbox*/}
         <Grid
-          alignContent={'center'}
           size={1}
           sx={sx.settingLabel}
         >
@@ -132,7 +129,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         {/* Sort ROIs  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.plotSortRoisLabel')}:</Typography>
@@ -150,7 +146,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         </Grid>
         {/* Normalization option */}
         <Grid
-          alignContent={'center'}
           size={1}
           sx={sx.settingLabel}
         >
@@ -178,7 +173,6 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
         {settings.normalization && settings.normalization !== 'none' && (
           <>
             <Grid
-              alignContent={'center'}
               size={1}
               sx={sx.settingLabel}
             >
@@ -209,7 +203,7 @@ export const HeatmapChartSettings = ({ settings, onChangeSettings }: HeatmapChar
   );
 };
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
     width: '350px'
   },
@@ -221,6 +215,7 @@ const styles = (theme: Theme) => ({
     borderColor: theme.palette.gx.mediumGrey[500],
     textWrap: 'nowrap',
     textAlign: 'end',
-    paddingInlineEnd: '8px'
+    paddingInlineEnd: '8px',
+    alignContent: 'center'
   }
 });

@@ -1,42 +1,44 @@
 import { CompositeLayer } from '@deck.gl/core';
 import { CellMasksLayerProps } from './cell-masks-layer.types';
 import { PolygonLayer } from '@deck.gl/layers';
-import * as protobuf from 'protobufjs';
-import { SegmentationFileSchema } from '../../schemas/segmentationFile.schema';
+import { DataFilterExtension } from '@deck.gl/extensions';
 
 class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
-  protoRoot: protobuf.Root;
   parsedColorMap: Record<string, number[]>;
+  filterExtension = new DataFilterExtension({ filterSize: 1 });
 
   constructor(props: CellMasksLayerProps) {
     super(props);
-    this.protoRoot = protobuf.Root.fromJSON(SegmentationFileSchema);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.clusterId, entry.color]));
   }
 
   renderLayers() {
-    const { outlierCellsData, cellsData } = this.props;
+    const { cellMasksData, filterValues, showDiscardedPoints } = this.props;
     const opacityValue = Math.round(this.props.cellFillOpacity * 255);
 
     const layers = [];
 
-    if (outlierCellsData && outlierCellsData.length) {
+    if (showDiscardedPoints) {
       layers.push(
         // Discarded cell segmentatio layer
         new PolygonLayer({
           id: `sub-discarded-cells-layer-${this.props.id}`,
-          data: this.props.outlierCellsData,
+          data: cellMasksData,
           positionFormat: 'XY',
-          stroked: false,
+          stroked: this.props.showBoundary,
           filled: this.props.showCellFill,
           getPolygon: (d) => d.vertices,
           getLineColor: [238, 238, 238],
           getFillColor: [238, 238, 238, opacityValue],
+          getFilterValue: (_d: unknown, info: { index: number }) => filterValues[info.index],
+          filterRange: [1, 1],
+          extensions: [this.filterExtension],
           updateTriggers: {
-            getFillColor: this.props.cellFillOpacity
+            getFillColor: this.props.cellFillOpacity,
+            getFilterValue: filterValues
           },
-          getLineWidth: 0,
-          visible: this.props.visible && this.props.showDiscardedPoints
+          getLineWidth: this.props.showBoundary ? this.props.boundaryWidth : 0,
+          visible: this.props.visible
         })
       );
     }
@@ -45,17 +47,22 @@ class CellMasksLayer extends CompositeLayer<CellMasksLayerProps> {
       // Main cell segmentation layer
       new PolygonLayer({
         id: `sub-cells-layer-${this.props.id}`,
-        data: cellsData,
+        data: cellMasksData,
         positionFormat: 'XY',
-        stroked: false,
+        stroked: this.props.showBoundary,
         filled: this.props.showCellFill,
         getPolygon: (d) => d.vertices,
         getLineColor: (d) => (this.parsedColorMap[d.clusterId] as [number, number, number]) || [255, 255, 255],
         getFillColor: (d) => [...(this.parsedColorMap[d.clusterId] || [255, 255, 255]), opacityValue] as any,
+        getFilterValue: (_d: unknown, info: { index: number }) => filterValues[info.index],
+        filterRange: [2, 2],
+        extensions: [this.filterExtension],
         updateTriggers: {
-          getFillColor: [this.props.cellFillOpacity, this.props.colormap]
+          getFillColor: [this.props.cellFillOpacity, this.props.colormap],
+          getLineColor: this.props.colormap,
+          getFilterValue: filterValues
         },
-        getLineWidth: 0,
+        getLineWidth: this.props.showBoundary ? this.props.boundaryWidth : 0,
         pickable: true,
         visible: this.props.visible
       })

@@ -2,7 +2,6 @@ import { Box, Typography } from '@mui/material';
 import { useState, useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
-import { useChannelsStore } from '../../../../stores/ChannelsStore';
 import { GxInput } from '../../../../shared/components/GxInput';
 import { makeBoundingBox } from '../../../ScaleBar/utils';
 import { useTranslation } from 'react-i18next';
@@ -12,19 +11,16 @@ export const ZoomInput = () => {
   const { t } = useTranslation();
 
   const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const getLoader = useChannelsStore((store) => store.getLoader);
+  const physicalSize = useViewerStore((store) => store.physicalSize);
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-
-  const loader = getLoader();
-  const physicalSize = loader[0]?.meta?.physicalSizes?.x;
 
   const boundingBox = viewState ? makeBoundingBox(viewState) : null;
   const viewLength = boundingBox ? boundingBox[2][0] - boundingBox[0][0] : 0;
   const barLength = viewLength * 0.05;
 
-  const unit = physicalSize?.unit || 'μm';
-  const size = physicalSize?.size || 1;
+  const unit = physicalSize?.unit ?? 'μm';
+  const size = physicalSize?.size ?? 1;
 
   const displayNumber = (barLength * size).toPrecision(5);
   const numericValue = parseFloat(displayNumber);

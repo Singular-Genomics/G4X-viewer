@@ -6,6 +6,7 @@ export type GxCollapsibleSectionProps = {
   disabled?: boolean;
   customStyles?: GxCollapsibleSectionStyles;
   unmountOnExit?: boolean;
+  headerAction?: React.ReactNode;
 };
 
 type GxCollapsibleSectionState = 'open' | 'collapsed';

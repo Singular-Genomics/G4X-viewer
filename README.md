@@ -54,7 +54,7 @@ G4X Viewer provides two main views for comprehensive data analysis:
 ### Prerequisites
 
 - **Node.js** (version 20.19 or higher)
-- **npm**
+- **pnpm**
 
 ### Installation
 
@@ -68,11 +68,11 @@ G4X Viewer provides two main views for comprehensive data analysis:
    ```
 3. **Install the dependencies:**
    ```bash
-   npm install
+   pnpm install
    ```
 4. **Start the application:**
    ```bash
-   npm run dev
+   pnpm dev
    ```
    The application will launch on your local server. **Note:** The default Vite development server runs on [http://localhost:5173](http://localhost:5173). If this port is already in use, Vite will automatically select an available port and display it in the console.
 

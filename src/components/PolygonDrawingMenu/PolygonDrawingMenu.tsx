@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/react/shallow';
 import CreateIcon from '@mui/icons-material/Create';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -12,8 +12,9 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers';
 import MuiTooltip from '@mui/material/Tooltip';
 import { PolygonDrawingMenuProps } from './PolygonDrawingMenu.types';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { PolygonImportExport } from '../PolygonImportExport';
 import { useEffect, useState, useCallback } from 'react';
 import { GxModal } from '../../shared/components/GxModal';
@@ -32,8 +33,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     isViewMode,
     isDeleteMode,
     clearPolygons,
-    exportPolygonsWithCells,
-    exportPolygonsWithTranscripts,
     polygonFeatures,
     isDetecting,
     showROINumbers
@@ -49,15 +48,14 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
       store.isViewMode,
       store.isDeleteMode,
       store.clearPolygons,
-      store.exportPolygonsWithCells,
-      store.exportPolygonsWithTranscripts,
       store.polygonFeatures,
       store.isDetecting,
       store.showROINumbers
     ])
   );
 
-  const transcriptFiles = useBinaryFilesStore((store) => store.files);
+  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
   const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -66,9 +64,8 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
   const sx = styles(theme);
 
   // Check if any data is loaded
-  const hasTranscriptData = transcriptFiles.length > 0;
-  const hasCellMaskData = cellMasksData && cellMasksData.length > 0;
-  const hasAnyData = hasTranscriptData || hasCellMaskData;
+  const hasCellMaskData = !!(cellMasksData && cellMasksData.length > 0);
+  const hasAnyData = (isTranscriptLayerOn && transcriptConfigLoaded) || hasCellMaskData;
 
   const handleClearPolygons = useCallback(() => {
     if (polygonFeatures.length > 1) {
@@ -215,8 +212,6 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
       </MuiTooltip>
 
       <PolygonImportExport
-        exportPolygonsWithCells={exportPolygonsWithCells}
-        exportPolygonsWithTranscripts={exportPolygonsWithTranscripts}
         polygonFeatures={polygonFeatures}
         isDetecting={isDetecting}
       />
@@ -313,7 +308,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
               color="primary"
               disabled={isDetecting}
             >
-              <DeleteOutlineIcon />
+              <DeleteForeverOutlinedIcon />
             </IconButton>
           </MuiTooltip>
 

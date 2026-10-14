@@ -31,22 +31,22 @@ _See [package.json](../package.json) for complete dependencies_
 ### Setup
 
 ```bash
-npm install
-npm run dev  # Starts on http://localhost:5173
+pnpm install
+pnpm dev  # Starts on http://localhost:5173
 ```
 
 ### Available Scripts
 
-- `npm run dev` - Development server
-- `npm run build` - Production build
-- `npm run lint` - Code linting
-- `npm run format` - Code formatting
-- `npm run type-check` - TypeScript validation
+- `pnpm dev` - Development server
+- `pnpm build` - Production build
+- `pnpm lint` - Code linting
+- `pnpm format` - Code formatting
+- `pnpm type-check` - TypeScript validation
 
 ### Before Committing
 
-- [ ] `npm run lint` - Fix linting issues
-- [ ] `npm run type-check` - Resolve TypeScript errors
+- [ ] `pnpm lint` - Fix linting issues
+- [ ] `pnpm type-check` - Resolve TypeScript errors
 - [ ] Test functionality manually
 - [ ] Check console for errors
 

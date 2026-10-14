@@ -2,15 +2,15 @@ import { create } from 'zustand';
 import { TranscriptLayerStore, TranscriptLayerStoreValues } from './TranscriptLayerStore.types';
 
 const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
-  isTranscriptLayerOn: true,
+  isTranscriptLayerOn: false,
   isGeneNameFilterActive: false,
   showFilteredPoints: false,
   showTilesBoundries: false,
   showTilesData: false,
   overrideLayers: false,
   pointSize: 1.5,
-  geneNameFilters: [],
-  maxVisibleLayers: 0,
+  geneNameFilters: new Set<string>(),
+  maxVisibleLayers: null,
   currentVisibleLayer: 0,
   selectedPoints: []
 };
@@ -25,7 +25,7 @@ export const useTranscriptLayerStore = create<TranscriptLayerStore>((set) => ({
   toggleOverrideLayer: () => set((store) => ({ overrideLayers: !store.overrideLayers })),
   setPointSize: (newPointSize) => set({ pointSize: newPointSize }),
   setGeneNamesFilter: (geneNames) => set({ geneNameFilters: geneNames }),
-  clearGeneNameFilters: () => set({ geneNameFilters: [] }),
+  clearGeneNameFilters: () => set({ geneNameFilters: new Set<string>() }),
   setSelectedPoints: (selectionData) => set({ selectedPoints: selectionData }),
   addSelectedPoints: (newSelectionData) =>
     set((store) => ({ selectedPoints: [...store.selectedPoints, newSelectionData] })),

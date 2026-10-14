@@ -88,11 +88,11 @@ export const CellsFilter = () => {
       )}
       <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledSection) }}>
         <CellsFilterOptions />
+        <CellsFilterTable />
         <GxFilterTableColormap
           onDrop={onDrop}
           onExport={onExport}
         />
-        <CellsFilterTable />
       </Box>
     </Box>
   );

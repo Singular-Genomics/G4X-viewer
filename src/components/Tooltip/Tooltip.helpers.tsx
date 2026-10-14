@@ -6,14 +6,19 @@ export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointTyp
   const tooltipItems: TooltipContentItem[] = [
     {
       label: t('transcript.position'),
-      value: `X: ${data.position[0].toFixed(2)} 
+      value: `X: ${data.position[0].toFixed(2)}
           Y: ${data.position[1].toFixed(2)}`
     },
     { label: t('transcript.geneName'), value: data.geneName },
     { label: t('transcript.cellId'), value: data.cellId }
   ];
 
-  return <TooltipContent data={tooltipItems} />;
+  return (
+    <TooltipContent
+      data={tooltipItems}
+      title={t('tooltip.objectTranscript')}
+    />
+  );
 }
 
 export function TooltipCellMaskContent({ data }: { data: CellMaskDatapointType }) {
@@ -25,5 +30,10 @@ export function TooltipCellMaskContent({ data }: { data: CellMaskDatapointType }
     { label: t('segmentation.totalGenes'), value: data.totalGenes }
   ];
 
-  return <TooltipContent data={tooltipItems} />;
+  return (
+    <TooltipContent
+      data={tooltipItems}
+      title={t('tooltip.objectCell')}
+    />
+  );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 export type GxModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onContinue?: () => void;
   title: string;
   children: React.ReactNode;
@@ -10,6 +10,8 @@ export type GxModalProps = {
   iconVariant?: GxModalIconVariant;
   dontShowFlag?: string;
   size?: GxModalSize;
+  hideCancel?: boolean;
+  continueText?: string;
 };
 
 type GxModalColorVaraints = 'danger' | 'warning' | 'info' | 'singular';

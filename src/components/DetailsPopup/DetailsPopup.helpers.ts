@@ -1,13 +1,19 @@
-export const formatDetailsPopupData = (section: Record<string, any>): { label: string; value: any }[] => {
-  return Object.entries(section).map(([key, value]) => {
+import { FormatDetailsPopupDataProps } from './DetailsPopup.types';
+
+export const formatDetailsPopupData = ({ section, smpInfoOrder }: FormatDetailsPopupDataProps) => {
+  const orderedKeys = smpInfoOrder.filter((k) => k in section);
+  const remainingKeys = Object.keys(section).filter((k) => !smpInfoOrder.includes(k));
+  const keys = [...orderedKeys, ...remainingKeys];
+
+  return keys.map((key) => {
+    const value = section[key];
     let formattedValue = value;
 
-    // Round floats to max 2 decimal places
     if (typeof value === 'number' && !Number.isInteger(value)) {
       formattedValue = Math.round(value * 100) / 100;
     } else if (Array.isArray(value)) {
       formattedValue = value.join(', ');
-    } else if (typeof value === 'object') {
+    } else if (typeof value === 'object' && value !== null) {
       formattedValue = JSON.stringify(value);
     }
 

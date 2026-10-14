@@ -7,9 +7,9 @@ export type GxFilterTableRowPropBase = {
 export type GxFilterTableProps<T extends GxFilterTableRowPropBase> = {
   columns: GridColDef<T>[];
   rows: Array<T>;
-  activeFilters: string[];
-  onClearFilteres: () => void;
-  onSetFilter: (newValue: string[]) => void;
+  activeFilters: Set<string>;
+  onClearFilters: () => void;
+  onSetFilter: (newValue: Set<string>) => void;
   onApplyClick: () => void;
   clearDisabled?: boolean;
   applyDisabled?: boolean;

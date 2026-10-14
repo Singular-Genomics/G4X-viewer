@@ -1,15 +1,15 @@
 import { usePointFiltersTableColumns } from './usePointFiltersTableColumns';
-import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { GeneNameFilterType, useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
 
 export const PointFiltersTable = () => {
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const columns = usePointFiltersTableColumns();
+  const [activeFilters, setActiveFilters] = useState<GeneNameFilterType>(new Set());
   const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setGeneNamesFilter,
@@ -20,10 +20,10 @@ export const PointFiltersTable = () => {
   );
 
   useEffect(() => {
-    setActiveFilters(useTranscriptLayerStore.getState().geneNameFilters);
-  }, []);
+    setActiveFilters(new Set(geneNameFilters));
+  }, [geneNameFilters]);
 
-  const colorMapConfig = useBinaryFilesStore((store) => store.colorMapConfig);
+  const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
 
   const rowData: PointFiltersTableRowEntry[] = colorMapConfig
     ? colorMapConfig.map((item) => ({
@@ -34,27 +34,31 @@ export const PointFiltersTable = () => {
     : [];
 
   const handleClearFilters = () => {
-    setActiveFilters([]);
+    setActiveFilters(new Set<string>());
     clearGeneNameFilters();
   };
 
   const handleApplyClick = () => {
     setGeneNamesFilter(activeFilters);
+    if (!isGeneNameFilterActive && activeFilters.size > 0) {
+      useTranscriptLayerStore.getState().toggleGeneNameFilter();
+    }
   };
 
   const haveFiltersChanges =
-    activeFilters.length !== geneNameFilters.length || !isEqual(activeFilters.sort(), geneNameFilters.sort());
+    activeFilters.size !== geneNameFilters.size ||
+    !isEqual(Array.from(activeFilters).sort(), Array.from(geneNameFilters).sort());
 
   return (
     <GxFilterTable<PointFiltersTableRowEntry>
       columns={columns}
       rows={rowData}
       activeFilters={activeFilters}
-      onClearFilteres={handleClearFilters}
+      onClearFilters={handleClearFilters}
       onApplyClick={handleApplyClick}
       onSetFilter={(filters) => setActiveFilters(filters)}
-      clearDisabled={!isGeneNameFilterActive || activeFilters.length === 0}
-      applyDisabled={!isGeneNameFilterActive || activeFilters.length === 0 || !haveFiltersChanges}
+      clearDisabled={!isGeneNameFilterActive || activeFilters.size === 0}
+      applyDisabled={!haveFiltersChanges || activeFilters.size === 0}
     />
   );
 };

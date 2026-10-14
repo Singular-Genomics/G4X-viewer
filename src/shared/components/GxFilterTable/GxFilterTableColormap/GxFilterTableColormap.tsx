@@ -39,7 +39,7 @@ export const GxFilterTableColormap = ({ onDrop, onExport }: GxFilterTableColorma
 
   return (
     <Box>
-      <Typography sx={sx.label}>{t('general.colormapConfig')}:</Typography>
+      <Typography sx={sx.colormapLabel}>{t('general.colormapConfig')}:</Typography>
       <Box sx={sx.buttonsContainer}>
         <Button
           startIcon={<DownloadIcon />}
@@ -72,9 +72,9 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     width: '100%',
     padding: '0'
   },
-  label: {
+  colormapLabel: {
     fontWeight: 600,
-    marginBottom: '4px'
+    marginTop: '4px'
   },
   exportButton: {
     background: theme.palette.gx.gradients.brand(),

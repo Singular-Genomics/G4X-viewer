@@ -3,11 +3,11 @@ import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 import { GxFilterTableColorCell } from '../../../../../shared/components/GxFilterTable/GxFilterTableColorCell/GxFilterTableColorCell';
-import { useBinaryFilesStore } from '../../../../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
   const { t } = useTranslation();
-  const { colorMapConfig, setColormapConfig } = useBinaryFilesStore();
+  const { colorMapConfig, setColormapConfig } = useZarrDataStore();
 
   const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
     if (!(value as string).startsWith('[')) {

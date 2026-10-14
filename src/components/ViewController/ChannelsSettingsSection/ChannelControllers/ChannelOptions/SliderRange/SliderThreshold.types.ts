@@ -1,5 +1,6 @@
 export type SliderThresholdProps = {
   slider: [number, number];
+  domain: [number, number];
   rangeMin: string;
   rangeMax: string;
   setRangeMin: (value: string) => void;

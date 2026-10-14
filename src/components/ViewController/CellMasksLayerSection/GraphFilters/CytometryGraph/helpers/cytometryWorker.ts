@@ -1,16 +1,15 @@
 import { Datum } from 'plotly.js';
 import WorkerScript from './script.ts?worker';
 import { AxisTypes, GraphMode } from '../../../../../../stores/CytometryGraphStore/CytometryGraphStore.types';
-import { SingleMask } from '../../../../../../shared/types';
 
+// Subsampled and +1 shifted on the main thread
 export type CytometryWorkerInput = {
-  maskData: SingleMask[];
-  xProteinIndex: number;
-  yProteinIndex: number;
+  xValues: Float32Array;
+  yValues: Float32Array;
+  cellIds: string[];
   binXCount: number;
   binYCount: number;
   axisType: AxisTypes;
-  subsamplingStep: number;
   graphMode: GraphMode;
 };
 

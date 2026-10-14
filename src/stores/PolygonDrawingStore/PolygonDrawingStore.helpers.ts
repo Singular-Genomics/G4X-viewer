@@ -1,10 +1,4 @@
-import * as protobuf from 'protobufjs';
-import { TranscriptFileSchema } from '../../schemas/transcriptaFile.schema';
-import { useTranscriptLayerStore } from '../TranscriptLayerStore';
-import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
-import { useViewerStore } from '../ViewerStore';
 import { PolygonFeature, Point2D, LineSegment, IntersectionResult, BoundingBox } from './PolygonDrawingStore.types';
-import { CellsExportData, TranscriptsExportData } from '../../components/PolygonImportExport/PolygonImportExport.types';
 
 // Epsilon for floating point comparisons
 const EPSILON = 1e-10;
@@ -155,16 +149,6 @@ export const isPointWitinBoundingBox = (point: [number, number], boundingBox: Bo
   );
 };
 
-// Check if polygon is fullt inside a rectangular bounding box
-export const isPolygonWithinBoundingBox = (cellVertices: number[], boundingBox: BoundingBox): boolean => {
-  for (let i = 0; i < cellVertices.length; i += 2) {
-    if (!isPointWitinBoundingBox([cellVertices[i], cellVertices[i + 1]], boundingBox)) {
-      return false;
-    }
-  }
-  return true;
-};
-
 // Ray Casting Algorithm with early exit optimization: Casts a horizontal ray from the point to infinity and counts edge intersections.
 // Odd count = inside, even count = outside.
 export const isPointInSelection = (point: [number, number], coordinates: number[][], boundingBox: BoundingBox) => {
@@ -185,22 +169,6 @@ export const isPointInSelection = (point: [number, number], coordinates: number[
     }
   }
   return inside;
-};
-
-export const isPolygonInSelection = (cellVertices: number[], coordinates: number[][], boundingBox: BoundingBox) => {
-  if (!cellVertices || cellVertices.length < 6) return false;
-
-  // Check each vertex of the cell polygon
-  for (let i = 0; i < cellVertices.length; i += 2) {
-    const x = cellVertices[i];
-    const y = cellVertices[i + 1];
-
-    if (!isPointInSelection([x, y], coordinates, boundingBox)) {
-      return false;
-    }
-  }
-
-  return true;
 };
 
 export const removeDuplicates = (points: any[]) => {
@@ -252,123 +220,6 @@ export const updatePolygonFeaturesWithIds = (features: PolygonFeature[], _nextId
     featuresWithIds,
     nextPolygonId: currentMaxId + 1
   };
-};
-
-export const loadTileData = (file: File) => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = protobuf.Root.fromJSON(TranscriptFileSchema)
-          .lookupType('TileData')
-          .decode(new Uint8Array(reader.result as ArrayBuffer));
-        resolve(data);
-      } catch {
-        resolve(null);
-      }
-    };
-    reader.onerror = () => resolve(null);
-    reader.readAsArrayBuffer(file);
-  });
-};
-
-const generateExportJsonFilename = (type: string): string => {
-  const viewerSource = useViewerStore.getState().source;
-  const ometiffName = viewerSource?.description?.replace(/\.(ome\.tiff?|tiff?|zarr)$/i, '') || 'export';
-  const date = new Date().toISOString().split('T')[0];
-  return `${ometiffName}_${type}_${date}.json`;
-};
-
-export const exportPolygonsWithCells = (
-  polygonFeatures: PolygonFeature[],
-  includeGenes: boolean,
-  polygonNotes: Record<number, string>
-) => {
-  const { selectedCells, segmentationMetadata } = useCellSegmentationLayerStore.getState();
-
-  const exportData: CellsExportData = {};
-
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const coordinates = feature.geometry.coordinates[0];
-
-    exportData[roiName] = {
-      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      cells:
-        selectedCells
-          .find((selection) => selection.roiId === polygonId)
-          ?.data.map((entry) => {
-            const { nonzeroGeneIndices, nonzeroGeneValues, proteinValues, ...exportObj } = entry;
-            return {
-              ...exportObj,
-              ...(segmentationMetadata?.proteinNames
-                ? {
-                    protein: Object.fromEntries(
-                      segmentationMetadata.proteinNames.map((name, index) => [name, entry.proteinValues[index]])
-                    )
-                  }
-                : {}),
-              ...(segmentationMetadata?.geneNames && includeGenes
-                ? {
-                    transcript: Object.fromEntries(
-                      entry.nonzeroGeneIndices.map((geneIndex, index) => [
-                        segmentationMetadata.geneNames[geneIndex],
-                        entry.nonzeroGeneValues[index]
-                      ])
-                    )
-                  }
-                : {})
-            };
-          }) || [],
-      polygonId: polygonId,
-      notes: polygonNotes[polygonId] || ''
-    };
-  });
-
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = Object.assign(document.createElement('a'), {
-    href: url,
-    download: generateExportJsonFilename('segmentation')
-  });
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
-
-export const exportPolygonsWithTranscripts = (
-  polygonFeatures: PolygonFeature[],
-  polygonNotes: Record<number, string>
-) => {
-  const { selectedPoints } = useTranscriptLayerStore.getState();
-
-  const exportData: TranscriptsExportData = {};
-
-  polygonFeatures.forEach((feature) => {
-    const polygonId = feature.properties?.polygonId || 1;
-    const roiName = `ROI_${polygonId}`;
-    const coordinates = feature.geometry.coordinates[0];
-
-    exportData[roiName] = {
-      coordinates: coordinates.map((coord: number[]) => coord as [number, number]),
-      transcripts: selectedPoints.find((selection) => selection.roiId === polygonId)?.data || [],
-      polygonId: polygonId,
-      notes: polygonNotes[polygonId] || ''
-    };
-  });
-
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = Object.assign(document.createElement('a'), {
-    href: url,
-    download: generateExportJsonFilename('transcripts')
-  });
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
 };
 
 export const findEditedPolygon = (

@@ -2,13 +2,13 @@ import { useCallback, useRef } from 'react';
 import type { PolygonWorkerMessage, PolygonWorkerResponse, PolygonPointData } from './polygonDetectionWorker.types';
 import { SingleMask } from '../../../shared/types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
+import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 
 export type PolygonDetectionWorkerHook = {
   detectPointsInPolygon: (
     polygon: PolygonFeature,
-    files: File[],
-    layerConfig: LayerConfig
+    layerConfig: LayerConfig,
+    zarrUrl?: string
   ) => Promise<{
     pointsInPolygon: PolygonPointData[];
     pointCount: number;
@@ -39,7 +39,7 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
   }, []);
 
   const detectPointsInPolygon = useCallback(
-    (polygon: PolygonFeature, files: File[], layerConfig: LayerConfig) => {
+    (polygon: PolygonFeature, layerConfig: LayerConfig, zarrUrl?: string) => {
       return new Promise<{
         pointsInPolygon: PolygonPointData[];
         pointCount: number;
@@ -77,8 +77,8 @@ export const usePolygonDetectionWorker = (): PolygonDetectionWorkerHook => {
           type: 'detectPointsInPolygon',
           payload: {
             polygon,
-            files,
-            layerConfig
+            layerConfig,
+            zarrUrl
           }
         };
 

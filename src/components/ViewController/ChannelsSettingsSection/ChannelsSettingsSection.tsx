@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material';
-import { OverviewToggle } from './OverviewToggle';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { LensToggle } from './LensToggle';
 import { ChannelControllers } from './ChannelControllers';
@@ -8,6 +7,7 @@ import { ColormapSelector } from './ColormapSelector';
 import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
 import { InfoTooltip } from '../../InfoTooltip';
+import { ChannelSettingsImportExportButtons } from './ChannelControllers/ChannelSettingsImportExportButtons';
 
 export const ChannelsSettingsSection = () => {
   const { t } = useTranslation();
@@ -24,14 +24,16 @@ export const ChannelsSettingsSection = () => {
         </Box>
         <ColormapSelector />
       </Box>
-      <Box sx={sx.togglesWrapper}>
-        <OverviewToggle />
-        {!colormap && shape[labels.indexOf('c')] > 1 && <LensToggle />}
-      </Box>
-      <Box>
+      {!colormap && shape[labels.indexOf('c')] > 1 && (
+        <Box sx={sx.togglesWrapper}>
+          <LensToggle />
+        </Box>
+      )}
+      <Box sx={sx.channelControlsSection}>
         <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
         <ChannelControllers />
         <AddChannel />
+        <ChannelSettingsImportExportButtons />
       </Box>
     </Box>
   );
@@ -54,5 +56,8 @@ const sx = {
     alignItems: 'center',
     paddingLeft: '8px',
     marginBottom: '8px'
+  },
+  channelControlsSection: {
+    marginTop: '12px'
   }
 };

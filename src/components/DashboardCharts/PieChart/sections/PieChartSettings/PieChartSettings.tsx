@@ -20,7 +20,6 @@ export const PieChartSettings = ({ settings, onChangeSettings }: PieChartSetting
         {/* Sort ROIs  */}
         <Grid
           size={1}
-          alignContent={'center'}
           sx={sx.settingLabel}
         >
           <Typography>{t('dashboard.plotSortRoisLabel')}:</Typography>
@@ -50,6 +49,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderColor: theme.palette.gx.mediumGrey[500],
     textWrap: 'nowrap',
     textAlign: 'end',
-    paddingInlineEnd: '8px'
+    paddingInlineEnd: '8px',
+    alignContent: 'center'
   }
 });

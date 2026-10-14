@@ -1,26 +1,23 @@
-import { alpha, Box, Button, Fade, FormControlLabel, Theme, Tooltip, useTheme } from '@mui/material';
+import { Box, Fade, FormControlLabel, Theme, Tooltip, useTheme } from '@mui/material';
 import { BrightfieldImageSelectorEntryProps } from './BrightfieldImageSelectorEntry.types';
-import ClearIcon from '@mui/icons-material/Clear';
 import { GxRadio } from '../../../../../shared/components/GxRadio';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudIcon from '@mui/icons-material/Cloud';
 import { useTranslation } from 'react-i18next';
+import { getEntryName } from '../../../../../stores/BrightfieldImagesStore';
 
 export const BrightfieldImageSelectorEntry = ({
   imageEntry,
   isActive,
   entryType,
-  onSelectImage,
-  onRemoveImage
+  onSelectImage
 }: BrightfieldImageSelectorEntryProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const entryName = typeof imageEntry === 'string' ? imageEntry : imageEntry.name;
-
-  const fileName = entryName.split('/').pop();
-  const imageName = fileName ? fileName.split('.').shift() : '';
+  const entryName = getEntryName(imageEntry);
+  const imageName = entryName.split('.').shift() ?? '';
 
   return (
     <Box sx={sx.entryContainer}>
@@ -62,12 +59,6 @@ export const BrightfieldImageSelectorEntry = ({
       >
         {entryType === 'local-file' ? <InsertDriveFileIcon fontSize="small" /> : <CloudIcon fontSize="small" />}
       </Tooltip>
-      <Button
-        onClick={() => onRemoveImage(entryName)}
-        sx={sx.removeButton}
-      >
-        <ClearIcon sx={sx.removeIcon} />
-      </Button>
     </Box>
   );
 };
@@ -91,24 +82,5 @@ const styles = (theme: Theme) => ({
   entryTypeTooltip: {
     marginRight: '8px',
     color: theme.palette.gx.mediumGrey[500]
-  },
-  removeButton: {
-    minWidth: 'unset',
-    width: '42px',
-    height: '42px',
-    borderRadius: '0',
-    padding: '0',
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.error, 0.04)
-    }
-  },
-  removeIcon: {
-    width: '100%',
-    height: '100%',
-    padding: '8px',
-    color: theme.palette.gx.darkGrey[500],
-    '&:hover': {
-      color: theme.palette.gx.accent.error
-    }
   }
 });

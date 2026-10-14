@@ -1,5 +1,10 @@
 import { create } from 'zustand';
-import { BrightfieldImagesStore, BrightfieldImagesStoreValues } from './BrightfieldImagesStore.types';
+import {
+  BrightfieldImagesStore,
+  BrightfieldImagesStoreValues,
+  AvailableImageEntry
+} from './BrightfieldImagesStore.types';
+import { MAX_UINT16_VALUE } from '../../shared/constants';
 
 export const MAX_NUMBER_OF_IMAGES = 10;
 
@@ -7,12 +12,22 @@ const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   brightfieldImageSource: null,
   loader: [{ labels: [], shape: [] }],
   image: 0,
-  contrastLimits: [[0, 65535]],
+  contrastLimits: [[0, MAX_UINT16_VALUE]],
+  colors: [
+    [255, 0, 0],
+    [0, 255, 0],
+    [0, 0, 255]
+  ],
   selections: [{ z: 0, c: 0, t: 0 }],
   opacity: 1,
   isLayerVisible: true,
   availableImages: []
 };
+
+export function getEntryName(entry: AvailableImageEntry): string {
+  if (typeof entry === 'string') return entry.split('/').pop() || entry;
+  return entry.name;
+}
 
 export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, get) => ({
   ...DEFAULT_VALUES,
@@ -22,7 +37,7 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
     return Array.isArray(loader[0]) ? loader[image] : loader;
   },
   toggleImageLayer: () => set((store) => ({ isLayerVisible: !store.isLayerVisible })),
-  setActiveImage: (file: File | string | null) => {
+  setActiveImage: (file: AvailableImageEntry | null) => {
     if (file === null) {
       set({
         brightfieldImageSource: null,
@@ -31,45 +46,32 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
       return;
     }
 
+    if (typeof file !== 'string' && '__localZarrImage' in file) {
+      set({
+        brightfieldImageSource: {
+          description: file.name,
+          urlOrFile: file.store
+        },
+        loader: DEFAULT_VALUES.loader
+      });
+      return;
+    }
+
     set({
       brightfieldImageSource: {
-        description: typeof file === 'string' ? file.split('/').pop() || file : file.name,
+        description: getEntryName(file),
         urlOrFile: file
       },
       loader: DEFAULT_VALUES.loader
     });
   },
-  setAvailableImages: (files: (File | string)[]) => set({ availableImages: files }),
-  addNewFile: (file: File | string) =>
-    set((state) => {
-      const newImagesList = state.availableImages;
-      newImagesList.push(file);
-      return {
-        ...state,
-        availableImages: newImagesList
-      };
-    }),
+  setAvailableImages: (files: AvailableImageEntry[]) => set({ availableImages: files }),
+  addNewFile: (file: AvailableImageEntry) =>
+    set((state) => ({
+      availableImages: [...state.availableImages, file]
+    })),
   removeFileByName: (fileName: string) =>
-    set((state) => {
-      const newImagesList = state.availableImages;
-      const index = newImagesList.findIndex((entry) => {
-        if (typeof entry === 'string') {
-          return entry.split('/').pop() === fileName || entry === fileName;
-        }
-        return entry.name === fileName;
-      });
-
-      if (index !== -1) {
-        if (newImagesList.length === 1) {
-          newImagesList.pop();
-        } else {
-          newImagesList.splice(index, 1);
-        }
-      }
-
-      return {
-        ...state,
-        availableImages: newImagesList
-      };
-    })
+    set((state) => ({
+      availableImages: state.availableImages.filter((entry) => getEntryName(entry) !== fileName)
+    }))
 }));

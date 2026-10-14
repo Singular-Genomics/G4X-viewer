@@ -4,6 +4,12 @@ export const DEFAULT_OVERVIEW = {
   position: 'bottom-left'
 };
 
+export const DEFAULT_OVERVIEW_MOBILE = {
+  ...DEFAULT_OVERVIEW,
+  maximumWidth: 120,
+  maximumHeight: 120
+};
+
 export const LAYER_ZOOM_OFFSET = 2;
 
 export const COLORMAP_OPTIONS = [
@@ -37,3 +43,10 @@ export const SEGMENTATION_FILE_SIZE_LIMIT = 524288000; // 500 MB
 
 // Maximum number of transcript points that can be selected in ROI to prevent browser crashes
 export const MAX_TRANSCRIPT_POINTS_LIMIT = 7500000; // 7.5 million points
+
+// Number of Zarr tiles processed in parallel per batch during ROI transcript detection
+export const ZARR_TILE_BATCH_SIZE = 5;
+
+// Image data type max values
+export const MAX_UINT16_VALUE = 65535;
+export const MAX_UINT8_VALUE = 255;

@@ -1,17 +1,23 @@
 import { SingleMask } from '../../../shared/types';
 import { PolygonFeature } from '../../../stores/PolygonDrawingStore/PolygonDrawingStore.types';
-import { LayerConfig } from '../../../stores/BinaryFilesStore/BinaryFilesStore.types';
+import { LayerConfig } from '../../../stores/ZarrDataStore/ZarrDataStore.types';
 
 export type PolygonPointData = {
   position: number[];
-  color: number[];
+  color?: number[];
   geneName: string;
   cellId: string;
 };
 
-export type PolygonTileData = {
-  pointsData: PolygonPointData[];
-  numberOfPoints: number;
+export type TileCoordinates = {
+  x: number;
+  y: number;
+};
+
+export type PointsDetectionBatchResult = {
+  allPointArrays: PolygonPointData[][];
+  totalPointsFound: number;
+  limitExceeded: boolean;
 };
 
 export type PolygonWorkerMessage =
@@ -19,8 +25,8 @@ export type PolygonWorkerMessage =
       type: 'detectPointsInPolygon';
       payload: {
         polygon: PolygonFeature;
-        files: File[];
         layerConfig: LayerConfig;
+        zarrUrl?: string;
       };
     }
   | {

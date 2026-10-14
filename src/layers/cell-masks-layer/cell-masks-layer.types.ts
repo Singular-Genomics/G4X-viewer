@@ -2,11 +2,13 @@ import { PickingInfo } from '@deck.gl/core';
 import { ColormapEntry, SingleMask } from '../../shared/types';
 
 export type CellMasksLayerProps = CompositeLayerProps & {
-  cellsData: SingleMask[];
+  cellMasksData: SingleMask[];
+  filterValues: Uint8Array;
   showCellFill: boolean;
   showDiscardedPoints: boolean;
   cellFillOpacity: number;
-  outlierCellsData?: SingleMask[];
+  showBoundary: boolean;
+  boundaryWidth: number;
   colormap: ColormapEntry[];
   onHover?: (pikingInfo: PickingInfo) => void;
 };

@@ -24,8 +24,14 @@ export const AddChannel = () => {
     ])
   );
 
-  const [selections, setPropertiesForChannel, addChannel, getLoader] = useChannelsStore(
-    useShallow((store) => [store.selections, store.setPropertiesForChannel, store.addChannel, store.getLoader])
+  const [selections, channelsSettings, setPropertiesForChannel, addChannel, getLoader] = useChannelsStore(
+    useShallow((store) => [
+      store.selections,
+      store.channelsSettings,
+      store.setPropertiesForChannel,
+      store.addChannel,
+      store.getLoader
+    ])
   );
 
   const loader = getLoader();
@@ -41,6 +47,20 @@ export const AddChannel = () => {
       loader,
       selection
     }).then(({ domain, contrastLimits }) => {
+      const { c } = selection;
+      const channelName = metadata.Pixels.Channels[c]?.Name ?? `Channel ${c}`;
+      const { Channels } = metadata.Pixels;
+      const initialColor =
+        (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255]);
+      if (!(channelName in channelsSettings)) {
+        channelsSettings[channelName] = {};
+      }
+      if (!channelsSettings[channelName].initialContrastLimits) {
+        channelsSettings[channelName].initialContrastLimits = contrastLimits as [number, number];
+      }
+      if (!channelsSettings[channelName].initialColor) {
+        channelsSettings[channelName].initialColor = initialColor as [number, number, number];
+      }
       setPropertiesForChannel(numSelectionsBeforeAdd, {
         domains: domain,
         contrastLimits: contrastLimits as [number, number],
@@ -53,20 +73,17 @@ export const AddChannel = () => {
         }
       });
       addIsChannelLoading(true);
-      const {
-        Pixels: { Channels }
-      } = metadata;
-      const { c } = selection;
       addChannel({
         selections: selection,
         ids: String(Math.random()),
         channelsVisible: false,
-        colors: (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255])
+        colors: initialColor
       } as any);
     });
   }, [
     addChannel,
     addIsChannelLoading,
+    channelsSettings,
     globalSelection,
     labels,
     loader,
@@ -79,7 +96,7 @@ export const AddChannel = () => {
   return (
     <Button
       disabled={
-        selections.length === MAX_CHANNELS ||
+        selections.length >= MAX_CHANNELS ||
         (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
       }
       onClick={handleChannelAdd}

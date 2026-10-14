@@ -3,11 +3,7 @@ import { DrawPolygonMode, ModifyMode } from '@deck.gl-community/editable-layers'
 import { useTranscriptLayerStore } from '../TranscriptLayerStore';
 import { useCellSegmentationLayerStore } from '../CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { PolygonDrawingStore, PolygonDrawingStoreValues } from './PolygonDrawingStore.types';
-import {
-  exportPolygonsWithCells,
-  exportPolygonsWithTranscripts,
-  getHighestPolygonId
-} from './PolygonDrawingStore.helpers';
+import { getHighestPolygonId } from './PolygonDrawingStore.helpers';
 
 const DEFAULT_POLYGON_DRAWING_STORE_VALUES: PolygonDrawingStoreValues = {
   isPolygonDrawingEnabled: false,
@@ -126,14 +122,6 @@ export const usePolygonDrawingStore = create<PolygonDrawingStore>((set, get) => 
     useTranscriptLayerStore.getState().setSelectedPoints([]);
     useCellSegmentationLayerStore.getState().setSelectedCells([]);
     set({ polygonFeatures: [], selectedFeatureIndex: null, isViewMode: false, polygonNotes: {} });
-  },
-  exportPolygonsWithCells: (includeGenes) => {
-    const { polygonFeatures, polygonNotes } = get();
-    exportPolygonsWithCells(polygonFeatures, includeGenes, polygonNotes);
-  },
-  exportPolygonsWithTranscripts: () => {
-    const { polygonFeatures, polygonNotes } = get();
-    exportPolygonsWithTranscripts(polygonFeatures, polygonNotes);
   },
   importPolygons: (importedFeatures: any) => {
     set({

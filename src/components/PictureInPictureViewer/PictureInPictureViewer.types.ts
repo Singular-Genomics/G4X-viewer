@@ -13,6 +13,8 @@ export type OverviewSettings = {
   position?: string;
   minimumWidth?: number;
   maximumWidth?: number;
+  minimumHeight?: number;
+  maximumHeight?: number;
   boundingBoxColor?: number[];
   boundingBoxOutlineWidth?: number;
   viewportOutlineColor?: number[];

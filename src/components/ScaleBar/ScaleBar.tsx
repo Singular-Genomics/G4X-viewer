@@ -1,18 +1,15 @@
-import { Box, Typography, alpha, useTheme, Theme } from '@mui/material';
+import { Box, Typography, alpha, useMediaQuery, useTheme, Theme } from '@mui/material';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { useChannelsStore } from '../../stores/ChannelsStore';
 import { makeBoundingBox } from './utils';
 import { ScaleBarIcon } from './ScaleBarIcon';
 
 export function ScaleBar() {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const viewState = useViewerStore(useShallow((store) => store.viewState));
-  const getLoader = useChannelsStore((store) => store.getLoader);
-
-  const loader = getLoader();
-  const physicalSize = loader[0]?.meta?.physicalSizes?.x;
+  const physicalSize = useViewerStore((store) => store.physicalSize);
 
   if (!viewState || !physicalSize) return null;
 
@@ -38,8 +35,10 @@ export function ScaleBar() {
         <ScaleBarIcon width={barWidthInPixels} />
       </Box>
       <Typography
-        sx={sx.text}
-        fontSize="14px"
+        sx={{
+          ...sx.text,
+          fontSize: isDesktop ? '14px' : '11px'
+        }}
       >
         {formattedNumber} {displayUnit}
       </Typography>
@@ -50,21 +49,28 @@ export function ScaleBar() {
 const styles = (theme: Theme) => ({
   container: {
     position: 'absolute',
-    right: 55,
-    bottom: 50,
+    right: 8,
+    bottom: 8,
     backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
-    padding: '4px 8px',
+    padding: '2px 6px',
     borderRadius: '10px',
     zIndex: 10,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.up('md')]: {
+      right: 55,
+      bottom: 50,
+      padding: '4px 8px'
+    }
   },
   iconContainer: {
     display: 'flex',
     justifyContent: 'center'
   },
   text: {
-    color: theme.palette.gx.primary.white
+    color: theme.palette.gx.primary.white,
+    textAlign: 'center',
+    width: '100%'
   }
 });

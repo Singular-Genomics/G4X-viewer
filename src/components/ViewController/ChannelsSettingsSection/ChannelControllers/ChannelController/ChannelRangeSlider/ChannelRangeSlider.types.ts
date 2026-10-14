@@ -1,10 +1,11 @@
 export type ChannelRangeSliderProps = {
   slider: [number, number];
+  domain: [number, number];
   color: [number, number, number];
   handleSliderChange: (newValue: [number, number]) => void;
   isLoading?: boolean;
-  rangeMin: string;
-  rangeMax: string;
+  visibleMin: number;
+  visibleMax: number;
   minInputValue: string;
   maxInputValue: string;
   setMinInputValue: (newVaule: string) => void;

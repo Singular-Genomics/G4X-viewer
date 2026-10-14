@@ -1,6 +1,6 @@
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
-import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
+import { getEntryName, useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { useTranslation } from 'react-i18next';
 
 export const useBrightfieldImageHandler = () => {
@@ -27,12 +27,7 @@ export const useBrightfieldImageHandler = () => {
       return;
     }
 
-    const index = availableImages.findIndex((entry) => {
-      if (typeof entry === 'string') {
-        return entry.split('/').pop() === imageFile.name || entry === imageFile.name;
-      }
-      return entry.name === imageFile.name;
-    });
+    const index = availableImages.findIndex((entry) => getEntryName(entry) === imageFile.name);
 
     if (index !== -1) {
       enqueueSnackbar({

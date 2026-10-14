@@ -133,6 +133,12 @@ export function isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEven
   return 'touches' in event;
 }
 
+const HEX_COLOR_PATTERN = /^#?[a-f\d]{6}$/i;
+
+export function isValidHex(value: string): boolean {
+  return HEX_COLOR_PATTERN.test(value.trim());
+}
+
 export function getParentWindow(node?: HTMLDivElement | null): Window {
   return (node && node.ownerDocument.defaultView) || self;
 }

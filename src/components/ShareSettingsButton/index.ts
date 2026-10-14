@@ -1,0 +1,1 @@
+export { ShareSettingsButton } from './ShareSettingsButton';

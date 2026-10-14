@@ -36,9 +36,8 @@ export function drawScaleBarOnCanvas(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
   viewState: ViewState,
-  loader: any[]
+  physicalSize: { size: number; unit: string } | null
 ) {
-  const physicalSize = loader[0]?.meta?.physicalSizes?.x;
   if (!viewState || !physicalSize) return;
 
   const boundingBox = makeBoundingBox(viewState);

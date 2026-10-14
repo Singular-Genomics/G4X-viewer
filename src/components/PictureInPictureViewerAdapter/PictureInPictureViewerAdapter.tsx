@@ -1,9 +1,9 @@
 import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
-import { DEFAULT_OVERVIEW, FILL_PIXEL_VALUE } from '../../shared/constants';
+import { DEFAULT_OVERVIEW, DEFAULT_OVERVIEW_MOBILE, FILL_PIXEL_VALUE } from '../../shared/constants';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
-import { Box } from '@mui/material';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
@@ -12,7 +12,7 @@ import {
   usePolygonDrawingLayer,
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -24,8 +24,11 @@ import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
+import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -50,23 +53,63 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     [containerSize]
   );
 
-  const [colors, contrastLimits, channelsVisible, selections] = useChannelsStore(
-    useShallow((store) => [store.colors, store.contrastLimits, store.channelsVisible, store.selections])
-  );
-
-  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading] = useViewerStore(
+  const [colors, contrastLimits, channelsVisible, selections, isLayerVisible] = useChannelsStore(
     useShallow((store) => [
-      store.colormap,
-      store.isLensOn,
-      store.isOverviewOn,
-      store.lensSelection,
-      store.onViewportLoad,
-      store.viewState,
-      store.isViewerLoading
+      store.colors,
+      store.contrastLimits,
+      store.channelsVisible,
+      store.selections,
+      store.isLayerVisible
     ])
   );
+  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
-  const [isPolygonDrawingEnabled] = usePolygonDrawingStore(useShallow((store) => [store.isPolygonDrawingEnabled]));
+  const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading, physicalSize] =
+    useViewerStore(
+      useShallow((store) => [
+        store.colormap,
+        store.isLensOn,
+        store.isOverviewOn,
+        store.lensSelection,
+        store.onViewportLoad,
+        store.viewState,
+        store.isViewerLoading,
+        store.physicalSize
+      ])
+    );
+
+  const [isPolygonDrawingEnabled, isDetecting, polygonDrawingMode, setDrawPolygonMode] = usePolygonDrawingStore(
+    useShallow((store) => [store.isPolygonDrawingEnabled, store.isDetecting, store.mode, store.setDrawPolygonMode])
+  );
+
+  const canCancelPolygonDrawing = (eventTarget: EventTarget | null) => {
+    const deckCanvas = deckGLRef.current?.deck?.canvas;
+    return (
+      eventTarget === deckCanvas &&
+      isViewerActive &&
+      isPolygonDrawingEnabled &&
+      !isDetecting &&
+      polygonDrawingMode instanceof DrawPolygonMode
+    );
+  };
+
+  const handlePointerDownCapture = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.button !== 2 || !canCancelPolygonDrawing(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    setDrawPolygonMode();
+  };
+
+  const handleContextMenu = (event: MouseEvent<HTMLDivElement>) => {
+    if (!canCancelPolygonDrawing(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+  };
 
   useEffect(() => {
     debouncedUpdateRef.current = debounce(
@@ -88,7 +131,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   }, [loader.length]);
 
   useEffect(() => {
-    if (containerSize.width && containerSize.height) {
+    if (containerSize.width && containerSize.height && loader[0]?.shape?.length) {
       const width = containerSize.width;
       const height = containerSize.height;
 
@@ -133,7 +176,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       tempCanvas.height = deck.canvas.height;
       ctx.drawImage(deck.canvas, 0, 0);
 
-      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, loader);
+      drawScaleBarOnCanvas(ctx, deck.canvas, viewState, physicalSize);
 
       const link = document.createElement('a');
       link.href = tempCanvas.toDataURL('image/png');
@@ -177,16 +220,18 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     <Box
       sx={sx.viewerContainer}
       ref={containerRef}
+      onPointerDownCapture={handlePointerDownCapture}
+      onContextMenu={handleContextMenu}
     >
-      {containerSize.width && containerSize.height && (
+      {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
             colors={colors}
-            channelsVisible={channelsVisible}
+            channelsVisible={visibleChannels}
             loader={loader}
             selections={selections}
-            overview={DEFAULT_OVERVIEW}
+            overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
             overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
@@ -227,10 +272,12 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               } as any
             }
           />
-          <PolygonDrawingMenu
-            takeScreenshot={takeScreenshot}
-            isViewerActive={isViewerActive}
-          />
+          {isDesktop && (
+            <PolygonDrawingMenu
+              takeScreenshot={takeScreenshot}
+              isViewerActive={isViewerActive}
+            />
+          )}
           <Tooltip />
         </>
       )}

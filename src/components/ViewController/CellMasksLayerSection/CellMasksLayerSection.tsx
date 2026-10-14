@@ -1,11 +1,13 @@
-import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
+import { Box, CircularProgress, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { CellMasksFillSettings } from './CellMasksFillSettings';
+import { CellMasksBoundarySettings } from './CellMasksBoundarySettings';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
 import { useTranslation } from 'react-i18next';
+import { SegmentationSelectors } from './SegmentationSelectors';
 
 const DisabledLayerWarning = () => {
   const { t } = useTranslation();
@@ -23,18 +25,34 @@ const DisabledLayerWarning = () => {
 
 export const CellMasksLayerSection = () => {
   const { t } = useTranslation();
-  const [isCellLayerOn, isCellFillOn, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellLayerOn, store.isCellFillOn, store.isCellNameFilterOn])
+  const [isCellLayerOn, cellMasksData, showBoundary, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.cellMasksData, store.showBoundary, store.isCellNameFilterOn])
   );
+
+  if (isCellLayerOn && cellMasksData === null) {
+    return (
+      <Box sx={sx.loadingContainer}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={sx.sectionContainer}>
+      <SegmentationSelectors />
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFillLabel')}</Typography>
-          {!isCellLayerOn && isCellFillOn && <DisabledLayerWarning />}
+          {!isCellLayerOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
+      </Box>
+      <Box>
+        <Box sx={sx.subsectionWrapper}>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.boundaryLabel')}</Typography>
+          {!isCellLayerOn && showBoundary && <DisabledLayerWarning />}
+        </Box>
+        <CellMasksBoundarySettings />
       </Box>
       <Box>
         <Box sx={sx.subsectionWrapper}>
@@ -55,6 +73,11 @@ export const CellMasksLayerSection = () => {
 };
 
 const sx = {
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '16px 0'
+  },
   sectionContainer: {
     display: 'flex',
     flexDirection: 'column',

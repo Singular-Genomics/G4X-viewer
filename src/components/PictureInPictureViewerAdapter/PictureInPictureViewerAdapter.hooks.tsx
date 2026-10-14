@@ -1,11 +1,11 @@
 import { useShallow } from 'zustand/react/shallow';
 import { DETAIL_VIEW_ID, MultiscaleImageLayer } from '@hms-dbmi/viv';
-import { useBinaryFilesStore } from '../../stores/BinaryFilesStore';
+import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -16,8 +16,6 @@ import { PolygonFeature } from '../../stores/PolygonDrawingStore/PolygonDrawingS
 import { usePolygonDetectionWorker } from './worker/usePolygonDetectionWorker';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
-import { useCellFilteringWorker } from '../../layers/cell-masks-layer';
-import { SingleMask } from '../../shared/types';
 import { useSnackbar } from 'notistack';
 import { generatePolygonColor } from '../../utils/utils';
 import {
@@ -26,8 +24,21 @@ import {
 } from '../../stores/PolygonDrawingStore/PolygonDrawingStore.helpers';
 import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
-import { useViewerStore, VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
+import { useViewerStore } from '../../stores/ViewerStore';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
+
+const updatePolygonProperties = <T,>(
+  results: { polygon: PolygonFeature; result: T }[],
+  getProperties: (result: T) => Record<string, unknown>
+) => {
+  const updates = new Map(results.map(({ polygon, result }) => [polygon.properties?.polygonId, getProperties(result)]));
+  usePolygonDrawingStore.setState((state) => ({
+    polygonFeatures: state.polygonFeatures.map((polygon) => {
+      const properties = updates.get(polygon.properties?.polygonId);
+      return properties ? { ...polygon, properties: { ...polygon.properties, ...properties } } : polygon;
+    })
+  }));
+};
 
 export const useResizableContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,8 +73,14 @@ export const useResizableContainer = () => {
 };
 
 export const useTranscriptLayer = () => {
-  const [files, layerConfig, colorMapConfig] = useBinaryFilesStore(
-    useShallow((store) => [store.files, store.layerConfig, store.colorMapConfig])
+  const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData, zarrStoreFactory] = useZarrDataStore(
+    useShallow((store) => [
+      store.layerConfig,
+      store.colorMapConfig,
+      store.zarrUrl,
+      store.hasTranscriptsData,
+      store.zarrStoreFactory
+    ])
   );
 
   const [
@@ -90,23 +107,25 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!files.length) {
+  if (!isTranscriptLayerOn || (!hasTranscriptsData && !zarrStoreFactory)) {
     return undefined;
   }
 
   const metadataLayer = new TranscriptLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
-    files,
+    zarrUrl,
+    zarrStoreFactory,
     config: layerConfig,
-    visible: !!files.length && isTranscriptLayerOn,
+    visible: !!hasTranscriptsData || !!zarrStoreFactory,
     geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
     pointSize,
     showTilesBoundries,
     showTilesData,
     showDiscardedPoints: showFilteredPoints,
     overrideLayers: overrideLayers,
-    maxVisibleLayers: maxVisibleLayers,
+    maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
     colormap: colorMapConfig,
+    onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
         position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -122,9 +141,10 @@ export const useCellSegmentationLayer = () => {
   const [
     cellMasksData,
     isCellLayerOn,
-    isCellFillOn,
     isCellNameFilterOn,
     cellFillOpacity,
+    showBoundary,
+    boundaryWidth,
     showFilteredCells,
     cellNameFilters,
     cellColormapConfig
@@ -132,9 +152,10 @@ export const useCellSegmentationLayer = () => {
     useShallow((store) => [
       store.cellMasksData,
       store.isCellLayerOn,
-      store.isCellFillOn,
       store.isCellNameFilterOn,
       store.cellFillOpacity,
+      store.showBoundary,
+      store.boundaryWidth,
       store.showFilteredCells,
       store.cellNameFilters,
       store.cellColormapConfig
@@ -143,71 +164,49 @@ export const useCellSegmentationLayer = () => {
 
   const { proteinIndices, ranges } = useCytometryGraphStore();
   const { ranges: umapRange } = useUmapGraphStore();
-  const { filterCells } = useCellFilteringWorker();
-  const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
 
-  const [filteredCells, setFilteredCells] = useState<{
-    unselectedCellsData: SingleMask[];
-    outlierCellsData: SingleMask[];
-  }>({ unselectedCellsData: [], outlierCellsData: [] });
-
-  useEffect(() => {
+  const filterValues = useMemo(() => {
     if (!cellMasksData) {
-      setFilteredCells({
-        unselectedCellsData: [],
-        outlierCellsData: []
-      });
-      return;
+      return new Uint8Array(0);
     }
 
-    useViewerStore.setState({
-      isViewerLoading: {
-        type: VIEWER_LOADING_TYPES.SEGMENTATION_PROCESSING,
-        message: t('viewer.loadingSegmentationProcessing')
-      }
-    });
+    const n = cellMasksData.length;
+    const fv = new Uint8Array(n);
 
-    filterCells(
-      cellMasksData,
-      isCellNameFilterOn ? cellNameFilters : 'all',
-      ranges && proteinIndices.xAxisIndex && proteinIndices.yAxisIndex
-        ? {
-            proteins: proteinIndices,
-            range: ranges
-          }
-        : undefined,
-      umapRange
-    )
-      .then((result) => {
-        setFilteredCells(result);
-      })
-      .catch((error) => {
-        console.error('Cell filtering error:', error);
-        enqueueSnackbar({
-          variant: 'gxSnackbar',
-          titleMode: 'error',
-          message: t('segmentationSettings.filteringFailed')
-        });
-        setFilteredCells({
-          unselectedCellsData: cellMasksData,
-          outlierCellsData: []
-        });
-      })
-      .finally(() => {
-        useViewerStore.setState({ isViewerLoading: undefined });
-      });
-  }, [
-    cellMasksData,
-    isCellNameFilterOn,
-    cellNameFilters,
-    ranges,
-    proteinIndices,
-    umapRange,
-    filterCells,
-    enqueueSnackbar,
-    t
-  ]);
+    const allowed = isCellNameFilterOn && cellNameFilters.size > 0 ? cellNameFilters : null;
+    const cytoActive = !!ranges && proteinIndices.xAxisIndex > 0 && proteinIndices.yAxisIndex > 0;
+    const umapActive = !!umapRange;
+
+    for (let i = 0; i < n; i++) {
+      const c = cellMasksData[i];
+
+      if (allowed && !allowed.has(c.clusterId)) {
+        fv[i] = 1;
+        continue;
+      }
+      if (
+        cytoActive &&
+        (c.proteinValues[proteinIndices.xAxisIndex] > ranges!.xEnd ||
+          c.proteinValues[proteinIndices.xAxisIndex] < ranges!.xStart ||
+          c.proteinValues[proteinIndices.yAxisIndex] < ranges!.yEnd ||
+          c.proteinValues[proteinIndices.yAxisIndex] > ranges!.yStart)
+      ) {
+        continue;
+      }
+      if (
+        umapActive &&
+        (c.umapValues.umapX < umapRange!.xStart ||
+          c.umapValues.umapX > umapRange!.xEnd ||
+          c.umapValues.umapY > umapRange!.yStart ||
+          c.umapValues.umapY < umapRange!.yEnd)
+      ) {
+        continue;
+      }
+      fv[i] = 2;
+    }
+
+    return fv;
+  }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange]);
 
   if (!cellMasksData) {
     return undefined;
@@ -216,11 +215,13 @@ export const useCellSegmentationLayer = () => {
   const cellMasksLayer = new CellMasksLayer({
     id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
     visible: !!cellMasksData && isCellLayerOn,
-    showCellFill: isCellFillOn,
+    showCellFill: true,
     showDiscardedPoints: showFilteredCells,
     cellFillOpacity,
-    cellsData: filteredCells.unselectedCellsData,
-    outlierCellsData: filteredCells.outlierCellsData,
+    showBoundary,
+    boundaryWidth,
+    cellMasksData,
+    filterValues,
     colormap: cellColormapConfig,
     onHover: (pickingInfo) =>
       useTooltipStore.setState({
@@ -234,10 +235,11 @@ export const useCellSegmentationLayer = () => {
 };
 
 export const useBrightfieldImageLayer = () => {
-  const [selections, contrastLimits, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
+  const [selections, contrastLimits, colors, opacity, isLayerVisible, getLoader] = useBrightfieldImagesStore(
     useShallow((store) => [
       store.selections,
       store.contrastLimits,
+      store.colors,
       store.opacity,
       store.isLayerVisible,
       store.getLoader
@@ -246,7 +248,7 @@ export const useBrightfieldImageLayer = () => {
 
   const loader = getLoader();
 
-  if (!loader || !loader[0] || !loader[0].shape) {
+  if (!loader || !loader[0] || !loader[0].shape || !loader[0].getRaster) {
     return undefined;
   }
 
@@ -257,6 +259,7 @@ export const useBrightfieldImageLayer = () => {
     channelsVisible: [true, true, true],
     selections: selections as any,
     contrastLimits: contrastLimits as any,
+    colors: colors as any,
     loader: loader as any,
     dtype: dtype,
     opacity: isLayerVisible ? opacity : 0,
@@ -302,7 +305,8 @@ export const usePolygonDrawingLayer = () => {
     ])
   );
 
-  const [files, layerConfig] = useBinaryFilesStore(useShallow((store) => [store.files, store.layerConfig]));
+  const [layerConfig, zarrUrl] = useZarrDataStore(useShallow((store) => [store.layerConfig, store.zarrUrl]));
+  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
   const [setSelectedPoints, updateSelectedPoints, addSelectedPoints, deleteSelectedPoints] = useTranscriptLayerStore(
     useShallow((store) => [
       store.setSelectedPoints,
@@ -311,8 +315,10 @@ export const usePolygonDrawingLayer = () => {
       store.deleteSelectedPoints
     ])
   );
+  const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
 
   const [cellMasksData] = useCellSegmentationLayerStore(useShallow((store) => [store.cellMasksData]));
+  const isCellLayerOn = useCellSegmentationLayerStore((store) => store.isCellLayerOn);
   const [setSelectedCells, updateSelectedCells, addSelectedCells, deleteSelectedCells] = useCellSegmentationLayerStore(
     useShallow((store) => [
       store.setSelectedCells,
@@ -326,8 +332,83 @@ export const usePolygonDrawingLayer = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const polygonFeaturesBeforeEdit = useRef<PolygonFeature[]>([]);
+
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastClickedPolygonRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isCellLayerOn || !cellMasksData) return;
+
+    const currentPolygons = usePolygonDrawingStore.getState().polygonFeatures;
+    if (currentPolygons.length === 0) return;
+
+    const redetect = async () => {
+      setDetecting(true);
+
+      const results = [];
+      for (const polygon of currentPolygons) {
+        const result = await detectCellPolygonsInPolygon(polygon, cellMasksData);
+        results.push({ polygon, result });
+      }
+
+      const newSelectedCells = results.map(({ polygon, result }) => ({
+        roiId: polygon.properties?.polygonId as number,
+        data: result.cellPolygonsInDrawnPolygon
+      }));
+      updatePolygonProperties(results, (result) => ({
+        cellPolygonCount: result.cellPolygonCount,
+        cellClusterDistribution: result.cellClusterDistribution
+      }));
+      setSelectedCells(newSelectedCells);
+      setDetecting(false);
+    };
+
+    redetect().catch((error) => {
+      console.error('Error re-detecting cells after segmentation change:', error);
+      setDetecting(false);
+    });
+  }, [cellMasksData, detectCellPolygonsInPolygon, isCellLayerOn, setDetecting, setSelectedCells]);
+
+  useEffect(() => {
+    if (!isTranscriptLayerOn || !transcriptConfigLoaded || !zarrUrl) return;
+
+    const currentPolygons = usePolygonDrawingStore.getState().polygonFeatures;
+    if (currentPolygons.length === 0) return;
+
+    const redetect = async () => {
+      setDetecting(true);
+
+      const results = [];
+      for (const polygon of currentPolygons) {
+        const result = await detectPointsInPolygon(polygon, layerConfig, zarrUrl);
+        results.push({ polygon, result });
+      }
+      updatePolygonProperties(results, (result) => ({
+        pointCount: result.pointCount,
+        geneDistribution: result.geneDistribution
+      }));
+      setSelectedPoints(
+        results.map(({ polygon, result }) => ({
+          roiId: polygon.properties?.polygonId as number,
+          data: result.pointsInPolygon
+        }))
+      );
+      setDetecting(false);
+    };
+
+    redetect().catch((error) => {
+      console.error('Error re-detecting transcripts after layer change:', error);
+      setDetecting(false);
+    });
+  }, [
+    detectPointsInPolygon,
+    isTranscriptLayerOn,
+    layerConfig,
+    setDetecting,
+    setSelectedPoints,
+    transcriptConfigLoaded,
+    zarrUrl
+  ]);
 
   const getPolygonColor = (
     feature: any,
@@ -401,9 +482,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(newPolygon, files, layerConfig);
+          const result = await detectPointsInPolygon(newPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, delete the polygon and show error
           if (result.limitExceeded) {
@@ -541,9 +622,9 @@ export const usePolygonDrawingLayer = () => {
       let totalFoundPoints = 0;
       let totalFoundCells = 0;
 
-      if (files.length > 0) {
+      if (zarrUrl) {
         try {
-          const result = await detectPointsInPolygon(editedPolygon, files, layerConfig);
+          const result = await detectPointsInPolygon(editedPolygon, layerConfig, zarrUrl);
 
           // If point limit was exceeded, revert the polygon to its previous position
           if (result.limitExceeded) {
@@ -767,7 +848,7 @@ export const usePolygonTextLayer = () => {
     getText: (d: any) => d.text,
     getColor: [255, 255, 255, Math.round(polygonOpacity * 255)],
     getSize: 18,
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     fontWeight: 'bold',
     getTextAnchor: 'middle',
     getAlignmentBaseline: 'center',

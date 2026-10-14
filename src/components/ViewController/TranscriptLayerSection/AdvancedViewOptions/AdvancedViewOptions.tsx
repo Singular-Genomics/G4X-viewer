@@ -77,6 +77,7 @@ const sx = {
     paddingLeft: '8px'
   },
   modalContentText: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    whiteSpace: 'pre-line'
   }
 };
