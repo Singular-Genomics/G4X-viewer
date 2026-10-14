@@ -50,6 +50,11 @@ const parseVersion = (version: string): ParsedVersion | undefined => {
 
 const compareVersions = (a: ParsedVersion, b: ParsedVersion): number => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
 
+const takeMostRecent = (changelog: ChangelogEntry[]) => ({
+  entries: changelog.slice(0, MAX_LISTED_VERSIONS),
+  wasLimited: changelog.length > MAX_LISTED_VERSIONS
+});
+
 export const getChangelogEntries = (
   versionSince?: string
 ): { entries: ChangelogEntry[]; wasLimited: boolean } | undefined => {
@@ -61,10 +66,7 @@ export const getChangelogEntries = (
     const since = versionSince ? parseVersion(versionSince) : undefined;
 
     if (!since) {
-      return {
-        entries: changelog.splice(0, MAX_LISTED_VERSIONS),
-        wasLimited: true
-      };
+      return takeMostRecent(changelog);
     }
 
     const lastSeenIndex = changelog.findIndex((entry) => {
@@ -73,10 +75,7 @@ export const getChangelogEntries = (
     });
 
     if (lastSeenIndex < 0) {
-      return {
-        entries: changelog.splice(0, MAX_LISTED_VERSIONS),
-        wasLimited: true
-      };
+      return takeMostRecent(changelog);
     }
 
     const unseen = changelog.slice(0, lastSeenIndex);
