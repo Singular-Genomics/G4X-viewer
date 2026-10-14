@@ -361,7 +361,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     }
   },
   modalContent: {
-    width: '700px'
+    width: { xs: '100%', sm: '70vw', md: '700px' }
   },
   exportGrid: {
     display: 'flex',
@@ -375,12 +375,12 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     marginTop: '8px'
   },
   sectionTitle: {
-    color: theme.palette.gx.primary.black,
+    color: theme.palette.text.primary,
     fontWeight: 600,
     marginBottom: '2px'
   },
   sectionDesc: {
-    color: theme.palette.gx.darkGrey[900],
+    color: theme.palette.text.secondary,
     fontSize: '13px',
     marginBottom: '0px'
   },
@@ -419,7 +419,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   formatControl: {
     marginBottom: '24px',
     '& .MuiFormLabel-root': {
-      color: theme.palette.gx.primary.black,
+      color: theme.palette.text.primary,
       marginBottom: '8px'
     }
   },
@@ -430,7 +430,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   radioOption: {
     '& .MuiFormControlLabel-label': {
       fontSize: '14px',
-      color: theme.palette.gx.primary.black
+      color: theme.palette.text.primary
     },
     '& .MuiRadio-root': {
       color: theme.palette.gx.mediumGrey[900],

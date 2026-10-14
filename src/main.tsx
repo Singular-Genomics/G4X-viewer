@@ -1,5 +1,14 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { App } from './App';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+
+if (window.location.pathname === '/components') {
+  import('./ComponentsShowcaseApp').then(({ ComponentsShowcaseApp }) => {
+    root.render(<ComponentsShowcaseApp />);
+  });
+} else {
+  import('./App').then(({ App }) => {
+    root.render(<App />);
+  });
+}

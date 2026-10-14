@@ -190,16 +190,16 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   versionLabel: {
     fontSize: '16px',
     fontWeight: 700,
-    color: theme.palette.gx.primary.black
+    color: theme.palette.text.primary
   },
   versionDate: {
     fontSize: '12px',
-    color: theme.palette.gx.mediumGrey[300]
+    color: theme.palette.text.secondary
   },
   sectionTitle: {
     fontSize: '14px',
     fontWeight: 700,
-    color: theme.palette.gx.primary.black
+    color: theme.palette.text.primary
   },
   sectionList: {
     margin: '4px 0 0',
@@ -207,7 +207,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   sectionItem: {
     fontSize: '14px',
-    color: theme.palette.gx.primary.black
+    color: theme.palette.text.primary
   },
   linksWrapper: {
     display: 'flex',
@@ -218,7 +218,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   legacyNote: {
     fontSize: '13px',
-    color: theme.palette.gx.primary.black
+    color: theme.palette.text.primary
   },
   link: {
     fontSize: '13px',
@@ -237,7 +237,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   moreTitle: {
     fontSize: '16px',
     fontWeight: 700,
-    color: theme.palette.gx.primary.black
+    color: theme.palette.text.primary
   },
   showAllButton: {
     marginTop: '8px',

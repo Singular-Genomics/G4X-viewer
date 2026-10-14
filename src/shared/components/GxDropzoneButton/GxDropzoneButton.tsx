@@ -76,8 +76,6 @@ export const GxDropzoneButton = ({
                   title={cloudUploadTooltipText}
                   arrow
                   placement="top"
-                  enterDelay={800}
-                  leaveDelay={50}
                 >
                   <span>
                     <IconButton
@@ -108,8 +106,6 @@ export const GxDropzoneButton = ({
           title={tooltipText}
           arrow
           placement="top"
-          enterDelay={800}
-          leaveDelay={50}
         >
           <Button
             fullWidth

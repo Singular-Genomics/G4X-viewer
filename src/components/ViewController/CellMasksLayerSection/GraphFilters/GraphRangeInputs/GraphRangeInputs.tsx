@@ -145,6 +145,7 @@ export function GraphRangeInputs({
           type="number"
           size="small"
           error={!!errors[field]}
+          sx={sx.input}
         />
       ))}
       <Button
@@ -170,18 +171,32 @@ export function GraphRangeInputs({
 const styles = (theme: Theme) => ({
   inputWrapper: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr) 100px 100px',
+    gridTemplateColumns: 'repeat(4, minmax(0, 1fr)) repeat(2, minmax(0, 1.15fr))',
     justifyContent: 'space-between',
     alignItems: 'start',
     gap: '8px',
-    paddingBlock: '16px',
+    paddingBlock: '8px',
     height: 'min-content',
     marginTop: 'auto',
     backgroundColor: theme.palette.gx.primary.white,
     paddingInline: '8px'
   },
+  input: {
+    // Not .MuiOutlinedInput-root - GxInput overrides that key.
+    '& .MuiInputBase-root': {
+      height: '36px',
+      fontSize: '14px'
+    },
+    '& .MuiInputLabel-root': {
+      fontSize: '14px'
+    },
+    // Re-center the resting label for the 36px height.
+    '& .MuiInputLabel-root:not(.MuiInputLabel-shrink)': {
+      transform: 'translate(14px, 8px) scale(1)'
+    }
+  },
   clearButton: {
-    height: '100%',
+    height: '36px',
     color: theme.palette.gx.accent.greenBlue,
     border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
@@ -192,7 +207,7 @@ const styles = (theme: Theme) => ({
     }
   },
   confirmButton: {
-    height: '100%',
+    height: '36px',
     color: theme.palette.gx.primary.white,
     background: theme.palette.gx.gradients.brand(),
     '&.Mui-disabled': {

@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { NavigationProps, NavigationView } from './Navigation.types';
@@ -7,11 +7,13 @@ import { SocialIcons } from '../SocialIcons/SocialIcons';
 import { NavigationRunInfo } from './NavigationRunInfo';
 import { ChangelogModal } from '../ChangelogModal';
 import { useChangelog } from '../../hooks/useChangelog.hook';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
 
-export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
+export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onToggleViewerUi }: NavigationProps) => {
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
@@ -84,7 +86,30 @@ export const Navigation = ({ currentView, onViewChange }: NavigationProps) => {
             />
           </Tabs>
         </Box>
-        <SocialIcons />
+        <Box sx={sx.actionsSection}>
+          <Tooltip
+            title={
+              currentView === 'viewer'
+                ? t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')
+                : ''
+            }
+          >
+            <IconButton
+              onClick={currentView === 'viewer' ? onToggleViewerUi : undefined}
+              sx={{
+                ...sx.viewerUiButton,
+                ...(currentView === 'dashboard' ? sx.viewerUiButtonPlaceholder : {})
+              }}
+            >
+              {isViewerUiHidden ? (
+                <VisibilityOutlinedIcon fontSize="small" />
+              ) : (
+                <VisibilityOffOutlinedIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
+          <SocialIcons />
+        </Box>
       </Box>
       <ChangelogModal
         isOpen={isOpen}
@@ -139,6 +164,7 @@ const styles = (theme: Theme) => ({
     display: 'none',
     alignItems: 'center',
     gap: '40px',
+    paddingRight: '8px',
     pointerEvents: 'auto',
     [theme.breakpoints.up('md')]: {
       display: 'flex'
@@ -186,6 +212,23 @@ const styles = (theme: Theme) => ({
     [theme.breakpoints.up('md')]: {
       display: 'flex'
     }
+  },
+  actionsSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  viewerUiButton: {
+    padding: '8px',
+    color: theme.palette.gx.lightGrey[500],
+    '&:hover': {
+      color: theme.palette.gx.lightGrey[300],
+      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+    }
+  },
+  viewerUiButtonPlaceholder: {
+    visibility: 'hidden',
+    pointerEvents: 'none'
   },
   tabs: {
     minHeight: '48px',

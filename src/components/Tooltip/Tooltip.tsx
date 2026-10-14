@@ -1,10 +1,11 @@
 import { Box, Theme, useTheme } from '@mui/material';
 import { TooltipType, useTooltipStore } from '../../stores/TooltipStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { TooltipCellMaskContent, TooltipTranscriptConent } from './Tooltip.helpers';
 import { CellMaskDatapointType, TranscriptDatapointType } from './Tooltip.types';
+import { TOOLTIP_ENTER_DELAY } from '../../shared/constants';
 
 function getTooltipContent(type: TooltipType | undefined, object: any) {
   if (type === 'Transcript') {
@@ -19,6 +20,7 @@ export function Tooltip() {
   const theme = useTheme();
   const sx = styles(theme);
   const tooltipRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [viewportWidth, viewportHeight] = useViewerStore(
     useShallow((store) => [store.viewportWidth, store.viewportHeight])
   );
@@ -28,8 +30,16 @@ export function Tooltip() {
   const tooltipElement = tooltipRef.current;
 
   useEffect(() => {
+    setIsVisible(false);
+    if (!object) return;
+
+    const timeout = window.setTimeout(() => setIsVisible(true), TOOLTIP_ENTER_DELAY);
+    return () => window.clearTimeout(timeout);
+  }, [object, type]);
+
+  useEffect(() => {
     if (tooltipElement) {
-      if (object) {
+      if (object && isVisible) {
         tooltipElement.style.display = 'block';
 
         const tooltipWidth = tooltipElement.offsetWidth;
@@ -44,7 +54,7 @@ export function Tooltip() {
         tooltipElement.style.display = 'none';
       }
     }
-  }, [tooltipElement, x, y, object, viewportWidth, viewportHeight]);
+  }, [tooltipElement, x, y, object, isVisible, viewportWidth, viewportHeight]);
 
   return (
     <Box

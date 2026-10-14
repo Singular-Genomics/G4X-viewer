@@ -94,6 +94,7 @@ export const UmapGraphHeader = () => {
         error={!!errors.pointSize}
         helperText={errors.pointSize || `Min. ${MIN_POINT_SIZE} | Max. ${MAX_POINT_SIZE}`}
         type="number"
+        size="small"
         sx={sx.inputField}
       />
       <Box sx={sx.subsamplingWrapper}>
@@ -101,7 +102,6 @@ export const UmapGraphHeader = () => {
         <Tooltip
           placement="top"
           arrow
-          enterDelay={250}
           title={t('segmentationSettings.umapMenuSubsamplingStepTooltip')}
         >
           <HelpIcon sx={sx.helpIcon} />
@@ -114,6 +114,7 @@ export const UmapGraphHeader = () => {
         error={!!errors.subsamplingValue}
         helperText={errors.subsamplingValue || `Min. ${MIN_SUBSAMPLE_VALUE} | Max. ${MAX_SUBSAMPLE_VALUE}`}
         type="number"
+        size="small"
         sx={sx.inputField}
       />
     </Box>
@@ -125,17 +126,19 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     height: 'min-content',
     backgroundColor: theme.palette.gx.primary.white,
-    gap: '16px',
+    gap: '12px',
     padding: '8px 8px 0 8px'
   },
   inputLabel: {
     textAlign: 'right',
     textWrap: 'nowrap',
     fontWeight: 'bold',
-    marginTop: '16px'
+    fontSize: '14px',
+    marginTop: '6px'
   },
   helpIcon: {
-    marginTop: '16px',
+    marginTop: '6px',
+    fontSize: '20px',
     color: theme.palette.gx.mediumGrey[100]
   },
   subsamplingWrapper: {
@@ -143,8 +146,21 @@ const styles = (theme: Theme) => ({
     gap: '8px'
   },
   inputField: {
+    width: '80px',
+    flexShrink: 0,
+    // Not .MuiOutlinedInput-root - GxInput overrides that key.
+    '& .MuiInputBase-root': {
+      height: '32px',
+      fontSize: '14px'
+    },
+    '& .MuiOutlinedInput-input': {
+      textAlign: 'center'
+    },
     '& .MuiFormHelperText-root': {
-      marginTop: '0px'
+      margin: 0,
+      fontSize: '11px',
+      textAlign: 'center',
+      whiteSpace: 'nowrap'
     }
   }
 });
