@@ -20,7 +20,14 @@ These controls sit directly in the viewer window and support dashboard access, R
 
     Opens the [dashboard](../dashboard/index.md) for analysis of user-selected ROIs. Switching between **Dashboard** and **Viewer** keeps the same session and shared save state.
 
-- <b><u>View G4X Summary Report:</u></b>
+- <b><u>Export All Settings:</u></b>
+
+    Opens a dialog where you can copy all current viewer settings as either a complete G4X-viewer URL or a settings string. You can share either format with other users or reuse it to apply the same settings across sessions and samples. To import settings, paste the URL or string into the corresponding field, then click **Apply**. Both formats include settings from the individual viewer layers.
+
+!!! tip "Find your preferred settings and save them"
+    Once you've found settings that work well for you, copy the URL or settings string and save it with your project notes. Reusing it makes it faster to explore samples with a consistent view of your data.
+
+- <b><u>Summary Report:</u></b>
 
     Opens the G4X Sample Summary Report HTML file. This report details core run statistics and information to help you assess data quality. The report is also available in the root directory for each sample. For more details on standard output files, see [G4X data](https://docs.singulargenomics.com/g4x_data/).
 
@@ -38,7 +45,9 @@ These controls sit directly in the viewer window and support dashboard access, R
 
     - **Screenshot:** Capture screenshots directly from the viewer and save them to your local device. Screenshots include only the current viewing area and exclude viewer interface elements such as side panels, menus, and buttons.
 
-    - **Export/Import Polygons:** Import or export polygons and their associated metadata. Exported files can include polygon vertices, metadata, and transcript contents. Supported export formats include **JSON** and **CSV**. Exported polygon coordinates can be imported later to restore previously saved ROIs from **JSON** files.
+    - **Export Polygons:** Export polygons and their associated metadata. Exported files can include polygon vertices, metadata, and transcript contents. Supported formats include **JSON** and **CSV**.
+
+    - **Import Polygons:** Import a previously exported **JSON** file to restore saved polygons. **CSV** exports cannot be imported.
 
     - **Draw Polygon (ROI Selection):** Create custom regions of interest (ROIs) for analysis and export. There is no limit to the number of ROIs that can be created. Once completed, the ROI is automatically analyzed for the cells, transcripts, and protein intensity contained within its boundaries. Polygons can be edited, imported, exported, and used for downstream analysis.
 

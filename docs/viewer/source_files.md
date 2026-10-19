@@ -20,7 +20,7 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
     Use this button to paste a cloud storage link and stream data into the viewer in real time.
 
-- <b><u>File Upload:</u></b>
+- <b><u>Local Upload:</u></b>
 
     Use this button to upload files from local storage. Depending on the viewer version, you can:
 
@@ -37,9 +37,9 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
       For additional information about viewer-compatible output files, see the [g4x_viewer output documentation](https://docs.singulargenomics.com/g4x_data/output_files/g4x_viewer/).
 
-- <b><u>Z-Layer Control:</u></b>
+- <b><u>Image Size/Layer:</u></b>
 
-      Enables navigation between image Z planes in multidimensional image datasets. Standard G4X datasets typically contain a single Z plane, so these controls are usually fixed or unavailable during normal use.
+      Displays the current layer, total layer count, and image dimensions.
 
 - <b><u>Manual Scaling:</u></b>
 
@@ -54,7 +54,7 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
       Shows or hides image layers displayed in the viewer.
 
       - **Channel Settings:** Shows or hides protein image layers.
-      - **Brightfield Image Settings:** Shows or hides the fH&E layer.
+      - **Brightfield Images Settings:** Shows or hides the fH&E layer.
       - **Transcript Layer Settings:** Shows or hides transcript dots.
       - **Segmentation Layer Settings:** Shows or hides cell segmentation masks.
 

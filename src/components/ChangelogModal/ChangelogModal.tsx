@@ -6,15 +6,26 @@ import { ChangelogModalProps, ChangelogModalVersionSectionProps } from './Change
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useCallback, useRef, useState } from 'react';
 
+const MAX_VISIBLE_ITEMS_PER_SECTION = 5;
+
 const ChangelogModalVersionSection = ({ entry, openByDefault }: ChangelogModalVersionSectionProps) => {
   const theme = useTheme();
   const sx = styles(theme);
+  const { t } = useTranslation();
 
   const sectionRef = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState<boolean>(!!openByDefault);
+  const [showAllItems, setShowAllItems] = useState<boolean>(false);
+
+  const totalItems = entry.sections.reduce((sum, section) => sum + section.items.length, 0);
+  const hasHiddenItems = entry.sections.some((section) => section.items.length > MAX_VISIBLE_ITEMS_PER_SECTION);
 
   const handleIconClick = useCallback(() => {
     setExpanded((previousState) => !previousState);
+  }, []);
+
+  const handleToggleShowAll = useCallback(() => {
+    setShowAllItems((previousState) => !previousState);
   }, []);
 
   const handleExpandScroll = useCallback(() => {
@@ -53,25 +64,38 @@ const ChangelogModalVersionSection = ({ entry, openByDefault }: ChangelogModalVe
         timeout="auto"
         unmountOnExit
       >
-        {entry.sections.map((section) => (
-          <Box key={section.title}>
-            <Typography sx={sx.sectionTitle}>{section.title}</Typography>
-            <Box
-              component="ul"
-              sx={sx.sectionList}
-            >
-              {section.items.map((item) => (
-                <Typography
-                  key={item}
-                  component="li"
-                  sx={sx.sectionItem}
-                >
-                  {item}
-                </Typography>
-              ))}
+        {entry.sections.map((section) => {
+          const visibleItems = showAllItems ? section.items : section.items.slice(0, MAX_VISIBLE_ITEMS_PER_SECTION);
+
+          return (
+            <Box key={section.title}>
+              <Typography sx={sx.sectionTitle}>{section.title}</Typography>
+              <Box
+                component="ul"
+                sx={sx.sectionList}
+              >
+                {visibleItems.map((item) => (
+                  <Typography
+                    key={item}
+                    component="li"
+                    sx={sx.sectionItem}
+                  >
+                    {item}
+                  </Typography>
+                ))}
+              </Box>
             </Box>
-          </Box>
-        ))}
+          );
+        })}
+        {hasHiddenItems && (
+          <Button
+            size="small"
+            onClick={handleToggleShowAll}
+            sx={sx.showAllButton}
+          >
+            {showAllItems ? t('changelog.showFewerChanges') : t('changelog.showAllChanges', { total: totalItems })}
+          </Button>
+        )}
       </Collapse>
     </Box>
   );
@@ -97,6 +121,7 @@ export const ChangelogModal = ({ isOpen, onClose, entries, showMore }: Changelog
         {entries?.length ? (
           entries.map((entry, index) => (
             <ChangelogModalVersionSection
+              key={entry.version}
               entry={entry}
               openByDefault={index === 0}
             />
@@ -131,13 +156,13 @@ export const ChangelogModal = ({ isOpen, onClose, entries, showMore }: Changelog
             {t('changelog.docsLinkLabel')}
           </Link>
           <Link
-            href={socialLinks.changelogHistory}
+            href={socialLinks.latestRelease}
             target="_blank"
             rel="noopener noreferrer"
             underline="none"
             sx={sx.link}
           >
-            {t('changelog.historyLinkLabel')}
+            {t('changelog.latestReleaseLinkLabel')}
           </Link>
         </Box>
       </Box>
@@ -213,6 +238,12 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     fontSize: '16px',
     fontWeight: 700,
     color: theme.palette.gx.primary.black
+  },
+  showAllButton: {
+    marginTop: '8px',
+    fontSize: '13px',
+    textTransform: 'none',
+    color: theme.palette.gx.accent.info
   },
   collapseIcon: {
     marginLeft: 'auto'
