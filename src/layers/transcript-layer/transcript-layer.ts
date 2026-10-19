@@ -61,13 +61,20 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       visible: this.props.showDiscardedPoints
     });
 
+    // Stroke is centered on the radius, so grow it to keep the ring outside the point
+    const outlineWidth = this.props.showOutline ? 1 : 0;
+
     const pointsLayer = new ScatterplotLayer({
       id: `sub-point-layer-${this.props.id}`,
       data: points,
       getPosition: (d) => d.position,
       getFillColor: (d) => (this.props.parsedColorMap[d.geneName] as [number, number, number]) || [255, 255, 255],
-      getRadius: this.props.pointSize,
+      getRadius: this.props.pointSize + outlineWidth / 2,
       radiusUnits: 'pixels',
+      stroked: this.props.showOutline,
+      getLineColor: [255, 255, 255],
+      getLineWidth: 1,
+      lineWidthUnits: 'pixels',
       pickable: true
     });
 
@@ -87,7 +94,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
     this.zarrLoader =
       props.zarrUrl || props.zarrStoreFactory
-        ? new ZarrTranscriptLoader(props.zarrUrl ?? undefined, props.zarrStoreFactory)
+        ? new ZarrTranscriptLoader(props.zarrUrl ?? undefined, props.zarrStoreFactory, props.source)
         : null;
     this.tileLoadCounter = 0;
   }
@@ -199,7 +206,9 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           this.props.pointSize,
           this.props.colormap,
           this.props.config
-        ]
+        ],
+        // deck ignores function props, this refreshes cached sublayers
+        renderSubLayers: [this.props.showOutline]
       },
       renderSubLayers: ({ id, data }) =>
         new SingleTileLayer({
@@ -209,6 +218,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           showBoundries: this.props.showTilesBoundries,
           showData: this.props.showTilesData,
           showDiscardedPoints: this.props.showDiscardedPoints,
+          showOutline: !!this.props.showOutline,
           parsedColorMap: this.parsedColorMap
         })
     });

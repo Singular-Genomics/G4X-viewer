@@ -4,6 +4,7 @@ import { useBrightfieldImagesStore } from '../stores/BrightfieldImagesStore';
 import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import type { SegmentationOption } from '../stores/CellSegmentationLayerStore/CellSegmentationLayerStore.types';
 import { useTranscriptLayerStore } from '../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../stores/DirectSeqLayerStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { ZarrDataSet } from './ZarrDataSet';
@@ -46,10 +47,11 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   const successMessages: string[] = [];
   const warningMessages: string[] = [];
 
-  const [hasImagesData, hasTranscriptsData, hasSegmentationData] = await Promise.all([
+  const [hasImagesData, hasTranscriptsData, hasSegmentationData, hasDirectSeqData] = await Promise.all([
     zarrDataSet.hasImagesData(),
     zarrDataSet.hasTranscriptsData(),
-    zarrDataSet.hasSegmentationData()
+    zarrDataSet.hasSegmentationData(),
+    zarrDataSet.hasDirectSeqData()
   ]);
 
   if (!hasImagesData && !hasTranscriptsData && !hasSegmentationData) {
@@ -62,6 +64,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
 
   useZarrDataStore.getState().reset();
   useTranscriptLayerStore.getState().reset();
+  useDirectSeqLayerStore.getState().reset();
   useCellSegmentationLayerStore.getState().reset();
   useBrightfieldImagesStore.getState().reset();
   useViewerStore.setState({
@@ -80,6 +83,7 @@ export const loadZarrFromUrl = async ({ cloudImageUrl, t }: LoadZarrFromUrlParam
   useZarrDataStore.setState({ zarrDataSet });
 
   useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+  useZarrDataStore.getState().setDirectSeqData({ hasData: hasDirectSeqData });
   useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
   if (!hasTranscriptsData) {
