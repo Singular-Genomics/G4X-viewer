@@ -1,7 +1,13 @@
-import { SingleTileLayerProps, TranscriptLayerProps, getTileDataProps, LayerDataItem } from './transcript-layer.types';
-import { CompositeLayer, PickingInfo, UpdateParameters } from '@deck.gl/core';
+import {
+  TranscriptTileLayerProps,
+  TranscriptLayerProps,
+  getTileDataProps,
+  LayerDataItem
+} from './transcript-layer.types';
+import { CompositeLayer, GetPickingInfoParams, Layer, PickingInfo, UpdateParameters } from '@deck.gl/core';
 import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
+import type { _Tileset2D as Tileset2D } from '@deck.gl/geo-layers';
 import type { Texture } from '@luma.gl/core';
 
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
@@ -9,6 +15,15 @@ import { ZarrTranscriptLoader } from './zarr-transcript-loader';
 import { ColorMapEntry } from '../../stores/ZarrDataStore';
 import { emptyTile } from '../../utils/transcriptTileDecode';
 import { GeneRegistry } from '../../utils/GeneRegistry';
+import {
+  TileBucket,
+  BucketEntry,
+  TileSequencer,
+  makeTileContent,
+  updateBuckets,
+  resolveBucketIndex,
+  sameItems
+} from './tile-buckets';
 import { GeneLookupExtension, createGeneLookupTexture, fillGeneLookup } from './gene-lookup-extension';
 
 // Reuse the parsed colormap while the colormap reference is unchanged (layer is rebuilt every render).
@@ -25,46 +40,62 @@ const parseColorMap = (colormap: ColorMapEntry[]) => {
 
 const GENE_LOOKUP_EXTENSIONS = [new GeneLookupExtension()];
 
-class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
-  // Binary attribute payload is built once per tile (stable identity => attributes are uploaded to the GPU once).
-  updateState({ props, oldProps, changeFlags }: UpdateParameters<this>) {
-    if (changeFlags.dataChanged || props.layerData !== oldProps.layerData || !this.state.binaryData) {
-      const { points } = props.layerData[0];
-      this.setState({
-        binaryData: {
-          length: points.length,
-          attributes: {
-            getPosition: { value: points.positions, size: 2 },
-            getGeneIndex: { value: points.geneIndex, size: 1 }
-          }
-        }
-      });
-    }
-    // Debug label only: number of points passing the filter (O(points), skipped unless the label is shown)
-    if (
-      props.showData &&
-      (changeFlags.dataChanged ||
-        props.layerData !== oldProps.layerData ||
-        props.geneLookupVersion !== oldProps.geneLookupVersion ||
-        !oldProps.showData)
-    ) {
-      const { geneIndex, length } = props.layerData[0].points;
-      let visible = 0;
-      for (let i = 0; i < length; i++) visible += props.geneVisible[geneIndex[i]];
-      this.setState({ visibleCount: visible });
-    }
+/**
+ * Byte budget of deck's tile cache (typed arrays owned by cached tiles, see makeTileContent). A full-resolution full
+ * view (~2,000 tiles) needs ~150 MB, so it fits with room for other levels. Tiles that are selected or visible are never
+ * evicted, even if they alone exceed the budget; older invisible tiles go first.
+ */
+const TRANSCRIPT_TILE_CACHE_BYTES = 400 * 1024 * 1024;
+
+const WHITE: [number, number, number] = [255, 255, 255];
+const OUTLINE_COLOR: [number, number, number] = [238, 238, 238];
+const BOUNDARY_COLOR: [number, number, number] = [255, 255, 255];
+const LABEL_COLOR: [number, number, number, number] = [255, 255, 255, 255];
+const LABEL_BACKGROUND: [number, number, number, number] = [0, 0, 0, 150];
+
+type DebugLabel = { textLabel: string; position: [number, number] };
+
+/**
+ * TileLayer that keeps tile selection / fetching / caching / LOD, but instead of one sublayer per tile it draws the
+ * visible tiles as a few "bucket" layers (consecutive runs of up to BUCKET_TILES tiles in the exact order the stock
+ * TileLayer draws its per-tile sublayers: `tileset.tiles`, i.e. zoom ascending, then tile creation order).
+ * Per-layer CPU cost in deck (uniform + buffer binding) dominates when ~2,000 tiles are on screen at once.
+ *
+ * A bucket's concatenated buffers are rebuilt only when its set of member tiles changes, never on pan/zoom alone.
+ * renderLayers runs at most once per update pass (i.e. once per frame), so tile arrivals are batched per frame.
+ */
+class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayerProps> {
+  initializeState() {
+    super.initializeState();
+    Object.assign(this.state, {
+      buckets: new Map<string, TileBucket>(),
+      sequencer: new TileSequencer<object>(),
+      visibleItems: [] as LayerDataItem[],
+      labels: null as { items: LayerDataItem[]; geneVisible: Uint8Array; version: number; data: DebugLabel[] } | null
+    });
   }
 
-  getPickingInfo({ info }: { info: PickingInfo }) {
-    if (info.index >= 0) {
-      const { points } = this.props.layerData[0];
-      const i = info.index;
-      if (i < points.length) {
+  // The base getter requires every tile to own `tile.layers`, which this layer never creates.
+  get isLoaded(): boolean {
+    return Boolean(this.state?.tileset?.selectedTiles?.every((tile) => tile.isLoaded));
+  }
+
+  // Bucket sublayers span several tiles, so the per-tile viewport culling of TileLayer does not apply.
+  filterSubLayer() {
+    return true;
+  }
+
+  getPickingInfo({ info, sourceLayer }: GetPickingInfoParams): any {
+    const bucket = (sourceLayer?.props as { bucket?: TileBucket } | undefined)?.bucket;
+    if (bucket && info.index >= 0) {
+      const hit = resolveBucketIndex(bucket, info.index);
+      if (hit) {
+        const i = info.index;
         // Resolve the hovered point lazily from the typed arrays (no per-point objects exist)
         info.object = {
-          position: [points.positions[2 * i], points.positions[2 * i + 1]],
-          geneName: this.props.geneNames[points.geneIndex[i]] ?? '',
-          cellId: String(points.cellId[i])
+          position: [bucket.positions[2 * i], bucket.positions[2 * i + 1]],
+          geneName: this.props.geneNames[bucket.geneIndex[i]] ?? '',
+          cellId: String(hit.item.points.cellId[hit.localIndex])
         };
       }
     }
@@ -72,96 +103,159 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
   }
 
   renderLayers() {
-    const { index, textPosition, tileData, points } = this.props.layerData[0];
-    const binaryData = this.state.binaryData as { length: number; attributes: Record<string, any> };
-    const visibleCount = this.state.visibleCount as number | undefined;
-    const layers = [];
+    const state = this.state as unknown as {
+      tileset: Tileset2D | null;
+      buckets: Map<string, TileBucket>;
+      sequencer: TileSequencer<object>;
+      visibleItems: LayerDataItem[];
+      labels: { items: LayerDataItem[]; geneVisible: Uint8Array; version: number; data: DebugLabel[] } | null;
+    };
+    const tileset = state.tileset;
+    if (!tileset) return null;
 
-    if (this.props.showBoundries) {
+    // Same tiles, same order as the stock TileLayer draws: `tileset.tiles` (zoom ascending, then creation order),
+    // restricted to tiles flagged visible by the refinement strategy ('never': selected tiles only). Every tile must
+    // pass through the sequencer (loaded or not) so its sequence number reflects creation order, not load order.
+    const entries: BucketEntry[] = [];
+    let visible: LayerDataItem[] = [];
+    for (const tile of tileset.tiles) {
+      const key = state.sequencer.bucketKey(tile, tile.zoom);
+      if (tile.isVisible && tile.content) {
+        for (const item of tile.content as LayerDataItem[]) {
+          entries.push({ item, key });
+          visible.push(item);
+        }
+      }
+    }
+    if (sameItems(visible, state.visibleItems)) visible = state.visibleItems;
+    else state.visibleItems = visible;
+
+    const nextBuckets = updateBuckets(entries, state.buckets);
+    state.buckets = nextBuckets;
+
+    const layers: Layer[] = [];
+    const {
+      pointSize,
+      showBoundries,
+      showData,
+      showDiscardedPoints,
+      geneVisible,
+      geneLookupTexture,
+      geneLookupVersion
+    } = this.props;
+
+    if (showBoundries) {
       layers.push(
-        new PolygonLayer({
-          id: `sub-polygon-layer-${this.props.id}`,
-          data: this.props.layerData,
-          filled: false,
-          wireframe: false,
-          getPolygon: (d) => d.boundingBox,
-          getLineWidth: 5,
-          lineWidthMaxPixels: 5,
-          getLineColor: [255, 255, 255]
-        })
+        new PolygonLayer(
+          this.getSubLayerProps({
+            id: 'boundaries',
+            data: visible,
+            filled: false,
+            wireframe: false,
+            getPolygon: (d: LayerDataItem) => d.boundingBox,
+            getLineWidth: 5,
+            lineWidthMaxPixels: 5,
+            getLineColor: BOUNDARY_COLOR
+          })
+        )
       );
     }
 
-    // @ INFO TEXT LAYER
-    if (this.props.showData) {
-      layers.push(
-        new TextLayer({
-          id: `sub-text-layer-${this.props.id}`,
-          data: [
-            {
-              textLabel: `[${index.x}, ${index.y}, ${index.z}]|[${tileData.width}, ${tileData.height}]|${visibleCount ?? points.length}`,
+    // @ INFO TEXT LAYER (number of points passing the filter is O(points): only recomputed when it can change)
+    if (showData) {
+      let labels = state.labels;
+      if (
+        !labels ||
+        labels.items !== visible ||
+        labels.geneVisible !== geneVisible ||
+        labels.version !== geneLookupVersion
+      ) {
+        labels = {
+          items: visible,
+          geneVisible,
+          version: geneLookupVersion,
+          data: visible.map(({ index, textPosition, tileData, points }) => {
+            let count = 0;
+            for (let i = 0; i < points.length; i++) count += geneVisible[points.geneIndex[i]];
+            return {
+              textLabel: `[${index.x}, ${index.y}, ${index.z}]|[${tileData.width}, ${tileData.height}]|${count}`,
               position: [textPosition.y, textPosition.x]
-            }
-          ],
-          getPosition: (d) => d.position,
-          getText: (d) => d.textLabel,
-          getTextAnchor: 'start',
-          getAlignmentBaseline: 'top',
-          getSize: 10,
-          getColor: [255, 255, 255, 255],
-          background: true,
-          backgroundPadding: [5, 5],
-          getBackgroundColor: [0, 0, 0, 150]
-        })
+            };
+          })
+        };
+        state.labels = labels;
+      }
+      layers.push(
+        new TextLayer(
+          this.getSubLayerProps({
+            id: 'labels',
+            data: labels.data,
+            getPosition: (d: DebugLabel) => d.position,
+            getText: (d: DebugLabel) => d.textLabel,
+            getTextAnchor: 'start',
+            getAlignmentBaseline: 'top',
+            getSize: 10,
+            getColor: LABEL_COLOR,
+            background: true,
+            backgroundPadding: [5, 5],
+            getBackgroundColor: LABEL_BACKGROUND
+          })
+        )
       );
     }
 
-    if (!this.props.geneLookupTexture || points.length === 0) return layers;
+    if (!geneLookupTexture) return layers;
 
     // @ POINTS LAYERS
     // Both layers share the same binary attributes; the gene lookup texture decides, per point and on the GPU,
     // which of them draws it (and with what color). Filtering never rebuilds per-point data.
-    if (this.props.showDiscardedPoints) {
+    for (const bucket of nextBuckets.values()) {
+      if (showDiscardedPoints) {
+        layers.push(
+          new ScatterplotLayer(
+            this.getSubLayerProps({
+              id: `discarded-${bucket.key}`,
+              data: bucket.data,
+              getFillColor: WHITE,
+              getLineColor: OUTLINE_COLOR,
+              getLineWidth: 0.2,
+              getRadius: pointSize,
+              radiusUnits: 'pixels',
+              updateTriggers: { getRadius: pointSize },
+              filled: false,
+              stroked: true,
+              extensions: GENE_LOOKUP_EXTENSIONS,
+              geneLookupTexture,
+              geneLookupVersion,
+              geneLookupMode: 'discarded'
+            }) as any
+          )
+        );
+      }
       layers.push(
-        new ScatterplotLayer({
-          id: `sub-discarded-point-layer-${this.props.id}`,
-          data: binaryData,
-          getFillColor: [255, 255, 255],
-          getLineColor: [238, 238, 238],
-          getLineWidth: 0.2,
-          getRadius: this.props.pointSize,
-          radiusUnits: 'pixels',
-          updateTriggers: { getRadius: this.props.pointSize },
-          filled: false,
-          stroked: true,
-          extensions: GENE_LOOKUP_EXTENSIONS,
-          geneLookupTexture: this.props.geneLookupTexture,
-          geneLookupVersion: this.props.geneLookupVersion,
-          geneLookupMode: 'discarded'
-        } as any)
+        new ScatterplotLayer(
+          this.getSubLayerProps({
+            id: `points-${bucket.key}`,
+            data: bucket.data,
+            bucket,
+            getFillColor: WHITE,
+            getRadius: pointSize,
+            radiusUnits: 'pixels',
+            updateTriggers: { getRadius: pointSize },
+            pickable: true,
+            extensions: GENE_LOOKUP_EXTENSIONS,
+            geneLookupTexture,
+            geneLookupVersion,
+            geneLookupMode: 'visible'
+          }) as any
+        )
       );
     }
-
-    layers.push(
-      new ScatterplotLayer({
-        id: `sub-point-layer-${this.props.id}`,
-        data: binaryData,
-        getFillColor: [255, 255, 255],
-        getRadius: this.props.pointSize,
-        radiusUnits: 'pixels',
-        updateTriggers: { getRadius: this.props.pointSize },
-        pickable: true,
-        extensions: GENE_LOOKUP_EXTENSIONS,
-        geneLookupTexture: this.props.geneLookupTexture,
-        geneLookupVersion: this.props.geneLookupVersion,
-        geneLookupMode: 'visible'
-      } as any)
-    );
     return layers;
   }
 }
 
-SingleTileLayer.layerName = 'SingleTileLayer';
+TranscriptTileLayer.layerName = 'TranscriptTileLayer';
 
 const LOADING_IDLE_DELAY_MS = 200;
 const NO_GENES: string[] = [];
@@ -303,7 +397,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
               height: bbox.bottom - bbox.top
             }
           };
-          return [item];
+          return makeTileContent(item);
         } finally {
           this.updateLoadingState(-1);
         }
@@ -324,7 +418,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
     const geneLookupTexture = this.state.lookupTexture as Texture;
     const geneLookupVersion = this.state.lookupVersion as number;
 
-    const tiledLayer = new TileLayer({
+    const tiledLayer = new TranscriptTileLayer({
       id: `tiled_layer_${tile_size}_${layer_width}_${layer_height}_${layers}`,
       tileSize: tile_size,
       maxZoom: layers,
@@ -332,24 +426,20 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       zoomOffset: LAYER_ZOOM_OFFSET,
       extent: [0, 0, layer_width, layer_height],
       refinementStrategy: 'never',
+      maxCacheByteSize: TRANSCRIPT_TILE_CACHE_BYTES,
       pickable: true,
       getTileData,
       updateTriggers: {
         getTileData: [this.props.zarrUrl, this.props.zarrStoreFactory, this.props.config]
       },
-      renderSubLayers: ({ id, data }) =>
-        new SingleTileLayer({
-          id,
-          layerData: data,
-          pointSize: this.props.pointSize,
-          showBoundries: this.props.showTilesBoundries,
-          showData: this.props.showTilesData,
-          showDiscardedPoints: this.props.showDiscardedPoints,
-          geneNames,
-          geneVisible,
-          geneLookupTexture: registry ? geneLookupTexture : null,
-          geneLookupVersion
-        })
+      pointSize: this.props.pointSize,
+      showBoundries: this.props.showTilesBoundries,
+      showData: this.props.showTilesData,
+      showDiscardedPoints: this.props.showDiscardedPoints,
+      geneNames,
+      geneVisible,
+      geneLookupTexture: registry ? geneLookupTexture : null,
+      geneLookupVersion
     });
     return [tiledLayer];
   }

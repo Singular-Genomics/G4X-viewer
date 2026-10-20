@@ -4,13 +4,11 @@ import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import type { Texture } from '@luma.gl/core';
 import type { ZarritaStoreFactory, ZarrTranscriptTileData } from '../../utils/ZarrDataSet.types';
 
-export type SingleTileLayerProps = CompositeLayerProps & {
-  layerData: LayerDataItem[];
+export type TranscriptTileLayerProps = {
   pointSize: number;
   showBoundries: boolean;
   showData: boolean;
   showDiscardedPoints: boolean;
-  disabledTiledView: boolean;
   /** gene index -> name (shared registry; may grow while tiles load) */
   geneNames: readonly string[];
   /** 1 when the gene passes the active filter, indexed by gene index */
