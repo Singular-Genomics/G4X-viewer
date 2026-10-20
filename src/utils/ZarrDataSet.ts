@@ -1,4 +1,4 @@
-import { open, get, FetchStore } from 'zarrita';
+import { open, get, FetchStore, Location } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
@@ -6,13 +6,17 @@ import type {
   ZarrTranscriptAttrs,
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
-  ZarrTranscriptPoint,
+  ZarrTranscriptField,
+  ZarritaReadableStore,
   ZarrCellsData,
   ZarrCellsSegmentations,
   ZarritaStoreFactory,
   ZarrRunMetadata
 } from './ZarrDataSet.types';
 import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
+import { GeneRegistry } from './GeneRegistry';
+import { ConsolidatedStore } from './ConsolidatedStore';
+import { decodeLegacyTile, decodePackedTile, decodeSplitTile, emptyTile } from './transcriptTileDecode';
 import { loadCellsFromZarr, loadCellsFromStoreFactory, fetchClusterIdsFromStoreFactory } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
@@ -29,14 +33,6 @@ export class NoCacheFetchStore {
   }
 }
 
-// Skips .zattrs requests — transcript tile arrays have no .zattrs, zarrita treats undefined as empty attrs.
-class SkipAttrsFetchStore extends NoCacheFetchStore {
-  override async get(key: string): Promise<Uint8Array | undefined> {
-    if (key.endsWith('.zattrs')) return undefined;
-    return super.get(key);
-  }
-}
-
 /**
  * ZarrDataSet - manages Zarr structure URL formatting
  *
@@ -47,13 +43,21 @@ class SkipAttrsFetchStore extends NoCacheFetchStore {
  *     position,polygon_offsets,polygon_vertices_xy,protein_names,protein_values,
  *     gene_names,gene_counts,gene_indices,gene_indptr}
  *   (cluster_labels & cluster_labels_order live in /cells/{segmentation}/.zattrs)
- * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
+ * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position} (legacy)
+ *     or {cell_id,gene_index,position} / {data} when layer_config.format_version == 2
  * - run_metadata: stored in .zattrs at root level
  */
+type TranscriptContext = {
+  layerConfig: ZarrLayerConfig;
+  registry: GeneRegistry;
+  store: ZarritaReadableStore;
+};
+
 export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: ZarrTranscriptAttrs | null = null;
+  private transcriptContext: Promise<TranscriptContext> | null = null;
   private storeFactory: ZarritaStoreFactory;
   private isCustomStore: boolean;
 
@@ -67,11 +71,16 @@ export class ZarrDataSet {
     }
   }
 
-  constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory) {
+  constructor(zarrUrl: string, storeFactory?: ZarritaStoreFactory, options: { noCache?: boolean } = {}) {
     this.zarrURL = zarrUrl.endsWith('/') ? zarrUrl.slice(0, -1) : zarrUrl;
     this.paths = createZarrPaths(this.zarrURL);
     this.isCustomStore = !!storeFactory;
-    this.storeFactory = storeFactory ?? ((subpath: string) => new FetchStore(this.zarrURL + '/' + subpath));
+    this.storeFactory =
+      storeFactory ??
+      ((subpath: string) =>
+        options.noCache
+          ? new NoCacheFetchStore(this.zarrURL + '/' + subpath)
+          : new FetchStore(this.zarrURL + '/' + subpath));
   }
 
   public getBaseURL(): string {
@@ -222,92 +231,122 @@ export class ZarrDataSet {
     return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  public async getTranscriptTileData({ z, y, x }: ZarrTileCoordinates): Promise<ZarrTranscriptTileData | null> {
-    try {
-      const transcriptConfig = await this.fetchTranscriptLayerConfig();
-      const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
-      const invertedZ = maxZoom - z;
+  /**
+   * Resolves everything needed to decode tiles once: layer_config, gene_order -> GeneRegistry and the store
+   * (wrapped with .zmetadata when the dataset provides consolidated metadata).
+   */
+  public getTranscriptContext(): Promise<TranscriptContext> {
+    if (!this.transcriptContext) {
+      this.transcriptContext = this.buildTranscriptContext().catch((error) => {
+        this.transcriptContext = null;
+        throw error;
+      });
+    }
+    return this.transcriptContext;
+  }
 
-      const tileField = (field: 'cell_id' | 'gene_name' | 'position') =>
-        ZARR_SUBPATHS.transcripts.tileField({ z: invertedZ, y, x, field });
+  private async buildTranscriptContext(): Promise<TranscriptContext> {
+    const attrs = await this.fetchTranscriptAttrs();
+    const layerConfig = attrs.layer_config;
+    if (!layerConfig) throw new Error('Dataset has no transcript layer_config');
+    let store: ZarritaReadableStore = this.storeFactory(ZARR_SUBPATHS.transcripts.base);
+    if (layerConfig.consolidated_metadata) {
+      store = (await ConsolidatedStore.tryOpen(store)) ?? store;
+    }
+    return { layerConfig, registry: new GeneRegistry(attrs.gene_order ?? []), store };
+  }
 
-      // open.v2 + attrs: false skips the .zattrs request (tile arrays have none, so it always ends in a 404 round trip)
-      // and the Zarr v3 fallback probe for missing tiles. Transcript data is Zarr v2 only.
+  private async openTileArray(store: ZarritaReadableStore, tilePath: string, field: ZarrTranscriptField) {
+    // attrs: false skips the .zattrs request (tile arrays have none) and the Zarr v3 fallback probe for missing
+    // tiles. Transcript data is Zarr v2 only.
+    const location = new Location(store as any, `/${tilePath}/${field}`);
+    return open.v2(location, { kind: 'array', attrs: false }).catch(() => null);
+  }
+
+  /**
+   * Fetch and decode one transcript tile into typed arrays (no per-point objects).
+   * `level` is the p-index (0 = full resolution), `y`/`x` the tile coordinates inside that level.
+   */
+  public async loadTranscriptTile(level: number, y: number, x: number): Promise<ZarrTranscriptTileData> {
+    const { layerConfig, registry, store } = await this.getTranscriptContext();
+    // store is rooted at transcripts/, so drop that prefix from the tile path
+    const tilePath = ZARR_SUBPATHS.transcripts
+      .tile({ z: level, y, x })
+      .slice(ZARR_SUBPATHS.transcripts.base.length + 1);
+    const tileSize = (layerConfig.tile_size / Math.pow(2, layerConfig.layers)) * Math.pow(2, level);
+
+    if ((layerConfig.format_version ?? 1) < 2) {
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open.v2(this.storeFactory(tileField('cell_id')) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField('gene_name')) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField('position')) as any, { kind: 'array', attrs: false }).catch(() => null)
+        this.openTileArray(store, tilePath, 'cell_id'),
+        this.openTileArray(store, tilePath, 'gene_name'),
+        this.openTileArray(store, tilePath, 'position')
       ]);
-
-      if (!cellIdArray || !geneNameArray || !positionArray) {
-        return { pointsData: [], numberOfPoints: 0 };
-      }
-
+      if (!cellIdArray || !geneNameArray || !positionArray) return emptyTile();
       const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
         get(cellIdArray),
         get(geneNameArray),
         get(positionArray)
       ]);
+      return decodeLegacyTile(
+        positionChunk.data as Int32Array,
+        geneNameChunk.data as any,
+        cellIdChunk.data as Int32Array,
+        registry
+      );
+    }
 
-      const cellIds = cellIdChunk.data as Int32Array;
-      const geneNames = geneNameChunk.data as any;
-      const positions = positionChunk.data as Int32Array;
-      const numberOfPoints = cellIds.length;
+    const origin = layerConfig.position_relative === false ? { x: 0, y: 0 } : { x: x * tileSize, y: y * tileSize };
+    if (layerConfig.layout === 'packed') {
+      const dataArray = await this.openTileArray(store, tilePath, 'data');
+      if (!dataArray) return emptyTile();
+      const chunk = await get(dataArray);
+      return decodePackedTile(chunk.data as Int32Array, origin);
+    }
+    const [cellIdArray, geneIndexArray, positionArray] = await Promise.all([
+      this.openTileArray(store, tilePath, 'cell_id'),
+      this.openTileArray(store, tilePath, 'gene_index'),
+      this.openTileArray(store, tilePath, 'position')
+    ]);
+    if (!cellIdArray || !geneIndexArray || !positionArray) return emptyTile();
+    const [cellIdChunk, geneIndexChunk, positionChunk] = await Promise.all([
+      get(cellIdArray),
+      get(geneIndexArray),
+      get(positionArray)
+    ]);
+    return decodeSplitTile(
+      positionChunk.data as Uint16Array,
+      geneIndexChunk.data as Uint16Array,
+      cellIdChunk.data as Int32Array,
+      origin
+    );
+  }
 
-      const pointsData: ZarrTranscriptPoint[] = [];
-      for (let i = 0; i < numberOfPoints; i++) {
-        const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
-        pointsData.push({
-          cellId: String(cellIds[i]),
-          geneName: geneName,
-          position: [positions[i * 2], positions[i * 2 + 1]]
-        });
-      }
-
-      return {
-        pointsData,
-        numberOfPoints
-      };
+  public async getTranscriptTileData({ z, y, x }: ZarrTileCoordinates): Promise<ZarrTranscriptTileData | null> {
+    try {
+      const { layerConfig } = await this.getTranscriptContext();
+      return await this.loadTranscriptTile(layerConfig.layers - z, y, x);
     } catch (error) {
       console.error(`Failed to fetch transcript tile data [z:${z}, y:${y}, x:${x}]:`, error);
       return null;
     }
   }
 
+  /** Gene registry (index -> name) shared by every tile loaded through this dataset. */
+  public async getGeneRegistry(): Promise<GeneRegistry> {
+    return (await this.getTranscriptContext()).registry;
+  }
+
+  /** Raw decoded tile for ROI detection: `invertedZ` is the p-index. */
   public async getTranscriptTileRawData(
     invertedZ: number,
     y: number,
     x: number
-  ): Promise<{ cellIds: Int32Array; geneNames: unknown; positions: Int32Array; count: number } | null> {
+  ): Promise<{ tile: ZarrTranscriptTileData; geneNames: string[] } | null> {
     try {
-      const tileParams = { z: invertedZ, y, x };
-
-      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
-          kind: 'array'
-        }).catch(() => null),
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
-          kind: 'array'
-        }).catch(() => null)
-      ]);
-
-      if (!cellIdArray || !geneNameArray || !positionArray) return null;
-
-      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
-        get(cellIdArray),
-        get(geneNameArray),
-        get(positionArray)
-      ]);
-
-      return {
-        cellIds: cellIdChunk.data as Int32Array,
-        geneNames: geneNameChunk.data,
-        positions: positionChunk.data as Int32Array,
-        count: (cellIdChunk.data as Int32Array).length
-      };
+      const { registry } = await this.getTranscriptContext();
+      const tile = await this.loadTranscriptTile(invertedZ, y, x);
+      if (tile.length === 0) return null;
+      return { tile, geneNames: registry.names };
     } catch (error) {
       console.error(`Failed to fetch transcript tile raw data [invertedZ:${invertedZ}, y:${y}, x:${x}]:`, error);
       return null;

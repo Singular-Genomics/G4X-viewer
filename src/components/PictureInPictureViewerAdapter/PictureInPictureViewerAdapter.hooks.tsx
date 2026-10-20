@@ -72,6 +72,23 @@ export const useResizableContainer = () => {
   };
 };
 
+// Stable callbacks: a new function identity per render would make every TranscriptLayer prop diff dirty.
+const onTranscriptLoadingStateChange = (isLoading: boolean) =>
+  useViewerStore.getState().setIsTranscriptTilesLoading(isLoading);
+const onTranscriptHover = (pickingInfo: any) =>
+  useTooltipStore.setState({
+    position: { x: pickingInfo.x, y: pickingInfo.y },
+    object: pickingInfo.object,
+    type: 'Transcript'
+  });
+
+const onCellMaskHover = (pickingInfo: any) =>
+  useTooltipStore.setState({
+    position: { x: pickingInfo.x, y: pickingInfo.y },
+    object: pickingInfo.object,
+    type: 'CellMask'
+  });
+
 export const useTranscriptLayer = () => {
   const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData, zarrStoreFactory] = useZarrDataStore(
     useShallow((store) => [
@@ -107,34 +124,43 @@ export const useTranscriptLayer = () => {
     ])
   );
 
-  if (!isTranscriptLayerOn || (!hasTranscriptsData && !zarrStoreFactory)) {
-    return undefined;
-  }
+  const isLayerAvailable = isTranscriptLayerOn && (hasTranscriptsData || !!zarrStoreFactory);
 
-  const metadataLayer = new TranscriptLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
+  // Memoized so unrelated React renders (viewState, tooltip, loading flag...) hand deck the *same* layer instance.
+  return useMemo(() => {
+    if (!isLayerAvailable) return undefined;
+    return new TranscriptLayer({
+      id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
+      zarrUrl,
+      zarrStoreFactory,
+      config: layerConfig,
+      visible: true,
+      geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
+      pointSize,
+      showTilesBoundries,
+      showTilesData,
+      showDiscardedPoints: showFilteredPoints,
+      overrideLayers: overrideLayers,
+      maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
+      colormap: colorMapConfig,
+      onLoadingStateChange: onTranscriptLoadingStateChange,
+      onHover: onTranscriptHover
+    });
+  }, [
+    isLayerAvailable,
     zarrUrl,
     zarrStoreFactory,
-    config: layerConfig,
-    visible: !!hasTranscriptsData || !!zarrStoreFactory,
-    geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
+    layerConfig,
+    isGeneNameFilterActive,
+    geneNameFilters,
     pointSize,
     showTilesBoundries,
     showTilesData,
-    showDiscardedPoints: showFilteredPoints,
-    overrideLayers: overrideLayers,
-    maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
-    colormap: colorMapConfig,
-    onLoadingStateChange: (isLoading) => useViewerStore.getState().setIsTranscriptTilesLoading(isLoading),
-    onHover: (pickingInfo) =>
-      useTooltipStore.setState({
-        position: { x: pickingInfo.x, y: pickingInfo.y },
-        object: pickingInfo.object,
-        type: 'Transcript'
-      })
-  });
-
-  return metadataLayer;
+    showFilteredPoints,
+    overrideLayers,
+    maxVisibleLayers,
+    colorMapConfig
+  ]);
 };
 
 export const useCellSegmentationLayer = () => {
@@ -208,30 +234,31 @@ export const useCellSegmentationLayer = () => {
     return fv;
   }, [cellMasksData, isCellNameFilterOn, cellNameFilters, ranges, proteinIndices, umapRange]);
 
-  if (!cellMasksData) {
-    return undefined;
-  }
-
-  const cellMasksLayer = new CellMasksLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
-    visible: !!cellMasksData && isCellLayerOn,
-    showCellFill: true,
-    showDiscardedPoints: showFilteredCells,
+  return useMemo(() => {
+    if (!cellMasksData) return undefined;
+    return new CellMasksLayer({
+      id: `${getVivId(DETAIL_VIEW_ID)}-cell-masks-layer`,
+      visible: isCellLayerOn,
+      showCellFill: true,
+      showDiscardedPoints: showFilteredCells,
+      cellFillOpacity,
+      showBoundary,
+      boundaryWidth,
+      cellMasksData,
+      filterValues,
+      colormap: cellColormapConfig,
+      onHover: onCellMaskHover
+    });
+  }, [
+    cellMasksData,
+    isCellLayerOn,
+    showFilteredCells,
     cellFillOpacity,
     showBoundary,
     boundaryWidth,
-    cellMasksData,
     filterValues,
-    colormap: cellColormapConfig,
-    onHover: (pickingInfo) =>
-      useTooltipStore.setState({
-        position: { x: pickingInfo.x, y: pickingInfo.y },
-        object: pickingInfo.object,
-        type: 'CellMask'
-      })
-  });
-
-  return cellMasksLayer;
+    cellColormapConfig
+  ]);
 };
 
 export const useBrightfieldImageLayer = () => {
@@ -248,27 +275,27 @@ export const useBrightfieldImageLayer = () => {
 
   const loader = getLoader();
 
-  if (!loader || !loader[0] || !loader[0].shape || !loader[0].getRaster) {
-    return undefined;
-  }
+  return useMemo(() => {
+    if (!loader || !loader[0] || !loader[0].shape || !loader[0].getRaster) {
+      return undefined;
+    }
 
-  const { dtype } = loader[0];
+    const { dtype } = loader[0];
 
-  const brightfieldImageLayer = new MultiscaleImageLayer({
-    id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
-    channelsVisible: [true, true, true],
-    selections: selections as any,
-    contrastLimits: contrastLimits as any,
-    colors: colors as any,
-    loader: loader as any,
-    dtype: dtype,
-    opacity: isLayerVisible ? opacity : 0,
-    ...({
-      pickable: false
-    } as any)
-  });
-
-  return brightfieldImageLayer;
+    return new MultiscaleImageLayer({
+      id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
+      channelsVisible: [true, true, true],
+      selections: selections as any,
+      contrastLimits: contrastLimits as any,
+      colors: colors as any,
+      loader: loader as any,
+      dtype: dtype,
+      opacity: isLayerVisible ? opacity : 0,
+      ...({
+        pickable: false
+      } as any)
+    });
+  }, [loader, selections, contrastLimits, colors, opacity, isLayerVisible]);
 };
 
 export const usePolygonDrawingLayer = () => {

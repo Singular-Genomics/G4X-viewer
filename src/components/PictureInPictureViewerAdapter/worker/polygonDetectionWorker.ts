@@ -52,8 +52,8 @@ const processZarrTileBatch = async (
     try {
       const raw = await zarrDataSet.getTranscriptTileRawData(invertedZ, y, x);
       if (!raw) return countOnly ? 0 : [];
-      const { cellIds, geneNames, positions, count } = raw;
-      const gn = geneNames as any;
+      const { tile, geneNames } = raw;
+      const { positions, cellId, geneIndex, length: count } = tile;
 
       if (countOnly) {
         let matched = 0;
@@ -70,8 +70,8 @@ const processZarrTileBatch = async (
         if (isPointInSelection([px, py], roiCoords, polygonBoundingBox)) {
           matched.push({
             position: [px, py],
-            cellId: String(cellIds[i]),
-            geneName: gn.get ? gn.get(i) : String(gn[i])
+            cellId: String(cellId[i]),
+            geneName: geneNames[geneIndex[i]] ?? ''
           });
         }
       }
@@ -138,9 +138,9 @@ const detectPointsInPolygonFromZarr = async (
   layerConfig: LayerConfig,
   zarrUrl: string
 ) => {
-  const zarrDataSet = new ZarrDataSet(zarrUrl);
+  const zarrDataSet = new ZarrDataSet(zarrUrl, undefined, { noCache: true });
   // Prefetch once — prevents thundering herd where each tile in first batch fires a redundant HTTP request
-  await zarrDataSet.fetchTranscriptLayerConfig();
+  await zarrDataSet.getTranscriptContext();
   const tilesToProcess = getZarrIntersectingTileCoordinates(polygonBoundingBox, layerConfig);
   const tileBatches: TileCoordinates[][] = [];
 

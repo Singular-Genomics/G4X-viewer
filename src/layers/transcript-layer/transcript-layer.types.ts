@@ -1,8 +1,8 @@
 import { PickingInfo } from '@deck.gl/core';
 import { ColorMapEntry, LayerConfig } from '../../stores/ZarrDataStore';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
-import { PointData } from '../../shared/types';
-import type { ZarritaStoreFactory } from '../../utils/ZarrDataSet.types';
+import type { Texture } from '@luma.gl/core';
+import type { ZarritaStoreFactory, ZarrTranscriptTileData } from '../../utils/ZarrDataSet.types';
 
 export type SingleTileLayerProps = CompositeLayerProps & {
   layerData: LayerDataItem[];
@@ -11,14 +11,18 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showData: boolean;
   showDiscardedPoints: boolean;
   disabledTiledView: boolean;
-  parsedColorMap: Record<string, number[]>;
+  /** gene index -> name (shared registry; may grow while tiles load) */
+  geneNames: readonly string[];
+  /** 1 when the gene passes the active filter, indexed by gene index */
+  geneVisible: Uint8Array;
+  geneLookupTexture: Texture | null;
+  geneLookupVersion: number;
 };
 
 export type LayerDataItem = {
   index: LayerDataIndex;
   textPosition: { x: number; y: number };
-  points: PointData[];
-  outlierPoints: PointData[];
+  points: ZarrTranscriptTileData;
   tileData: { width: number; height: number };
   boundingBox: number[];
 };

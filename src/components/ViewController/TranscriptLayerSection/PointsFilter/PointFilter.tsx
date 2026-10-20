@@ -12,7 +12,8 @@ export const PointFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { colorMapConfig, setColormapConfig } = useZarrDataStore();
+  const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
+  const setColormapConfig = useZarrDataStore((store) => store.setColormapConfig);
 
   const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
 

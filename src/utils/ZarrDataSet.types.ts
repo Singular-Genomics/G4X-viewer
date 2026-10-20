@@ -9,6 +9,12 @@ export type ZarrLayerConfig = {
   layer_height: number;
   layers: number;
   tile_size: number;
+  /** Absent/1 = legacy per-tile {position, gene_name, cell_id}; 2 = typed-array format (see TranscriptTileFormat) */
+  format_version?: number;
+  layout?: 'split' | 'packed';
+  position_relative?: boolean;
+  consolidated_metadata?: boolean;
+  sorted_by_gene?: boolean;
 };
 
 export type ZarrGeneColors = Record<string, [number, number, number]>;
@@ -25,15 +31,12 @@ export type ZarrTileCoordinates = {
   x: number;
 };
 
+/** Columnar tile: point i is (positions[2i], positions[2i+1]) in absolute layer pixels, gene = names[geneIndex[i]]. */
 export type ZarrTranscriptTileData = {
-  pointsData: ZarrTranscriptPoint[];
-  numberOfPoints: number;
-};
-
-export type ZarrTranscriptPoint = {
-  cellId: string;
-  geneName: string;
-  position: [number, number];
+  length: number;
+  positions: Float32Array;
+  geneIndex: Uint16Array;
+  cellId: Int32Array;
 };
 
 export type ZarrCellsData = {
@@ -53,7 +56,7 @@ export type ZarrCellsSegmentations = {
   segmentationSources: Record<string, string>;
 };
 
-export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position';
+export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position' | 'gene_index' | 'data';
 
 export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
   field: ZarrTranscriptField;
