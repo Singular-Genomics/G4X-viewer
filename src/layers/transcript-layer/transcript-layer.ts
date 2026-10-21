@@ -4,7 +4,14 @@ import {
   getTileDataProps,
   LayerDataItem
 } from './transcript-layer.types';
-import { CompositeLayer, GetPickingInfoParams, Layer, LayerContext, UpdateParameters } from '@deck.gl/core';
+import {
+  CompositeLayer,
+  FilterContext,
+  GetPickingInfoParams,
+  Layer,
+  LayerContext,
+  UpdateParameters
+} from '@deck.gl/core';
 import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 import type { _Tileset2D as Tileset2D } from '@deck.gl/geo-layers';
@@ -28,6 +35,7 @@ import {
   sameItems
 } from './tile-buckets';
 import { GENE_LOOKUP_EXTENSIONS, WHITE, createGeneLookupTexture, fillGeneLookup } from './gene-lookup-extension';
+import { PickCuller } from './pick-culling';
 
 // Reuse the parsed colormap while the colormap reference is unchanged (layer is rebuilt every render).
 let parsedColorMapCache: { colormap: ColorMapEntry[]; parsed: Record<string, number[]> } | null = null;
@@ -92,6 +100,7 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
       sequencer: new TileSequencer<object>(),
       visibleItems: [] as LayerDataItem[],
       labels: null as LabelsState | null,
+      pickCuller: new PickCuller(),
       settleRedraw: 0
     });
   }
@@ -120,9 +129,12 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
     return Boolean(this.state?.tileset?.selectedTiles?.every((tile) => tile.isLoaded));
   }
 
-  // Bucket sublayers span several tiles, so the per-tile viewport culling of TileLayer does not apply.
-  filterSubLayer() {
-    return true;
+  // Bucket sublayers span several tiles, so TileLayer's per-tile culling does not apply; picks are culled per bucket.
+  filterSubLayer(context: FilterContext) {
+    return (this.state as unknown as { pickCuller: PickCuller }).pickCuller.shouldDraw(
+      context,
+      this.props.pointSize + 1
+    );
   }
 
   getPickingInfo({ info, sourceLayer }: GetPickingInfoParams): any {
@@ -259,6 +271,7 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
             this.getSubLayerProps({
               id: `discarded-${bucket.key}`,
               data: bucket.data,
+              pickBounds: bucket.bounds,
               getLineWidth: 0.2,
               getRadius: pointSize,
               radiusUnits: 'pixels',
@@ -279,6 +292,7 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
             id: `points-${bucket.key}`,
             data: bucket.data,
             bucket,
+            pickBounds: bucket.bounds,
             getFillColor: WHITE,
             getRadius: pointSize,
             radiusUnits: 'pixels',

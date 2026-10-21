@@ -1,3 +1,4 @@
+import { pointBounds, type Bounds } from './pick-culling';
 import type { LayerDataItem } from './transcript-layer.types';
 
 /**
@@ -20,6 +21,7 @@ export type TileBucket = {
   starts: Uint32Array;
   positions: Float32Array;
   geneIndex: Uint16Array;
+  bounds: Bounds;
   /** Stable binary payload for deck (same object while the membership is unchanged => GPU buffers are kept) */
   data: { length: number; attributes: Record<string, { value: Float32Array | Uint16Array; size: number }> };
 };
@@ -94,6 +96,7 @@ export function buildBucket(key: string, items: LayerDataItem[]): TileBucket {
     starts,
     positions,
     geneIndex,
+    bounds: pointBounds(positions, length),
     data: {
       length,
       attributes: {

@@ -1,3 +1,5 @@
+import { pointBounds, type Bounds } from './pick-culling';
+
 /**
  * Merges the gene-store chunks that are drawn into a few bucket buffers (one ScatterplotLayer each) instead of one layer
  * per 16k-row chunk: deck only picks the first 255 pickable layers and pays per layer.
@@ -29,6 +31,7 @@ export type GeneBucket = {
   positions: Float32Array;
   /** Per-point lookup index into the gene lookup texture */
   geneLookup: Uint16Array;
+  bounds: Bounds;
   data: { length: number; attributes: Record<string, { value: Float32Array | Uint16Array; size: number }> };
 };
 
@@ -58,6 +61,7 @@ export function buildGeneBucket(
     starts,
     positions,
     geneLookup,
+    bounds: pointBounds(positions, length),
     data: {
       length,
       attributes: { getPosition: { value: positions, size: 2 }, getGeneIndex: { value: geneLookup, size: 1 } }
