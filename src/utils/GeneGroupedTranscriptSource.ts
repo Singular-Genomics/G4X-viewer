@@ -21,7 +21,6 @@ export type GeneChunk = {
   geneName: string;
   /** Chunk number within the (level, gene) array */
   chunk: number;
-  /** Number of points */
   length: number;
   /** Interleaved x, y in absolute layer px */
   positions: Float32Array;

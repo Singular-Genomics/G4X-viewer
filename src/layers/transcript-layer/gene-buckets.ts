@@ -1,6 +1,6 @@
 /**
  * Merges the gene-store chunks that are drawn into a few bucket buffers (one ScatterplotLayer each) instead of one layer
- * per 16k-row chunk: deck only picks the first 255 pickable layers and pays per layer. No value imports (unit tested).
+ * per 16k-row chunk: deck only picks the first 255 pickable layers and pays per layer.
  */
 
 /** The part of a decoded chunk the buckets need (see GeneChunk) */
@@ -68,7 +68,8 @@ export function buildGeneBucket(
 
 /**
  * Groups the drawn chunks into buckets, reusing a previous bucket object (=> no GPU re-upload) whenever its member
- * chunks are unchanged (lookup indices of a gene name never change). Chunks whose gene has no lookup index are skipped. Iterates in a stable order.
+ * chunks are unchanged (lookup indices of a gene name never change). Chunks whose gene has no lookup index are
+ * skipped. Iterates in a stable order.
  */
 export function updateGeneBuckets(
   rendered: Iterable<BucketChunk>,

@@ -1,19 +1,18 @@
 /**
  * Pure helpers for the gene-grouped transcript store (`transcripts_by_gene`): manifest types, chunk selection,
- * level choice, chunk decoding and a bounded LRU. No I/O and no imports so they can be unit tested in isolation.
+ * level choice, chunk decoding and a bounded LRU. No I/O.
  */
 
 export const GENE_GROUP_FORMAT = 'g4x-tx-by-gene';
 export const GENE_GROUP_VERSION = 1;
 
 /**
- * Max rows (points) of the selected genes drawn at once before falling back to a coarser level. Single knob to tune.
+ * Max rows (points) of the selected genes drawn at once before falling back to a coarser level.
  *
- * Memory per point in filtered mode: 12 B on the JS heap (Float32 x, y + Int32 cell id) + about 12 B of GPU attribute
- * (deck instances a vec3 position) = ~24 B, i.e. 4M points = ~97 MB. For reference the unfiltered full view of the
- * 10.6M-point dataset (known OK) costs ~150 MB of tile data plus bucket buffers, ~350 MB measured. While the level
- * changes the old and the new view are resident together (see planRendered): 2 x 4M x 24 B = ~190 MB, still below that
- * known-OK figure, which keeps an 8 GB unified-memory machine comfortable.
+ * A filtered point costs ~24 B (12 B JS heap: Float32 x, y + Int32 cell id; ~12 B GPU: deck's vec3 position), so 4M
+ * points = ~97 MB, and ~190 MB while a level change keeps the old and new view resident (see planRendered). That stays
+ * below the unfiltered full view of the 10.6M-point dataset (~350 MB measured); sized for an 8 GB unified-memory
+ * machine.
  */
 export const GENE_LEVEL_ROW_BUDGET = 4_000_000;
 /** Moving to a finer level than the current one requires the estimate to be at most this fraction of the budget. */

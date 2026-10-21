@@ -331,8 +331,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       geneStoreRequested: false,
       // true once the gene-filtered layer has drawn its first complete view (the normal tile layer is then removed)
       filteredReady: false,
-      // Gene filter just turned off: the filtered layer keeps drawing these genes until the normal tiles loaded
       activeGenes: null as GeneNameFilterType | null,
+      // Filter just turned off: the filtered layer keeps drawing these genes until the normal tiles loaded
       heldGenes: null as GeneNameFilterType | null,
       grace: { unfiltered: null, genes: null } as GraceTimers,
       // Gene store: unfiltered tiles kept mounted (hidden) after the filtered layer took over
@@ -427,7 +427,6 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       !this.state.loader || props.zarrUrl !== oldProps.zarrUrl || props.zarrStoreFactory !== oldProps.zarrStoreFactory;
 
     if (sourceChanged) {
-      // New source: free everything held for a grace period now
       this.endGrace('unfiltered');
       this.endGrace('genes');
     }
@@ -665,7 +664,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
       showBoundries: this.props.showTilesBoundries,
       showData: this.props.showTilesData,
       showDiscardedPoints,
-      // hidden (held): keep the sublayers it had, so no extra GPU copies are made and re-showing reuses them
+      // false while held (hidden), so it keeps its full sublayers and re-showing reuses them
       discardedOnly: filteredReady && drawTiles,
       onViewportLoad: this.state.onTilesReady as () => void,
       geneNames,
