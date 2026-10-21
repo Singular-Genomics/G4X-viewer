@@ -70,6 +70,17 @@ export function renderImageTileSubLayers(props: any) {
  * top-level picked layer, and VivViewer.onHover returns early when it is null (a bare XRLayer has none).
  */
 class ImageBackdropLayer extends CompositeLayer<any> {
+  // WORKAROUND (root cause unknown): the first frame after the backdrop is created sometimes leaves it and its lens
+  // ring blank, and nothing redraws a still view. Same issue as TranscriptTileLayer.scheduleSettleRedraw.
+  initializeState() {
+    this.state = { settleRedraw: requestAnimationFrame(() => (this.getCurrentLayer() as any)?.setNeedsRedraw()) };
+  }
+
+  finalizeState(context: any) {
+    cancelAnimationFrame(this.state.settleRedraw as number);
+    super.finalizeState(context);
+  }
+
   renderLayers() {
     return new (XRLayer as any)(this.props, {
       id: `image-backdrop-sub-layer-${this.props.id}`,

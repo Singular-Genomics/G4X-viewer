@@ -91,7 +91,27 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
       buckets: new Map<string, TileBucket>(),
       sequencer: new TileSequencer<object>(),
       visibleItems: [] as LayerDataItem[],
-      labels: null as LabelsState | null
+      labels: null as LabelsState | null,
+      settleRedraw: 0
+    });
+  }
+
+  finalizeState() {
+    cancelAnimationFrame((this.state as unknown as { settleRedraw: number }).settleRedraw);
+    super.finalizeState();
+  }
+
+  /**
+   * WORKAROUND (root cause unknown): the first frame after the bucket buffers are replaced sometimes draws an image
+   * tile (or the overview image) blank although every layer's state is correct. Seen on ANGLE's OpenGL backend
+   * (NVIDIA); a GPU sync (gl.finish) before the transcript draw also avoids it, which points at a driver timing issue.
+   * Nothing redraws a still view, so draw once more on the next frame. Remove once the cause is fixed.
+   */
+  scheduleSettleRedraw() {
+    const state = this.state as unknown as { settleRedraw: number };
+    cancelAnimationFrame(state.settleRedraw);
+    state.settleRedraw = requestAnimationFrame(() => {
+      (this.getCurrentLayer() as Layer | null)?.setNeedsRedraw();
     });
   }
 
@@ -150,6 +170,9 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
     else state.visibleItems = visible;
 
     const nextBuckets = updateBuckets(entries, state.buckets);
+    if (nextBuckets.size !== state.buckets.size || [...nextBuckets].some(([key, b]) => state.buckets.get(key) !== b)) {
+      this.scheduleSettleRedraw();
+    }
     state.buckets = nextBuckets;
 
     const layers: Layer[] = [];
