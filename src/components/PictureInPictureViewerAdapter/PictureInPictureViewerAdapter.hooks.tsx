@@ -7,7 +7,7 @@ import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLaye
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
-import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
+import TranscriptLayer, { HIDDEN_GRACE_MS } from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { EditableGeoJsonLayer, ViewMode } from '@deck.gl-community/editable-layers';
 import { TextLayer } from '@deck.gl/layers';
@@ -75,6 +75,8 @@ export const useResizableContainer = () => {
 // Stable callbacks: a new function identity per render would make every TranscriptLayer prop diff dirty.
 const onTranscriptLoadingStateChange = (isLoading: boolean) =>
   useViewerStore.getState().setIsTranscriptTilesLoading(isLoading);
+const onFilteredTranscriptLevelChange = (level: number | null) =>
+  useTranscriptLayerStore.setState({ filteredTranscriptLevel: level });
 const onTranscriptHover = (pickingInfo: any) =>
   useTooltipStore.setState({
     position: { x: pickingInfo.x, y: pickingInfo.y },
@@ -88,6 +90,29 @@ const onCellMaskHover = (pickingInfo: any) =>
     object: pickingInfo.object,
     type: 'CellMask'
   });
+
+type GraceState = { isOn: boolean; source: unknown; held: boolean };
+
+/**
+ * True while a layer that was just switched off should stay mounted (hidden, keeping its data) for HIDDEN_GRACE_MS.
+ * A source change ends the grace period at once. Derived during render (no frame where the layer is unmounted between
+ * "off" and "held").
+ */
+const useHiddenGrace = (isOn: boolean, source: unknown) => {
+  const [grace, setGrace] = useState<GraceState>({ isOn, source, held: false });
+  if (grace.isOn !== isOn || grace.source !== source) {
+    setGrace({ isOn, source, held: grace.source === source && !isOn && (grace.isOn || grace.held) });
+  }
+  useEffect(() => {
+    if (!grace.held) return;
+    const timer = setTimeout(
+      () => setGrace((current) => (current === grace ? { ...grace, held: false } : current)),
+      HIDDEN_GRACE_MS
+    );
+    return () => clearTimeout(timer);
+  }, [grace]);
+  return grace.held;
+};
 
 export const useTranscriptLayer = () => {
   const [layerConfig, colorMapConfig, zarrUrl, hasTranscriptsData, zarrStoreFactory] = useZarrDataStore(
@@ -125,16 +150,18 @@ export const useTranscriptLayer = () => {
   );
 
   const isLayerAvailable = isTranscriptLayerOn && (hasTranscriptsData || !!zarrStoreFactory);
+  // Unticked: stays mounted but hidden (tiles kept, no fetching) for the grace period, so re-ticking is instant
+  const isHeld = useHiddenGrace(isLayerAvailable, zarrStoreFactory ?? zarrUrl);
 
   // Memoized so unrelated React renders (viewState, tooltip, loading flag...) hand deck the *same* layer instance.
   return useMemo(() => {
-    if (!isLayerAvailable) return undefined;
+    if (!isLayerAvailable && !isHeld) return undefined;
     return new TranscriptLayer({
       id: `${getVivId(DETAIL_VIEW_ID)}-transcript-layer`,
+      visible: isLayerAvailable,
       zarrUrl,
       zarrStoreFactory,
       config: layerConfig,
-      visible: true,
       geneFilters: isGeneNameFilterActive ? geneNameFilters : 'all',
       pointSize,
       showTilesBoundries,
@@ -143,11 +170,13 @@ export const useTranscriptLayer = () => {
       overrideLayers: overrideLayers,
       maxVisibleLayers: maxVisibleLayers ?? layerConfig.layers,
       colormap: colorMapConfig,
+      onFilteredLevelChange: onFilteredTranscriptLevelChange,
       onLoadingStateChange: onTranscriptLoadingStateChange,
       onHover: onTranscriptHover
     });
   }, [
     isLayerAvailable,
+    isHeld,
     zarrUrl,
     zarrStoreFactory,
     layerConfig,
@@ -269,7 +298,10 @@ export const useBrightfieldImageLayer = () => {
       store.colors,
       store.opacity,
       store.isLayerVisible,
-      store.getLoader
+      store.getLoader,
+      // not read directly: subscribing makes the hook re-run (getLoader() reads them) when the loader/image change
+      store.loader,
+      store.image
     ])
   );
 

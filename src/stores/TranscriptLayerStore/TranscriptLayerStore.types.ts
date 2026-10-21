@@ -14,6 +14,8 @@ export type TranscriptLayerStoreValues = {
   pointSize: number;
   geneNameFilters: GeneNameFilterType;
   currentVisibleLayer: number;
+  /** Pyramid level the gene store is drawing (null: the zoom-implied level of the normal tile layer is drawn) */
+  filteredTranscriptLevel: number | null;
   selectedPoints: SelectionData<PointData>[];
 };
 

@@ -15,8 +15,13 @@ function resolveDirectory(root: FileSystemDirectoryHandle, parts: string[]): Pro
     let next = cache.get(path);
     if (!next) {
       const parent = current;
-      next = parent.then((dir) => dir.getDirectoryHandle(part));
-      cache.set(path, next);
+      const entry = parent.then((dir) => dir.getDirectoryHandle(part));
+      next = entry;
+      cache.set(path, entry);
+      // Do not cache failures (e.g. a transient permission error): let the next read retry
+      entry.catch(() => {
+        if (cache.get(path) === entry) cache.delete(path);
+      });
     }
     current = next;
   }

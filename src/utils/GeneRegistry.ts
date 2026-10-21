@@ -1,7 +1,7 @@
 /**
  * Maps gene names <-> dense uint16 indices.
  *
- * Seeded from transcripts/.zattrs `gene_order` so that v2 `gene_index` arrays are already valid indices. Legacy tiles
+ * Seeded from transcripts/.zattrs `layer_config.gene_index_names` (v2) or `gene_order` so that v2 `gene_index` arrays are already valid indices. Legacy tiles
  * store the gene name per point as fixed-width UCS-4 strings; `mapCodes` converts those to indices with an
  * allocation-free open-addressing hash lookup over the raw code points (no per-point string objects).
  * Names not present in `gene_order` are appended on first sight (`version` is bumped so consumers can refresh).

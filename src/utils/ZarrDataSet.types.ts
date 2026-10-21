@@ -11,10 +11,11 @@ export type ZarrLayerConfig = {
   tile_size: number;
   /** Absent/1 = legacy per-tile {position, gene_name, cell_id}; 2 = typed-array format (see TranscriptTileFormat) */
   format_version?: number;
-  layout?: 'split' | 'packed';
-  position_relative?: boolean;
+  /** v2: only 'split' is supported; positions are uint16 tile-relative */
+  layout?: string;
   consolidated_metadata?: boolean;
-  sorted_by_gene?: boolean;
+  /** v2: gene names indexed by `gene_index` (gene_order fallback if missing) */
+  gene_index_names?: string[];
 };
 
 export type ZarrGeneColors = Record<string, [number, number, number]>;
@@ -58,10 +59,6 @@ export type ZarrCellsSegmentations = {
 
 export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position' | 'gene_index' | 'data';
 
-export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
-  field: ZarrTranscriptField;
-};
-
 export type ZarrPathsCells = {
   base: () => string;
   segmentation: (folder: string) => string;
@@ -76,7 +73,6 @@ export type ZarrPathsImages = {
 export type ZarrPathsTranscripts = {
   base: () => string;
   tile: (params: ZarrTileCoordinates) => string;
-  tileField: (params: ZarrTranscriptTileFieldParams) => string;
 };
 
 export type ZarrPathsAttrs = {

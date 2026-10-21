@@ -1,4 +1,4 @@
-import type { ZarrPathBuilder, ZarrTileCoordinates, ZarrTranscriptTileFieldParams } from './ZarrDataSet.types';
+import type { ZarrPathBuilder, ZarrTileCoordinates } from './ZarrDataSet.types';
 
 const padTile = (n: number) => String(n).padStart(2, '0');
 const transcriptTileBase = ({ z, y, x }: ZarrTileCoordinates) => `transcripts/p${z}/y${padTile(y)}/x${padTile(x)}`;
@@ -25,8 +25,10 @@ export const ZARR_SUBPATHS = {
   },
   transcripts: {
     base: 'transcripts',
-    tile: (params: ZarrTileCoordinates) => transcriptTileBase(params),
-    tileField: ({ z, y, x, field }: ZarrTranscriptTileFieldParams) => `${transcriptTileBase({ z, y, x })}/${field}`
+    tile: (params: ZarrTileCoordinates) => transcriptTileBase(params)
+  },
+  transcriptsByGene: {
+    base: 'transcripts_by_gene'
   },
   misc: {
     summary: 'misc/summary.html'
@@ -67,8 +69,7 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
     },
     transcripts: {
       base: () => join(ZARR_SUBPATHS.transcripts.base),
-      tile: (params) => join(ZARR_SUBPATHS.transcripts.tile(params)),
-      tileField: (params) => join(ZARR_SUBPATHS.transcripts.tileField(params))
+      tile: (params) => join(ZARR_SUBPATHS.transcripts.tile(params))
     },
     attrs: {
       root: () => join(ZARR_SUBPATHS.attrs.root),

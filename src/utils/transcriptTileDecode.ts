@@ -48,23 +48,7 @@ export function decodeSplitTile(
   return {
     length,
     positions,
-    geneIndex: geneIndex instanceof Uint16Array ? geneIndex : Uint16Array.from(geneIndex),
+    geneIndex,
     cellId
   };
-}
-
-/** packed layout: int32 (N,4) rows of [x_offset, y_offset, gene_index, cell_id] */
-export function decodePackedTile(data: Int32Array, origin: { x: number; y: number }): ZarrTranscriptTileData {
-  const length = data.length >> 2;
-  const positions = new Float32Array(length * 2);
-  const geneIndex = new Uint16Array(length);
-  const cellId = new Int32Array(length);
-  for (let i = 0; i < length; i++) {
-    const r = i * 4;
-    positions[2 * i] = data[r] + origin.x;
-    positions[2 * i + 1] = data[r + 1] + origin.y;
-    geneIndex[i] = data[r + 2];
-    cellId[i] = data[r + 3];
-  }
-  return { length, positions, geneIndex, cellId };
 }

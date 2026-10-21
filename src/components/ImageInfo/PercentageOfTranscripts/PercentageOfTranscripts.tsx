@@ -6,6 +6,7 @@ import { Theme, Typography, useTheme } from '@mui/material';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatLevelPercentage } from '../../../utils/transcriptSampling';
 
 export const PercentageOfTranscripts = () => {
   const theme = useTheme();
@@ -16,6 +17,7 @@ export const PercentageOfTranscripts = () => {
   const [maxVisibleLayersRaw, overrideLayers] = useTranscriptLayerStore(
     useShallow((store) => [store.maxVisibleLayers, store.overrideLayers])
   );
+  const filteredLevel = useTranscriptLayerStore((store) => store.filteredTranscriptLevel);
   const maxVisibleLayers = maxVisibleLayersRaw ?? layerConfig.layers;
 
   const zoomBrakePoints = overrideLayers
@@ -27,7 +29,7 @@ export const PercentageOfTranscripts = () => {
 
   const percentageValues = Array.from(
     { length: (overrideLayers ? maxVisibleLayers : layerConfig.layers) + 1 },
-    (_, i) => `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
+    (_, i) => formatLevelPercentage(i)
   ).reverse();
 
   const currentZoom = viewState?.zoom || 0;
@@ -53,9 +55,12 @@ export const PercentageOfTranscripts = () => {
 
     return '---';
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentZoom, viewState?.zoom, layerConfig]);
+  }, [currentZoom, viewState?.zoom, layerConfig, overrideLayers, maxVisibleLayers]);
 
-  return <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTranscripts}`}</Typography>;
+  // The gene store draws its own level (it may be finer than the zoom implies, or coarser under a heavy filter)
+  const shown = filteredLevel !== null ? formatLevelPercentage(filteredLevel) : percentageOfTranscripts;
+
+  return <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${shown}`}</Typography>;
 };
 
 const styles = (theme: Theme) => ({

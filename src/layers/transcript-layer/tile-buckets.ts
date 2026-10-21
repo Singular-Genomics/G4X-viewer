@@ -34,6 +34,8 @@ export type TileContent = LayerDataItem[] & { byteLength: number };
  * Wraps a tile item as deck tile content. `byteLength` is constant (deck adds it on load and subtracts it on evict, so
  * it must not change afterwards). It counts the bytes the tile logically owns, whether they currently live in its own
  * arrays or in a bucket buffer that its arrays are views of, so it stays accurate after `buildBucket` re-points them.
+ * That holds because a bucket buffer is exactly the sum of its members' data and `detachTile` gives a tile its own
+ * compact copy as soon as it leaves a bucket, so a tile never keeps a larger buffer alive than its own data.
  */
 export function makeTileContent(item: LayerDataItem): TileContent {
   const { positions, geneIndex, cellId } = item.points;
@@ -102,6 +104,13 @@ export function buildBucket(key: string, items: LayerDataItem[]): TileBucket {
   };
 }
 
+/** Replaces a tile's views of a bucket buffer by compact copies so the (replaced/dropped) buffer can be freed. */
+function detachTile(item: LayerDataItem) {
+  const { points } = item;
+  points.positions = points.positions.slice();
+  points.geneIndex = points.geneIndex.slice();
+}
+
 /**
  * Groups the visible tiles (already in draw order) into buckets, reusing a previous bucket (same object => no
  * re-upload) whenever its member tiles are exactly the same. Only buckets whose membership changed are rebuilt.
@@ -116,9 +125,24 @@ export function updateBuckets(entries: readonly BucketEntry[], previous: Readonl
     else groups.set(key, [item]);
   }
   const next = new Map<string, TileBucket>();
+  let changed = false;
   for (const [key, items] of groups) {
     const old = previous.get(key);
-    next.set(key, old && sameItems(old.items, items) ? old : buildBucket(key, items));
+    if (old && sameItems(old.items, items)) next.set(key, old);
+    else {
+      next.set(key, buildBucket(key, items));
+      changed = true;
+    }
+  }
+  // Tiles that left a replaced/dropped bucket still view its buffer: copy them out (after the new buckets were built,
+  // which read from those views). Unchanged frames skip this entirely.
+  if (changed || previous.size !== next.size) {
+    const members = new Set<LayerDataItem>();
+    for (const bucket of next.values()) for (const item of bucket.items) members.add(item);
+    for (const [key, old] of previous) {
+      if (next.get(key) === old) continue;
+      for (const item of old.items) if (!members.has(item)) detachTile(item);
+    }
   }
   return next;
 }
