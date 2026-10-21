@@ -24,7 +24,8 @@ export const ChannelControllers = () => {
     soloChannelIndex,
     presoloChannelsVisible,
     setSoloChannel,
-    togglePresoloIsOn
+    togglePresoloIsOn,
+    isLayerVisible
   ] = useChannelsStore(
     useShallow((store) => [
       store.ids,
@@ -41,7 +42,8 @@ export const ChannelControllers = () => {
       store.soloChannelIndex,
       store.presoloChannelsVisible,
       store.setSoloChannel,
-      store.togglePresoloIsOn
+      store.togglePresoloIsOn,
+      store.isLayerVisible
     ])
   );
 
@@ -164,6 +166,7 @@ export const ChannelControllers = () => {
               onSelectionChange={onSelectionChange}
               channelVisible={channelsVisible[index]}
               pixelValue={pixelValues[index]}
+              hidePixelValue={!isLayerVisible}
               toggleIsOn={toggleIsOn}
               color={colors[index]}
               defaultColor={(channelsSettings[name]?.initialColor ?? colors[index]) as [number, number, number]}
