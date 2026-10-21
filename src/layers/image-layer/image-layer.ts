@@ -61,7 +61,6 @@ export function renderImageTileSubLayers(props: any) {
     bounds,
     id: `tile-sub-layer-${bounds}-${id}`,
     tileId: { x, y, z },
-    // NEAREST at the highest resolution, LINEAR otherwise (unchanged from viv).
     interpolation: z === maxZoom ? 'nearest' : 'linear'
   });
 }
