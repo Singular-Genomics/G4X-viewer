@@ -580,6 +580,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           const loader = this.state.loader as ZarrTranscriptLoader | false;
           const points = loader ? await loader.loadTileData(index.z, index.x, index.y) : emptyTile();
 
+          // 4.0 data backwards compatible
           // Legacy datasets without gene_order register genes while decoding: refresh the lookup if any appeared
           const registry = this.state.registry as GeneRegistry | null;
           if (registry && registry.version !== this.state.lookupRegistryVersion) {

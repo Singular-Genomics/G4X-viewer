@@ -15,9 +15,11 @@ export const emptyTile = (): ZarrTranscriptTileData => ({
   cellId: new Int32Array(0)
 });
 
+// 4.0 data backwards compatible
 /** zarrita's UnicodeStringArray (`<U{chars}`): a view over a UCS-4 buffer, `chars` code points per element. */
 type UnicodeStringArrayLike = { buffer: ArrayBufferLike; byteOffset: number; length: number; chars: number };
 
+// 4.0 data backwards compatible
 export function decodeLegacyTile(
   position: Int32Array,
   geneName: UnicodeStringArrayLike,
