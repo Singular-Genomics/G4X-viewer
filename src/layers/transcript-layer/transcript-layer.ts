@@ -91,7 +91,6 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
       const hit = resolveBucketIndex(bucket, info.index);
       if (hit) {
         const i = info.index;
-        // Resolve the hovered point lazily from the typed arrays (no per-point objects exist)
         info.object = {
           position: [bucket.positions[2 * i], bucket.positions[2 * i + 1]],
           geneName: this.props.geneNames[bucket.geneIndex[i]] ?? '',

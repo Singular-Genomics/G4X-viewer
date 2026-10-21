@@ -1,6 +1,5 @@
-// Directory handles resolved so far, per root handle: "a/b/c" -> Promise<handle for a/b/c>.
-// Sharing across store instances (the store factory creates one per subpath) means each directory is walked once
-// instead of once per file read (~30 getDirectoryHandle calls per transcript tile before).
+// Directory handles resolved so far, per root handle: "a/b/c" -> Promise<handle for a/b/c>. Shared across store
+// instances (the store factory creates one per subpath) so each directory is walked once, not once per file read.
 const dirHandleCaches = new WeakMap<FileSystemDirectoryHandle, Map<string, Promise<FileSystemDirectoryHandle>>>();
 
 function resolveDirectory(root: FileSystemDirectoryHandle, parts: string[]): Promise<FileSystemDirectoryHandle> {

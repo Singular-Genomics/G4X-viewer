@@ -264,7 +264,7 @@ export class ZarrDataSet {
   }
 
   /**
-   * Fetch and decode one transcript tile into typed arrays (no per-point objects).
+   * Fetch and decode one transcript tile into typed arrays.
    * `level` is the p-index (0 = full resolution), `y`/`x` the tile coordinates inside that level.
    */
   public async loadTranscriptTile(level: number, y: number, x: number): Promise<ZarrTranscriptTileData> {
