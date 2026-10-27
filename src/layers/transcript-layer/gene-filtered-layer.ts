@@ -6,7 +6,6 @@ import {
   LayerContext,
   UpdateParameters
 } from '@deck.gl/core';
-import { ScatterplotLayer } from '@deck.gl/layers';
 import type { Texture } from '@luma.gl/core';
 
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
@@ -24,6 +23,7 @@ import {
   visibleTileRect
 } from '../../utils/geneGroupedCore';
 import { GENE_LOOKUP_EXTENSIONS, WHITE } from './gene-lookup-extension';
+import { createPointLayer } from './transcript-point-layer';
 import { GeneBucket, resolveGeneBucketIndex, updateGeneBuckets } from './gene-buckets';
 import { PickCuller } from './pick-culling';
 
@@ -293,7 +293,8 @@ export default class GeneFilteredTranscriptLayer extends CompositeLayer<GeneFilt
     const layers: Layer[] = [];
     for (const bucket of state.buckets.values()) {
       layers.push(
-        new ScatterplotLayer(
+        createPointLayer(
+          this.context,
           this.getSubLayerProps({
             id: `gene-${bucket.key}`,
             data: bucket.data,
