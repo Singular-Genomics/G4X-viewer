@@ -1,16 +1,17 @@
 import { usePointFiltersTableColumns } from './usePointFiltersTableColumns';
-import { GeneNameFilterType, useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { GeneNameFilterType } from '../../../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
-import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
+import { useTranscriptSource } from '../../TranscriptSourceContext';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
 
 export const PointFiltersTable = () => {
+  const { useLayerStore, useColorMap } = useTranscriptSource();
   const columns = usePointFiltersTableColumns();
   const [activeFilters, setActiveFilters] = useState<GeneNameFilterType>(new Set());
-  const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useTranscriptLayerStore(
+  const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useLayerStore(
     useShallow((store) => [
       store.setGeneNamesFilter,
       store.clearGeneNameFilters,
@@ -23,7 +24,7 @@ export const PointFiltersTable = () => {
     setActiveFilters(new Set(geneNameFilters));
   }, [geneNameFilters]);
 
-  const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
+  const { colorMapConfig } = useColorMap();
 
   const rowData: PointFiltersTableRowEntry[] = colorMapConfig
     ? colorMapConfig.map((item) => ({
@@ -41,7 +42,7 @@ export const PointFiltersTable = () => {
   const handleApplyClick = () => {
     setGeneNamesFilter(activeFilters);
     if (!isGeneNameFilterActive && activeFilters.size > 0) {
-      useTranscriptLayerStore.getState().toggleGeneNameFilter();
+      useLayerStore.getState().toggleGeneNameFilter();
     }
   };
 

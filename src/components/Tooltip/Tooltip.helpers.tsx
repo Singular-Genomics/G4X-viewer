@@ -2,21 +2,28 @@ import { CellMaskDatapointType, TranscriptDatapointType } from './Tooltip.types'
 import { TooltipContent, TooltipContentItem } from './TooltipContent';
 import { t } from 'i18next';
 
-export function TooltipTranscriptConent({ data }: { data: TranscriptDatapointType }) {
+export function TooltipTranscriptConent({
+  data,
+  isDirectSeq = false
+}: {
+  data: TranscriptDatapointType;
+  isDirectSeq?: boolean;
+}) {
   const tooltipItems: TooltipContentItem[] = [
     {
       label: t('transcript.position'),
       value: `X: ${data.position[0].toFixed(2)}
           Y: ${data.position[1].toFixed(2)}`
     },
-    { label: t('transcript.geneName'), value: data.geneName },
+    // Direct-Seq keeps the target in geneName
+    { label: t(isDirectSeq ? 'transcript.targetName' : 'transcript.geneName'), value: data.geneName },
     { label: t('transcript.cellId'), value: data.cellId }
   ];
 
   return (
     <TooltipContent
       data={tooltipItems}
-      title={t('tooltip.objectTranscript')}
+      title={t(isDirectSeq ? 'tooltip.objectDirectSeq' : 'tooltip.objectTranscript')}
     />
   );
 }
