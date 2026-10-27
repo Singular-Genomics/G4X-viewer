@@ -6,6 +6,7 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 import { ZarrTranscriptLoader } from './zarr-transcript-loader';
+import { getOutlineColor } from './transcript-layer.helpers';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 
 class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
@@ -72,7 +73,7 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
       getRadius: this.props.pointSize + outlineWidth / 2,
       radiusUnits: 'pixels',
       stroked: this.props.showOutline,
-      getLineColor: [255, 255, 255],
+      getLineColor: (d) => this.props.parsedOutlineColorMap[d.geneName] || [255, 255, 255],
       getLineWidth: 1,
       lineWidthUnits: 'pixels',
       pickable: true
@@ -86,12 +87,16 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   parsedColorMap: Record<string, number[]>;
+  parsedOutlineColorMap: Record<string, [number, number, number]>;
   zarrLoader: ZarrTranscriptLoader | null;
   tileLoadCounter: number;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
+    this.parsedOutlineColorMap = Object.fromEntries(
+      props.colormap.map((entry) => [entry.gene_name, getOutlineColor(entry.color)])
+    );
     this.zarrLoader =
       props.zarrUrl || props.zarrStoreFactory
         ? new ZarrTranscriptLoader(props.zarrUrl ?? undefined, props.zarrStoreFactory, props.source)
@@ -219,7 +224,8 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           showData: this.props.showTilesData,
           showDiscardedPoints: this.props.showDiscardedPoints,
           showOutline: !!this.props.showOutline,
-          parsedColorMap: this.parsedColorMap
+          parsedColorMap: this.parsedColorMap,
+          parsedOutlineColorMap: this.parsedOutlineColorMap
         })
     });
     return [tiledLayer];

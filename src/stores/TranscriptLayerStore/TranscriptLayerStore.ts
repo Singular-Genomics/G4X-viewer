@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { TranscriptLayerStore, TranscriptLayerStoreValues } from './TranscriptLayerStore.types';
 
 // Per call, so each store gets its own geneNameFilters Set
-const createDefaultTranscriptLayerStoreValues = (): TranscriptLayerStoreValues => ({
+const createDefaultTranscriptLayerStoreValues = (
+  initialValues: Partial<TranscriptLayerStoreValues>
+): TranscriptLayerStoreValues => ({
   isTranscriptLayerOn: false,
   isGeneNameFilterActive: false,
   showFilteredPoints: false,
@@ -14,13 +16,14 @@ const createDefaultTranscriptLayerStoreValues = (): TranscriptLayerStoreValues =
   geneNameFilters: new Set<string>(),
   maxVisibleLayers: null,
   currentVisibleLayer: 0,
-  selectedPoints: []
+  selectedPoints: [],
+  ...initialValues
 });
 
 // Shared by transcripts and Direct-Seq, where isTranscriptLayerOn etc. mean "this layer"
-export const createTranscriptLayerStore = () =>
+export const createTranscriptLayerStore = (initialValues: Partial<TranscriptLayerStoreValues> = {}) =>
   create<TranscriptLayerStore>((set) => ({
-    ...createDefaultTranscriptLayerStoreValues(),
+    ...createDefaultTranscriptLayerStoreValues(initialValues),
     toggleTranscriptLayer: () => set((store) => ({ isTranscriptLayerOn: !store.isTranscriptLayerOn })),
     toggleTileBoundries: () => set((store) => ({ showTilesBoundries: !store.showTilesBoundries })),
     toggleTileData: () => set((store) => ({ showTilesData: !store.showTilesData })),
@@ -48,7 +51,7 @@ export const createTranscriptLayerStore = () =>
       })),
     deleteSelectedPoints: (selectionId) =>
       set((store) => ({ selectedPoints: store.selectedPoints.filter((selection) => selection.roiId !== selectionId) })),
-    reset: () => set({ ...createDefaultTranscriptLayerStoreValues() })
+    reset: () => set({ ...createDefaultTranscriptLayerStoreValues(initialValues) })
   }));
 
 export const useTranscriptLayerStore = createTranscriptLayerStore();
