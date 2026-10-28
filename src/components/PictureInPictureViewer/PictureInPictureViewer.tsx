@@ -12,6 +12,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     contrastLimits,
     colors,
     channelsVisible,
+    overviewChannelsVisible = channelsVisible,
     viewStates: viewStatesProp,
     colormap,
     overview,
@@ -86,6 +87,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   const views = [detailView];
   const layerProps = [layerConfig];
   const viewStates = [{ ...baseViewState, id: DETAIL_VIEW_ID }];
+  // Overview: H&E if visible, otherwise protein image (ignores its layer checkbox)
   const overviewSource =
     brightfieldImageSource && isBrightfieldLayerVisible
       ? {
@@ -95,7 +97,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
           channelsVisible: Array(brightfieldColors.length).fill(true),
           selections: brightfieldSelections
         }
-      : { loader, contrastLimits, colors, channelsVisible, selections };
+      : { loader, contrastLimits, colors, channelsVisible: overviewChannelsVisible, selections };
 
   if (overviewOn && overviewSource.loader?.[0]?.getRaster) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
