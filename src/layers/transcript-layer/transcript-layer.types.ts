@@ -13,7 +13,7 @@ export type SingleTileLayerProps = CompositeLayerProps & {
   showOutline: boolean;
   disabledTiledView: boolean;
   parsedColorMap: Record<string, number[]>;
-  parsedOutlineColorMap: Record<string, [number, number, number]>;
+  parsedTransparentColorMap: Record<string, number[]>;
 };
 
 export type LayerDataItem = {

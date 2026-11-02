@@ -6,7 +6,6 @@ import { TileLayer } from '@deck.gl/geo-layers';
 import { partition } from 'lodash';
 import { LAYER_ZOOM_OFFSET } from '../../shared/constants';
 import { ZarrTranscriptLoader } from './zarr-transcript-loader';
-import { getOutlineColor } from './transcript-layer.helpers';
 import { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 
 class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
@@ -65,18 +64,23 @@ class SingleTileLayer extends CompositeLayer<SingleTileLayerProps> {
     // Stroke is centered on the radius, so grow it to keep the ring outside the point
     const outlineWidth = this.props.showOutline ? 1 : 0;
 
+    const fillColorMap = this.props.showOutline ? this.props.parsedTransparentColorMap : this.props.parsedColorMap;
+
     const pointsLayer = new ScatterplotLayer({
       id: `sub-point-layer-${this.props.id}`,
       data: points,
       getPosition: (d) => d.position,
-      getFillColor: (d) => (this.props.parsedColorMap[d.geneName] as [number, number, number]) || [255, 255, 255],
+      // Alpha 0 instead of filled: false, which breaks hover
+      getFillColor: (d) =>
+        (fillColorMap[d.geneName] as [number, number, number]) || [255, 255, 255, this.props.showOutline ? 0 : 255],
       getRadius: this.props.pointSize + outlineWidth / 2,
       radiusUnits: 'pixels',
       stroked: this.props.showOutline,
-      getLineColor: (d) => this.props.parsedOutlineColorMap[d.geneName] || [255, 255, 255],
+      getLineColor: (d) => (this.props.parsedColorMap[d.geneName] as [number, number, number]) || [255, 255, 255],
       getLineWidth: 1,
       lineWidthUnits: 'pixels',
-      pickable: true
+      pickable: true,
+      updateTriggers: { getFillColor: [this.props.showOutline] }
     });
 
     return [boundingBoxLayer, textLayer, discardedPointsLayer, pointsLayer];
@@ -87,15 +91,16 @@ SingleTileLayer.layerName = 'SingleTileLayer';
 
 class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
   parsedColorMap: Record<string, number[]>;
-  parsedOutlineColorMap: Record<string, [number, number, number]>;
+  parsedTransparentColorMap: Record<string, number[]>;
   zarrLoader: ZarrTranscriptLoader | null;
   tileLoadCounter: number;
 
   constructor(props: TranscriptLayerProps) {
     super(props);
     this.parsedColorMap = Object.fromEntries(props.colormap.map((entry) => [entry.gene_name, entry.color]));
-    this.parsedOutlineColorMap = Object.fromEntries(
-      props.colormap.map((entry) => [entry.gene_name, getOutlineColor(entry.color)])
+    // Same RGB as the ring, avoids a dark inner edge
+    this.parsedTransparentColorMap = Object.fromEntries(
+      props.colormap.map((entry) => [entry.gene_name, [...entry.color.slice(0, 3), 0]])
     );
     this.zarrLoader =
       props.zarrUrl || props.zarrStoreFactory
@@ -225,7 +230,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           showDiscardedPoints: this.props.showDiscardedPoints,
           showOutline: !!this.props.showOutline,
           parsedColorMap: this.parsedColorMap,
-          parsedOutlineColorMap: this.parsedOutlineColorMap
+          parsedTransparentColorMap: this.parsedTransparentColorMap
         })
     });
     return [tiledLayer];
