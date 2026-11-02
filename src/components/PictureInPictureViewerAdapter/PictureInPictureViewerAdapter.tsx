@@ -14,6 +14,7 @@ import {
 } from './PictureInPictureViewerAdapter.hooks';
 import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 import { Tooltip } from '../Tooltip';
+import { useTooltipStore } from '../../stores/TooltipStore';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useSnackbar } from 'notistack';
@@ -109,6 +110,13 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     }
 
     event.preventDefault();
+  };
+
+  // Deck.gl doesn't emit hover "out" when leaving the canvas
+  const handlePointerOut = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.target === deckGLRef.current?.deck?.canvas) {
+      useTooltipStore.setState({ object: undefined });
+    }
   };
 
   useEffect(() => {
@@ -221,6 +229,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       sx={sx.viewerContainer}
       ref={containerRef}
       onPointerDownCapture={handlePointerDownCapture}
+      onPointerOut={handlePointerOut}
       onContextMenu={handleContextMenu}
     >
       {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
