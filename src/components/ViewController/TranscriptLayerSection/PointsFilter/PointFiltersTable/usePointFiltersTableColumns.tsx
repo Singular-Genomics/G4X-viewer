@@ -7,7 +7,7 @@ import { useTranscriptSource } from '../../TranscriptSourceContext';
 
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
   const { t } = useTranslation();
-  const { useColorMap, nameColumnLabelKey } = useTranscriptSource();
+  const { useColorMap, nameColumns } = useTranscriptSource();
   const { colorMapConfig, setColormapConfig } = useColorMap();
 
   const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
@@ -25,14 +25,16 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
   };
 
   return [
-    {
-      field: 'gene_name',
-      headerName: t(nameColumnLabelKey),
-      headerAlign: 'center',
-      filterable: true,
-      flex: 1,
-      renderCell: (params) => <Typography>{params.row.gene_name}</Typography>
-    },
+    ...nameColumns.map(
+      ({ field, labelKey }): GridColDef<PointFiltersTableRowEntry> => ({
+        field,
+        headerName: t(labelKey),
+        headerAlign: 'center',
+        filterable: true,
+        flex: 1,
+        renderCell: (params) => <Typography>{params.row[field]}</Typography>
+      })
+    ),
     {
       field: 'color',
       headerAlign: 'center',

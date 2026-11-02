@@ -44,6 +44,9 @@ export type ZarrDataStoreMethods = {
 export type ColorMapEntry = {
   gene_name: string;
   color: number[];
+  // Direct-Seq only
+  gene?: string;
+  variant?: string;
 };
 
 export type ConfigFileData = {

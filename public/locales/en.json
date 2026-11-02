@@ -266,7 +266,11 @@
     "cellId": "Cell ID",
     "color": "Color",
     "geneName": "Gene Name",
+    "gene": "Gene",
+    "variant": "Variant",
     "targetName": "Target",
+    "sequence": "Sequence",
+    "meanQs": "mean QS",
     "position": "Position"
   },
   "transcriptsSettings": {
@@ -342,6 +346,10 @@
     "showFilteredPoints": "Show filtered points",
     "transcriptsLayer": "Transcripts Layer",
     "transcriptsLayerDisabled": "Transcripts Layer disabled",
+    "directSeqLayer": "Direct-Seq Layer",
+    "targetFilter_one": "Gene/Variant == {{target}}",
+    "targetFilter_other": "Gene/Variant == {{count}} variants",
+    "targetFilter_zero": "Gene/Variant == none",
     "clusterFilter_one": "Cluster ID == {{clusterId}}",
     "clusterFilter_other": "Cluster ID == {{count}} clusters",
     "clusterFilter_zero": "Cluster ID == none",

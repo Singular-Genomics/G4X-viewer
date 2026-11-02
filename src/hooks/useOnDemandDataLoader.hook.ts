@@ -7,20 +7,35 @@ import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerSt
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import type { ColorMapEntry } from '../stores/ZarrDataStore';
+import type { ZarrDirectSeqTargetMetadata } from '../utils/ZarrDataSet.types';
 import {
   applyCellFilterUrlSettings,
   applyCytometryFilterUrlSettings,
   applyTranscriptFilterUrlSettings
 } from '../utils/urlSettings';
 
-const toColorMapEntries = (colors: Record<string, number[]>, order: string[] | null): ColorMapEntry[] => {
-  const entries = Object.entries(colors).map(([gene_name, color]) => ({ gene_name, color }));
+const sortByOrder = (entries: ColorMapEntry[], order: string[] | null): ColorMapEntry[] => {
   if (order) {
     const orderIndex = new Map(order.map((name, i) => [name, i]));
     entries.sort((a, b) => (orderIndex.get(a.gene_name) ?? Infinity) - (orderIndex.get(b.gene_name) ?? Infinity));
   }
   return entries;
 };
+
+const toColorMapEntries = (colors: Record<string, number[]>, order: string[] | null): ColorMapEntry[] =>
+  sortByOrder(
+    Object.entries(colors).map(([gene_name, color]) => ({ gene_name, color })),
+    order
+  );
+
+const toDirectSeqColorMapEntries = (
+  metadata: Record<string, ZarrDirectSeqTargetMetadata>,
+  order: string[] | null
+): ColorMapEntry[] =>
+  sortByOrder(
+    Object.entries(metadata).map(([gene_name, { color, gene, variant }]) => ({ gene_name, color, gene, variant })),
+    order
+  );
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -99,15 +114,14 @@ export const useOnDemandDataLoader = () => {
           const layerConfig = await zarrDataSet.detectLayerConfig('directSeq');
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
-          const [targetColors, targetOrder] = await Promise.all([
-            zarrDataSet.fetchTranscriptColors('directSeq'),
-            zarrDataSet.fetchTranscriptGeneOrder('directSeq')
-          ]);
+          const directSeqMetadata = await zarrDataSet.fetchDirectSeqMetadata();
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
           setDirectSeqData({
             ...(layerConfig && { layerConfig }),
-            ...(targetColors && { colorMapConfig: toColorMapEntries(targetColors, targetOrder) })
+            ...(directSeqMetadata && {
+              colorMapConfig: toDirectSeqColorMapEntries(directSeqMetadata.metadata, directSeqMetadata.order)
+            })
           });
         }
 

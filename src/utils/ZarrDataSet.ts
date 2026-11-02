@@ -25,10 +25,6 @@ const TRANSCRIPT_NAME_FIELD: Record<ZarrTranscriptSource, ZarrTranscriptField> =
   directSeq: 'target'
 };
 
-// { target: { color } } -> { gene: color }
-export const flattenTargetColors = (targetColors: Record<string, { color: [number, number, number] }>) =>
-  Object.fromEntries(Object.entries(targetColors).map(([target, { color }]) => [target, color])) as ZarrGeneColors;
-
 export class NoCacheFetchStore {
   constructor(public url: string) {}
 
@@ -202,17 +198,19 @@ export class ZarrDataSet {
     return attrs.layer_config || null;
   }
 
-  public async fetchTranscriptColors(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrGeneColors | null> {
-    const attrs = await this.fetchTranscriptAttrs(source);
-    if (source === 'directSeq') {
-      return attrs.target_colors ? flattenTargetColors(attrs.target_colors) : null;
-    }
+  public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
+    const attrs = await this.fetchTranscriptAttrs();
     return attrs.gene_colors || null;
   }
 
-  public async fetchTranscriptGeneOrder(source: ZarrTranscriptSource = 'transcripts'): Promise<string[] | null> {
-    const attrs = await this.fetchTranscriptAttrs(source);
-    return (source === 'directSeq' ? attrs.target_order : attrs.gene_order) || null;
+  public async fetchTranscriptGeneOrder(): Promise<string[] | null> {
+    const attrs = await this.fetchTranscriptAttrs();
+    return attrs.gene_order || null;
+  }
+
+  public async fetchDirectSeqMetadata() {
+    const { metadata, metadata_order } = await this.fetchTranscriptAttrs('directSeq');
+    return metadata ? { metadata, order: metadata_order || null } : null;
   }
 
   public async detectLayerConfig(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrLayerConfig | null> {
@@ -265,38 +263,52 @@ export class ZarrDataSet {
 
       const tileField = (field: ZarrTranscriptField) => ZARR_SUBPATHS[source].tileField({ z: invertedZ, y, x, field });
       const nameField = TRANSCRIPT_NAME_FIELD[source];
+      const isDirectSeq = source === 'directSeq';
 
       // open.v2 + attrs: false skips the .zattrs request (tile arrays have none, so it always ends in a 404 round trip)
       // and the Zarr v3 fallback probe for missing tiles. Transcript data is Zarr v2 only.
-      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open.v2(this.storeFactory(tileField('cell_id')) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField(nameField)) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField('position')) as any, { kind: 'array', attrs: false }).catch(() => null)
+      const openField = (field: ZarrTranscriptField) =>
+        open.v2(this.storeFactory(tileField(field)) as any, { kind: 'array', attrs: false }).catch(() => null);
+
+      // sequence and mean_QS are Direct-Seq only
+      const [cellIdArray, geneNameArray, positionArray, sequenceArray, meanQsArray] = await Promise.all([
+        openField('cell_id'),
+        openField(nameField),
+        openField('position'),
+        isDirectSeq ? openField('sequence') : null,
+        isDirectSeq ? openField('mean_QS') : null
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
         return { pointsData: [], numberOfPoints: 0 };
       }
 
-      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
+      const [cellIdChunk, geneNameChunk, positionChunk, sequenceChunk, meanQsChunk] = await Promise.all([
         get(cellIdArray),
         get(geneNameArray),
-        get(positionArray)
+        get(positionArray),
+        sequenceArray && get(sequenceArray),
+        meanQsArray && get(meanQsArray)
       ]);
 
       const cellIds = cellIdChunk.data as Int32Array;
       const geneNames = geneNameChunk.data as any;
       const positions = positionChunk.data as Int32Array;
+      const sequences = sequenceChunk?.data as any;
+      const meanQs = meanQsChunk?.data as Float32Array | undefined;
       const numberOfPoints = cellIds.length;
 
       const pointsData: ZarrTranscriptPoint[] = [];
       for (let i = 0; i < numberOfPoints; i++) {
         const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
-        pointsData.push({
+        const point: ZarrTranscriptPoint = {
           cellId: String(cellIds[i]),
           geneName: geneName,
           position: [positions[i * 2], positions[i * 2 + 1]]
-        });
+        };
+        if (sequences) point.sequence = sequences.get ? sequences.get(i) : String(sequences[i]);
+        if (meanQs) point.meanQs = meanQs[i];
+        pointsData.push(point);
       }
 
       return {
