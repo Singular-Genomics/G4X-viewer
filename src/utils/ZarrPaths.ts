@@ -1,13 +1,22 @@
 import type { ZarrPathBuilder, ZarrTileCoordinates, ZarrTranscriptTileFieldParams } from './ZarrDataSet.types';
 
 const padTile = (n: number) => String(n).padStart(2, '0');
-const transcriptTileBase = ({ z, y, x }: ZarrTileCoordinates) => `transcripts/p${z}/y${padTile(y)}/x${padTile(x)}`;
+const tiledTileBase = (group: string, { z, y, x }: ZarrTileCoordinates) =>
+  `${group}/p${z}/y${padTile(y)}/x${padTile(x)}`;
+
+// /transcripts and /direct_seq share one layout
+const createTiledSubpaths = (group: string) => ({
+  base: group,
+  tile: (params: ZarrTileCoordinates) => tiledTileBase(group, params),
+  tileField: ({ z, y, x, field }: ZarrTranscriptTileFieldParams) => `${tiledTileBase(group, { z, y, x })}/${field}`
+});
 
 export const ZARR_SUBPATHS = {
   attrs: {
     root: '.zattrs',
     group: '.zgroup',
     transcripts: 'transcripts/.zattrs',
+    directSeq: 'direct_seq/.zattrs',
     images: 'images/.zattrs',
     cells: 'cells/.zattrs',
     cellsSegmentation: (folder: string) => `cells/${folder}/.zattrs`,
@@ -23,11 +32,8 @@ export const ZARR_SUBPATHS = {
     multiplex: (level?: number) => (level !== undefined ? `images/multiplex/${level}` : 'images/multiplex'),
     h_and_e: (level?: number) => (level !== undefined ? `images/h_and_e/${level}` : 'images/h_and_e')
   },
-  transcripts: {
-    base: 'transcripts',
-    tile: (params: ZarrTileCoordinates) => transcriptTileBase(params),
-    tileField: ({ z, y, x, field }: ZarrTranscriptTileFieldParams) => `${transcriptTileBase({ z, y, x })}/${field}`
-  },
+  transcripts: createTiledSubpaths('transcripts'),
+  directSeq: createTiledSubpaths('direct_seq'),
   misc: {
     summary: 'misc/summary.html'
   }
@@ -70,10 +76,16 @@ export const createZarrPaths = (baseUrl: string): ZarrPathBuilder => {
       tile: (params) => join(ZARR_SUBPATHS.transcripts.tile(params)),
       tileField: (params) => join(ZARR_SUBPATHS.transcripts.tileField(params))
     },
+    directSeq: {
+      base: () => join(ZARR_SUBPATHS.directSeq.base),
+      tile: (params) => join(ZARR_SUBPATHS.directSeq.tile(params)),
+      tileField: (params) => join(ZARR_SUBPATHS.directSeq.tileField(params))
+    },
     attrs: {
       root: () => join(ZARR_SUBPATHS.attrs.root),
       group: () => join(ZARR_SUBPATHS.attrs.group),
       transcripts: () => join(ZARR_SUBPATHS.attrs.transcripts),
+      directSeq: () => join(ZARR_SUBPATHS.attrs.directSeq),
       multiplexLevel: (level) => join(ZARR_SUBPATHS.attrs.multiplexLevel(level)),
       images: () => join(ZARR_SUBPATHS.attrs.images),
       cells: () => join(ZARR_SUBPATHS.attrs.cells),

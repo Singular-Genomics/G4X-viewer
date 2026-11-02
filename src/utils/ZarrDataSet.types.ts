@@ -17,7 +17,18 @@ export type ZarrTranscriptAttrs = {
   layer_config?: ZarrLayerConfig;
   gene_colors?: ZarrGeneColors;
   gene_order?: string[];
+  // Direct-Seq equivalents of gene_colors / gene_order
+  metadata?: Record<string, ZarrDirectSeqTargetMetadata>;
+  metadata_order?: string[];
 };
+
+export type ZarrDirectSeqTargetMetadata = {
+  gene: string;
+  variant: string;
+  color: [number, number, number];
+};
+
+export type ZarrTranscriptSource = 'transcripts' | 'directSeq';
 
 export type ZarrTileCoordinates = {
   z: number;
@@ -34,6 +45,8 @@ export type ZarrTranscriptPoint = {
   cellId: string;
   geneName: string;
   position: [number, number];
+  sequence?: string;
+  meanQs?: number;
 };
 
 export type ZarrCellsData = {
@@ -53,7 +66,7 @@ export type ZarrCellsSegmentations = {
   segmentationSources: Record<string, string>;
 };
 
-export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position';
+export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'target' | 'position' | 'sequence' | 'mean_QS';
 
 export type ZarrTranscriptTileFieldParams = ZarrTileCoordinates & {
   field: ZarrTranscriptField;
@@ -80,6 +93,7 @@ export type ZarrPathsAttrs = {
   root: () => string;
   group: () => string;
   transcripts: () => string;
+  directSeq: () => string;
   multiplexLevel: (level: number) => string;
   images: () => string;
   cells: () => string;
@@ -94,6 +108,7 @@ export type ZarrPathBuilder = {
   cells: ZarrPathsCells;
   images: ZarrPathsImages;
   transcripts: ZarrPathsTranscripts;
+  directSeq: ZarrPathsTranscripts;
   attrs: ZarrPathsAttrs;
   misc: ZarrPathsMisc;
 };

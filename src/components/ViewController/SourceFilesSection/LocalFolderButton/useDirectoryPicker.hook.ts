@@ -5,6 +5,7 @@ import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackb
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../../../../stores/DirectSeqLayerStore';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useBrightfieldImagesStore } from '../../../../stores/BrightfieldImagesStore';
 import { ZarrDataSet } from '../../../../utils/ZarrDataSet';
@@ -101,6 +102,7 @@ export const useDirectoryPicker = () => {
     }
 
     const transcriptAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.transcripts);
+    const directSeqAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.directSeq);
     const rootAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.root);
     const imageAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.images);
     const cellsAttrs = await readJsonFromHandle(handle, ZARR_SUBPATHS.attrs.cells);
@@ -113,6 +115,7 @@ export const useDirectoryPicker = () => {
 
     const hasImagesData = imageAttrs !== null;
     const hasTranscriptsData = !!transcriptAttrs?.layer_config;
+    const hasDirectSeqData = !!directSeqAttrs?.layer_config;
     const hasSegmentationData = availableSegmentations.length > 0;
 
     // `images` may be a symlink, which the File System Access API cannot
@@ -133,6 +136,7 @@ export const useDirectoryPicker = () => {
     // Reset dependent stores
     useZarrDataStore.getState().reset();
     useTranscriptLayerStore.getState().reset();
+    useDirectSeqLayerStore.getState().reset();
     useCellSegmentationLayerStore.getState().reset();
     useBrightfieldImagesStore.getState().reset();
     useViewerStore.setState({
@@ -157,6 +161,7 @@ export const useDirectoryPicker = () => {
     useZarrDataStore.setState({ zarrDataSet });
     useZarrDataStore.getState().setPendingTranscriptAttrs(transcriptAttrs);
     useZarrDataStore.getState().setHasTranscriptsData(hasTranscriptsData);
+    useZarrDataStore.getState().setDirectSeqData({ hasData: hasDirectSeqData });
     useZarrDataStore.getState().setHasSegmentationData(hasSegmentationData);
 
     const warningMessages: string[] = [];

@@ -7,6 +7,7 @@ import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   useCellSegmentationLayer,
   useTranscriptLayer,
+  useDirectSeqLayer,
   useResizableContainer,
   useBrightfieldImageLayer,
   usePolygonDrawingLayer,
@@ -36,6 +37,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
   const transcriptLayer = useTranscriptLayer();
+  const directSeqLayer = useDirectSeqLayer();
   const brightfieldImageLayer = useBrightfieldImageLayer();
   const polygonDrawingLayer = usePolygonDrawingLayer();
   const polygonTextLayer = usePolygonTextLayer();
@@ -194,7 +196,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   };
 
   const deckProps = {
-    layers: [cellMasksLayer, transcriptLayer],
+    layers: [cellMasksLayer, transcriptLayer, directSeqLayer],
     ref: deckGLRef,
     glOptions: {
       preserveDrawingBuffer: true

@@ -9,6 +9,13 @@ import { CellMaskDatapointType, TranscriptDatapointType } from './Tooltip.types'
 function getTooltipContent(type: TooltipType | undefined, object: any) {
   if (type === 'Transcript') {
     return <TooltipTranscriptConent data={object as TranscriptDatapointType} />;
+  } else if (type === 'DirectSeq') {
+    return (
+      <TooltipTranscriptConent
+        data={object as TranscriptDatapointType}
+        isDirectSeq
+      />
+    );
   } else if (type === 'CellMask') {
     return <TooltipCellMaskContent data={object as CellMaskDatapointType} />;
   }

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { MaxLayerSlider } from './MaxLayerSlider';
-import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
+import { useTranscriptSource } from '../TranscriptSourceContext';
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
 import { GxModal } from '../../../../shared/components/GxModal';
@@ -11,7 +11,8 @@ import { useTranslation } from 'react-i18next';
 export const AdvancedViewOptions = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
+  const { useLayerStore } = useTranscriptSource();
+  const [overrideLayers, toggleOverrideLayer] = useLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
   );
 
@@ -28,8 +29,8 @@ export const AdvancedViewOptions = () => {
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
     triggerViewerRerender();
-    useTranscriptLayerStore.setState({ overrideLayers: true });
-  }, []);
+    useLayerStore.setState({ overrideLayers: true });
+  }, [useLayerStore]);
 
   return (
     <>
