@@ -16,7 +16,6 @@ export type CellSegmentationLayerStoreValues = {
   isCellLayerOn: boolean;
   isCellNameFilterOn: boolean;
   showFilteredCells: boolean;
-  showCellFill: boolean;
   cellFillOpacity: number;
   showBoundary: boolean;
   boundaryWidth: number;
@@ -43,7 +42,6 @@ export type CellSegmentationLayerStoreMethods = {
   toggleCellNameFilter: () => void;
   toggleShowFilteredCells: () => void;
   setCellFillOpacity: (newOpacity: number) => void;
-  toggleCellFill: () => void;
   toggleBoundary: () => void;
   setBoundaryWidth: (width: number) => void;
   setCellColormapConfig: (config: CellSegmentationColormapEntry[]) => void;
