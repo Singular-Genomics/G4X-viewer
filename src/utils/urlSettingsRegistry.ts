@@ -398,6 +398,17 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
   },
   // Cell segmentation settings
   {
+    key: URL_KEYS.segShowFill,
+    type: 'boolean',
+    defaultValue: true,
+    read: () => useCellSegmentationLayerStore.getState().showCellFill,
+    write: (val) =>
+      useCellSegmentationLayerStore.setState((store) => ({
+        showCellFill: val as boolean,
+        showBoundary: !val || store.showBoundary
+      }))
+  },
+  {
     key: URL_KEYS.segFillOpacity,
     type: 'number',
     defaultValue: 0.2,
@@ -409,7 +420,11 @@ export const SETTINGS_REGISTRY: SettingDef[] = [
     type: 'boolean',
     defaultValue: false,
     read: () => useCellSegmentationLayerStore.getState().showBoundary,
-    write: (val) => useCellSegmentationLayerStore.setState({ showBoundary: val as boolean })
+    write: (val) =>
+      useCellSegmentationLayerStore.setState((store) => ({
+        showBoundary: val as boolean,
+        showCellFill: !val || store.showCellFill
+      }))
   },
   {
     key: URL_KEYS.segBoundaryWidth,

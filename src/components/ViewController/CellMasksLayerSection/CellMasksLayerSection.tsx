@@ -4,7 +4,6 @@ import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationL
 import { useShallow } from 'zustand/react/shallow';
 import { CellMasksFillSettings } from './CellMasksFillSettings';
 import { CellMasksBoundarySettings } from './CellMasksBoundarySettings';
-import { CellMasksBoundaryToggle } from './CellMasksBoundaryToggle';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
 import { useTranslation } from 'react-i18next';
@@ -26,8 +25,8 @@ const DisabledLayerWarning = () => {
 
 export const CellMasksLayerSection = () => {
   const { t } = useTranslation();
-  const [isCellLayerOn, cellMasksData, showBoundary, isCellNameFilterOn] = useCellSegmentationLayerStore(
-    useShallow((store) => [store.isCellLayerOn, store.cellMasksData, store.showBoundary, store.isCellNameFilterOn])
+  const [isCellLayerOn, cellMasksData, isCellNameFilterOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.isCellLayerOn, store.cellMasksData, store.isCellNameFilterOn])
   );
 
   if (isCellLayerOn && cellMasksData === null) {
@@ -43,17 +42,10 @@ export const CellMasksLayerSection = () => {
       <SegmentationSelectors />
       <Box>
         <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellFillLabel')}</Typography>
+          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.cellAppearanceLabel')}</Typography>
           {!isCellLayerOn && <DisabledLayerWarning />}
         </Box>
         <CellMasksFillSettings />
-      </Box>
-      <Box>
-        <Box sx={sx.subsectionWrapper}>
-          <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.boundaryLabel')}</Typography>
-          <CellMasksBoundaryToggle />
-          {!isCellLayerOn && showBoundary && <DisabledLayerWarning />}
-        </Box>
         <CellMasksBoundarySettings />
       </Box>
       <Box>

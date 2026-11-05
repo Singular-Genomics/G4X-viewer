@@ -64,6 +64,7 @@ import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSecti
 import { GxColorscaleSlider } from '../../shared/components/GxColorscaleSlider';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
 import { GxFilterTable } from '../../shared/components/GxFilterTable';
+import { GxFilterTableOptions } from '../../shared/components/GxFilterTable/GxFilterTableOptions';
 import { GxFilterTableColorCell } from '../../shared/components/GxFilterTable/GxFilterTableColorCell';
 import { GxGridItem } from '../../shared/components/GxGridItem';
 import { GxInput } from '../../shared/components/GxInput';
@@ -249,6 +250,8 @@ export const ComponentsShowcaseView = () => {
 
   const [filterTableRows, setFilterTableRows] = useState<FilterTableRow[]>(INITIAL_FILTER_TABLE_ROWS);
   const [activeTableFilters, setActiveTableFilters] = useState<Set<string>>(() => new Set(['CD3', 'CD8']));
+  const [isTableFilterEnabled, setIsTableFilterEnabled] = useState(false);
+  const [showDiscardedTableRows, setShowDiscardedTableRows] = useState(false);
 
   const handleFilterTableColorUpdate = (newColor: number[], geneName: string) =>
     setFilterTableRows((prev) =>
@@ -617,15 +620,19 @@ export const ComponentsShowcaseView = () => {
 
       <ShowcaseSection title="Filter table">
         <Box sx={{ ...sx.sidebarPanel, maxWidth: 420 }}>
+          <GxFilterTableOptions
+            isFilterEnabled={isTableFilterEnabled}
+            isShowDiscardedEnabled={showDiscardedTableRows}
+            onToggleFilter={() => setIsTableFilterEnabled((enabled) => !enabled)}
+            onToggleShowDiscarded={() => setShowDiscardedTableRows((shown) => !shown)}
+            onClearFilters={() => setActiveTableFilters(new Set())}
+            clearDisabled={activeTableFilters.size === 0}
+          />
           <GxFilterTable
             columns={filterTableColumns}
             rows={filterTableRows}
             activeFilters={activeTableFilters}
-            onClearFilters={() => setActiveTableFilters(new Set())}
             onSetFilter={setActiveTableFilters}
-            onApplyClick={() =>
-              enqueueSnackbar({ message: `Applied filter: ${[...activeTableFilters].join(', ')}`, variant: 'success' })
-            }
           />
         </Box>
       </ShowcaseSection>

@@ -39,6 +39,7 @@ export const URL_KEYS = {
   cytoAxes: 'cyto_xy',
   cytoRanges: 'cyto_r',
   // Cell segmentation
+  segShowFill: 'seg_sf',
   segFillOpacity: 'seg_fo',
   segShowBoundary: 'seg_sb',
   segBoundaryWidth: 'seg_bw',

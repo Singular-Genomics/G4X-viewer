@@ -8,9 +8,5 @@ export type GxFilterTableProps<T extends GxFilterTableRowPropBase> = {
   columns: GridColDef<T>[];
   rows: Array<T>;
   activeFilters: Set<string>;
-  onClearFilters: () => void;
   onSetFilter: (newValue: Set<string>) => void;
-  onApplyClick: () => void;
-  clearDisabled?: boolean;
-  applyDisabled?: boolean;
 };

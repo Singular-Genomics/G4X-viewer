@@ -7,11 +7,13 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   isCellLayerOn: false,
   isCellNameFilterOn: false,
   showFilteredCells: false,
+  showCellFill: true,
   cellFillOpacity: 0.2,
   showBoundary: false,
   boundaryWidth: 1,
   cellColormapConfig: [],
   cellNameFilters: new Set<string>(),
+  clusterLabelFilters: {},
   selectedCells: [],
   umapDataAvailable: false,
   segmentationMetadata: undefined,
@@ -21,13 +23,36 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   selectedClusterLabelKey: ''
 };
 
+// Save the outgoing label's filters and restore only the incoming label's state.
+export const getClusterLabelFilterState = (store: CellSegmentationLayerStoreValues, key: string) => {
+  const clusterLabelFilters = {
+    ...store.clusterLabelFilters,
+    [store.selectedClusterLabelKey]: {
+      cellNameFilters: store.cellNameFilters,
+      isCellNameFilterOn: store.isCellNameFilterOn,
+      showFilteredCells: store.showFilteredCells
+    }
+  };
+
+  return {
+    selectedClusterLabelKey: key,
+    clusterLabelFilters,
+    ...(clusterLabelFilters[key] ?? {
+      cellNameFilters: new Set<string>(),
+      isCellNameFilterOn: false,
+      showFilteredCells: false
+    })
+  };
+};
+
 export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>((set) => ({
   ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES,
   toggleCellLayer: () => set((store) => ({ isCellLayerOn: !store.isCellLayerOn })),
   toggleCellNameFilter: () => set((store) => ({ isCellNameFilterOn: !store.isCellNameFilterOn })),
   toggleShowFilteredCells: () => set((store) => ({ showFilteredCells: !store.showFilteredCells })),
   setCellFillOpacity: (newOpacity) => set({ cellFillOpacity: newOpacity }),
-  toggleBoundary: () => set((store) => ({ showBoundary: !store.showBoundary })),
+  toggleCellFill: () => set((store) => ({ showCellFill: store.showBoundary ? !store.showCellFill : true })),
+  toggleBoundary: () => set((store) => ({ showBoundary: store.showCellFill ? !store.showBoundary : true })),
   setBoundaryWidth: (width) => set({ boundaryWidth: width }),
   setCellColormapConfig: (config) => set({ cellColormapConfig: config }),
   setCellNameFilter: (cellNames) => set({ cellNameFilters: cellNames }),
@@ -50,6 +75,6 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   deleteSelectedCells: (selectionId) =>
     set((store) => ({ selectedCells: store.selectedCells.filter((selection) => selection.roiId !== selectionId) })),
   setSelectedSegmentationLabel: (label) => set({ selectedSegmentationLabel: label }),
-  setSelectedClusterLabelKey: (key) => set({ selectedClusterLabelKey: key }),
+  setSelectedClusterLabelKey: (key) => set((store) => getClusterLabelFilterState(store, key)),
   reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES })
 }));

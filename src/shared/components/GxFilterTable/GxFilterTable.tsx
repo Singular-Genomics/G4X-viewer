@@ -1,4 +1,4 @@
-import { Box, Button, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
+import { Box, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
 import { DataGrid, GridSlotProps } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
@@ -18,11 +18,7 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   columns,
   rows,
   activeFilters,
-  onClearFilters,
-  onSetFilter,
-  onApplyClick,
-  clearDisabled,
-  applyDisabled
+  onSetFilter
 }: GxFilterTableProps<T>) => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -37,22 +33,6 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   return (
     <>
       <Box sx={sx.tableContainer}>
-        <Box sx={sx.buttonsWrapper}>
-          <Button
-            disabled={clearDisabled}
-            sx={sx.clearButton}
-            onClick={onClearFilters}
-          >
-            {t('general.clear')}
-          </Button>
-          <Button
-            disabled={applyDisabled}
-            sx={sx.applyButton}
-            onClick={onApplyClick}
-          >
-            {t('general.apply')}
-          </Button>
-        </Box>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -64,12 +44,9 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
           disableColumnSelector
           rowSelectionModel={{ ids: activeFilters, type: 'include' }}
           onRowSelectionModelChange={(newSelection) => {
-            if (newSelection.ids.size === 0 || newSelection.ids.size === rows.length) {
-              onClearFilters();
-            } else {
-              onSetFilter(newSelection.ids as Set<string>);
-            }
+            onSetFilter(new Set(newSelection.ids as Set<string>));
           }}
+          disableRowSelectionExcludeModel
           keepNonExistentRowsSelected
           checkboxSelection
           slots={{
@@ -147,31 +124,5 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   activeFiltersSwitchWrapper: {
     marginRight: 0
-  },
-  buttonsWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '8px',
-    width: '100%',
-    marginBottom: '8px'
-  },
-  clearButton: {
-    width: '100%',
-    color: theme.palette.gx.accent.greenBlue,
-    border: '2px solid',
-    borderColor: theme.palette.gx.accent.greenBlue,
-    '&.Mui-disabled': {
-      borderColor: theme.palette.gx.mediumGrey[300],
-      color: theme.palette.gx.mediumGrey[300]
-    }
-  },
-  applyButton: {
-    width: '100%',
-    background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.gx.primary.white,
-    fontWeight: 500,
-    '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[300]
-    }
   }
 });

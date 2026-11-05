@@ -3,4 +3,6 @@ export type GxFilterTableOptionsProps = {
   isShowDiscardedEnabled: boolean;
   onToggleFilter: () => void;
   onToggleShowDiscarded: () => void;
+  onClearFilters: () => void;
+  clearDisabled?: boolean;
 };
