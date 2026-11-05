@@ -21,6 +21,7 @@ export type CellSegmentationLayerStoreValues = {
   boundaryWidth: number;
   cellColormapConfig: CellSegmentationColormapEntry[];
   cellNameFilters: CellNameFilterType;
+  clusterLabelFilters: Record<string, ClusterLabelFilterState>;
   selectedCells: SelectionData<SingleMask>[];
   umapDataAvailable: boolean;
   availableSegmentations: SegmentationOption[];
@@ -30,6 +31,11 @@ export type CellSegmentationLayerStoreValues = {
 };
 
 export type CellNameFilterType = Set<string>;
+
+export type ClusterLabelFilterState = Pick<
+  CellSegmentationLayerStoreValues,
+  'cellNameFilters' | 'isCellNameFilterOn' | 'showFilteredCells'
+>;
 
 export type CellSegmentationLayerStoreMethods = {
   toggleCellLayer: () => void;
