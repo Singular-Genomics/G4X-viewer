@@ -105,14 +105,14 @@ const styles = (theme: Theme) => ({
   },
   snackbarTitle: {
     padding: '8px 16px',
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
     background: 'transparent',
     '& a': {
-      color: theme.palette.gx.primary.white,
+      color: theme.palette.common.white,
       textDecoration: 'underline',
       transition: 'opacity 150ms ease',
       '&:hover': {
@@ -125,10 +125,10 @@ const styles = (theme: Theme) => ({
     paddingLeft: '8px'
   },
   iconButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     transition: 'all .2s',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.2)
+      backgroundColor: alpha(theme.palette.common.white, 0.2)
     }
   },
   snackbarTitleMode: {
@@ -152,7 +152,8 @@ const styles = (theme: Theme) => ({
     }
   },
   snackbarContentWrapper: {
-    background: 'white',
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
     padding: '8px'
   }
 });

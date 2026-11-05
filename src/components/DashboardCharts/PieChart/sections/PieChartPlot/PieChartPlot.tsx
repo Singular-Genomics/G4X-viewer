@@ -1,3 +1,4 @@
+import { getPlotTheme } from '../../../../../themes/plotTheme';
 import { Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -168,6 +169,7 @@ export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
     });
 
     return {
+      ...getPlotTheme(theme),
       width: dimensions.width,
       height: dimensions.height,
       autosize: true,
@@ -186,11 +188,12 @@ export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
         }
       },
       modebar: {
-        bgcolor: 'transparent'
+        ...getPlotTheme(theme).modebar,
+        bgcolor: theme.palette.background.paper
       },
       annotations: annotations
     };
-  }, [dimensions.width, dimensions.height, orderedRois, t]);
+  }, [dimensions.width, dimensions.height, orderedRois, t, theme]);
 
   return (
     <Box
@@ -237,6 +240,6 @@ const sx: Record<string, SxProps<Theme>> = {
     padding: 3
   },
   emptyStateText: (theme: Theme) => ({
-    color: theme.palette.gx.lightGrey[500]
+    color: theme.palette.text.primary
   })
 };

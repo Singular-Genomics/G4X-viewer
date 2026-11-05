@@ -45,7 +45,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
       <Box sx={sx.textWrapper}>
         <Typography
           sx={{
-            ...(disabled ? { color: 'rgb(128, 128, 128)' } : {})
+            ...(disabled ? { color: 'text.disabled' } : {})
           }}
         >
           {t('transcriptsSettings.subsamplingSliderLabel')}
@@ -59,7 +59,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
         >
           <InfoIcon
             sx={{
-              ...(disabled ? { color: 'rgb(128, 128, 128)' } : sx.infoIcon)
+              ...(disabled ? { color: 'text.disabled' } : sx.infoIcon)
             }}
           />
         </Tooltip>

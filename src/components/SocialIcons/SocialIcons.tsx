@@ -108,7 +108,7 @@ const styles = (theme: Theme) => ({
     }
   },
   triggerButtonOpen: {
-    backgroundColor: alpha(theme.palette.gx.primary.white, 0.12)
+    backgroundColor: alpha(theme.palette.background.paper, 0.94)
   },
   iconStack: {
     display: 'flex',
@@ -145,9 +145,9 @@ const styles = (theme: Theme) => ({
     flexShrink: 0,
     boxSizing: 'border-box',
     borderRadius: '6px',
-    border: `2px solid ${theme.palette.gx.darkGrey[300]}`,
-    backgroundColor: theme.palette.gx.darkGrey[500],
-    color: theme.palette.gx.lightGrey[500],
+    border: `2px solid ${theme.palette.divider}`,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
     '& .MuiSvgIcon-root': {
       fontSize: '18px'
     }
@@ -156,11 +156,11 @@ const styles = (theme: Theme) => ({
     '& .MuiPaper-root': {
       minWidth: '190px',
       marginTop: '8px',
-      background: theme.palette.gx.darkGrey[300],
+      background: theme.palette.background.paper,
       backgroundImage: 'none',
-      border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.12)}`,
+      border: `1px solid ${theme.palette.divider}`,
       borderRadius: '8px',
-      boxShadow: `0 12px 28px ${alpha(theme.palette.gx.primary.black, 0.35)}`
+      boxShadow: `0 12px 28px ${alpha(theme.palette.common.black, 0.35)}`
     },
     '& .MuiList-root': {
       padding: '6px'
@@ -171,10 +171,10 @@ const styles = (theme: Theme) => ({
     minHeight: '40px',
     padding: '8px 12px',
     borderRadius: '6px',
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     '&:hover': {
-      color: theme.palette.gx.lightGrey[300],
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.08)
+      color: theme.palette.text.primary,
+      backgroundColor: alpha(theme.palette.text.primary, 0.08)
     }
   },
   menuIcon: {

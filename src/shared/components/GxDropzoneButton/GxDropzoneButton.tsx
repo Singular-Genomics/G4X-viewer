@@ -174,7 +174,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   dropzoneHelperMessage: {
     fontSize: '12px',
-    color: theme.palette.gx.mediumGrey[100]
+    color: theme.palette.text.secondary
   },
   cloudUploadIcon: {
     color: theme.palette.grey[500],

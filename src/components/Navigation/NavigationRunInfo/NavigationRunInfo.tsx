@@ -76,7 +76,7 @@ const styles = (theme: Theme) => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: '10px',
-    borderLeft: `1px solid ${alpha(theme.palette.gx.primary.white, 0.15)}`,
+    borderLeft: `1px solid ${theme.palette.divider}`,
     paddingLeft: '20px',
     minWidth: 0,
     overflow: 'hidden',
@@ -110,7 +110,7 @@ const styles = (theme: Theme) => ({
   label: {
     fontSize: '12px',
     fontWeight: 500,
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     lineHeight: 1.3,
     whiteSpace: 'nowrap',
     letterSpacing: '0.04em'
@@ -118,7 +118,7 @@ const styles = (theme: Theme) => ({
   value: {
     fontSize: '13px',
     fontWeight: 400,
-    color: alpha(theme.palette.gx.primary.white, 0.8),
+    color: alpha(theme.palette.text.primary, 0.8),
     lineHeight: 1.3,
     whiteSpace: 'nowrap',
     overflow: 'hidden',

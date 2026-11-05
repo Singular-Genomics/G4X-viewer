@@ -100,13 +100,13 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     '& .MuiSlider-mark': {
       height: '16px',
       width: '1px',
-      backgroundColor: theme.palette.gx.primary.black
+      backgroundColor: theme.palette.text.primary
     },
     '& .MuiSlider-thumb:hover': {
       boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`
     },
     '&.MuiSlider-root.Mui-disabled': {
-      color: theme.palette.gx.mediumGrey[100]
+      color: theme.palette.action.disabled
     }
   }
 });

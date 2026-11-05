@@ -75,8 +75,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   headerContainer: {
     display: 'flex',
-    backgroundColor: theme.palette.gx.mediumGrey[700],
-    borderBottom: `2px solid ${theme.palette.gx.darkGrey[900]}`,
+    backgroundColor: theme.palette.background.paper,
+    borderBottom: `2px solid ${theme.palette.divider}`,
     gap: '2px'
   },
   controlsBar: {
@@ -86,25 +86,25 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     gap: 1,
     padding: '8px 12px',
     flexShrink: 0,
-    backgroundColor: theme.palette.gx.lightGrey[100]
+    backgroundColor: theme.palette.background.default
   },
   settingsButtonWrapper: {
-    backgroundColor: theme.palette.gx.lightGrey[100],
+    backgroundColor: theme.palette.background.default,
     display: 'flex',
     alignItems: 'center'
   },
   settingsButton: {
     height: 'min-content',
-    color: theme.palette.gx.darkGrey[900],
+    color: theme.palette.text.secondary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   closeButton: {
-    color: theme.palette.gx.darkGrey[300],
+    color: theme.palette.text.primary,
     padding: '4px',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   modal: {
@@ -113,7 +113,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     justifyContent: 'center'
   },
   settingsContainer: {
-    backgroundColor: theme.palette.gx.lightGrey[100],
+    backgroundColor: theme.palette.background.default,
     borderRadius: '10px',
     padding: '14px',
     display: 'flex',
@@ -137,7 +137,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   settingsContent: {
     width: '100%',
     borderRadius: '8px',
-    background: theme.palette.gx.lightGrey[900],
+    background: theme.palette.background.paper,
     padding: '8px'
   },
   title: {
@@ -149,7 +149,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     overflow: 'auto',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.gx.darkGrey[500],
-    boxShadow: `inset 0px 0px 24px ${alpha(theme.palette.gx.primary.white, 0.4)}`
+    backgroundColor: theme.palette.background.paper,
+    boxShadow: `inset 0px 0px 24px ${alpha(theme.palette.common.black, 0.12)}`
   }
 });

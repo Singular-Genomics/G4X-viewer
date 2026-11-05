@@ -28,10 +28,7 @@ export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onTogg
     <Box sx={sx.navigationContainer}>
       <Box sx={sx.leftSection}>
         <Box sx={sx.logoSection}>
-          <GxLogo
-            version="light"
-            size={36}
-          />
+          <GxLogo size={36} />
           <Box sx={sx.logoTextWrapper}>
             <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
             <Typography
@@ -129,7 +126,7 @@ const styles = (theme: Theme) => ({
     right: 0,
     zIndex: 50,
     height: `${NAVIGATION_HEIGHT_MOBILE}px`,
-    background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[100]} 0%, ${theme.palette.gx.darkGrey[300]} 100%)`,
+    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -182,7 +179,7 @@ const styles = (theme: Theme) => ({
     position: 'relative'
   },
   logoText: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.text.primary,
     fontWeight: 700,
     fontSize: '20px',
     lineHeight: '20px',
@@ -191,7 +188,7 @@ const styles = (theme: Theme) => ({
   versionText: {
     fontSize: '12px',
     lineHeight: '12px',
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     alignSelf: 'flex-end',
     background: 'none',
     border: 'none',
@@ -202,7 +199,7 @@ const styles = (theme: Theme) => ({
     textDecorationColor: 'transparent',
     transition: 'text-decoration-color 0.2s ease',
     '&:hover': {
-      textDecorationColor: theme.palette.gx.lightGrey[500]
+      textDecorationColor: theme.palette.text.primary
     }
   },
   tabsSection: {
@@ -220,10 +217,10 @@ const styles = (theme: Theme) => ({
   },
   viewerUiButton: {
     padding: '8px',
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     '&:hover': {
-      color: theme.palette.gx.lightGrey[300],
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+      color: theme.palette.text.primary,
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   viewerUiButtonPlaceholder: {
@@ -240,7 +237,7 @@ const styles = (theme: Theme) => ({
     }
   },
   tab: {
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     fontWeight: 600,
     fontSize: '15px',
     textTransform: 'capitalize',
@@ -250,15 +247,15 @@ const styles = (theme: Theme) => ({
     borderRadius: '0 14px 0 14px',
     borderBottom: '2px solid transparent',
     '&.Mui-selected': {
-      color: theme.palette.gx.primary.white,
-      background: 'rgba(255, 255, 255, 0.1)',
+      color: theme.palette.text.primary,
+      background: theme.palette.action.selected,
       backdropFilter: 'blur(15px)',
       borderBottom: `2px solid ${theme.palette.gx.accent.greenBlue}`,
       boxShadow: `0 0 12px ${theme.palette.gx.accent.greenBlue}50`
     },
     '&:hover:not(.Mui-selected)': {
-      color: theme.palette.gx.lightGrey[300],
-      background: 'rgba(255, 255, 255, 0.05)',
+      color: theme.palette.text.primary,
+      background: theme.palette.action.hover,
       backdropFilter: 'blur(12px)'
     }
   },
@@ -277,15 +274,15 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     padding: '5px 10px',
-    background: alpha(theme.palette.gx.primary.white, 0.08),
+    background: theme.palette.action.hover,
     borderRadius: '4px',
-    border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.12)}`,
+    border: `1px solid ${theme.palette.divider}`,
     cursor: 'pointer'
   },
   mobilePreviewText: {
     fontSize: '11px',
     fontWeight: 600,
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     lineHeight: 1
   }
 });

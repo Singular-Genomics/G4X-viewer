@@ -6,7 +6,7 @@ export const LogoBanner = () => {
   const { t } = useTranslation();
   return (
     <Box sx={sx.logoBannerContainer}>
-      <GxLogo version="light" />
+      <GxLogo />
       <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
     </Box>
   );
@@ -23,7 +23,7 @@ const sx = {
     gap: '10px'
   },
   logoText: {
-    color: (theme: Theme) => theme.palette.gx.primary.white,
+    color: (theme: Theme) => theme.palette.text.primary,
     fontWeight: 700,
     fontSize: '20px'
   }

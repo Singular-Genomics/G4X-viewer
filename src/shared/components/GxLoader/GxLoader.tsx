@@ -1,8 +1,8 @@
-import { Box, keyframes } from '@mui/material';
+import { Box, keyframes, Theme } from '@mui/material';
 import { GxLogo } from '../GxLogo';
 import { GxLoaderProps } from './GxLoader.types';
 
-export const GxLoader = function ({ version = 'dark' }: GxLoaderProps) {
+export const GxLoader = function ({ version }: GxLoaderProps) {
   return (
     <Box sx={sx.wrapper}>
       <Box sx={sx.loader} />
@@ -80,7 +80,7 @@ const sx = {
       position: 'absolute',
       inset: '0',
       borderRadius: '50%',
-      border: '1px solid rgba(199, 199, 199, 1)'
+      border: (theme: Theme) => `1px solid ${theme.palette.divider}`
     },
     '&:after': {
       content: '""',
@@ -88,7 +88,7 @@ const sx = {
       position: 'absolute',
       inset: '0',
       borderRadius: '50%',
-      border: '1px solid rgba(0, 0, 0, 1)',
+      border: (theme: Theme) => `1px solid ${theme.palette.text.primary}`,
       animation: `${loaderCircleAnimations} 2s linear infinite`
     }
   }

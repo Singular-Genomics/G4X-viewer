@@ -163,7 +163,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       marginTop: '3px'
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[700],
+      color: theme.palette.action.disabled,
       opacity: 0.75
     },
     '& .MuiSlider-thumb:hover': {

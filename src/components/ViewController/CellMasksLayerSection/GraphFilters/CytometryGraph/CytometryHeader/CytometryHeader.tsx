@@ -114,7 +114,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: theme.palette.gx.primary.white,
+    backgroundColor: theme.palette.background.paper,
     gap: '8px',
     padding: '8px'
   },

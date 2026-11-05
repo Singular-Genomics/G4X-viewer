@@ -95,7 +95,7 @@ export const ChannelOptions = ({ color, defaultColor, handleColorSelect, disable
 
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     padding: '8px',
     width: '272px'
   },
@@ -106,7 +106,7 @@ const styles = (theme: Theme) => ({
     }
   },
   divider: {
-    borderColor: theme.palette.gx.mediumGrey[500],
+    borderColor: theme.palette.divider,
     marginTop: '16px',
     marginBottom: '16px'
   }

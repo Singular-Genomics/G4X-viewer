@@ -99,24 +99,24 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     top: '10px',
     right: '10px',
-    color: theme.palette.gx.mediumGrey[300],
+    color: theme.palette.text.secondary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   closeButton: {
     position: 'absolute',
     top: '8px',
     right: '8px',
-    color: theme.palette.gx.darkGrey[300],
+    color: theme.palette.text.primary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   popover: {
     '& .MuiPopover-paper': {
-      backgroundColor: theme.palette.gx.lightGrey[100],
-      border: `5px solid ${theme.palette.gx.mediumGrey[300]}`,
+      backgroundColor: theme.palette.background.default,
+      border: `5px solid ${theme.palette.divider}`,
       borderRadius: '10px'
     }
   },
@@ -129,7 +129,7 @@ const styles = (theme: Theme) => ({
     position: 'relative'
   },
   sectionTitle: {
-    color: theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     fontWeight: '700',
     marginBottom: '8px',
     fontSize: '1.1rem'
@@ -146,12 +146,12 @@ const styles = (theme: Theme) => ({
     gap: '16px'
   },
   label: {
-    color: theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     fontWeight: '500',
     fontSize: '0.95rem'
   },
   value: {
-    color: theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     fontWeight: '700',
     textAlign: 'right',
     maxWidth: '300px',

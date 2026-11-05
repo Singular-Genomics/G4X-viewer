@@ -18,7 +18,7 @@ export function ScaleBarIcon({ width }: ScaleBarIconProps) {
         y1="5"
         x2="2"
         y2="15"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.5"
       />
       <line
@@ -26,7 +26,7 @@ export function ScaleBarIcon({ width }: ScaleBarIconProps) {
         y1="10"
         x2={lineEnd}
         y2="10"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.5"
       />
       <line
@@ -34,7 +34,7 @@ export function ScaleBarIcon({ width }: ScaleBarIconProps) {
         y1="5"
         x2={lineEnd}
         y2="15"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1.5"
       />
     </svg>

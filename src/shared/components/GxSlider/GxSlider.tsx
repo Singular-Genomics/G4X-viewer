@@ -22,7 +22,7 @@ const styles = (theme: Theme) => ({
       boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`
     },
     '&.MuiSlider-root.Mui-disabled': {
-      color: theme.palette.gx.mediumGrey[100]
+      color: theme.palette.action.disabled
     }
   }
 });

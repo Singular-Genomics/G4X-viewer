@@ -75,23 +75,21 @@ export const GxMultiSelect = ({
   );
 };
 
-const styles = (theme: Theme, variant: 'light' | 'dark') => {
-  const isDark = variant === 'dark';
-
+const styles = (theme: Theme, _variant: 'light' | 'dark') => {
   return {
     rounded: {
       borderRadius: '8px',
-      background: isDark ? theme.palette.gx.darkGrey[300] : theme.palette.gx.primary.white,
+      background: theme.palette.background.paper,
       minHeight: '40px',
       height: 'auto',
-      color: isDark ? theme.palette.gx.lightGrey[700] : theme.palette.gx.darkGrey[100],
+      color: theme.palette.text.primary,
       width: '100%',
       transition: 'background 0.15s ease, color 0.15s ease',
       '& .MuiPaper-root': {
         filter: 'none'
       },
       '& .MuiSelect-icon': {
-        color: isDark ? alpha(theme.palette.gx.lightGrey[100], 0.25) : undefined,
+        color: theme.palette.action.active,
         transition: 'color 0.15s ease'
       },
       '& .MuiSelect-select': {
@@ -104,15 +102,13 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       },
       [`& .${outlinedInputClasses.notchedOutline}`]: {
         border: '1px solid',
-        borderColor: isDark
-          ? alpha(theme.palette.gx.lightGrey[100], 0.25)
-          : alpha(theme.palette.gx.darkGrey[100], 0.25),
+        borderColor: theme.palette.divider,
         transition: 'border-color 0.15s ease'
       },
       '&.Mui-disabled': {
         opacity: 1,
         border: 'none',
-        background: isDark ? theme.palette.gx.darkGrey[500] : theme.palette.gx.lightGrey[500],
+        background: theme.palette.action.disabledBackground,
         [`& .${outlinedInputClasses.notchedOutline}`]: {
           border: 'none'
         }
@@ -125,21 +121,19 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       '&:hover': {
         [`& .${outlinedInputClasses.notchedOutline}`]: {
           border: '1px solid',
-          borderColor: isDark ? alpha(theme.palette.gx.accent.greenBlue, 0.5) : theme.palette.gx.accent.greenBlue
+          borderColor: theme.palette.primary.main
         }
       },
       [`&.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]: {
         border: '1px solid',
-        borderColor: isDark ? alpha(theme.palette.gx.accent.greenBlue, 0.6) : theme.palette.gx.accent.greenBlue
+        borderColor: theme.palette.primary.main
       }
     },
     roundedMenu: {
       '& .MuiPaper-root': {
         border: '1px solid',
-        borderColor: isDark
-          ? alpha(theme.palette.gx.lightGrey[100], 0.25)
-          : alpha(theme.palette.gx.darkGrey[100], 0.25),
-        background: isDark ? theme.palette.gx.darkGrey[300] : theme.palette.gx.primary.white,
+        borderColor: theme.palette.divider,
+        background: theme.palette.background.paper,
         filter: 'none',
         fontSize: '14px',
         boxSizing: 'border-box',
@@ -149,10 +143,10 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
         },
         '& .MuiMenuItem-root': {
           fontSize: '14px',
-          color: isDark ? theme.palette.gx.lightGrey[500] : theme.palette.gx.mediumGrey[100],
+          color: theme.palette.text.primary,
           transition: 'background 0.15s ease, color 0.15s ease',
           '&:hover': {
-            color: isDark ? alpha(theme.palette.gx.lightGrey[700], 0.9) : theme.palette.gx.accent.greenBlue,
+            color: theme.palette.text.primary,
             background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
           },
           [`&.${menuItemClasses.selected}`]: {
@@ -167,15 +161,15 @@ const styles = (theme: Theme, variant: 'light' | 'dark') => {
       }
     },
     indeterminateColor: {
-      color: '#f50057'
+      color: theme.palette.secondary.main
     },
     selectAllText: {
       fontWeight: 500
     },
     selectedAll: {
-      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.action.selected,
       '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.08)'
+        backgroundColor: theme.palette.action.selected
       },
       '& .MuiCheckbox-root': {
         '&, &.Mui-checked, &.MuiCheckbox-indeterminate': {

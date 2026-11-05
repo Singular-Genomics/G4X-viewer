@@ -112,7 +112,7 @@ export const lightPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'light',
   background: { default: colors.lightGrey[100], paper: primary.white },
-  text: { primary: darkGrey[100], secondary: colors.mediumGrey[100] },
+  text: { primary: darkGrey[100], secondary: darkGrey[700] },
   divider: colors.mediumGrey[500]
 };
 

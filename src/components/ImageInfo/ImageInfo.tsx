@@ -43,7 +43,7 @@ const styles = (theme: Theme) => ({
     bottom: 6,
     display: 'none',
     gap: '8px',
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     padding: '8px 14px 10px',
     borderRadius: '10px',
     [theme.breakpoints.up('md')]: {

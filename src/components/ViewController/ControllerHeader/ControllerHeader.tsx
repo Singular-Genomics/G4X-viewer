@@ -10,7 +10,7 @@ export const ControllerHeader = ({ onCloseController }: ControllerHeaderProps) =
 
   return (
     <Box sx={sx.viewControllerHeaderContainer}>
-      <GxLogo version="dark" />
+      <GxLogo />
       <Box sx={sx.viewControllerHeaderTextWrapper}>
         <Typography sx={sx.viewControllerHeaderTitleText}>{t('general.appTitle')}</Typography>
         <Typography sx={sx.viewControllerHeaderVersionText}>{app_version}</Typography>

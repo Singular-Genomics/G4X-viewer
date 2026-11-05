@@ -189,7 +189,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     flexDirection: 'column',
     gap: '4px',
     paddingTop: '8px',
-    borderTop: `1px solid ${theme.palette.gx.mediumGrey[500]}`
+    borderTop: `1px solid ${theme.palette.divider}`
   },
   legacyNote: {
     fontSize: '13px',
@@ -202,7 +202,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   moreWrapper: {
     borderTop: '1px dashed',
-    borderColor: theme.palette.gx.mediumGrey[500],
+    borderColor: theme.palette.divider,
     paddingTop: '6px',
     paddingInline: '8px',
     display: 'flex',

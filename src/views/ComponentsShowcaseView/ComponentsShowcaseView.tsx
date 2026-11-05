@@ -661,7 +661,7 @@ export const ComponentsShowcaseView = () => {
           >
             <Typography
               variant="body2"
-              sx={{ color: theme.palette.gx.darkGrey[100] }}
+              sx={{ color: theme.palette.text.primary }}
             >
               Drag the handle at the top to move this window around.
             </Typography>
@@ -760,9 +760,9 @@ const styles = (theme: Theme) => ({
     gap: 1,
     padding: '4px 12px',
     borderRadius: '999px',
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`,
+    border: `1px solid ${theme.palette.divider}`,
     background: theme.palette.background.paper,
-    boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.25)',
+    boxShadow: theme.shadows[4],
     zIndex: 1000
   },
   header: {
@@ -770,7 +770,7 @@ const styles = (theme: Theme) => ({
     alignItems: 'center',
     gap: 2,
     paddingBottom: 3,
-    borderBottom: `1px solid ${theme.palette.gx.mediumGrey[500]}`
+    borderBottom: `1px solid ${theme.palette.divider}`
   },
   pageTitle: {
     fontSize: '24px',
@@ -793,7 +793,7 @@ const styles = (theme: Theme) => ({
     letterSpacing: '0.04em'
   },
   sectionDivider: {
-    borderColor: theme.palette.gx.mediumGrey[500]
+    borderColor: theme.palette.divider
   },
   row: {
     display: 'flex',
@@ -803,28 +803,28 @@ const styles = (theme: Theme) => ({
   },
   controlLabel: {
     fontSize: '12px',
-    color: theme.palette.gx.mediumGrey[100],
+    color: theme.palette.text.secondary,
     marginBottom: '4px'
   },
   darkSurface: {
-    background: theme.palette.gx.darkGrey[100],
-    color: theme.palette.gx.lightGrey[900],
+    background: theme.palette.background.paper,
+    color: theme.palette.text.primary,
     borderRadius: '8px',
     padding: '16px',
     width: 'fit-content',
-    border: `1px solid ${theme.palette.gx.darkGrey[500]}`
+    border: `1px solid ${theme.palette.divider}`
   },
   sidebarPanel: {
-    background: theme.palette.gx.lightGrey[100],
-    color: theme.palette.gx.darkGrey[100],
+    background: theme.palette.background.default,
+    color: theme.palette.text.primary,
     borderRadius: '8px',
     padding: '16px',
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`
+    border: `1px solid ${theme.palette.divider}`
   },
   navigationWrapper: {
     borderRadius: '8px',
     overflow: 'hidden',
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`
+    border: `1px solid ${theme.palette.divider}`
   },
   channelControllersContainer: {
     display: 'flex',
@@ -834,7 +834,7 @@ const styles = (theme: Theme) => ({
   },
   channelControllerWrapper: {
     padding: '8px',
-    background: theme.palette.gx.lightGrey[900],
+    background: theme.palette.background.paper,
     borderRadius: '4px'
   },
   infoBoxStack: {
@@ -844,45 +844,45 @@ const styles = (theme: Theme) => ({
     width: 'fit-content'
   },
   brandButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 600,
     background: theme.palette.gx.gradients.brand(),
-    '&:hover': { boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}` }
+    '&:hover': { boxShadow: `0px 4px 24px ${theme.palette.common.black}` }
   },
   outlinedButton: {
     color: theme.palette.text.primary,
-    borderColor: theme.palette.gx.mediumGrey[500],
+    borderColor: theme.palette.divider,
     '&:hover': { borderColor: theme.palette.gx.accent.greenBlue },
     '&.Mui-disabled': {
       color: theme.palette.text.disabled,
-      borderColor: theme.palette.gx.mediumGrey[700]
+      borderColor: theme.palette.divider
     }
   },
   dangerButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 600,
     background: theme.palette.gx.gradients.danger()
   },
   warningButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 600,
     background: theme.palette.gx.gradients.warning()
   },
   infoButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 600,
     background: theme.palette.gx.gradients.info()
   },
   iconButtonDemo: {
     color: theme.palette.text.primary,
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`
+    border: `1px solid ${theme.palette.divider}`
   },
   gridItemPlaceholder: {
     flex: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: theme.palette.gx.mediumGrey[900],
+    color: theme.palette.text.secondary,
     fontSize: '13px'
   },
   loaderWrapper: {
@@ -902,7 +902,7 @@ const styles = (theme: Theme) => ({
     gap: '4px',
     padding: '12px 4px',
     borderRadius: '8px',
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`,
+    border: `1px solid ${theme.palette.divider}`,
     '&:hover': { borderColor: theme.palette.gx.accent.greenBlue }
   },
   iconGlyph: {

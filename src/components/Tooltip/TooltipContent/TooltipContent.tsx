@@ -51,7 +51,7 @@ const styles = (theme: Theme) => ({
     mb: '4px'
   },
   divider: {
-    borderColor: theme.palette.gx.darkGrey[900],
+    borderColor: theme.palette.divider,
     mb: '6px'
   },
   dataRow: {

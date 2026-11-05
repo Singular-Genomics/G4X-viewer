@@ -300,7 +300,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     justifyContent: 'center',
     padding: '2px 6px',
     borderRadius: '8px',
-    background: theme.palette.gx.primary.white,
+    background: theme.palette.background.paper,
     flexGrow: 0.5,
     minWidth: '90px',
     maxWidth: '90px'
@@ -320,7 +320,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     paddingBottom: '0'
   },
   groupDivider: {
-    borderColor: theme.palette.gx.lightGrey[500],
+    borderColor: theme.palette.divider,
     marginTop: '4px',
     marginBottom: '4px'
   },

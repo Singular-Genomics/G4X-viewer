@@ -100,11 +100,11 @@ const sx = {
     alignItems: 'center',
     position: 'relative',
     padding: '8px',
-    color: (theme: Theme) => theme.palette.gx.primary.black,
+    color: (theme: Theme) => theme.palette.text.primary,
     width: '100%',
     borderRadius: 0,
     '&:after': {
-      background: (theme: Theme) => theme.palette.gx.primary.black,
+      background: (theme: Theme) => theme.palette.divider,
       bottom: 0,
       content: '""',
       display: 'block',
@@ -133,7 +133,7 @@ const sx = {
   },
   sectionContentContainer: {
     borderBottom: '1px solid',
-    borderColor: (theme: Theme) => theme.palette.gx.mediumGrey[300],
+    borderColor: (theme: Theme) => theme.palette.divider,
     padding: '8px 0px 16px'
   }
 };

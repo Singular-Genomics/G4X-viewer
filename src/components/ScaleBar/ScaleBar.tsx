@@ -51,7 +51,7 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     right: 8,
     bottom: 8,
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     padding: '2px 6px',
     borderRadius: '10px',
     zIndex: 10,
@@ -69,7 +69,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center'
   },
   text: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.text.primary,
     textAlign: 'center',
     width: '100%'
   }

@@ -74,10 +74,10 @@ const styles = (theme: Theme) => ({
     display: 'none'
   },
   tooltipContainer: {
-    backgroundColor: theme.palette.gx.darkGrey[300],
-    color: theme.palette.gx.lightGrey[900],
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
     padding: '8px 16px',
-    border: `5px solid ${theme.palette.gx.darkGrey[100]}`,
+    border: `5px solid ${theme.palette.divider}`,
     borderRadius: '10px',
     cursor: 'crosshair',
     fontSize: '13px'

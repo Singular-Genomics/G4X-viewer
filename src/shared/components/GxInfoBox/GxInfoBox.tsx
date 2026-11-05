@@ -82,7 +82,7 @@ export const GxInfoBox = ({
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
-    backgroundColor: theme.palette.gx.darkGrey[100],
+    backgroundColor: theme.palette.background.paper,
     borderRadius: 2,
     overflow: 'visible',
     transition: 'all 300ms ease-in-out',
@@ -101,9 +101,9 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     width: '100%',
     padding: '8px 10px',
     borderRadius: 0,
-    color: theme.palette.gx.lightGrey[900],
+    color: theme.palette.text.primary,
     '&:hover': {
-      backgroundColor: theme.palette.gx.darkGrey[300]
+      backgroundColor: theme.palette.action.hover
     }
   },
   title: {
@@ -117,7 +117,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   tag: {
     backgroundColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     padding: '2px 6px',
     borderRadius: 1,
     fontSize: '12px',
@@ -132,7 +132,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   contentContainer: {
     padding: 2,
     borderTop: 1,
-    borderColor: theme.palette.gx.darkGrey[900],
-    color: theme.palette.gx.lightGrey[900]
+    borderColor: theme.palette.divider,
+    color: theme.palette.text.primary
   }
 });

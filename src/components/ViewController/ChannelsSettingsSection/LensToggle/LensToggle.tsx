@@ -68,7 +68,7 @@ const styles = (theme: Theme) => ({
   },
   subSectionWrapper: {
     marginLeft: '32px',
-    borderLeft: `5px solid ${theme.palette.gx.mediumGrey[100]}`,
+    borderLeft: `5px solid ${theme.palette.divider}`,
     paddingLeft: '8px'
   },
   selectTitle: {

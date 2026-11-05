@@ -63,7 +63,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     background: theme.palette.gx.gradients.brand(),
     fontWeight: 600,
     '&:hover': {
-      boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}`
+      boxShadow: `0px 4px 24px ${theme.palette.common.black}`
     }
   }
 });

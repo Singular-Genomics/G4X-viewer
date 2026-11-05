@@ -191,16 +191,16 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     padding: 3
   },
   noRoiMessageText: {
-    color: theme.palette.gx.lightGrey[500],
+    color: theme.palette.text.primary,
     maxWidth: '480px',
     '& a': {
-      color: theme.palette.gx.lightGrey[500],
+      color: theme.palette.text.primary,
       textDecoration: 'underline'
     }
   },
   header: {
     padding: '24px 24px 16px',
-    borderBottom: `1px solid ${alpha(theme.palette.gx.primary.white, 0.1)}`,
+    borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
     flexShrink: 0
   },
   title: {

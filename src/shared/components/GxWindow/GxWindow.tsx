@@ -144,19 +144,19 @@ const styles = (theme: Theme) => ({
   windowContainer: (posX: number, posY: number, isDragging: boolean) => ({
     borderRadius: '8px 8px 0px 0px',
     position: 'fixed',
-    backgroundColor: theme.palette.gx.mediumGrey[500],
+    backgroundColor: theme.palette.background.paper,
     zIndex: 100,
     transition: 'box-shadow 0.25s',
-    boxShadow: isDragging ? '24px 24px 8px rgba(0,0,0,0.5)' : '8px 8px 8px rgba(0,0,0,0.8)',
+    boxShadow: isDragging ? theme.shadows[16] : theme.shadows[8],
     left: `${posX}px`,
     top: `${posY}px`,
     border: '4px solid',
-    BorderColor: theme.palette.gx.primary.black
+    borderColor: theme.palette.divider
   }),
   windowHandle: (isDragging: boolean) => ({
     width: '64px',
     height: '6px',
-    background: 'black',
+    background: theme.palette.divider,
     marginInline: 'auto',
     marginBlock: '2px',
     borderRadius: '3px',
@@ -169,7 +169,7 @@ const styles = (theme: Theme) => ({
     paddingInline: '8px',
     borderTop: '1px solid',
     borderBottom: '1px solid',
-    borderColor: theme.palette.gx.primary.black
+    borderColor: theme.palette.divider
   },
   titleContainer: {
     display: 'flex',
@@ -181,19 +181,19 @@ const styles = (theme: Theme) => ({
     textTransform: 'capitalize'
   },
   windowContentWrapper: {
-    backgroundColor: theme.palette.gx.lightGrey[300],
+    backgroundColor: theme.palette.background.paper,
     resize: 'both',
     overflow: 'auto',
     padding: '8px'
   },
   iconButton: {
     marginLeft: 'auto',
-    color: theme.palette.gx.primary.black,
+    color: theme.palette.text.primary,
     backgroundColor: 'transparent',
     padding: '2px',
     marginBlock: '4px',
     '&:hover': {
-      backgroundColor: theme.palette.gx.mediumGrey[500]
+      backgroundColor: theme.palette.action.hover
     }
   }
 });

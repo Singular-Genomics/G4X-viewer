@@ -2,14 +2,14 @@ import { Theme } from '@mui/material';
 
 export const getControlButtonStyles = (theme: Theme) => ({
   border: '1px solid',
-  borderColor: theme.palette.gx.mediumGrey[100],
-  backgroundColor: theme.palette.gx.primary.white,
-  color: theme.palette.gx.darkGrey[300],
+  borderColor: theme.palette.divider,
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   fontWeight: 600,
-  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.18)',
+  boxShadow: theme.shadows[1],
   '&:hover': {
     borderColor: theme.palette.primary.dark,
-    backgroundColor: theme.palette.gx.lightGrey[900]
+    backgroundColor: theme.palette.action.hover
   },
   '&.Mui-selected': {
     borderColor: theme.palette.primary.dark,
@@ -20,9 +20,9 @@ export const getControlButtonStyles = (theme: Theme) => ({
     }
   },
   '&.Mui-disabled': {
-    borderColor: theme.palette.gx.mediumGrey[500],
-    backgroundColor: theme.palette.gx.lightGrey[900],
-    color: theme.palette.gx.darkGrey[900],
+    borderColor: theme.palette.divider,
+    backgroundColor: theme.palette.action.disabledBackground,
+    color: theme.palette.action.disabled,
     boxShadow: 'none'
   },
   '&.Mui-selected.Mui-disabled': {

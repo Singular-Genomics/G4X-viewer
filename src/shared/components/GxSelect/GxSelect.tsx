@@ -25,21 +25,21 @@ const styles = (theme: Theme) => ({
   rounded: {
     overflow: 'hidden',
     borderRadius: '8px',
-    background: theme.palette.gx.primary.white,
+    background: theme.palette.background.paper,
     height: '40px',
-    color: theme.palette.gx.darkGrey[100],
+    color: theme.palette.text.primary,
     fontSize: '14px',
     '& .MuiPaper-root': {
       filter: 'none'
     },
     [`& .${outlinedInputClasses.notchedOutline}`]: {
       border: '1px solid',
-      borderColor: alpha(theme.palette.gx.darkGrey[100], 0.2)
+      borderColor: theme.palette.divider
     },
     '&.Mui-disabled': {
       opacity: 1,
       border: 'none ',
-      background: theme.palette.gx.lightGrey[500],
+      background: theme.palette.action.disabledBackground,
       [`& .${outlinedInputClasses.notchedOutline}`]: {
         border: 'none '
       }
@@ -61,7 +61,7 @@ const styles = (theme: Theme) => ({
   roundedMenu: {
     '& .MuiPaper-root': {
       border: '1px solid',
-      borderColor: alpha(theme.palette.gx.darkGrey[100], 0.2),
+      borderColor: theme.palette.divider,
       filter: 'none',
       fontSize: '14px',
       boxSizing: 'border-box',
@@ -70,9 +70,9 @@ const styles = (theme: Theme) => ({
       },
       '& .MuiMenuItem-root': {
         fontSize: '14px',
-        color: theme.palette.gx.mediumGrey[100],
+        color: theme.palette.text.secondary,
         '&:hover': {
-          color: theme.palette.gx.mediumGrey[100],
+          color: theme.palette.text.secondary,
           background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
         },
         [`&.${menuItemClasses.selected}`]: {

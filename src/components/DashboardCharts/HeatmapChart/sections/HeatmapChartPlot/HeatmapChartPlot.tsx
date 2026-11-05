@@ -1,4 +1,5 @@
-import { Box, SxProps, Theme, Typography } from '@mui/material';
+import { getPlotTheme } from '../../../../../themes/plotTheme';
+import { Box, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { HeatmapChartPlotProps } from './HeatmapChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ export const HeatmapChartPlot = ({
   settings
 }: HeatmapChartPlotProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [threshold, setThreshold] = useState<{ lower?: number; upper?: number }>({});
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -68,10 +70,9 @@ export const HeatmapChartPlot = ({
   }
 
   const layout: Partial<Layout> = {
+    ...getPlotTheme(theme),
     width: dimensions.width,
     height: dimensions.height,
-    plot_bgcolor: 'white',
-    paper_bgcolor: 'white',
     autosize: true,
     showlegend: false,
     uirevision: 'true',
@@ -163,11 +164,11 @@ const sx: Record<string, SxProps<Theme>> = {
     padding: 3
   },
   emptyStateText: (theme: Theme) => ({
-    color: theme.palette.gx.lightGrey[500]
+    color: theme.palette.text.primary
   }),
   sliderWrapper: {
     width: '100%',
-    backgroundColor: 'white',
+    backgroundColor: (theme: Theme) => theme.palette.background.paper,
     paddingInline: '32px'
   }
 };

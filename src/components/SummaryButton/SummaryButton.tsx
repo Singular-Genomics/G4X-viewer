@@ -185,9 +185,9 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     top: '10px',
     right: '50px',
-    color: theme.palette.gx.mediumGrey[300],
+    color: theme.palette.text.secondary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   dialog: {
@@ -205,7 +205,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 700,
     padding: '16px 24px',
     flexShrink: 0
@@ -213,7 +213,7 @@ const styles = (theme: Theme) => ({
   dialogTitleText: {
     fontWeight: 700,
     fontSize: '1.25rem',
-    color: theme.palette.gx.primary.white
+    color: theme.palette.common.white
   },
   dialogTitleActions: {
     display: 'flex',
@@ -221,20 +221,20 @@ const styles = (theme: Theme) => ({
     gap: '12px'
   },
   openInNewTabButton: {
-    color: theme.palette.gx.primary.white,
-    borderColor: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
+    borderColor: theme.palette.common.white,
     '&:hover': {
-      borderColor: theme.palette.gx.primary.white,
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+      borderColor: theme.palette.common.white,
+      backgroundColor: alpha(theme.palette.common.white, 0.1)
     },
     '&.Mui-disabled': {
-      color: alpha(theme.palette.gx.primary.white, 0.45)
+      color: theme.palette.action.disabled
     }
   },
   dialogCloseButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+      backgroundColor: alpha(theme.palette.common.white, 0.1)
     }
   },
   dialogContent: {

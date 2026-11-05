@@ -78,7 +78,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   exportButton: {
     background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     padding: '7px 16px',
     flex: 1
   },

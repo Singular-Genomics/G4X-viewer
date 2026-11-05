@@ -238,9 +238,9 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     top: '10px',
     right: '90px',
-    color: theme.palette.gx.mediumGrey[300],
+    color: theme.palette.text.secondary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1)
+      backgroundColor: alpha(theme.palette.text.primary, 0.1)
     }
   },
   dialog: {
@@ -258,12 +258,12 @@ const styles = (theme: Theme) => ({
   dialogTitleText: {
     fontWeight: 700,
     fontSize: '1.25rem',
-    color: theme.palette.gx.primary.white
+    color: theme.palette.common.white
   },
   dialogCloseButton: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.1)
+      backgroundColor: alpha(theme.palette.common.white, 0.1)
     }
   },
   dialogContent: {
@@ -293,9 +293,9 @@ const styles = (theme: Theme) => ({
     }
   },
   actionButton: {
-    color: theme.palette.gx.mediumGrey[300],
+    color: theme.palette.text.secondary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.mediumGrey[300], 0.1),
+      backgroundColor: alpha(theme.palette.text.primary, 0.1),
       color: theme.palette.gx.accent.greenBlue
     }
   },
@@ -303,11 +303,11 @@ const styles = (theme: Theme) => ({
     alignSelf: 'stretch',
     minWidth: '72px',
     background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     fontWeight: 600,
     '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[300],
-      color: theme.palette.gx.primary.white
+      background: theme.palette.action.disabledBackground,
+      color: theme.palette.action.disabled
     }
   },
   divider: {

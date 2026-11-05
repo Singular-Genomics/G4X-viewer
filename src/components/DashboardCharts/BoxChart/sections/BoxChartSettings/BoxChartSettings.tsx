@@ -117,7 +117,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   settingLabel: {
     borderRight: '2px solid',
-    borderColor: theme.palette.gx.mediumGrey[500],
+    borderColor: theme.palette.divider,
     textWrap: 'nowrap',
     textAlign: 'end',
     paddingInlineEnd: '8px',

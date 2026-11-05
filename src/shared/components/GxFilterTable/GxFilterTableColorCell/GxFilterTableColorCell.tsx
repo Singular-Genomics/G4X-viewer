@@ -83,7 +83,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     padding: '4px'
   },
   paper: {
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.75),
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     padding: '8px',
     width: '272px'
   }

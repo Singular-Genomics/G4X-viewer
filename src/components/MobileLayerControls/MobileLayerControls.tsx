@@ -128,8 +128,8 @@ const styles = (theme: Theme) => ({
     minWidth: 0,
     padding: '6px 12px',
     borderRadius: '18px',
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.65),
-    color: theme.palette.gx.primary.white,
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
+    color: theme.palette.text.primary,
     fontSize: '12px',
     fontWeight: 700,
     lineHeight: 1.5,
@@ -137,7 +137,7 @@ const styles = (theme: Theme) => ({
     backdropFilter: 'blur(8px)',
     zIndex: 20,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.78)
+      backgroundColor: theme.palette.background.paper
     }
   },
   popoverPaper: {
@@ -145,20 +145,20 @@ const styles = (theme: Theme) => ({
     marginTop: '8px',
     padding: '10px',
     borderRadius: '14px',
-    border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.14)}`,
-    background: alpha(theme.palette.gx.darkGrey[100], 0.94),
-    color: theme.palette.gx.primary.white,
-    boxShadow: `0 8px 24px ${alpha(theme.palette.gx.primary.black, 0.35)}`,
+    border: `1px solid ${alpha(theme.palette.divider, 0.14)}`,
+    background: alpha(theme.palette.background.paper, 0.94),
+    color: theme.palette.text.primary,
+    boxShadow: `0 8px 24px ${alpha(theme.palette.common.black, 0.35)}`,
     backdropFilter: 'blur(12px)'
   },
   title: {
     padding: '2px 6px 8px',
     fontSize: '12px',
     fontWeight: 700,
-    color: theme.palette.gx.lightGrey[500]
+    color: theme.palette.text.primary
   },
   divider: {
-    borderColor: alpha(theme.palette.gx.primary.white, 0.12),
+    borderColor: theme.palette.divider,
     marginBottom: '4px'
   },
   layerControl: {
@@ -169,14 +169,14 @@ const styles = (theme: Theme) => ({
     justifyContent: 'space-between',
     borderRadius: '10px',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.07)
+      backgroundColor: alpha(theme.palette.text.primary, 0.07)
     }
   },
   layerLabel: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
-    color: theme.palette.gx.primary.white
+    color: theme.palette.text.primary
   },
   layerName: {
     fontSize: '14px',

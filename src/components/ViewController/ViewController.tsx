@@ -203,7 +203,7 @@ const styles = (theme: Theme) => ({
   },
 
   viewControllerContentWrapper: {
-    backgroundColor: theme.palette.gx.lightGrey[100],
+    backgroundColor: theme.palette.background.default,
 
     padding: '16px 4px 8px 20px',
     height: '100%',
@@ -218,7 +218,7 @@ const styles = (theme: Theme) => ({
     gap: '8px',
     paddingRight: '8px',
     overflowY: 'scroll',
-    scrollbarColor: '#8E9092 transparent'
+    scrollbarColor: `${theme.palette.divider} transparent`
   },
   viewControllerLoaderWrapper: {
     display: 'flex',
@@ -236,23 +236,23 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.gx.lightGrey[100],
+    backgroundColor: theme.palette.background.default,
     borderTopLeftRadius: '8px',
     borderBottomLeftRadius: '8px',
     cursor: 'ew-resize',
     touchAction: 'none',
     outline: 'none',
     '&:hover': {
-      backgroundColor: theme.palette.gx.lightGrey[300]
+      backgroundColor: theme.palette.action.hover
     }
   },
   resizeHandleActive: {
-    backgroundColor: theme.palette.gx.lightGrey[300]
+    backgroundColor: theme.palette.background.paper
   },
   headerCheckbox: {
     padding: '0 8px 0 0',
     '&, &.Mui-checked': {
-      color: theme.palette.gx.primary.black
+      color: theme.palette.text.primary
     },
     '&.Mui-disabled': {
       opacity: 0.26

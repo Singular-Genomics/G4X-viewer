@@ -1,3 +1,4 @@
+import { getPlotTheme } from '../../../../../themes/plotTheme';
 import { Box, useTheme } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
@@ -75,6 +76,7 @@ export const UmapGraph = () => {
   }, []);
 
   const layout = {
+    ...getPlotTheme(theme),
     width: dimensions.width,
     height: dimensions.height,
     uirevision: 'true',
@@ -85,7 +87,7 @@ export const UmapGraph = () => {
         ? [
             {
               line: {
-                color: theme.palette.gx.primary.black,
+                color: theme.palette.text.primary,
                 width: 2,
                 dash: 'solid'
               },

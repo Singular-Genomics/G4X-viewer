@@ -338,26 +338,26 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     gap: 1
   },
   controlButton: {
-    color: theme.palette.gx.lightGrey[300],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    color: theme.palette.text.primary,
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     transition: 'color 100ms ease-in-out',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
+      backgroundColor: theme.palette.background.paper
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[900],
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.5)
+      color: theme.palette.action.disabled,
+      backgroundColor: alpha(theme.palette.background.paper, 0.94)
     }
   },
   controlButtonDisabled: {
-    color: theme.palette.gx.darkGrey[500],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.3),
+    color: theme.palette.action.disabled,
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.3)
+      backgroundColor: alpha(theme.palette.background.paper, 0.94)
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[500],
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.3)
+      color: theme.palette.action.disabled,
+      backgroundColor: alpha(theme.palette.background.paper, 0.94)
     }
   },
   modalContent: {
@@ -400,17 +400,17 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   formatButton: {
     height: 'fit-content',
     backgroundColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.8)
     }
   },
   csvButton: {
-    borderColor: theme.palette.gx.lightGrey[300],
-    color: theme.palette.gx.lightGrey[300],
+    borderColor: theme.palette.divider,
+    color: theme.palette.text.primary,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.lightGrey[300], 0.1),
-      borderColor: theme.palette.gx.lightGrey[300]
+      backgroundColor: alpha(theme.palette.text.primary, 0.1),
+      borderColor: theme.palette.divider
     }
   },
   dropzoneWrapper: {
@@ -433,7 +433,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       color: theme.palette.text.primary
     },
     '& .MuiRadio-root': {
-      color: theme.palette.gx.mediumGrey[900],
+      color: theme.palette.text.secondary,
       '&.Mui-checked': {
         color: theme.palette.gx.accent.greenBlue
       }

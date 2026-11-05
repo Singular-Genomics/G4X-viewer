@@ -178,7 +178,7 @@ const styles = (theme: Theme) => ({
     paddingBlock: '8px',
     height: 'min-content',
     marginTop: 'auto',
-    backgroundColor: theme.palette.gx.primary.white,
+    backgroundColor: theme.palette.background.paper,
     paddingInline: '8px'
   },
   input: {
@@ -200,18 +200,18 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.accent.greenBlue,
     border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    background: theme.palette.gx.primary.white,
+    background: theme.palette.background.paper,
     '&.Mui-disabled': {
-      borderColor: theme.palette.gx.mediumGrey[300],
-      color: theme.palette.gx.mediumGrey[300]
+      borderColor: theme.palette.divider,
+      color: theme.palette.action.disabled
     }
   },
   confirmButton: {
     height: '36px',
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     background: theme.palette.gx.gradients.brand(),
     '&.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[300]
+      background: theme.palette.action.disabledBackground
     }
   }
 });

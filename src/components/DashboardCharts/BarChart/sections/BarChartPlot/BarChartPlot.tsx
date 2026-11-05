@@ -1,4 +1,5 @@
-import { Box, Theme, Typography } from '@mui/material';
+import { getPlotTheme } from '../../../../../themes/plotTheme';
+import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { BarChartPlotProps } from './BarChartPlot.types';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ export const BarChartPlot = ({
   settings
 }: BarChartPlotProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const { parseCellsByRoi } = useBarChartPlotDataParser();
@@ -54,10 +56,9 @@ export const BarChartPlot = ({
   }, []);
 
   const layout: Partial<Layout> = {
+    ...getPlotTheme(theme),
     width: dimensions.width,
     height: dimensions.height,
-    plot_bgcolor: 'white',
-    paper_bgcolor: 'white',
     autosize: true,
     showlegend: true,
     uirevision: 'true',
@@ -70,6 +71,7 @@ export const BarChartPlot = ({
       : {}),
     ...{
       [settings.swapAxis ? 'xaxis' : 'yaxis']: {
+        ...getPlotTheme(theme).xaxis,
         title: {
           text: selectedValue
         }
@@ -131,6 +133,6 @@ const sx = {
     padding: 2
   },
   emptyStateText: (theme: Theme) => ({
-    color: theme.palette.gx.lightGrey[500]
+    color: theme.palette.text.primary
   })
 };

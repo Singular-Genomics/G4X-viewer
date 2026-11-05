@@ -238,7 +238,7 @@ const styles = (theme: Theme) => ({
   },
   swatchesGroup: {
     display: 'flex',
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`,
+    border: `1px solid ${theme.palette.divider}`,
     flexShrink: 0
   },
   colorSwatch: {
@@ -247,13 +247,13 @@ const styles = (theme: Theme) => ({
   hexInput: {
     flex: 1,
     '& .MuiInputBase-input': {
-      color: theme.palette.gx.lightGrey[900]
+      color: theme.palette.text.primary
     },
     '& .MuiOutlinedInput-notchedOutline': {
       transition: 'border-color 0.2s ease'
     },
     '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.gx.mediumGrey[300]
+      borderColor: theme.palette.divider
     }
   },
   palettedWrapper: {
@@ -264,7 +264,7 @@ const styles = (theme: Theme) => ({
   picker: {
     width: '16px',
     height: '16px',
-    border: '2px solid white',
+    border: `2px solid ${theme.palette.common.white}`,
     borderRadius: '100%',
     zIndex: 100,
     position: 'absolute',
@@ -281,29 +281,29 @@ const styles = (theme: Theme) => ({
   },
   resetButton: {
     flex: 1,
-    color: theme.palette.gx.lightGrey[900],
-    border: `1px solid ${theme.palette.gx.mediumGrey[500]}`,
+    color: theme.palette.text.primary,
+    border: `1px solid ${theme.palette.divider}`,
     fontWeight: 600,
     '&:hover': {
-      borderColor: theme.palette.gx.lightGrey[500],
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.05)
+      borderColor: theme.palette.divider,
+      backgroundColor: alpha(theme.palette.text.primary, 0.05)
     },
     '&.Mui-disabled': {
-      color: alpha(theme.palette.gx.lightGrey[900], 0.3),
-      borderColor: theme.palette.gx.darkGrey[300]
+      color: theme.palette.action.disabled,
+      borderColor: theme.palette.divider
     }
   },
   confirmButton: {
     flex: 1,
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.common.white,
     background: theme.palette.gx.gradients.brand(),
     fontWeight: 600,
     '&:hover': {
-      boxShadow: `0px 4px 24px ${theme.palette.gx.primary.black}`
+      boxShadow: `0px 4px 24px ${theme.palette.common.black}`
     },
     '&.Mui-disabled': {
-      color: alpha(theme.palette.gx.primary.white, 0.5),
-      background: theme.palette.gx.darkGrey[300]
+      color: theme.palette.action.disabled,
+      background: theme.palette.action.disabledBackground
     }
   },
   predefinedColorsContainer: {
@@ -339,7 +339,7 @@ const styles = (theme: Theme) => ({
     '& .MuiSlider-thumb': {
       width: '24px',
       height: '24px',
-      border: '3px solid #FFF',
+      border: `3px solid ${theme.palette.common.white}`,
       background: color
     }
   })

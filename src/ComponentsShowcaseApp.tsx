@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
 import { initReactI18next } from 'react-i18next';
 import HttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
@@ -20,7 +20,12 @@ i18n
 
 export const ComponentsShowcaseApp = () => {
   return (
-    <ThemeProvider theme={gxTheme}>
+    <ThemeProvider
+      theme={gxTheme}
+      // Custom styles and Plotly consume resolved colors from theme.palette.
+      forceThemeRerender
+    >
+      <CssBaseline enableColorScheme />
       <SnackbarProvider
         anchorOrigin={{
           vertical: 'top',

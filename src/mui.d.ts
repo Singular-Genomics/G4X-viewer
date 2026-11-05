@@ -1,6 +1,10 @@
 import { GxPalette } from './themes/types';
 
 declare module '@mui/material/styles' {
+  interface CssThemeVariables {
+    enabled: true;
+  }
+
   interface Palette extends MuiPalette {
     gx: GxPalette;
   }

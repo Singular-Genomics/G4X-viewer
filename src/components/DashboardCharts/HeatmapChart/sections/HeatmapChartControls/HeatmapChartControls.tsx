@@ -181,10 +181,10 @@ const sx: Record<string, SxProps> = {
       padding: '8px 12px'
     },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.23)'
+      borderColor: 'divider'
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'rgba(255, 255, 255, 0.4)'
+      borderColor: 'text.secondary'
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
       borderColor: 'primary.main'

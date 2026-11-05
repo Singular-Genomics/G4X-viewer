@@ -48,9 +48,9 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: backgroundColor || theme.palette.gx.darkGrey[100],
+    backgroundColor: backgroundColor || theme.palette.background.paper,
     borderRadius: 2,
-    border: `1px solid ${theme.palette.gx.darkGrey[500]}`,
+    border: `1px solid ${theme.palette.divider}`,
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
@@ -62,8 +62,8 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
     alignItems: 'center',
     gap: 1,
     padding: '6px 12px',
-    background: `linear-gradient(90deg, ${theme.palette.gx.darkGrey[700]}, ${theme.palette.gx.darkGrey[300]})`,
-    borderBottom: `1px solid ${theme.palette.gx.darkGrey[300]}`,
+    background: theme.palette.background.default,
+    borderBottom: `1px solid ${theme.palette.divider}`,
     minHeight: 32,
     cursor: 'grab'
   },
@@ -73,11 +73,11 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
   },
   dragIcon: {
     fontSize: '16px',
-    color: theme.palette.gx.lightGrey[700],
+    color: theme.palette.text.primary,
     opacity: 0.7
   },
   title: {
-    color: theme.palette.gx.lightGrey[900],
+    color: theme.palette.text.primary,
     fontWeight: 600,
     fontSize: '0.875rem'
   },
@@ -85,7 +85,7 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
     position: 'absolute',
     top: 4,
     right: 4,
-    color: theme.palette.gx.lightGrey[700],
+    color: theme.palette.text.primary,
     padding: '4px',
     zIndex: 10,
     backgroundColor: 'transparent',

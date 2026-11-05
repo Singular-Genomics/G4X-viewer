@@ -150,9 +150,9 @@ const styles = (theme: Theme) => ({
   },
   select: {
     fontSize: '13px',
-    color: theme.palette.gx.lightGrey[900],
+    color: theme.palette.text.primary,
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.gx.darkGrey[900]
+      borderColor: theme.palette.divider
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.gx.accent.greenBlue
@@ -161,21 +161,21 @@ const styles = (theme: Theme) => ({
       borderColor: theme.palette.gx.accent.greenBlue
     },
     '& .MuiSvgIcon-root': {
-      color: theme.palette.gx.lightGrey[900]
+      color: theme.palette.text.primary
     }
   },
   selectMenu: {
-    backgroundColor: theme.palette.gx.darkGrey[300],
+    backgroundColor: theme.palette.background.paper,
     '& .MuiMenuItem-root': {
-      color: theme.palette.gx.lightGrey[900],
+      color: theme.palette.text.primary,
       fontSize: '13px',
       '&:hover': {
-        backgroundColor: theme.palette.gx.darkGrey[500]
+        backgroundColor: theme.palette.action.hover
       },
       '&.Mui-selected': {
-        backgroundColor: theme.palette.gx.darkGrey[700],
+        backgroundColor: theme.palette.action.selected,
         '&:hover': {
-          backgroundColor: theme.palette.gx.darkGrey[500]
+          backgroundColor: theme.palette.action.hover
         }
       }
     }
@@ -184,7 +184,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     gap: 2,
     padding: '8px 12px',
-    backgroundColor: theme.palette.gx.darkGrey[300],
+    backgroundColor: theme.palette.background.paper,
     borderRadius: '4px'
   },
   statItem: {
@@ -194,24 +194,24 @@ const styles = (theme: Theme) => ({
   },
   statLabel: {
     fontSize: '12px',
-    color: theme.palette.gx.mediumGrey[500],
+    color: theme.palette.text.secondary,
     fontWeight: 500
   },
   statValue: {
     fontSize: '13px',
-    color: theme.palette.gx.lightGrey[900],
+    color: theme.palette.text.primary,
     fontWeight: 600
   },
   textField: {
     fontSize: '13px',
     '& .MuiInputBase-input': {
       fontSize: '13px',
-      color: theme.palette.gx.lightGrey[900],
+      color: theme.palette.text.primary,
       '&::-webkit-scrollbar': {
         width: '8px'
       },
       '&::-webkit-scrollbar-track': {
-        background: theme.palette.gx.lightGrey[700],
+        background: theme.palette.background.paper,
         borderRadius: '10px'
       },
       '&::-webkit-scrollbar-thumb': {
@@ -224,7 +224,7 @@ const styles = (theme: Theme) => ({
     },
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
-        borderColor: theme.palette.gx.darkGrey[900]
+        borderColor: theme.palette.divider
       },
       '&:hover fieldset': {
         borderColor: theme.palette.gx.accent.greenBlue
@@ -234,7 +234,7 @@ const styles = (theme: Theme) => ({
       }
     },
     '& .MuiInputBase-input::placeholder': {
-      color: theme.palette.gx.mediumGrey[500],
+      color: theme.palette.text.secondary,
       opacity: 1
     }
   }

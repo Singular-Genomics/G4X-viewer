@@ -122,7 +122,7 @@ const styles = (theme: Theme, size: string) => {
   // Base styles for all sizes
   const baseStyles = {
     backdrop: {
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.58),
+      backgroundColor: alpha(theme.palette.common.black, 0.58),
       backdropFilter: 'blur(3px)'
     },
     modalContainer: {
@@ -138,7 +138,7 @@ const styles = (theme: Theme, size: string) => {
       borderRadius: '14px',
       border: `1px solid ${alpha(theme.palette.divider, 0.45)}`,
       backgroundColor: theme.palette.background.paper,
-      boxShadow: `0 24px 64px ${alpha(theme.palette.gx.primary.black, 0.32)}`,
+      boxShadow: `0 24px 64px ${alpha(theme.palette.common.black, 0.32)}`,
       overflow: 'hidden',
       outline: 'none'
     },
@@ -157,15 +157,15 @@ const styles = (theme: Theme, size: string) => {
       placeItems: 'center',
       flexShrink: 0,
       borderRadius: '10px',
-      color: theme.palette.gx.primary.white,
-      backgroundColor: alpha(theme.palette.gx.primary.white, 0.14),
-      border: `1px solid ${alpha(theme.palette.gx.primary.white, 0.18)}`
+      color: theme.palette.common.white,
+      backgroundColor: alpha(theme.palette.common.white, 0.14),
+      border: `1px solid ${alpha(theme.palette.common.white, 0.18)}`
     },
     closeButton: {
       marginLeft: 'auto',
-      color: theme.palette.gx.primary.white,
+      color: theme.palette.common.white,
       '&:hover': {
-        backgroundColor: alpha(theme.palette.gx.primary.white, 0.14)
+        backgroundColor: alpha(theme.palette.common.white, 0.14)
       }
     },
     modalContentWrapper: {
@@ -204,10 +204,10 @@ const styles = (theme: Theme, size: string) => {
       }
     },
     continueButton: {
-      color: theme.palette.gx.primary.white,
-      boxShadow: `0 6px 16px ${alpha(theme.palette.gx.primary.black, 0.18)}`,
+      color: theme.palette.common.white,
+      boxShadow: `0 6px 16px ${alpha(theme.palette.common.black, 0.18)}`,
       '&:hover': {
-        boxShadow: `0 8px 20px ${alpha(theme.palette.gx.primary.black, 0.24)}`
+        boxShadow: `0 8px 20px ${alpha(theme.palette.common.black, 0.24)}`
       }
     },
     cancelButton: {
@@ -242,7 +242,7 @@ const styles = (theme: Theme, size: string) => {
         fontSize: '18px',
         lineHeight: 1.3,
         fontWeight: 700,
-        color: theme.palette.gx.primary.white,
+        color: theme.palette.common.white,
         letterSpacing: '0.01em'
       },
       modalButtonBase: {
@@ -263,7 +263,7 @@ const styles = (theme: Theme, size: string) => {
       fontSize: '22px',
       lineHeight: 1.3,
       fontWeight: 700,
-      color: theme.palette.gx.primary.white,
+      color: theme.palette.common.white,
       letterSpacing: '0.01em'
     }
   };

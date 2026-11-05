@@ -77,7 +77,7 @@ export const ViewerView = ({ className, isViewerActive = true, isUiHidden = fals
           )}
           {!isUiHidden && isViewerLoading && (
             <Box sx={sx.loaderContainer}>
-              <GxLoader version="light" />
+              <GxLoader />
               {isViewerLoading.message && (
                 <Typography sx={sx.loadingText}>{`${isViewerLoading.message}...`}</Typography>
               )}
@@ -143,7 +143,7 @@ const styles = (theme: Theme) => ({
   },
   loaderContainer: {
     position: 'absolute',
-    background: alpha(theme.palette.gx.darkGrey[700], 0.8),
+    background: alpha(theme.palette.background.paper, 0.8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -155,11 +155,11 @@ const styles = (theme: Theme) => ({
   },
   loadingText: {
     fontSize: '30px',
-    color: '#FFF',
+    color: theme.palette.text.primary,
     textTransform: 'uppercase'
   },
   infoText: {
-    color: theme.palette.gx.lightGrey[900],
+    color: theme.palette.text.primary,
     fontSize: '16px'
   }
 });

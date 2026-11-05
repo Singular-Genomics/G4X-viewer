@@ -124,11 +124,11 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       fontSize: '0.8rem',
-      color: theme.palette.gx.primary.black
+      color: theme.palette.text.primary
     }
   },
   iconButton: {
-    color: theme.palette.gx.primary.black,
+    color: theme.palette.text.primary,
     padding: '2px',
     alignSelf: 'center',
     marginTop: '12px',

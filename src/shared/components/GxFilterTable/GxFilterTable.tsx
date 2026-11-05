@@ -93,22 +93,22 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       borderRadius: '0px !important'
     },
     '& .MuiDataGrid-row': {
-      backgroundColor: theme.palette.gx.primary.white,
+      backgroundColor: theme.palette.background.paper,
       cursor: 'pointer',
       '&.Mui-selected': {
         backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.4)
       }
     },
     '& .MuiDataGrid-container--top [role=row]': {
-      background: `${theme.palette.gx.lightGrey[900]} !important`
+      background: `${theme.palette.background.paper} !important`
     },
     '& .MuiDataGrid-columnHeaderTitle': {
-      color: theme.palette.gx.darkGrey[900],
+      color: theme.palette.text.secondary,
       textTransform: 'uppercase',
       fontWeight: 700
     },
     '& .MuiDataGrid-footerContainer': {
-      background: theme.palette.gx.lightGrey[900]
+      background: theme.palette.background.paper
     },
     '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiCheckbox-root': {
       color: theme.palette.gx.accent.greenBlue

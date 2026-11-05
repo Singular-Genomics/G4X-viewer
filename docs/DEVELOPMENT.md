@@ -155,6 +155,16 @@ const styles = (theme: Theme) => ({
 });
 ```
 
+### Light and dark mode
+
+`src/themes/palette.ts` defines the shared brand colors and the light/dark semantic palettes. Use `theme.palette.background.default` for application surfaces, `background.paper` for controls and floating panels, `text.primary` / `text.secondary` for text, `divider` for borders, and `action.*` for hover, selected, and disabled states. Fixed neutral colors from `palette.gx` should not be used for interface surfaces or text.
+
+Keep scientific data colors (channel colors, cluster colormaps, heatmap scales, and exported image annotations) independent of the interface theme. White lettering on brand gradients and black modal backdrops intentionally use `palette.common` for contrast.
+
+Both app entry points use `CssBaseline` and `ThemeProvider` with `forceThemeRerender`. Custom styles and Plotly consume resolved palette values, so the provider must refresh those values when the color scheme changes. Plotly layouts should start with `getPlotTheme(theme)` from `src/themes/plotTheme.ts`; retain its axis colors when adding custom axis settings.
+
+To check a styling change, switch **Light / Dark** in View Settings and inspect the sidebar, filter tables, Fill/Border toggles (including the last-active disabled button), dropdown menus, floating graphs, settings dialogs, tooltips, and dashboard plots. The `/components` route also has a theme switch for inspecting shared controls. Confirm that changing modes preserves selections and data colors.
+
 ## Web Workers
 
 The application frequently processes large scientific datasets (cell segmentation, transcript data, imaging). Use web workers for advanced operations to prevent UI blocking.

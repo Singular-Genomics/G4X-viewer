@@ -18,10 +18,10 @@ const styles = (theme: Theme) => ({
   input: {
     '& .MuiOutlinedInput-root': {
       '& fieldset': {
-        borderColor: theme.palette.gx.mediumGrey[100]
+        borderColor: theme.palette.divider
       },
       '&:hover fieldset': {
-        borderColor: theme.palette.gx.darkGrey[500]
+        borderColor: theme.palette.divider
       },
       '&.Mui-focused fieldset': {
         borderColor: theme.palette.gx.accent.greenBlue,

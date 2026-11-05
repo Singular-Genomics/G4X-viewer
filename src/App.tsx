@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import G4XViewer from './components/G4XViewer';
 import { SnackbarProvider } from 'notistack';
 import { gxTheme } from './themes/theme';
@@ -27,7 +27,12 @@ export const App = () => {
   }, [t]);
 
   return (
-    <ThemeProvider theme={gxTheme}>
+    <ThemeProvider
+      theme={gxTheme}
+      // Custom styles and Plotly consume resolved colors from theme.palette.
+      forceThemeRerender
+    >
+      <CssBaseline enableColorScheme />
       <SnackbarProvider
         anchorOrigin={{
           vertical: 'top',

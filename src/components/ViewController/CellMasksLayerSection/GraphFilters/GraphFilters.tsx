@@ -82,15 +82,15 @@ const styles = (theme: Theme) => ({
     width: '100%',
     display: 'flex',
     fontWeight: 700,
-    borderColor: theme.palette.gx.primary.black,
-    color: theme.palette.gx.primary.black,
+    borderColor: theme.palette.divider,
+    color: theme.palette.text.primary,
     gap: '8px',
     '&.Mui-selected.Mui-disabled': {
-      background: theme.palette.gx.mediumGrey[100]
+      background: theme.palette.action.disabledBackground
     },
     '&.Mui-selected': {
       background: theme.palette.gx.gradients.brand(),
-      color: theme.palette.gx.primary.white
+      color: theme.palette.common.white
     }
   },
   toggleButtonLabel: {

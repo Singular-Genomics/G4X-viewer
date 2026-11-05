@@ -67,7 +67,7 @@ const styles = (theme: Theme) => ({
   entryContainer: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: theme.palette.gx.lightGrey[900],
+    backgroundColor: theme.palette.background.paper,
     borderRadius: '8px',
     height: '42px'
   },
@@ -81,6 +81,6 @@ const styles = (theme: Theme) => ({
   },
   entryTypeTooltip: {
     marginRight: '8px',
-    color: theme.palette.gx.mediumGrey[500]
+    color: theme.palette.text.secondary
   }
 });

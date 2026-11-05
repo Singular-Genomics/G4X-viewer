@@ -192,10 +192,10 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   textFieldEnabled: {
     '& .MuiInputBase-input': {
       textAlign: 'center',
-      WebkitTextFillColor: theme.palette.gx.primary.black
+      WebkitTextFillColor: theme.palette.text.primary
     },
     '&.MuiInputBase-root::before': {
-      borderColor: `${theme.palette.gx.primary.black}`,
+      borderColor: `${theme.palette.divider}`,
       borderBottomStyle: 'solid'
     }
   },

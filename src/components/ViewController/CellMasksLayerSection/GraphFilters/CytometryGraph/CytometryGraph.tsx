@@ -1,3 +1,4 @@
+import { getPlotTheme } from '../../../../../themes/plotTheme';
 import { alpha, Box, IconButton, Theme, Typography, useTheme } from '@mui/material';
 import Plot from 'react-plotly.js';
 import { Data, Layout } from 'plotly.js';
@@ -258,13 +259,15 @@ export const CytometryGraph = () => {
   ];
 
   const layout = {
+    ...getPlotTheme(theme),
     dragmode: 'select',
     hovermode: 'closest',
     uirevision: 'true',
     margin: { t: 50, r: 100, b: 80, l: 100 },
-    paper_bgcolor: theme.palette.gx.primary.white,
-    plot_bgcolor: theme.palette.gx.lightGrey[900],
+    paper_bgcolor: theme.palette.background.paper,
+    plot_bgcolor: theme.palette.background.paper,
     xaxis: {
+      ...getPlotTheme(theme).xaxis,
       title: {
         text: xProteinName,
         font: { size: 14 }
@@ -278,6 +281,7 @@ export const CytometryGraph = () => {
       exponentformat: settings.exponentFormat
     },
     yaxis: {
+      ...getPlotTheme(theme).yaxis,
       title: {
         text: yProteinName,
         font: { size: 14 },
@@ -297,14 +301,14 @@ export const CytometryGraph = () => {
     height: dimensions.height,
     activeselection: {
       opacity: 1,
-      fillcolor: alpha(theme.palette.gx.primary.black, 0.1)
+      fillcolor: alpha(theme.palette.text.primary, 0.1)
     },
     selections: [
       ...(selectionRange
         ? [
             {
               line: {
-                color: theme.palette.gx.primary.black,
+                color: theme.palette.text.primary,
                 width: 2,
                 dash: 'solid'
               },
@@ -360,7 +364,7 @@ export const CytometryGraph = () => {
           }}
         />
       </Box>
-      <Box sx={{ backgroundColor: theme.palette.gx.primary.white, paddingInline: '32px' }}>
+      <Box sx={{ backgroundColor: theme.palette.background.paper, paddingInline: '32px' }}>
         <GxColorscaleSlider
           scaleMin={heatmapData.metadata?.zMin}
           scaleMax={heatmapData.metadata?.zMax}
@@ -414,16 +418,16 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '8px',
-    background: alpha(theme.palette.gx.darkGrey[500], 0.55)
+    background: alpha(theme.palette.background.paper, 0.94)
   },
   loaderProgressValueText: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.text.primary,
     fontSize: '24px',
     fontWeight: 700,
     marginBlockStart: '16px'
   },
   loaderProgressMessage: {
-    color: theme.palette.gx.primary.white,
+    color: theme.palette.text.primary,
     fontSize: '24px',
     fontWeight: 700
   },
@@ -440,6 +444,6 @@ const messageSx = {
     paddingInline: '16px'
   },
   downloadIcon: {
-    color: (theme: Theme) => theme.palette.gx.darkGrey[700]
+    color: (theme: Theme) => theme.palette.text.primary
   }
 };

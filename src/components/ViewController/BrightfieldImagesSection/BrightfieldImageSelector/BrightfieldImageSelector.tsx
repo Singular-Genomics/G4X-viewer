@@ -152,7 +152,7 @@ const styles = (theme: Theme) => ({
   dropzoneButton: {
     flex: 1,
     borderStyle: 'solid',
-    backgroundColor: theme.palette.gx.primary.white,
+    backgroundColor: theme.palette.background.paper,
     height: '40px',
     borderRadius: '0 0 0 8px',
     borderColor: theme.palette.gx.accent.greenBlue,
@@ -166,7 +166,7 @@ const styles = (theme: Theme) => ({
   cloudUploadButton: {
     flex: 1,
     borderStyle: 'solid',
-    backgroundColor: theme.palette.gx.primary.white,
+    backgroundColor: theme.palette.background.paper,
     height: '40px',
     borderRadius: '0 0 8px 0',
     borderColor: theme.palette.gx.accent.greenBlue,
@@ -183,7 +183,7 @@ const styles = (theme: Theme) => ({
     gap: '8px',
     flexDirection: 'column',
     padding: '8px',
-    backgroundColor: theme.palette.gx.primary.white,
+    backgroundColor: theme.palette.background.paper,
     borderRadius: '8px 8px 0 0'
   },
   imageSelectorEmptyText: {

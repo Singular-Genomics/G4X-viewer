@@ -244,7 +244,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
                 backgroundColor:
                   mode instanceof DrawPolygonMode
                     ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                    : alpha(theme.palette.gx.primary.black, 0.5)
+                    : alpha(theme.palette.background.paper, 0.5)
               }}
               onClick={setDrawPolygonMode}
               color="primary"
@@ -264,7 +264,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
                 backgroundColor:
                   mode instanceof ModifyMode && !isViewMode
                     ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                    : alpha(theme.palette.gx.primary.black, 0.5)
+                    : alpha(theme.palette.background.paper, 0.5)
               }}
               onClick={setModifyMode}
               color="primary"
@@ -283,7 +283,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
                 ...sx.controlButton,
                 backgroundColor: isViewMode
                   ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                  : alpha(theme.palette.gx.primary.black, 0.5)
+                  : alpha(theme.palette.background.paper, 0.5)
               }}
               onClick={setViewMode}
               color="primary"
@@ -302,7 +302,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
                 ...sx.controlButton,
                 backgroundColor: isDeleteMode
                   ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                  : alpha(theme.palette.gx.primary.black, 0.5)
+                  : alpha(theme.palette.background.paper, 0.5)
               }}
               onClick={setDeleteMode}
               color="primary"
@@ -373,15 +373,15 @@ const styles = (theme: Theme) => ({
     gap: 1
   },
   controlButton: {
-    color: theme.palette.gx.lightGrey[300],
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    color: theme.palette.text.primary,
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     transition: 'color 100ms ease-in-out',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.darkGrey[700], 0.5)
+      backgroundColor: theme.palette.background.paper
     },
     '&.Mui-disabled': {
-      color: theme.palette.gx.darkGrey[900],
-      backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+      color: theme.palette.action.disabled,
+      backgroundColor: alpha(theme.palette.background.paper, 0.94),
       cursor: 'default'
     }
   }

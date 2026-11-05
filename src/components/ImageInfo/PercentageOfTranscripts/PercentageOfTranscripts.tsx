@@ -60,6 +60,6 @@ export const PercentageOfTranscripts = () => {
 
 const styles = (theme: Theme) => ({
   footerText: {
-    color: theme.palette.gx.primary.white
+    color: theme.palette.text.primary
   }
 });

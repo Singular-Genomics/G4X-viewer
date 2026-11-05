@@ -49,7 +49,7 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     right: 8,
     bottom: 56,
-    backgroundColor: alpha(theme.palette.gx.primary.black, 0.5),
+    backgroundColor: alpha(theme.palette.background.paper, 0.94),
     padding: '4px 8px',
     borderRadius: '10px',
     zIndex: 10,
