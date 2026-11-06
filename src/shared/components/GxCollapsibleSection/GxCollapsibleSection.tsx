@@ -103,20 +103,25 @@ const sx = {
     color: (theme: Theme) => theme.palette.text.primary,
     width: '100%',
     borderRadius: 0,
+    overflow: 'hidden',
+    transition: (theme: Theme) =>
+      theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
+        duration: 150
+      }),
     '&:after': {
       background: (theme: Theme) => theme.palette.divider,
       bottom: 0,
       content: '""',
       display: 'block',
       height: '1px',
-      left: '50%',
+      left: 0,
       position: 'absolute',
-      transition: 'width 0.3s ease 0s, left 0.3s ease 0s',
-      width: 0
+      transition: 'transform 150ms ease',
+      width: '100%',
+      transform: 'translateX(-100%)'
     },
     '&:hover:after': {
-      width: '100%',
-      left: 0
+      transform: 'translateX(0)'
     }
   },
   sectionTitle: {
