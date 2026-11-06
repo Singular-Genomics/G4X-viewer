@@ -16,6 +16,11 @@ export class ZarrTranscriptLoader {
     });
   }
 
+  /** Gene-grouped store for gene filters (lazy: nothing is requested until this is called) */
+  getGeneStore() {
+    return this.zarrDataSet.getGeneGroupedSource();
+  }
+
   async loadTileData(z: number, x: number, y: number): Promise<ZarrTranscriptTileData> {
     return (await this.zarrDataSet.getTranscriptTileData({ z, y, x })) ?? emptyTile();
   }

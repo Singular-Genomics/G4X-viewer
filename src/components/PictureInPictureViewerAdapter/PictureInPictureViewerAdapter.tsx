@@ -13,7 +13,6 @@ import {
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
 import { memo, useEffect, useMemo, useRef, type MouseEvent, type PointerEvent } from 'react';
-import { logRender } from '../../utils/devRenderLog';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -28,7 +27,6 @@ import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
 
 const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
-  logRender('PictureInPictureViewerAdapter');
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);

@@ -12,6 +12,7 @@ const DEFAULT_TRANSCRIPT_LAYER_STORE_VALUES: TranscriptLayerStoreValues = {
   geneNameFilters: new Set<string>(),
   maxVisibleLayers: null,
   currentVisibleLayer: 0,
+  filteredTranscriptLevel: null,
   selectedPoints: []
 };
 

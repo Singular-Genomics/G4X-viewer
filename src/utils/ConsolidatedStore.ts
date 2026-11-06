@@ -22,7 +22,8 @@ export class ConsolidatedStore implements ZarritaReadableStore {
       const doc = JSON.parse(new TextDecoder().decode(bytes));
       if (doc?.zarr_consolidated_format !== 1 || typeof doc.metadata !== 'object') return null;
       return new ConsolidatedStore(inner, doc.metadata);
-    } catch {
+    } catch (error) {
+      console.warn('Ignoring unreadable consolidated metadata (.zmetadata):', error);
       return null;
     }
   }

@@ -9,6 +9,8 @@ export type TranscriptTileLayerProps = {
   showBoundries: boolean;
   showData: boolean;
   showDiscardedPoints: boolean;
+  /** Draw only the discarded (filtered-out) points: the gene-filtered layer draws the passing ones */
+  discardedOnly: boolean;
   /** gene index -> name (shared registry; may grow while tiles load) */
   geneNames: readonly string[];
   /** 1 when the gene passes the active filter, indexed by gene index */
@@ -36,6 +38,8 @@ export type TranscriptLayerProps = CompositeLayerProps & {
   showDiscardedPoints: boolean;
   overrideLayers: boolean;
   maxVisibleLayers: number;
+  /** Level the gene store is drawing (null when the normal tile layer draws) */
+  onFilteredLevelChange?: (level: number | null) => void;
   colormap: ColorMapEntry[];
   onHover?: (pikingInfo: PickingInfo) => void;
   onLoadingStateChange?: (isLoading: boolean) => void;

@@ -20,7 +20,6 @@ import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { MobileLayerControls } from '../../components/MobileLayerControls';
-import { logRender } from '../../utils/devRenderLog';
 import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 // Delay prevents loader flicker for very short transcript tile requests.
@@ -45,7 +44,6 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  logRender('ViewerView');
   const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const [isCellLayerOn, cellMasksData] = useCellSegmentationLayerStore(

@@ -16,7 +16,8 @@ import type {
 import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
 import { GeneRegistry } from './GeneRegistry';
 import { ConsolidatedStore } from './ConsolidatedStore';
-import { decodeLegacyTile, decodePackedTile, decodeSplitTile, emptyTile } from './transcriptTileDecode';
+import { GeneGroupedTranscriptSource } from './GeneGroupedTranscriptSource';
+import { decodeLegacyTile, decodeSplitTile, emptyTile } from './transcriptTileDecode';
 import { loadCellsFromZarr, loadCellsFromStoreFactory, fetchClusterIdsFromStoreFactory } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
@@ -44,7 +45,7 @@ export class NoCacheFetchStore {
  *     gene_names,gene_counts,gene_indices,gene_indptr}
  *   (cluster_labels & cluster_labels_order live in /cells/{segmentation}/.zattrs)
  * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position} (legacy)
- *     or {cell_id,gene_index,position} / {data} when layer_config.format_version == 2
+ *     or {cell_id,gene_index,position} (split) when layer_config.format_version == 2
  * - run_metadata: stored in .zattrs at root level
  */
 type TranscriptContext = {
@@ -58,6 +59,8 @@ export class ZarrDataSet {
   private paths: ReturnType<typeof createZarrPaths>;
   private transcriptAttrs: ZarrTranscriptAttrs | null = null;
   private transcriptContext: Promise<TranscriptContext> | null = null;
+  private warnedBadLayout = false;
+  private geneGroupedSource: Promise<GeneGroupedTranscriptSource | null> | null = null;
   private storeFactory: ZarritaStoreFactory;
   private isCustomStore: boolean;
 
@@ -253,7 +256,38 @@ export class ZarrDataSet {
     if (layerConfig.consolidated_metadata) {
       store = (await ConsolidatedStore.tryOpen(store)) ?? store;
     }
-    return { layerConfig, registry: new GeneRegistry(attrs.gene_order ?? []), store };
+    // v2 gene_index values index gene_index_names (frozen at write time). Writers always emit it; fall back to
+    // gene_order (identical at write time) with a warning rather than crashing on a malformed dataset.
+    const isV2 = (layerConfig.format_version ?? 1) >= 2;
+    let geneOrder = attrs.gene_order;
+    if (isV2) {
+      geneOrder = layerConfig.gene_index_names;
+      if (!geneOrder) {
+        console.warn('Transcript layer_config.gene_index_names missing: falling back to gene_order');
+        geneOrder = attrs.gene_order;
+      }
+    }
+    return { layerConfig, registry: new GeneRegistry(geneOrder ?? []), store };
+  }
+
+  /**
+   * The gene-grouped transcript store (`transcripts_by_gene/`), or null when the dataset has none / it is stale.
+   * Only called once a gene filter is on, so datasets without a filter never touch the group.
+   */
+  public getGeneGroupedSource(): Promise<GeneGroupedTranscriptSource | null> {
+    if (!this.geneGroupedSource) {
+      this.geneGroupedSource = this.getTranscriptContext()
+        .then(({ layerConfig }) =>
+          (layerConfig.format_version ?? 1) >= 2
+            ? GeneGroupedTranscriptSource.open(this.storeFactory(ZARR_SUBPATHS.transcriptsByGene.base), layerConfig)
+            : null
+        )
+        .catch((error) => {
+          console.warn('Gene-grouped transcript store unavailable, using the GPU filter:', error);
+          return null;
+        });
+    }
+    return this.geneGroupedSource;
   }
 
   private async openTileArray(store: ZarritaReadableStore, tilePath: string, field: ZarrTranscriptField) {
@@ -295,13 +329,15 @@ export class ZarrDataSet {
       );
     }
 
-    const origin = layerConfig.position_relative === false ? { x: 0, y: 0 } : { x: x * tileSize, y: y * tileSize };
-    if (layerConfig.layout === 'packed') {
-      const dataArray = await this.openTileArray(store, tilePath, 'data');
-      if (!dataArray) return emptyTile();
-      const chunk = await get(dataArray);
-      return decodePackedTile(chunk.data as Int32Array, origin);
+    if (layerConfig.layout !== 'split') {
+      if (!this.warnedBadLayout) {
+        this.warnedBadLayout = true;
+        console.error(`Unsupported transcript tile layout '${layerConfig.layout}': tiles will be empty`);
+      }
+      return emptyTile();
     }
+    // 4.1 positions are always tile-relative uint16
+    const origin = { x: x * tileSize, y: y * tileSize };
     const [cellIdArray, geneIndexArray, positionArray] = await Promise.all([
       this.openTileArray(store, tilePath, 'cell_id'),
       this.openTileArray(store, tilePath, 'gene_index'),

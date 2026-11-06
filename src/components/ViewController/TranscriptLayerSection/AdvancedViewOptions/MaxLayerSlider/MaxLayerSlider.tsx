@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from '../AdvancedViewOptions.helpers';
 import InfoIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
+import { formatLevelPercentage } from '../../../../../utils/transcriptSampling';
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     () =>
       Array.from({ length: layers + 1 }, (_, i) => ({
         value: layers - i,
-        label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
+        label: formatLevelPercentage(i)
       })),
     [layers]
   );

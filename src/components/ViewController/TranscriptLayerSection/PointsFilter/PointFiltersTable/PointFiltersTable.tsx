@@ -5,11 +5,9 @@ import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useMemo, useState } from 'react';
-import { logRender } from '../../../../../utils/devRenderLog';
 import { isEqual } from 'lodash';
 
 export const PointFiltersTable = () => {
-  logRender('PointFiltersTable');
   const columns = usePointFiltersTableColumns();
   const [activeFilters, setActiveFilters] = useState<GeneNameFilterType>(new Set());
   const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useTranscriptLayerStore(

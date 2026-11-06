@@ -115,14 +115,16 @@ export function createGeneLookupTexture(device: { createTexture: (props: any) =>
   });
 }
 
-const WHITE = [255, 255, 255];
+export const WHITE: [number, number, number] = [255, 255, 255];
+/** Shared instance for every point layer that uses the gene lookup */
+export const GENE_LOOKUP_EXTENSIONS = [new GeneLookupExtension()];
 
-/** O(genes): rewrites one texel per gene; genes beyond `names.length` stay transparent (hidden). */
+/** O(genes): rewrites one texel per gene (`visible[i]` = 1 when gene i passes the filter); genes beyond `names.length` stay transparent (hidden). */
 export function fillGeneLookup(
   texture: Texture,
   names: readonly string[],
   colors: Record<string, number[]>,
-  isVisible: (name: string) => boolean
+  visible: Uint8Array
 ) {
   // upload the whole (256 KB) texture: copyImageData expects a full-size buffer
   const rows = GENE_LOOKUP_TEXTURE_HEIGHT;
@@ -133,7 +135,7 @@ export function fillGeneLookup(
     data[i * 4] = c[0];
     data[i * 4 + 1] = c[1];
     data[i * 4 + 2] = c[2];
-    data[i * 4 + 3] = isVisible(name) ? 255 : 0;
+    data[i * 4 + 3] = visible[i] ? 255 : 0;
   }
   texture.copyImageData({ data, width: GENE_LOOKUP_TEXTURE_WIDTH, height: rows, x: 0, y: 0 } as any);
 }
