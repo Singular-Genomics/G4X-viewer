@@ -1,3 +1,4 @@
+import { getSliderHandleStyles } from '../../../shared/components/sliderControls.styles';
 import { Box, Input, Theme, ToggleButton, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -64,6 +65,7 @@ export const BrightfieldImagesSection = () => {
       </Typography>
       <Box sx={sx.slider}>
         <GxSlider
+          sx={sx.sliderControl}
           aria-labelledby="brightfield-opacity-label"
           value={sliderValue}
           onChange={(_, newValue) => {
@@ -80,6 +82,7 @@ export const BrightfieldImagesSection = () => {
         />
       </Box>
       <Input
+        disableUnderline
         value={inputValue}
         onChange={(event) => setInputValue(event.target.value)}
         onBlur={commitInputValue}
@@ -108,29 +111,43 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    paddingBlock: '20px',
     marginBottom: '8px'
   },
   toggleButton: {
     ...getControlButtonStyles(theme),
     width: 114,
     flexShrink: 0,
-    padding: '6px 4px',
-    fontSize: '0.75rem'
+    padding: '2px 4px',
+    fontSize: '1rem',
+    fontWeight: 700
   },
   label: {
     fontSize: '0.75rem',
     flexShrink: 0
   },
   slider: {
+    display: 'flex',
+    alignItems: 'center',
     flex: 1,
     minWidth: 0,
     padding: '0 4px'
   },
+  sliderControl: getSliderHandleStyles(theme),
   input: {
     width: 52,
     flexShrink: 0,
+    borderRadius: '6px',
+    backgroundColor: theme.palette.gx.darkGrey[500],
+    color: theme.palette.getContrastText(theme.palette.gx.darkGrey[500]),
     '& .MuiInputBase-input': {
-      textAlign: 'center'
+      textAlign: 'center',
+      padding: '3px 6px',
+      fontSize: '14px'
+    },
+    '&.Mui-focused': {
+      outline: 'none',
+      boxShadow: `inset 0 -2px 0 ${theme.palette.primary.main}`
     }
   }
 });

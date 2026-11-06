@@ -35,21 +35,21 @@ export const GxLayerToggle = ({ checked, disabled, onChange, label }: GxLayerTog
 };
 
 const styles = (theme: Theme) => ({
-  width: 54.4,
-  height: 27.2,
+  width: 46.24,
+  height: 24.48,
   padding: 0,
   flexShrink: 0,
   borderRadius: '999px',
   boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.2)}`,
   '& .MuiSwitch-switchBase': {
-    padding: '4px',
+    padding: '3.6px',
     color: theme.palette.common.white,
     transition: theme.transitions.create('transform', { duration: 90 }),
     '&:hover': {
       backgroundColor: 'transparent'
     },
     '&.Mui-checked': {
-      transform: 'translateX(27.2px)',
+      transform: 'translateX(21.76px)',
       color: theme.palette.common.white,
       '& + .MuiSwitch-track': {
         opacity: 1,
@@ -73,8 +73,8 @@ const styles = (theme: Theme) => ({
     }
   },
   '& .MuiSwitch-thumb': {
-    width: 19.2,
-    height: 19.2,
+    width: 17.28,
+    height: 17.28,
     boxShadow: `0 1px 4px ${alpha(theme.palette.common.black, 0.35)}`
   },
   '& .MuiSwitch-track': {
@@ -86,12 +86,12 @@ const styles = (theme: Theme) => ({
     boxShadow: `inset 0 1px 3px ${alpha(theme.palette.common.black, 0.25)}`,
     '& .MuiSvgIcon-root': {
       position: 'absolute',
-      top: '6.4px',
-      fontSize: '14.4px',
+      top: '5.76px',
+      fontSize: '12.96px',
       transition: 'opacity 60ms ease'
     },
-    '& .layer-toggle-check': { left: '6.4px', opacity: 0 },
-    '& .layer-toggle-close': { right: '6.4px', opacity: 1 }
+    '& .layer-toggle-check': { left: '5.76px', opacity: 0 },
+    '& .layer-toggle-close': { right: '5.76px', opacity: 1 }
   },
   '@media (prefers-reduced-motion: reduce)': {
     '& .MuiSwitch-switchBase, & .MuiSvgIcon-root': {

@@ -5,6 +5,7 @@ import {
   MenuList,
   Paper,
   Popper,
+  SvgIcon,
   Theme,
   Tooltip,
   alpha,
@@ -13,7 +14,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ChannelOptionsProps } from './ChannelOption.types';
 import { useRef, useState } from 'react';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { GxColorPicker } from '../../../../../shared/components/GxColorPicker/GxColorPicker';
 import { ColorHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.types';
 import { HsvToRgb, RgbToHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.helpers';
@@ -51,12 +51,18 @@ export const ChannelOptions = ({ color, defaultColor, handleColorSelect, disable
       >
         <IconButton
           size="small"
+          aria-label={t('channelSettings.channelOptionsTooltip')}
           onClick={handleToggleOpen}
           ref={anchorRef}
           disabled={disabled}
           sx={sx.channelOptionsButton}
         >
-          <MoreVertIcon fontSize="small" />
+          <SvgIcon
+            fontSize="small"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3,21V16.25L11.95,7.3L10.5,5.9l1.45-1.4l1.9,1.9l3.1-3.1q0.13-0.13 0.31-0.2t0.39-0.07T18.03,3.1t0.32,0.2L20.7,5.65q0.13,0.15 0.2,0.32t0.07,0.38T20.9,6.74T20.7,7.05l-3.08,3.07l1.9,1.95L18.1,13.5l-1.4-1.45L7.75,21H3Zm2-2H6.95l8.3-8.35l-1.9-1.9L5,17.05V19ZM16.18,8.75l2.4-2.4L17.65,5.43l-2.4,2.4l0.93,0.93Zm0,0L15.25,7.82l0.93,0.93Z" />
+          </SvgIcon>
         </IconButton>
       </Tooltip>
       <Popper
@@ -100,6 +106,7 @@ const styles = (theme: Theme) => ({
     width: '272px'
   },
   channelOptionsButton: {
+    color: theme.palette.text.secondary,
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: 'unset'

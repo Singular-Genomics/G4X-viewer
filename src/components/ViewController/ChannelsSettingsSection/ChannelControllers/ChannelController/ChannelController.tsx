@@ -295,6 +295,7 @@ export const ChannelController = ({
 const styles = (theme: Theme): Record<string, SxProps> => ({
   soloRadio: {
     padding: '8px',
+    paddingLeft: 0,
     paddingRight: 0,
     marginRight: '0px',
     '&, &.Mui-checked': {
@@ -308,6 +309,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     opacity: 0.4
   },
   removeChannelButton: {
+    color: theme.palette.text.secondary,
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: 'unset'
@@ -333,17 +335,21 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '2px 6px',
-    borderRadius: '8px',
-    background: theme.palette.background.paper,
-    flexGrow: 0.5,
-    minWidth: '90px',
-    maxWidth: '90px'
+    borderRadius: '6px',
+    height: '35px',
+    marginLeft: '10px',
+    background: theme.palette.background.default,
+    flexShrink: 0,
+    width: '76.5px'
   },
   channelSelect: {
     height: '35px',
     flex: '1 1 200px',
     minWidth: 0,
     maxWidth: '200px',
+    '& .MuiSelect-select, & .MuiSelect-select .MuiTypography-root': {
+      fontWeight: 700
+    },
     '& .MuiSelect-icon': {
       color: alpha(theme.palette.text.secondary, 0.6)
     },
@@ -395,7 +401,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     '& .MuiIconButton-root': {
       borderRadius: 0,
       padding: '2.5px 5px',
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
       '&:hover': {
         backgroundColor: theme.palette.background.default
       },

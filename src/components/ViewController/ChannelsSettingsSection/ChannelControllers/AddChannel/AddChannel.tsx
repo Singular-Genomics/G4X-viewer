@@ -100,7 +100,7 @@ export const AddChannel = () => {
         (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
       }
       onClick={handleChannelAdd}
-      fullWidth
+      size="small"
       startIcon={<AddIcon />}
       sx={sx.addChannelButton}
     >
@@ -111,11 +111,13 @@ export const AddChannel = () => {
 
 const styles = (theme: Theme) => ({
   addChannelButton: {
-    marginTop: '16px',
+    padding: '6px 16px',
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
     color: theme.palette.gx.accent.greenBlue,
     border: '1px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    borderRadius: '8px',
+    borderRadius: '6px',
     '&:hover': {
       backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
     }

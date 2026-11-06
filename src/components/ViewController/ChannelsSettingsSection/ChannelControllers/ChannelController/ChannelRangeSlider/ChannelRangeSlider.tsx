@@ -1,4 +1,8 @@
-import { alpha, Box, Input, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import {
+  getSliderHandleStyles,
+  getSliderValueFieldStyles
+} from '../../../../../../shared/components/sliderControls.styles';
+import { Box, Input, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
@@ -86,6 +90,7 @@ export const ChannelRangeSlider = ({
       <Box sx={sx.sliderContainer}>
         <Input
           id="channel_min"
+          data-endpoint="min"
           type="number"
           disableUnderline
           disabled={isLoading}
@@ -108,9 +113,13 @@ export const ChannelRangeSlider = ({
           orientation="horizontal"
           style={{ color: rgbColor }}
           sx={sx.rangeSlider}
+          slotProps={{
+            track: { style: { transform: 'translateY(-50%) scaleY(0.9)' } }
+          }}
         />
         <Input
           id="channel_max"
+          data-endpoint="max"
           type="number"
           disableUnderline
           disabled={isLoading}
@@ -127,43 +136,16 @@ export const ChannelRangeSlider = ({
   );
 };
 
-const styles = (theme: Theme): Record<string, SxProps> => ({
+const styles = (theme: Theme): Record<string, SxProps<Theme>> => ({
   sliderContainer: {
     display: 'flex',
     flex: 1,
     minWidth: 0,
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: '20px',
+    gap: '18px',
     padding: '0 2px'
   },
-  textField: {
-    width: '48px',
-    minWidth: 0,
-    flexShrink: 0,
-    borderRadius: '4px',
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.text.primary,
-    '& .MuiInputBase-input': {
-      padding: '3px 4px',
-      fontSize: '14px',
-      textAlign: 'center'
-    },
-    '&.Mui-focused': {
-      outline: `1px solid ${theme.palette.primary.main}`
-    }
-  },
-  rangeSlider: {
-    '& .MuiSlider-thumb': {
-      height: '16px',
-      width: '4px',
-      borderRadius: '3px'
-    },
-    '& .MuiSlider-thumb:hover': {
-      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
-    },
-    '& .MuiSlider-thumb.Mui-active, & .MuiSlider-thumb.Mui-focusVisible': {
-      boxShadow: `0 0 0 6px ${alpha(theme.palette.primary.main, 0.2)}`
-    }
-  }
+  textField: getSliderValueFieldStyles(theme),
+  rangeSlider: getSliderHandleStyles(theme)
 });

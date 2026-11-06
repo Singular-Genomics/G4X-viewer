@@ -23,10 +23,11 @@ export const ChannelsSettingsSection = ({ isRgb = false }: { isRgb?: boolean }) 
       {!isRgb && (
         <>
           <Box>
-            <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
+            <Box sx={sx.controlsHeader}>
+              <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
+              <AddChannel />
+            </Box>
             <ChannelControllers />
-            <AddChannel />
-            <ChannelSettingsImportExportButtons />
           </Box>
           <GxCollapsibleSection
             sectionTitle={t('channelSettings.advanced')}
@@ -45,6 +46,7 @@ export const ChannelsSettingsSection = ({ isRgb = false }: { isRgb?: boolean }) 
                 <LensToggle />
               </Box>
             )}
+            <ChannelSettingsImportExportButtons />
           </GxCollapsibleSection>
         </>
       )}
@@ -61,7 +63,13 @@ const sx = {
   },
   controlsTitleStandalone: {
     fontWeight: 700,
-    paddingLeft: '8px',
+    paddingLeft: '8px'
+  },
+  controlsHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '12px',
     marginBottom: '8px'
   },
   titleWithTooltip: {

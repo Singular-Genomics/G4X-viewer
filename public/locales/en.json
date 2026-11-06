@@ -26,7 +26,7 @@
     "channelImportSourceFileMismatch": "Source file does not match the current file. Imported settings might cause errors.",
     "channelImportSuccess": "Channel settings imported successfully",
     "channelImportTooManyChannels": "Imported settings exceed the maximum number of channels and have been clipped.",
-    "channelOptionsTooltip": "Channel options",
+    "channelOptionsTooltip": "Change channel color",
     "colormapSelect": "Proteomics Color Mode",
     "highlightedChannel": "Highlighted Channel",
     "lens": "Lens",
