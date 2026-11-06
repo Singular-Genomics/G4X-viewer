@@ -1,4 +1,4 @@
-import { getControlButtonStyles } from '../../../../shared/components/controlButton.styles';
+import { getAppearanceControlStyles } from '../../../../shared/components/appearanceControl.styles';
 import { Box, ToggleButton, Input, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -61,12 +61,13 @@ export const CellMasksFillSettings = () => {
         <Typography
           id="cell-fill-alpha-label"
           component="label"
-          sx={{ fontSize: '0.75rem', flexShrink: 0 }}
+          sx={sx.label}
         >
           {t('segmentationSettings.fillAlphaLabel')}
         </Typography>
         <Box sx={sx.sliderInputItem}>
           <GxSlider
+            sx={sx.sliderControl}
             aria-labelledby="cell-fill-alpha-label"
             value={sliderValue * 100}
             onChange={(_, newValue) => {
@@ -86,6 +87,7 @@ export const CellMasksFillSettings = () => {
         </Box>
         <Box sx={{ width: 52, flexShrink: 0 }}>
           <Input
+            disableUnderline
             value={inputValue}
             onChange={(event) => setInputValue(event.target.value)}
             onBlur={commitInputValue}
@@ -102,7 +104,7 @@ export const CellMasksFillSettings = () => {
               max: MAX_FILL_OPACITY.toString(),
               min: MIN_FILL_OPACITY.toString()
             }}
-            sx={sx.textFieldBase}
+            sx={sx.input}
             disabled={!showCellFill}
           />
         </Box>
@@ -111,41 +113,23 @@ export const CellMasksFillSettings = () => {
   );
 };
 
-const styles = (theme: Theme): Record<string, SxProps> => ({
-  strokeSettingsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '8px'
-  },
-  toggleButton: {
-    ...getControlButtonStyles(theme),
-    border: 0,
-    width: 114,
-    flexShrink: 0,
-    padding: '6px 4px',
-    fontSize: '0.75rem'
-  },
-  sliderInputContainer: {
-    display: 'flex',
-    flex: 1,
-    minWidth: 0,
-    flexWrap: 'nowrap',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  sliderInputItem: {
-    flex: 1,
-    minWidth: 0,
-    padding: '0px 12px'
-  },
-  textFieldBase: {
-    '&.MuiInputBase-root::after': {
-      borderBottom: '2px solid'
+const styles = (theme: Theme): Record<string, SxProps<Theme>> => {
+  const controls = getAppearanceControlStyles(theme);
+  return {
+    ...controls,
+    strokeSettingsContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      marginBottom: '8px'
     },
-    '& .MuiInputBase-input': {
-      textAlign: 'center'
-    }
-  }
-});
+    sliderInputContainer: {
+      display: 'flex',
+      flex: 1,
+      minWidth: 0,
+      alignItems: 'center',
+      gap: '8px'
+    },
+    sliderInputItem: controls.slider
+  };
+};

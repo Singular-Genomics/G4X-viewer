@@ -1,4 +1,5 @@
-import { alpha, Box, Button, SxProps, Theme, Typography, useTheme } from '@mui/material';
+import { getConfigurationImportExportStyles } from '../../configurationImportExport.styles';
+import { Box, Button, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -38,71 +39,51 @@ export const GxFilterTableColormap = ({ onDrop, onExport }: GxFilterTableColorma
   };
 
   return (
-    <Box>
-      <Typography sx={sx.colormapLabel}>{t('general.colormapConfig')}:</Typography>
-      <Box sx={sx.buttonsContainer}>
-        <Button
-          startIcon={<DownloadIcon />}
-          fullWidth
-          sx={sx.exportButton}
-          onClick={onExport}
-        >
-          {t('general.export')}
-        </Button>
-        <Button
-          startIcon={<UploadIcon />}
-          sx={importButtonStyle}
-          fullWidth
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} />
-          {dynamicButtonText}
-        </Button>
+    <Box sx={sx.row}>
+      <Typography sx={sx.colormapLabel}>{t('general.colormapConfig')}</Typography>
+      <Box sx={sx.buttonsWrapper}>
+        <Box sx={sx.buttonsContainer}>
+          <Button
+            startIcon={<DownloadIcon />}
+            fullWidth
+            sx={sx.exportButton}
+            onClick={onExport}
+          >
+            {t('general.export')}
+          </Button>
+          <Button
+            startIcon={<UploadIcon />}
+            sx={importButtonStyle}
+            fullWidth
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {dynamicButtonText}
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
 };
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
-  buttonsContainer: {
+  ...getConfigurationImportExportStyles(theme),
+  row: {
     display: 'flex',
-    justifyContent: 'space-between',
-    gap: '16px',
-    marginBottom: '12px',
-    width: '100%',
-    padding: '0'
+    alignItems: 'center',
+    gap: '12px',
+    paddingLeft: '8px',
+    marginBottom: '8px'
   },
   colormapLabel: {
-    fontWeight: 600,
-    marginTop: '4px'
+    fontWeight: 700,
+    flexShrink: 0,
+    whiteSpace: 'nowrap'
   },
-  exportButton: {
-    background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.common.white,
-    padding: '7px 16px',
-    flex: 1
-  },
-  importButton: {
-    borderStyle: 'dashed',
-    color: theme.palette.gx.accent.greenBlue,
-    border: '2px solid',
-    borderColor: theme.palette.gx.accent.greenBlue,
-    padding: '7px 16px',
-    flex: 1
-  },
-  importButtonActive: {
-    borderStyle: 'solid',
-    borderWidth: '2px',
-    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1)
-  },
-  importButtonAccept: {
-    borderColor: theme.palette.success.main,
-    color: theme.palette.success.main,
-    backgroundColor: alpha(theme.palette.success.main, 0.1)
-  },
-  importButtonReject: {
-    borderColor: theme.palette.error.main,
-    color: theme.palette.error.main,
-    backgroundColor: alpha(theme.palette.error.main, 0.1)
+  buttonsWrapper: {
+    flex: 1,
+    minWidth: 0,
+    maxWidth: '200px',
+    marginLeft: 'auto'
   }
 });

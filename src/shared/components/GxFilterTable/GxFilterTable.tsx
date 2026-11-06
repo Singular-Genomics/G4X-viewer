@@ -1,5 +1,13 @@
 import { Box, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
-import { DataGrid, GridSlotProps } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridPagination,
+  GridSlotProps,
+  gridPageCountSelector,
+  useGridApiContext,
+  useGridSelector
+} from '@mui/x-data-grid';
+import { GridToolbar } from '@mui/x-data-grid/internals';
 import { useMemo, useState } from 'react';
 import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
 import { GxCheckbox } from '../GxCheckbox';
@@ -11,6 +19,34 @@ function GridCheckbox({ slotProps, ...rest }: GridSlotProps['baseCheckbox']) {
       {...rest}
       slotProps={{ input: slotProps?.htmlInput }}
     />
+  );
+}
+
+function FilterTableToolbar(props: GridSlotProps['toolbar']) {
+  const apiRef = useGridApiContext();
+  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', borderBottom: 1, borderColor: 'divider', minWidth: 0 }}>
+      <Box
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          '& .MuiTablePagination-toolbar': { minHeight: '36px', paddingLeft: '16px', paddingRight: 0 },
+          '& .MuiTablePagination-spacer': { display: 'none' },
+          '& .MuiTablePagination-displayedRows': { margin: 0, fontSize: '0.875rem' },
+          '& .MuiTablePagination-actions': { display: pageCount > 1 ? 'flex' : 'none', marginLeft: '4px' }
+        }}
+      >
+        <GridPagination />
+      </Box>
+      <GridToolbar
+        {...props}
+        csvOptions={{ ...props.csvOptions, disableToolbarButton: true }}
+        printOptions={{ ...props.printOptions, disableToolbarButton: true }}
+        sx={{ flex: '0 1 auto', minWidth: 0, borderBottom: 0 }}
+      />
+    </Box>
   );
 }
 
@@ -33,33 +69,36 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
   return (
     <>
       <Box sx={sx.tableContainer}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          density="compact"
-          disableColumnMenu
-          disableColumnResize
-          pageSizeOptions={[100]}
-          showToolbar
-          disableColumnSelector
-          rowSelectionModel={{ ids: activeFilters, type: 'include' }}
-          onRowSelectionModelChange={(newSelection) => {
-            onSetFilter(new Set(newSelection.ids as Set<string>));
-          }}
-          disableRowSelectionExcludeModel
-          keepNonExistentRowsSelected
-          checkboxSelection
-          slots={{
-            baseCheckbox: GridCheckbox
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true
-            }
-          }}
-          hideFooterSelectedRowCount={true}
-          sx={sx.filtersTable}
-        />
+        <Box sx={sx.gridWrapper}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            density="compact"
+            disableColumnMenu
+            disableColumnResize
+            pageSizeOptions={[100]}
+            showToolbar
+            disableColumnSelector
+            rowSelectionModel={{ ids: activeFilters, type: 'include' }}
+            onRowSelectionModelChange={(newSelection) => {
+              onSetFilter(new Set(newSelection.ids as Set<string>));
+            }}
+            disableRowSelectionExcludeModel
+            keepNonExistentRowsSelected
+            checkboxSelection
+            slots={{
+              baseCheckbox: GridCheckbox,
+              toolbar: FilterTableToolbar
+            }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true
+              }
+            }}
+            hideFooter
+            sx={sx.filtersTable}
+          />
+        </Box>
         <FormControlLabel
           label={t('general.filterShowActiveOnly')}
           labelPlacement="end"
@@ -85,9 +124,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     alignItems: 'end',
     '& .MuiDataGrid-root': {
       borderWidth: '0px',
-      width: '100%',
-      maxHeight: '480px',
-      minHeight: '480px'
+      width: '100%'
     },
     '& .MuiDataGrid-virtualScroller': {
       borderRadius: '0px !important'
@@ -114,8 +151,13 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       color: theme.palette.gx.accent.greenBlue
     }
   },
+  gridWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    maxHeight: '480px'
+  },
   filtersTable: {
-    height: '400px',
     '& .MuiDataGrid-cell': {
       display: 'flex',
       alignItems: 'center',
@@ -123,6 +165,9 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     }
   },
   activeFiltersSwitchWrapper: {
+    alignSelf: 'flex-start',
+    marginTop: '18px',
+    marginLeft: 0,
     marginRight: 0
   }
 });

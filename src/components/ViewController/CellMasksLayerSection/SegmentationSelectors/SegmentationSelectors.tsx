@@ -26,10 +26,12 @@ export const SegmentationSelectors = () => {
   return (
     <Box sx={sx.wrapper}>
       {showSegmentationSelector && (
-        <Box>
+        <Box sx={sx.row}>
           <Typography sx={sx.label}>{t('segmentationSettings.segmentationSelectLabel')}</Typography>
           <Box sx={sx.selectWrapper}>
             <GxSelect
+              sx={sx.select}
+              inputProps={{ 'aria-label': t('segmentationSettings.segmentationSelectLabel') }}
               value={selectedSegmentationLabel}
               onChange={(e) => handleSegmentationChange(e.target.value as string)}
               disabled={isLoading}
@@ -54,10 +56,12 @@ export const SegmentationSelectors = () => {
         </Box>
       )}
       {showClusterLabelSelector && (
-        <Box>
+        <Box sx={sx.row}>
           <Typography sx={sx.label}>{t('segmentationSettings.clusterLabelSelectLabel')}</Typography>
           <Box sx={sx.selectWrapper}>
             <GxSelect
+              sx={sx.select}
+              inputProps={{ 'aria-label': t('segmentationSettings.clusterLabelSelectLabel') }}
               value={selectedClusterLabelKey}
               onChange={(e) => handleClusterLabelChange(e.target.value as string)}
               disabled={isLoading}
@@ -92,18 +96,39 @@ const sx = {
     gap: '8px',
     paddingBottom: '4px'
   },
-  label: {
-    fontSize: '14px',
-    fontWeight: 700,
-    paddingLeft: '8px',
-    marginBottom: '4px'
-  },
-  selectWrapper: {
+  row: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '12px',
+    paddingLeft: '8px'
+  },
+  label: {
+    fontWeight: 700,
+    flexShrink: 0,
+    whiteSpace: 'nowrap'
+  },
+  selectWrapper: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    flex: 1,
+    minWidth: 0,
+    maxWidth: '200px',
+    marginLeft: 'auto'
+  },
+  select: {
+    height: '36px',
+    '& .MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline, &.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
+        border: 0
+      },
+    '&.Mui-disabled .MuiSelect-select': {
+      paddingRight: '60px'
+    }
   },
   spinner: {
-    flexShrink: 0
+    position: 'absolute',
+    right: '36px',
+    pointerEvents: 'none'
   }
 };

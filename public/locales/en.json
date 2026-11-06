@@ -84,7 +84,7 @@
     "fileLocal": "Local File",
     "filterEnable": "Enable",
     "filterMissingColormap": "Missing colormap config data - filtering disabled.",
-    "filterShowActiveOnly": "Show active filters only",
+    "filterShowActiveOnly": "Show all active filters",
     "filterShowDiscarded": "Show Discarded",
     "gene": "Gene",
     "hexColor": "Hex",
