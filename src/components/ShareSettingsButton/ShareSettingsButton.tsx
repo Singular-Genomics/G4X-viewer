@@ -1,3 +1,4 @@
+import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
 import { useState } from 'react';
 import {
   Box,
@@ -7,6 +8,7 @@ import {
   DialogTitle,
   Divider,
   IconButton,
+  SvgIcon,
   TextField,
   Theme,
   Tooltip,
@@ -14,7 +16,6 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import ShareIcon from '@mui/icons-material/Share';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useTranslation } from 'react-i18next';
@@ -121,14 +122,27 @@ export const ShareSettingsButton = () => {
   return (
     <Box>
       <Tooltip title={t('general.shareSettings')}>
-        <IconButton
+        <Button
           onClick={handleOpen}
           size="small"
+          fullWidth
+          startIcon={
+            <SvgIcon
+              fontSize="small"
+              viewBox="0 -960 960 960"
+            >
+              <path d="M720-80q-50 0-85-35t-35-85q0-7 1-14.5t3-13.5L322-392q-17 15-38 23.5t-44 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q23 0 44 8.5t38 23.5l282-164q-2-6-3-13.5t-1-14.5q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-23 0-44-8.5T638-672L356-508q2 6 3 13.5t1 14.5q0 7-1 14.5t-3 13.5l282 164q17-15 38-23.5t44-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z" />
+            </SvgIcon>
+          }
           sx={sx.shareButton}
-          aria-label={t('general.shareSettings')}
         >
-          <ShareIcon />
-        </IconButton>
+          <Box
+            component="span"
+            className="source-data-action-label"
+          >
+            {t('general.shareSettings')}
+          </Box>
+        </Button>
       </Tooltip>
 
       <Dialog
@@ -234,15 +248,7 @@ export const ShareSettingsButton = () => {
 };
 
 const styles = (theme: Theme) => ({
-  shareButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '90px',
-    color: theme.palette.getContrastText(theme.palette.background.viewport),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.getContrastText(theme.palette.background.viewport), 0.1)
-    }
-  },
+  shareButton: getSourceDataActionStyles(theme),
   dialog: {
     '& .MuiDialog-paper': {
       backgroundColor: theme.palette.background.paper

@@ -1,6 +1,8 @@
+import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
 import {
   Box,
   IconButton,
+  SvgIcon,
   Theme,
   useTheme,
   alpha,
@@ -12,7 +14,6 @@ import {
   CircularProgress,
   Tooltip
 } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useEffect, useRef, useState } from 'react';
@@ -108,13 +109,27 @@ export const SummaryButton = () => {
         title={t('general.summaryReportTooltip')}
         arrow
       >
-        <IconButton
+        <Button
           onClick={handleSummaryClick}
           size="small"
+          fullWidth
+          startIcon={
+            <SvgIcon
+              fontSize="small"
+              viewBox="0 -960 960 960"
+            >
+              <path d="M280-280h80v-200h-80v200Zm320 0h80v-400h-80v400Zm-160 0h80v-120h-80v120Zm0-200h80v-80h-80v80ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Z" />
+            </SvgIcon>
+          }
           sx={sx.summaryButton}
         >
-          <DescriptionIcon />
-        </IconButton>
+          <Box
+            component="span"
+            className="source-data-action-label"
+          >
+            {t('general.summaryReport')}
+          </Box>
+        </Button>
       </Tooltip>
 
       <Dialog
@@ -181,15 +196,7 @@ export const SummaryButton = () => {
 };
 
 const styles = (theme: Theme) => ({
-  summaryButton: {
-    position: 'absolute',
-    top: '10px',
-    right: '50px',
-    color: theme.palette.getContrastText(theme.palette.background.viewport),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.getContrastText(theme.palette.background.viewport), 0.1)
-    }
-  },
+  summaryButton: getSourceDataActionStyles(theme),
   dialog: {
     '& .MuiDialog-paper': {
       backgroundColor: theme.palette.background.paper,

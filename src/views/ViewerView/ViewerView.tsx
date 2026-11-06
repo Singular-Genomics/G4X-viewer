@@ -8,9 +8,6 @@ import { useProteinImage } from '../../hooks/useProteinImage.hook';
 import { ImageInfo } from '../../components/ImageInfo/ImageInfo';
 import { useBrightfieldImage } from '../../hooks/useBrightfieldImage.hook';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
-import { DetailsPopup } from '../../components/DetailsPopup';
-import { SummaryButton } from '../../components/SummaryButton';
-import { ShareSettingsButton } from '../../components/ShareSettingsButton';
 import { ActiveFiltersPanel } from '../../components/ActiveFiltersPanel';
 import { useTranslation } from 'react-i18next';
 import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
@@ -96,9 +93,6 @@ export const ViewerView = ({ className, isViewerActive = true, isUiHidden = fals
               />
             </Box>
           )}
-          {!isUiHidden && isDesktop && <SummaryButton />}
-          {!isUiHidden && isDesktop && <ShareSettingsButton />}
-          {!isUiHidden && isDesktop && <DetailsPopup />}
         </>
       </Box>
       {!isUiHidden && isDesktop && (

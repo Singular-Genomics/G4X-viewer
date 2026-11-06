@@ -122,6 +122,7 @@
     "shape": "Shape",
     "summaryReport": "Summary Report",
     "summaryReportTooltip": "View summary report",
+    "metadata": "Metadata",
     "runMetadataTooltip": "View run metadata",
     "transcripts": "Transcripts",
     "warning": "Warning"
