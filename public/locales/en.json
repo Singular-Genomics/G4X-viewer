@@ -13,6 +13,7 @@
     "sectionTitle": "fH&E"
   },
   "channelSettings": {
+    "advanced": "Advanced",
     "addChannel": "Add Channel",
     "channelControls": "Channel Controls",
     "channelExportError": "Error exporting channel settings",

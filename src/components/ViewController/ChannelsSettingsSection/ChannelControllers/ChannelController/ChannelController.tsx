@@ -24,7 +24,6 @@ import { GxSelect } from '../../../../../shared/components/GxSelect';
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import { InfoTooltip } from '../../../../InfoTooltip';
 
 export const ChannelController = ({
   color,
@@ -128,10 +127,15 @@ export const ChannelController = ({
             disableTouchRipple
           />
         </Box>
-        <Box sx={sx.valueWrapper}>
-          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
-        </Box>
-        <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
+        <Tooltip
+          title={t('tooltips.channelSettings.currentPixelIntensity')}
+          arrow
+          placement="top"
+        >
+          <Box sx={sx.valueWrapper}>
+            <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+          </Box>
+        </Tooltip>
         <GxSelect
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
@@ -225,7 +229,11 @@ export const ChannelController = ({
           setMinInputValue={setMinInputValue}
           setMaxInputValue={setMaxInputValue}
         />
-        <Box sx={sx.sliderRowIcons}>
+        <Box
+          role="group"
+          aria-label={t('channelSettings.sliderRangeSectionTitle')}
+          sx={sx.sliderRowIcons}
+        >
           <Tooltip
             title={t(
               sliderRangeMode === 'expanded'
@@ -239,11 +247,23 @@ export const ChannelController = ({
               onClick={handleModeToggle}
               disabled={disabled}
               sx={sx.modeToggleButton}
+              aria-pressed={sliderRangeMode === 'expanded'}
+              aria-label={t(
+                sliderRangeMode === 'expanded'
+                  ? 'channelSettings.sliderRangeModeExpanded'
+                  : 'channelSettings.sliderRangeModeContract'
+              )}
             >
               {sliderRangeMode === 'expanded' ? (
-                <UnfoldMoreIcon fontSize="small" />
+                <UnfoldMoreIcon
+                  fontSize="small"
+                  sx={{ transform: 'rotate(90deg)' }}
+                />
               ) : (
-                <UnfoldLessIcon fontSize="small" />
+                <UnfoldLessIcon
+                  fontSize="small"
+                  sx={{ transform: 'rotate(90deg)' }}
+                />
               )}
             </IconButton>
           </Tooltip>
@@ -254,9 +274,9 @@ export const ChannelController = ({
             <span>
               <IconButton
                 size="small"
+                aria-label={t('channelSettings.resetSlider')}
                 onClick={handleResetSlider}
                 disabled={disabled || (slider[0] === defaultSlider[0] && slider[1] === defaultSlider[1])}
-                sx={sx.sliderRowButton}
               >
                 <RestartAltIcon fontSize="small" />
               </IconButton>
@@ -326,27 +346,41 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   sliderRow: {
     display: 'flex',
+    width: '100%',
     alignItems: 'center',
-    gap: '4px'
+    gap: '8px'
   },
   sliderRowIcons: {
     display: 'flex',
     alignItems: 'center',
-    gap: '4px',
-    flexShrink: 0
-  },
-  sliderRowButton: {
-    '&:hover': {
-      color: theme.palette.gx.accent.greenBlue,
-      backgroundColor: 'unset'
+    flexShrink: 0,
+    marginLeft: 'auto',
+    borderRadius: '6px',
+    backgroundColor: theme.palette.background.paper,
+    overflow: 'hidden',
+    '& > span': {
+      display: 'flex'
+    },
+    '& .MuiIconButton-root': {
+      borderRadius: 0,
+      padding: '2.5px 5px',
+      color: theme.palette.text.primary,
+      '&:hover': {
+        backgroundColor: theme.palette.background.default
+      },
+      '&.Mui-disabled': {
+        color: theme.palette.action.disabled,
+        backgroundColor: 'transparent'
+      },
+      '&.Mui-focusVisible': {
+        outline: `2px solid ${theme.palette.primary.main}`,
+        outlineOffset: '-2px'
+      }
     }
   },
   modeToggleButton: {
-    transform: 'rotate(90deg)',
-    '&:hover': {
-      color: theme.palette.gx.accent.greenBlue,
-      backgroundColor: 'unset'
-    }
+    borderRight: '1px solid',
+    borderColor: theme.palette.divider
   },
   textField: {
     marginBottom: '8px',

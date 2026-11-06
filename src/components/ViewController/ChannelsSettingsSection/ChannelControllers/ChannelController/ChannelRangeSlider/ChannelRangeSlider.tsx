@@ -1,11 +1,10 @@
-import { Box, Input, SxProps, Theme, useTheme } from '@mui/material';
+import { alpha, Box, Input, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
 import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
 import { useViewerStore } from '../../../../../../stores/ViewerStore';
 import { GxSlider } from '../../../../../../shared/components/GxSlider';
-import { InfoTooltip } from '../../../../../InfoTooltip';
 import { useTranslation } from 'react-i18next';
 
 const DEBOUNCE_TIME_MS = 300;
@@ -79,51 +78,58 @@ export const ChannelRangeSlider = ({
   );
 
   return (
-    <Box sx={sx.sliderContainer}>
-      <Input
-        id="channel_min"
-        type="number"
-        disabled={isLoading}
-        sx={sx.textField}
-        value={minInputValue}
-        onChange={handleMinInputChange}
-        inputProps={{
-          max: domainMax,
-          step: CHANNEL_STEP
-        }}
-      />
-      <GxSlider
-        disabled={isLoading}
-        value={slider}
-        onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
-        valueLabelDisplay="off"
-        min={visibleMin}
-        max={visibleMax}
-        step={CHANNEL_STEP}
-        orientation="horizontal"
-        style={{ color: rgbColor }}
-        sx={sx.rangeSlider}
-      />
-      <Input
-        id="channel_max"
-        type="number"
-        disabled={isLoading}
-        sx={sx.textField}
-        value={maxInputValue}
-        onChange={handleMaxInputChange}
-        inputProps={{
-          max: domainMax,
-          step: CHANNEL_STEP
-        }}
-      />
-      <InfoTooltip title={t('tooltips.channelSettings.minMaxDisplay')} />
-    </Box>
+    <Tooltip
+      title={t('tooltips.channelSettings.minMaxDisplay')}
+      arrow
+      placement="top"
+    >
+      <Box sx={sx.sliderContainer}>
+        <Input
+          id="channel_min"
+          type="number"
+          disabled={isLoading}
+          sx={sx.textField}
+          value={minInputValue}
+          onChange={handleMinInputChange}
+          inputProps={{
+            max: domainMax,
+            step: CHANNEL_STEP
+          }}
+        />
+        <GxSlider
+          disabled={isLoading}
+          value={slider}
+          onChange={(_, newValue) => handleSliderChange(newValue as [number, number])}
+          valueLabelDisplay="off"
+          min={visibleMin}
+          max={visibleMax}
+          step={CHANNEL_STEP}
+          orientation="horizontal"
+          style={{ color: rgbColor }}
+          sx={sx.rangeSlider}
+        />
+        <Input
+          id="channel_max"
+          type="number"
+          disabled={isLoading}
+          sx={sx.textField}
+          value={maxInputValue}
+          onChange={handleMaxInputChange}
+          inputProps={{
+            max: domainMax,
+            step: CHANNEL_STEP
+          }}
+        />
+      </Box>
+    </Tooltip>
   );
 };
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   sliderContainer: {
     display: 'flex',
+    flex: 1,
+    minWidth: 0,
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '20px',
@@ -146,7 +152,14 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   rangeSlider: {
     '& .MuiSlider-thumb': {
       height: '16px',
-      width: '16px'
+      width: '4px',
+      borderRadius: '3px'
+    },
+    '& .MuiSlider-thumb:hover': {
+      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
+    },
+    '& .MuiSlider-thumb.Mui-active, & .MuiSlider-thumb.Mui-focusVisible': {
+      boxShadow: `0 0 0 6px ${alpha(theme.palette.primary.main, 0.2)}`
     }
   }
 });

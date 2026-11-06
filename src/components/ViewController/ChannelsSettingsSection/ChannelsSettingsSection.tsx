@@ -8,6 +8,7 @@ import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
 import { InfoTooltip } from '../../InfoTooltip';
 import { ChannelSettingsImportExportButtons } from './ChannelControllers/ChannelSettingsImportExportButtons';
+import { GxCollapsibleSection } from '../../../shared/components/GxCollapsibleSection';
 
 export const ChannelsSettingsSection = () => {
   const { t } = useTranslation();
@@ -18,23 +19,29 @@ export const ChannelsSettingsSection = () => {
   return (
     <Box>
       <Box>
-        <Box sx={sx.titleWithTooltip}>
-          <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
-          <InfoTooltip title={t('tooltips.channelSettings.proteomicsColormap')} />
-        </Box>
-        <ColormapSelector />
-      </Box>
-      {!colormap && shape[labels.indexOf('c')] > 1 && (
-        <Box sx={sx.togglesWrapper}>
-          <LensToggle />
-        </Box>
-      )}
-      <Box sx={sx.channelControlsSection}>
         <Typography sx={sx.controlsTitleStandalone}>{t('channelSettings.channelControls')}</Typography>
         <ChannelControllers />
         <AddChannel />
         <ChannelSettingsImportExportButtons />
       </Box>
+      <GxCollapsibleSection
+        sectionTitle={t('channelSettings.advanced')}
+        unmountOnExit={false}
+        customStyles={{ sectionContainer: sx.advancedSection }}
+      >
+        <Box>
+          <Box sx={sx.titleWithTooltip}>
+            <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
+            <InfoTooltip title={t('tooltips.channelSettings.proteomicsColormap')} />
+          </Box>
+          <ColormapSelector />
+        </Box>
+        {!colormap && shape[labels.indexOf('c')] > 1 && (
+          <Box sx={sx.togglesWrapper}>
+            <LensToggle />
+          </Box>
+        )}
+      </GxCollapsibleSection>
     </Box>
   );
 };
@@ -57,7 +64,7 @@ const sx = {
     paddingLeft: '8px',
     marginBottom: '8px'
   },
-  channelControlsSection: {
+  advancedSection: {
     marginTop: '12px'
   }
 };
