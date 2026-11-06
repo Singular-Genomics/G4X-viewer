@@ -4,10 +4,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { logRender } from '../../../../../utils/devRenderLog';
 import { isEqual } from 'lodash';
 
 export const PointFiltersTable = () => {
+  logRender('PointFiltersTable');
   const columns = usePointFiltersTableColumns();
   const [activeFilters, setActiveFilters] = useState<GeneNameFilterType>(new Set());
   const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useTranscriptLayerStore(
@@ -25,13 +27,17 @@ export const PointFiltersTable = () => {
 
   const colorMapConfig = useZarrDataStore((store) => store.colorMapConfig);
 
-  const rowData: PointFiltersTableRowEntry[] = colorMapConfig
-    ? colorMapConfig.map((item) => ({
-        id: item.gene_name,
-        visible: true,
-        ...item
-      }))
-    : [];
+  const rowData: PointFiltersTableRowEntry[] = useMemo(
+    () =>
+      colorMapConfig
+        ? colorMapConfig.map((item) => ({
+            id: item.gene_name,
+            visible: true,
+            ...item
+          }))
+        : [],
+    [colorMapConfig]
+  );
 
   const handleClearFilters = () => {
     setActiveFilters(new Set<string>());

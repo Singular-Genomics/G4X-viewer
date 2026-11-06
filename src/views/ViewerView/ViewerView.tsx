@@ -20,10 +20,24 @@ import { useCloudImageLoader } from '../../hooks/useCloudImageLoader.hook';
 import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { MobileLayerControls } from '../../components/MobileLayerControls';
+import { logRender } from '../../utils/devRenderLog';
 import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
 
 // Delay prevents loader flicker for very short transcript tile requests.
 const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
+
+// Own subscription: the tile-loading flag toggles often while tiles stream in and must not re-render the whole view.
+const TranscriptTilesLoadingBar = () => {
+  const { t } = useTranslation();
+  const isTranscriptTilesLoading = useViewerStore((store) => store.isTranscriptTilesLoading);
+  return (
+    <ViewerLoadingBar
+      isLoading={isTranscriptTilesLoading}
+      text={t('viewer.loadingTranscripts')}
+      delayMs={TRANSCRIPT_TILES_LOADING_DELAY_MS}
+    />
+  );
+};
 
 export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
   const theme = useTheme();
@@ -31,9 +45,8 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
   const sx = styles(theme);
   const { t } = useTranslation();
 
-  const [source, isViewerLoading, isTranscriptTilesLoading] = useViewerStore(
-    useShallow((store) => [store.source, store.isViewerLoading, store.isTranscriptTilesLoading])
-  );
+  logRender('ViewerView');
+  const [source, isViewerLoading] = useViewerStore(useShallow((store) => [store.source, store.isViewerLoading]));
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const [isCellLayerOn, cellMasksData] = useCellSegmentationLayerStore(
     useShallow((store) => [store.isCellLayerOn, store.cellMasksData])
@@ -77,11 +90,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
             </Box>
           )}
           <Box sx={sx.loadingBarsContainer}>
-            <ViewerLoadingBar
-              isLoading={isTranscriptTilesLoading}
-              text={t('viewer.loadingTranscripts')}
-              delayMs={TRANSCRIPT_TILES_LOADING_DELAY_MS}
-            />
+            <TranscriptTilesLoadingBar />
             <ViewerLoadingBar
               isLoading={isCellLayerOn && cellMasksData === null}
               text={t('viewer.loadingSegmentation')}

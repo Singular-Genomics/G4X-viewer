@@ -12,7 +12,8 @@ import {
   usePolygonDrawingLayer,
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
-import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
+import { memo, useEffect, useMemo, useRef, type MouseEvent, type PointerEvent } from 'react';
+import { logRender } from '../../utils/devRenderLog';
 import { Tooltip } from '../Tooltip';
 import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -26,7 +27,8 @@ import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdap
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
 
-export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
+  logRender('PictureInPictureViewerAdapter');
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const getLoader = useChannelsStore((store) => store.getLoader);
@@ -193,28 +195,50 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     }
   };
 
-  const deckProps = {
-    layers: [cellMasksLayer, transcriptLayer],
-    ref: deckGLRef,
-    glOptions: {
-      preserveDrawingBuffer: true
-    },
-    controller: {
-      doubleClickZoom: false
-    }
-  };
+  const showBrightfield =
+    !!brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE);
 
-  if (brightfieldImageSource && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.BRIGHTFIELD_IMAGE)) {
-    deckProps.layers = [brightfieldImageLayer, ...deckProps.layers];
-  }
+  // Memoized: a fresh deckProps/layers array on every React render makes deck.setProps re-diff all layers.
+  const deckProps = useMemo(() => {
+    const layers = [cellMasksLayer, transcriptLayer];
+    if (showBrightfield) layers.unshift(brightfieldImageLayer);
+    if (polygonDrawingLayer) layers.push(polygonDrawingLayer as any);
+    if (polygonTextLayer) layers.push(polygonTextLayer as any);
+    return {
+      layers,
+      ref: deckGLRef,
+      glOptions: {
+        preserveDrawingBuffer: true
+      },
+      controller: {
+        doubleClickZoom: false
+      }
+    };
+  }, [cellMasksLayer, transcriptLayer, showBrightfield, brightfieldImageLayer, polygonDrawingLayer, polygonTextLayer]);
 
-  if (polygonDrawingLayer) {
-    deckProps.layers.push(polygonDrawingLayer as any);
-  }
+  // Stable identity unless the colormap toggles (new extension instances force viv to rebuild its shaders/models).
+  const extensions = useMemo(() => [colormap ? new AdditiveColormapExtension() : new LensExtension()], [colormap]);
 
-  if (polygonTextLayer) {
-    deckProps.layers.push(polygonTextLayer as any);
-  }
+  const hoverHooks = useMemo(
+    () =>
+      ({
+        handleValue: (values: any) =>
+          useViewerStore.setState({
+            pixelValues: values.map((value: any) =>
+              Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
+            )
+          }),
+        handleCoordnate: (coords: number[]) =>
+          coords &&
+          useViewerStore.setState({
+            hoverCoordinates: {
+              x: coords[0].toFixed(0).toString(),
+              y: coords[1].toFixed(0).toString()
+            }
+          })
+      }) as any,
+    []
+  );
 
   return (
     <Box
@@ -235,7 +259,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
             overviewOn={isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
-            extensions={[colormap ? new AdditiveColormapExtension() : new LensExtension()]}
+            extensions={extensions}
             lensSelection={lensSelection}
             lensEnabled={isLensOn}
             deckProps={deckProps}
@@ -253,24 +277,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
                 debouncedUpdateRef.current((newViewState as any).zoom);
               }
             }}
-            hoverHooks={
-              {
-                handleValue: (values: any) =>
-                  useViewerStore.setState({
-                    pixelValues: values.map((value: any) =>
-                      Number.isInteger(value) ? value.toFixed(1).toString() : FILL_PIXEL_VALUE
-                    )
-                  }),
-                handleCoordnate: (coords: number[]) =>
-                  coords &&
-                  useViewerStore.setState({
-                    hoverCoordinates: {
-                      x: coords[0].toFixed(0).toString(),
-                      y: coords[1].toFixed(0).toString()
-                    }
-                  })
-              } as any
-            }
+            hoverHooks={hoverHooks}
           />
           {isDesktop && (
             <PolygonDrawingMenu
@@ -284,6 +291,8 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
     </Box>
   );
 };
+
+export const PictureInPictureViewerAdapter = memo(PictureInPictureViewerAdapterComponent);
 
 const sx = {
   viewerContainer: {
