@@ -12,6 +12,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     contrastLimits,
     colors,
     channelsVisible,
+    isImageLayerVisible = true,
     viewStates: viewStatesProp,
     colormap,
     overview,
@@ -71,6 +72,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     contrastLimits,
     colors,
     channelsVisible,
+    isImageLayerVisible,
     selections,
     onViewportLoad,
     colormap,
@@ -95,7 +97,13 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
           channelsVisible: Array(brightfieldColors.length).fill(true),
           selections: brightfieldSelections
         }
-      : { loader, contrastLimits, colors, channelsVisible, selections };
+      : {
+          loader,
+          contrastLimits,
+          colors,
+          channelsVisible: isImageLayerVisible ? channelsVisible : [],
+          selections
+        };
 
   if (overviewOn && overviewSource.loader?.[0]?.getRaster) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".

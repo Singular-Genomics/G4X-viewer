@@ -62,7 +62,6 @@ const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: Pictu
       store.isLayerVisible
     ])
   );
-  const visibleChannels = isLayerVisible ? channelsVisible : [];
 
   const [colormap, isLensOn, isOverviewOn, lensSelection, onViewportLoad, viewState, isViewerLoading, physicalSize] =
     useViewerStore(
@@ -81,6 +80,11 @@ const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: Pictu
   const [isPolygonDrawingEnabled, isDetecting, polygonDrawingMode, setDrawPolygonMode] = usePolygonDrawingStore(
     useShallow((store) => [store.isPolygonDrawingEnabled, store.isDetecting, store.mode, store.setDrawPolygonMode])
   );
+
+  // A hidden image layer never fires onViewportLoad, so release any pending channel-loading state.
+  useEffect(() => {
+    if (!isLayerVisible) onViewportLoad();
+  }, [isLayerVisible, onViewportLoad]);
 
   const canCancelPolygonDrawing = (eventTarget: EventTarget | null) => {
     const deckCanvas = deckGLRef.current?.deck?.canvas;
@@ -250,7 +254,8 @@ const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: Pictu
           <PictureInPictureViewer
             contrastLimits={contrastLimits}
             colors={colors}
-            channelsVisible={visibleChannels}
+            channelsVisible={channelsVisible}
+            isImageLayerVisible={isLayerVisible}
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}

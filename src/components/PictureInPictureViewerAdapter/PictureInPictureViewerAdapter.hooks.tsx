@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import { List, ListItem } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore';
 import { MAX_TRANSCRIPT_POINTS_LIMIT } from '../../shared/constants';
+import { IMAGE_TILE_CACHE_PROPS, renderImageTileSubLayers } from '../../layers/image-layer';
 
 const updatePolygonProperties = <T,>(
   results: { polygon: PolygonFeature; result: T }[],
@@ -314,7 +315,14 @@ export const useBrightfieldImageLayer = () => {
 
     const { dtype } = loader[0];
 
+    // Hidden layers are dropped so they neither fetch nor cache tiles; re-enabling re-creates them.
+    if (!isLayerVisible) {
+      return undefined;
+    }
+
     return new MultiscaleImageLayer({
+      ...IMAGE_TILE_CACHE_PROPS,
+      renderSubLayers: renderImageTileSubLayers,
       id: `${getVivId(DETAIL_VIEW_ID)}-h&e-image-layer`,
       channelsVisible: [true, true, true],
       selections: selections as any,
@@ -322,7 +330,7 @@ export const useBrightfieldImageLayer = () => {
       colors: colors as any,
       loader: loader as any,
       dtype: dtype,
-      opacity: isLayerVisible ? opacity : 0,
+      opacity,
       ...({
         pickable: false
       } as any)

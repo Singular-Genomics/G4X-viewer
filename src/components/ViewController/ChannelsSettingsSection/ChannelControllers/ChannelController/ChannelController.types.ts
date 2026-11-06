@@ -8,6 +8,7 @@ export type ChannelControllerProps = {
   isLoading: boolean;
   disabled: boolean;
   pixelValue: string;
+  hidePixelValue?: boolean;
   channelVisible: boolean;
   slider: [number, number];
   defaultSlider: [number, number];

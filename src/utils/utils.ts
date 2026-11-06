@@ -1,4 +1,5 @@
 import { ImageLayer, MultiscaleImageLayer } from '@vivjs/layers';
+import { IMAGE_TILE_CACHE_PROPS, renderImageTileSubLayers } from '../layers/image-layer';
 
 export const getVivId = (id: string) => {
   return `-#${id}#`;
@@ -32,6 +33,7 @@ export function getImageLayer(id: string, props: any) {
   const layerLoader = loader.length > 1 ? loader : loader[0];
 
   return new Layer({
+    ...(loader.length > 1 ? { ...IMAGE_TILE_CACHE_PROPS, renderSubLayers: renderImageTileSubLayers } : {}),
     ...props,
     id: `${sourceName}${getVivId(id)}`,
     viewportId: id,

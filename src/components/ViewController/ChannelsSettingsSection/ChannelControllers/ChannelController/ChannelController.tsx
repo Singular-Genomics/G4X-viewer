@@ -34,6 +34,7 @@ export const ChannelController = ({
   isLoading,
   disabled,
   pixelValue,
+  hidePixelValue = false,
   channelVisible,
   slider,
   defaultSlider,
@@ -129,9 +130,7 @@ export const ChannelController = ({
             disableTouchRipple
           />
         </Box>
-        <Box sx={sx.valueWrapper}>
-          <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
-        </Box>
+        <Box sx={sx.valueWrapper}>{!hidePixelValue && <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>}</Box>
         <InfoTooltip title={t('tooltips.channelSettings.currentPixelIntensity')} />
         <GxSelect
           value={name}
