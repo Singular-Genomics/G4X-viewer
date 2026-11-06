@@ -1,4 +1,4 @@
-import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState, LensExtension } from '@hms-dbmi/viv';
+import { AdditiveColormapExtension, DETAIL_VIEW_ID, getDefaultInitialViewState } from '@hms-dbmi/viv';
 import { useChannelsStore } from '../../stores/ChannelsStore/ChannelsStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DEFAULT_OVERVIEW, DEFAULT_OVERVIEW_MOBILE, FILL_PIXEL_VALUE } from '../../shared/constants';
@@ -25,6 +25,7 @@ import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
+import { QuietLensExtension } from '../../layers/image-layer';
 
 const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -219,7 +220,7 @@ const PictureInPictureViewerAdapterComponent = ({ isViewerActive = true }: Pictu
   }, [cellMasksLayer, transcriptLayer, showBrightfield, brightfieldImageLayer, polygonDrawingLayer, polygonTextLayer]);
 
   // Stable identity unless the colormap toggles (new extension instances force viv to rebuild its shaders/models).
-  const extensions = useMemo(() => [colormap ? new AdditiveColormapExtension() : new LensExtension()], [colormap]);
+  const extensions = useMemo(() => [colormap ? new AdditiveColormapExtension() : new QuietLensExtension()], [colormap]);
 
   const hoverHooks = useMemo(
     () =>

@@ -82,11 +82,13 @@ export class GeneLookupExtension extends LayerExtension {
   }
 
   initializeState(this: Layer<GeneLookupExtensionProps>) {
-    this.getAttributeManager()?.addInstanced({
+    // 'dynamic': instance-stepped for ScatterplotLayer, vertex-stepped for non-instanced models (TranscriptPointLayer)
+    this.getAttributeManager()?.add({
       instanceGeneIndices: {
         size: 1,
         type: 'unorm16',
-        accessor: 'getGeneIndex'
+        accessor: 'getGeneIndex',
+        stepMode: 'dynamic'
       }
     });
   }

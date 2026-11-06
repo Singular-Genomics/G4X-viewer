@@ -12,7 +12,7 @@ import {
   LayerContext,
   UpdateParameters
 } from '@deck.gl/core';
-import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
+import { PolygonLayer, TextLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 import type { _Tileset2D as Tileset2D } from '@deck.gl/geo-layers';
 import type { Texture } from '@luma.gl/core';
@@ -25,6 +25,7 @@ import type { GeneNameFilterType } from '../../stores/TranscriptLayerStore';
 import { GeneRegistry } from '../../utils/GeneRegistry';
 import type { GeneGroupedTranscriptSource } from '../../utils/GeneGroupedTranscriptSource';
 import GeneFilteredTranscriptLayer from './gene-filtered-layer';
+import { createPointLayer } from './transcript-point-layer';
 import {
   TileBucket,
   BucketEntry,
@@ -267,7 +268,8 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
     for (const bucket of nextBuckets.values()) {
       if (showDiscardedPoints || discardedOnly) {
         layers.push(
-          new ScatterplotLayer(
+          createPointLayer(
+            this.context,
             this.getSubLayerProps({
               id: `discarded-${bucket.key}`,
               data: bucket.data,
@@ -287,7 +289,8 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
       }
       if (discardedOnly) continue;
       layers.push(
-        new ScatterplotLayer(
+        createPointLayer(
+          this.context,
           this.getSubLayerProps({
             id: `points-${bucket.key}`,
             data: bucket.data,
