@@ -47,10 +47,10 @@ export const PictureInPictureViewerAdapter = ({
     coords[1] >= 0 &&
     coords[1] < imageHeight;
 
-  const clearCursorCoordinates = () => {
-    const { hoverCoordinates } = useViewerStore.getState();
-    if (hoverCoordinates.x || hoverCoordinates.y) {
-      useViewerStore.setState({ hoverCoordinates: { x: '', y: '' } });
+  const clearHoverReadouts = () => {
+    const { hoverCoordinates, pixelValues } = useViewerStore.getState();
+    if (hoverCoordinates.x || hoverCoordinates.y || pixelValues.length) {
+      useViewerStore.setState({ hoverCoordinates: { x: '', y: '' }, pixelValues: [] });
     }
   };
   const { t } = useTranslation();
@@ -243,7 +243,7 @@ export const PictureInPictureViewerAdapter = ({
       ref={containerRef}
       onPointerDownCapture={handlePointerDownCapture}
       onContextMenu={handleContextMenu}
-      onPointerLeave={clearCursorCoordinates}
+      onPointerLeave={clearHoverReadouts}
     >
       {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
@@ -264,7 +264,7 @@ export const PictureInPictureViewerAdapter = ({
             colormap={colormap}
             onViewportLoad={onViewportLoad}
             onHover={({ coordinate, sourceLayer }) => {
-              if (!sourceLayer || !isOnImage(coordinate)) clearCursorCoordinates();
+              if (!sourceLayer || !isOnImage(coordinate)) clearHoverReadouts();
             }}
             viewStates={viewState ? [viewState] : []}
             onViewStateChange={({ viewState: newViewState, viewId }: { viewState: any; viewId: any }) => {
@@ -288,7 +288,7 @@ export const PictureInPictureViewerAdapter = ({
                   }),
                 handleCoordnate: (coords: number[]) => {
                   if (!isOnImage(coords)) {
-                    clearCursorCoordinates();
+                    clearHoverReadouts();
                     return;
                   }
                   useViewerStore.setState({

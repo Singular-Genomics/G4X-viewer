@@ -37,7 +37,7 @@ export const COLOR_PALLETE = [
   [255, 0, 0]
 ];
 
-export const FILL_PIXEL_VALUE = '----';
+export const FILL_PIXEL_VALUE = '--';
 
 export const SEGMENTATION_FILE_SIZE_LIMIT = 524288000; // 500 MB
 // export const TRANSCRIPT_FILEZ_SIZE_LIMIT = 1073741824; // 1 GB
