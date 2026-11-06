@@ -99,9 +99,9 @@ const styles = (theme: Theme) => ({
     position: 'absolute',
     top: '10px',
     right: '10px',
-    color: theme.palette.text.secondary,
+    color: theme.palette.getContrastText(theme.palette.background.viewport),
     '&:hover': {
-      backgroundColor: alpha(theme.palette.text.primary, 0.1)
+      backgroundColor: alpha(theme.palette.getContrastText(theme.palette.background.viewport), 0.1)
     }
   },
   closeButton: {

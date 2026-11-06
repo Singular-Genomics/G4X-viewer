@@ -5,6 +5,11 @@ declare module '@mui/material/styles' {
     enabled: true;
   }
 
+  interface TypeBackground {
+    settingsPanel: string;
+    viewport: string;
+  }
+
   interface Palette extends MuiPalette {
     gx: GxPalette;
   }

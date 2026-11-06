@@ -203,7 +203,7 @@ const styles = (theme: Theme) => ({
   },
 
   viewControllerContentWrapper: {
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.settingsPanel,
 
     padding: '16px 4px 8px 20px',
     height: '100%',
@@ -236,7 +236,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.settingsPanel,
     borderTopLeftRadius: '8px',
     borderBottomLeftRadius: '8px',
     cursor: 'ew-resize',

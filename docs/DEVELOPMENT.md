@@ -157,7 +157,7 @@ const styles = (theme: Theme) => ({
 
 ### Light and dark mode
 
-`src/themes/palette.ts` defines the shared brand colors and the light/dark semantic palettes. Use `theme.palette.background.default` for application surfaces, `background.paper` for controls and floating panels, `text.primary` / `text.secondary` for text, `divider` for borders, and `action.*` for hover, selected, and disabled states. Fixed neutral colors from `palette.gx` should not be used for interface surfaces or text.
+`src/themes/palette.ts` defines the shared brand colors and the light/dark semantic palettes. Use `theme.palette.background.settingsPanel` for the settings sidebar, `background.viewport` for the imaging viewport, `background.default` for other application surfaces, `background.paper` for controls and floating panels, `text.primary` / `text.secondary` for text, `divider` for borders, and `action.*` for hover, selected, and disabled states. Fixed neutral colors from `palette.gx` should not be used for interface surfaces or text.
 
 Keep scientific data colors (channel colors, cluster colormaps, heatmap scales, and exported image annotations) independent of the interface theme. White lettering on brand gradients and black modal backdrops intentionally use `palette.common` for contrast.
 

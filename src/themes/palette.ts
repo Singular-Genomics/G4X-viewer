@@ -111,7 +111,12 @@ const commonPalette = {
 export const lightPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'light',
-  background: { default: colors.lightGrey[100], paper: primary.white },
+  background: {
+    default: colors.lightGrey[100],
+    paper: primary.white,
+    settingsPanel: colors.lightGrey[100],
+    viewport: primary.greyDark
+  },
   text: { primary: darkGrey[100], secondary: darkGrey[700] },
   divider: colors.mediumGrey[500]
 };
@@ -119,7 +124,12 @@ export const lightPalette: PaletteOptions = {
 export const darkPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'dark',
-  background: { default: darkGrey[100], paper: darkGrey[300] },
+  background: {
+    default: darkGrey[100],
+    paper: darkGrey[300],
+    settingsPanel: darkGrey[300],
+    viewport: primary.greyDark
+  },
   text: { primary: colors.lightGrey[900], secondary: colors.mediumGrey[900] },
   divider: colors.mediumGrey[500]
 };
