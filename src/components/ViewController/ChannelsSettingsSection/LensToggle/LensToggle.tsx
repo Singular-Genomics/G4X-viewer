@@ -88,6 +88,7 @@ const styles = (theme: Theme) => ({
   },
   toggleButton: {
     ...getControlButtonStyles(theme),
+    border: 0,
     width: 114,
     padding: '2px 4px',
     fontSize: '1rem',

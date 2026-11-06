@@ -121,6 +121,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   toggleButton: {
     ...getControlButtonStyles(theme),
+    border: 0,
     width: 114,
     flexShrink: 0,
     padding: '6px 4px',

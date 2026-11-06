@@ -12,12 +12,29 @@ const primary = {
 };
 
 const darkGrey = {
+  10: '#101010',
   50: '#1b1b1b',
   100: '#212426',
   300: '#2E3337',
   500: '#3F4447',
   700: '#515558',
   900: '#626668'
+};
+
+const mediumGrey = {
+  100: '#7D7F81',
+  300: '#8E9092',
+  500: '#A0A1A2',
+  700: '#B2B2B3',
+  900: '#C3C3C4'
+};
+
+const lightGrey = {
+  100: '#D0D0D0',
+  300: '#D7D7D7',
+  500: '#DFDFDF',
+  700: '#E7E7E7',
+  900: '#EEEEEE'
 };
 
 const blue = {
@@ -61,20 +78,8 @@ const gradient =
 // live in lightPalette/darkPalette below, not here.
 export const colors: GxPalette = {
   primary,
-  lightGrey: {
-    100: '#D0D0D0',
-    300: '#D7D7D7',
-    500: '#DFDFDF',
-    700: '#E7E7E7',
-    900: '#EEEEEE'
-  },
-  mediumGrey: {
-    100: '#7D7F81',
-    300: '#8E9092',
-    500: '#A0A1A2',
-    700: '#B2B2B3',
-    900: '#C3C3C4'
-  },
+  lightGrey,
+  mediumGrey,
   darkGrey,
   blue,
   blueGreen,
@@ -130,7 +135,7 @@ export const darkPalette: PaletteOptions = {
     default: darkGrey[100],
     paper: darkGrey[300],
     settingsPanel: darkGrey[100],
-    viewport: darkGrey[50]
+    viewport: darkGrey[10]
   },
   text: { primary: colors.lightGrey[900], secondary: colors.mediumGrey[900] },
   divider: colors.mediumGrey[500]
