@@ -1,6 +1,7 @@
 import { calculateExpandedRange, getPixelValueDisplay, MORPHOLOGY_KEYWORDS } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
 import {
+  alpha,
   Box,
   Divider,
   IconButton,
@@ -342,7 +343,22 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     height: '35px',
     flex: '1 1 200px',
     minWidth: 0,
-    maxWidth: '200px'
+    maxWidth: '200px',
+    '& .MuiSelect-icon': {
+      color: alpha(theme.palette.text.secondary, 0.6)
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: alpha(theme.palette.text.secondary, 0.35)
+    },
+    '&:hover': {
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderColor: alpha(theme.palette.text.secondary, 0.55)
+      }
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      border: '1px solid',
+      borderColor: alpha(theme.palette.text.secondary, 0.75)
+    }
   },
   groupHeader: {
     fontSize: '11px',
