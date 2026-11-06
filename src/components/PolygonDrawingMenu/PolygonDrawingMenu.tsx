@@ -56,16 +56,24 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
 
   const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
   const isTranscriptLayerOn = useTranscriptLayerStore((store) => store.isTranscriptLayerOn);
-  const cellMasksData = useCellSegmentationLayerStore((store) => store.cellMasksData);
+  const [cellMasksData, isCellLayerOn] = useCellSegmentationLayerStore(
+    useShallow((store) => [store.cellMasksData, store.isCellLayerOn])
+  );
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const theme = useTheme();
   const sx = styles(theme);
 
-  // Check if any data is loaded
+  // ROI tools require loaded data from an active layer.
   const hasCellMaskData = !!(cellMasksData && cellMasksData.length > 0);
-  const hasAnyData = (isTranscriptLayerOn && transcriptConfigLoaded) || hasCellMaskData;
+  const hasAnyData = (isTranscriptLayerOn && transcriptConfigLoaded) || (isCellLayerOn && hasCellMaskData);
+
+  useEffect(() => {
+    if (!hasAnyData && isPolygonDrawingEnabled) {
+      togglePolygonDrawing();
+    }
+  }, [hasAnyData, isPolygonDrawingEnabled, togglePolygonDrawing]);
 
   const handleClearPolygons = useCallback(() => {
     if (polygonFeatures.length > 1) {
@@ -176,7 +184,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
     };
   }, [handleKeyDown]);
 
-  // If no data is loaded, show only screenshot button
+  // Without an active ROI data layer, show only the screenshot button.
   if (!hasAnyData) {
     return (
       <Box sx={sx.menuContainer}>
