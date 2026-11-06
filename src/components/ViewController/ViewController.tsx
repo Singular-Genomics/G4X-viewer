@@ -1,8 +1,7 @@
-import { Box, SvgIcon, Theme, useTheme } from '@mui/material';
+import { Box, SvgIcon, Theme, lighten, useTheme } from '@mui/material';
 import { useMetadata } from '../../hooks/useMetadata.hook';
 import { guessRgb } from '../../legacy/utils';
 import { PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from 'react';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import StorageIcon from '@mui/icons-material/Storage';
 import LayersIcon from '@mui/icons-material/Layers';
 import ScatterPlotIcon from '@mui/icons-material/ScatterPlot';
@@ -102,14 +101,12 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
   return (
     <Box sx={{ ...sx.viewControllerContainer, width: panelWidth }}>
       <Box
-        sx={{ ...sx.resizeHandle, ...(isResizing ? sx.resizeHandleActive : {}) }}
+        sx={sx.resizeHandle}
         onPointerDown={handleResizeStart}
         onPointerMove={handleResize}
         onPointerUp={handleResizeEnd}
         onPointerCancel={handleResizeEnd}
-      >
-        <DragIndicatorIcon fontSize="small" />
-      </Box>
+      />
       <Box sx={sx.viewControllerContentWrapper}>
         <Box sx={sx.viewControllerSectionsWrapper}>
           <GxCollapsibleSection
@@ -222,24 +219,30 @@ const styles = (theme: Theme) => ({
   resizeHandle: {
     position: 'absolute',
     left: '-28px',
-    top: '100px',
+    top: '40px',
     zIndex: 1,
     width: '28px',
     height: '72px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.background.settingsPanel,
-    borderTopLeftRadius: '8px',
-    borderBottomLeftRadius: '8px',
     cursor: 'ew-resize',
     touchAction: 'none',
     outline: 'none',
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      right: 0,
+      top: '12px',
+      width: '8px',
+      height: '70px',
+      backgroundColor: theme.palette.background.paper,
+      borderTopLeftRadius: '8px',
+      borderBottomLeftRadius: '8px',
+      pointerEvents: 'none'
+    },
+    '&:hover::before': {
+      backgroundColor: lighten(theme.palette.background.paper, 0.1)
     }
-  },
-  resizeHandleActive: {
-    backgroundColor: theme.palette.background.paper
   }
 });
