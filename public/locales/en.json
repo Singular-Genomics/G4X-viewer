@@ -45,6 +45,9 @@
     "groupProteins": "Proteins",
     "groupMorphology": "Morphology"
   },
+  "layerVisibility": {
+    "toggle": "Show or hide {{layer}}"
+  },
   "general": {
     "apply": "Apply",
     "applyFullLink": "Load dataset and apply settings",

@@ -12,10 +12,12 @@ declare module '@mui/material/styles' {
 
   interface Palette extends MuiPalette {
     gx: GxPalette;
+    sectionDivider: string;
   }
 
   interface PaletteOptions extends MuiPaletteOptions {
     gx: GxPalette;
+    sectionDivider?: string;
   }
 }
 

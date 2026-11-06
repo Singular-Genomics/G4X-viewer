@@ -60,6 +60,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
+import { GxLayerToggle } from '../../shared/components/GxLayerToggle';
 import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSection';
 import { GxColorscaleSlider } from '../../shared/components/GxColorscaleSlider';
 import { GxDropzoneButton } from '../../shared/components/GxDropzoneButton';
@@ -553,10 +554,10 @@ export const ComponentsShowcaseView = () => {
             sectionTitle="Channels"
             defultState="open"
             headerAction={
-              <GxCheckbox
+              <GxLayerToggle
+                label="Show or hide Channels"
                 checked={isChannelsLayerVisible}
                 onChange={(e) => setIsChannelsLayerVisible(e.target.checked)}
-                disableTouchRipple
               />
             }
           >

@@ -14,7 +14,7 @@ import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
 import { useTranslation } from 'react-i18next';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
-import { GxCheckbox } from '../../shared/components/GxCheckbox';
+import { GxLayerToggle } from '../../shared/components/GxLayerToggle';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
 
@@ -124,12 +124,11 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
             sectionTitle={t('channelSettings.sectionTitle')}
             disabled={!imageLoaded}
             headerAction={
-              <GxCheckbox
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('channelSettings.sectionTitle') })}
                 checked={isChannelLayerVisible}
                 onChange={toggleChannelLayerVisibility}
                 disabled={!imageLoaded || !!isRgb}
-                disableTouchRipple
-                sx={sx.headerCheckbox}
               />
             }
           >
@@ -140,12 +139,11 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
             disabled={!imageLoaded || !hasTranscriptsData}
             unmountOnExit={false}
             headerAction={
-              <GxCheckbox
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('transcriptsSettings.sectionTitle') })}
                 checked={isTranscriptLayerOn}
                 onChange={toggleTranscriptLayer}
                 disabled={!imageLoaded || !hasTranscriptsData}
-                disableTouchRipple
-                sx={sx.headerCheckbox}
               />
             }
           >
@@ -156,12 +154,11 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
             disabled={!imageLoaded || !hasSegmentationData}
             unmountOnExit={false}
             headerAction={
-              <GxCheckbox
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('segmentationSettings.sectionTitle') })}
                 checked={isCellLayerOn}
                 onChange={toggleCellLayer}
                 disabled={!imageLoaded || !hasSegmentationData}
-                disableTouchRipple
-                sx={sx.headerCheckbox}
               />
             }
           >
@@ -228,14 +225,5 @@ const styles = (theme: Theme) => ({
   },
   resizeHandleActive: {
     backgroundColor: theme.palette.background.paper
-  },
-  headerCheckbox: {
-    padding: '0 8px 0 0',
-    '&, &.Mui-checked': {
-      color: theme.palette.text.primary
-    },
-    '&.Mui-disabled': {
-      opacity: 0.26
-    }
   }
 });

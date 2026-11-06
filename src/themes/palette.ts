@@ -101,6 +101,7 @@ export const colors: GxPalette = {
 
 const commonPalette = {
   gx: colors,
+  sectionDivider: darkGrey[500],
   primary: { main: blue.main, light: blue.main, dark: blue[600] },
   secondary: { main: accents.purple },
   success: { main: green.main, light: green.main, dark: green[600] },

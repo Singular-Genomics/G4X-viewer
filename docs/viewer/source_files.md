@@ -51,12 +51,12 @@ These controls cover data loading, Z-plane navigation, scale adjustment, and lay
 
 - <b><u>Layer Toggles:</u></b>
 
-      Shows or hides image layers displayed in the viewer.
+      Prominent pill switches beside the section titles show or hide image layers. Blue with a check mark means visible; dark grey with a cross means hidden. Unavailable layers have disabled switches. Switching visibility does not expand or collapse the settings; click the section title or arrow to do that.
 
-      - **Channel Settings:** Shows or hides protein image layers.
-      - **Brightfield Image Settings:** Shows or hides the fH&E layer.
-      - **Transcript Layer Settings:** Shows or hides transcript dots.
-      - **Segmentation Layer Settings:** Shows or hides cell segmentation masks.
+      - **Multi-Channel:** Shows or hides protein image layers.
+      - **fH&E:** The toggle at the top of Multi-Channel shows or hides the fH&E image.
+      - **Transcripts:** Shows or hides transcript dots.
+      - **Cells:** Shows or hides cell segmentation masks.
 
 <br>
 
