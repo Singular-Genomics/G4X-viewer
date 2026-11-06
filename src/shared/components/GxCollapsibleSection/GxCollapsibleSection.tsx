@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { GxCollapsibleSectionProps } from './GxCollapsibleSection.types';
-import { Box, Button, Collapse, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Button, Collapse, IconButton, SxProps, Theme, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const GxCollapsibleSection = ({
@@ -54,7 +54,6 @@ export const GxCollapsibleSection = ({
         }
         aria-disabled={disabled || undefined}
       >
-        {headerAction && <Box sx={sx.headerAction}>{headerAction}</Box>}
         <Button
           sx={sx.sectionExpandButton}
           disabled={disabled}
@@ -72,15 +71,38 @@ export const GxCollapsibleSection = ({
             </Box>
           )}
           <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>{sectionTitle}</Typography>
-          <ExpandMoreIcon
-            style={{
-              transform: `rotate(${expanded ? '180deg' : '0deg'})`,
-              transition: 'transform 300ms ease-in-out'
-            }}
-            sx={sx.collapseIcon}
-            fontSize="medium"
-          />
+          {!headerAction && (
+            <ExpandMoreIcon
+              style={{
+                transform: `rotate(${expanded ? '180deg' : '0deg'})`,
+                transition: 'transform 300ms ease-in-out'
+              }}
+              sx={sx.collapseIcon}
+              fontSize="medium"
+            />
+          )}
         </Button>
+        {headerAction && (
+          <>
+            <Box sx={sx.headerAction}>{headerAction}</Box>
+            <IconButton
+              disabled={disabled}
+              onClick={handleIconClick}
+              aria-label={sectionTitle}
+              aria-expanded={expanded}
+              aria-controls={contentId}
+              sx={sx.expandIconButton}
+            >
+              <ExpandMoreIcon
+                style={{
+                  transform: `rotate(${expanded ? '180deg' : '0deg'})`,
+                  transition: 'transform 300ms ease-in-out'
+                }}
+                fontSize="medium"
+              />
+            </IconButton>
+          </>
+        )}
       </Box>
       <Collapse
         onEntered={handleExpandScroll}
@@ -147,6 +169,7 @@ const sx = {
     alignItems: 'center',
     flex: 1,
     minWidth: 0,
+    justifyContent: 'flex-start',
     padding: '8px 0',
     color: 'inherit',
     borderRadius: 0,
@@ -172,7 +195,16 @@ const sx = {
   headerAction: {
     display: 'flex',
     alignItems: 'center',
-    paddingRight: '12px'
+    flexShrink: 0,
+    paddingLeft: '12px',
+    paddingRight: '8px'
+  },
+  expandIconButton: {
+    padding: 0,
+    color: (theme: Theme) => theme.palette.text.disabled,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
   collapseIcon: {
     marginLeft: 'auto',

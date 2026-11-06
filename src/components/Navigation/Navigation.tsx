@@ -246,7 +246,7 @@ const styles = (theme: Theme) => ({
     padding: '10px 24px',
     transition: 'all 0.3s ease',
     backdropFilter: 'blur(10px)',
-    borderRadius: '0 14px 0 14px',
+    borderRadius: '6px',
     borderBottom: '2px solid transparent',
     '&.Mui-selected': {
       color: theme.palette.text.primary,

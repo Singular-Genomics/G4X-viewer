@@ -3,6 +3,11 @@ import { useMetadata } from '../../hooks/useMetadata.hook';
 import { guessRgb } from '../../legacy/utils';
 import { PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import StorageIcon from '@mui/icons-material/Storage';
+import TuneIcon from '@mui/icons-material/Tune';
+import LayersIcon from '@mui/icons-material/Layers';
+import ScatterPlotIcon from '@mui/icons-material/ScatterPlot';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import { ViewControllerProps } from './ViewController.types';
 import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSection/GxCollapsibleSection';
 import { SourceFilesSection } from './SourceFilesSection/SourceFilesSection';
@@ -110,18 +115,21 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
         <Box sx={sx.viewControllerSectionsWrapper}>
           <GxCollapsibleSection
             sectionTitle={t('sourceFiles.sectionTitle')}
+            sectionIcon={<StorageIcon fontSize="small" />}
             defultState="open"
           >
             <SourceFilesSection />
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('viewSettings.sectionTitle')}
+            sectionIcon={<TuneIcon fontSize="small" />}
             disabled={!imageLoaded}
           >
             <ViewControlsSection />
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('channelSettings.sectionTitle')}
+            sectionIcon={<LayersIcon fontSize="small" />}
             disabled={!imageLoaded}
             headerAction={
               <GxLayerToggle
@@ -136,6 +144,7 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('transcriptsSettings.sectionTitle')}
+            sectionIcon={<ScatterPlotIcon fontSize="small" />}
             disabled={!imageLoaded || !hasTranscriptsData}
             unmountOnExit={false}
             headerAction={
@@ -151,6 +160,7 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('segmentationSettings.sectionTitle')}
+            sectionIcon={<BubbleChartIcon fontSize="small" />}
             disabled={!imageLoaded || !hasSegmentationData}
             unmountOnExit={false}
             headerAction={
