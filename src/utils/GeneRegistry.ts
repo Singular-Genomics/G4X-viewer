@@ -45,6 +45,7 @@ export class GeneRegistry {
     return index;
   }
 
+  // 4.0 data backwards compatible (mapCodes, probe and the code-point hash table)
   /**
    * Converts `length` fixed-width UCS-4 strings (`chars` code points each, zero padded) to gene indices.
    */

@@ -1,4 +1,11 @@
-import { CompositeLayer, GetPickingInfoParams, Layer, LayerContext, UpdateParameters } from '@deck.gl/core';
+import {
+  CompositeLayer,
+  FilterContext,
+  GetPickingInfoParams,
+  Layer,
+  LayerContext,
+  UpdateParameters
+} from '@deck.gl/core';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import type { Texture } from '@luma.gl/core';
 
@@ -18,6 +25,7 @@ import {
 } from '../../utils/geneGroupedCore';
 import { GENE_LOOKUP_EXTENSIONS, WHITE } from './gene-lookup-extension';
 import { GeneBucket, resolveGeneBucketIndex, updateGeneBuckets } from './gene-buckets';
+import { PickCuller } from './pick-culling';
 
 export type GeneFilteredTranscriptLayerProps = {
   /** Part of the layer id upstream (a different source means a different layer), so it never changes here */
@@ -66,6 +74,7 @@ type State = {
   renderVersion: number;
   buckets: Map<string, GeneBucket>;
   reportedLevel: number | null;
+  pickCuller: PickCuller;
 };
 
 /**
@@ -94,7 +103,8 @@ export default class GeneFilteredTranscriptLayer extends CompositeLayer<GeneFilt
       viewSignature: '',
       renderVersion: 0,
       buckets: new Map(),
-      reportedLevel: null
+      reportedLevel: null,
+      pickCuller: new PickCuller()
     };
     this.setState(state);
   }
@@ -254,6 +264,10 @@ export default class GeneFilteredTranscriptLayer extends CompositeLayer<GeneFilt
     if (before > 0 !== state.pending > 0) this.props.onLoadingStateChange?.(state.pending > 0);
   }
 
+  filterSubLayer(context: FilterContext) {
+    return (this.state as unknown as State).pickCuller.shouldDraw(context, this.props.pointSize + 1);
+  }
+
   getPickingInfo({ info, sourceLayer }: GetPickingInfoParams): any {
     const bucket = (sourceLayer?.props as { bucket?: GeneBucket } | undefined)?.bucket;
     if (bucket && info.index >= 0) {
@@ -284,6 +298,7 @@ export default class GeneFilteredTranscriptLayer extends CompositeLayer<GeneFilt
             id: `gene-${bucket.key}`,
             data: bucket.data,
             bucket,
+            pickBounds: bucket.bounds,
             getFillColor: WHITE,
             getRadius: pointSize,
             radiusUnits: 'pixels',

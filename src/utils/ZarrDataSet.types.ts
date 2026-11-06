@@ -57,6 +57,7 @@ export type ZarrCellsSegmentations = {
   segmentationSources: Record<string, string>;
 };
 
+// 4.0 data backwards compatible: 'gene_name'
 export type ZarrTranscriptField = 'cell_id' | 'gene_name' | 'position' | 'gene_index' | 'data';
 
 export type ZarrPathsCells = {

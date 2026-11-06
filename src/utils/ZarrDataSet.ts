@@ -259,7 +259,7 @@ export class ZarrDataSet {
     // v2 gene_index values index gene_index_names (frozen at write time). Writers always emit it; fall back to
     // gene_order (identical at write time) with a warning rather than crashing on a malformed dataset.
     const isV2 = (layerConfig.format_version ?? 1) >= 2;
-    let geneOrder = attrs.gene_order;
+    let geneOrder = attrs.gene_order; // 4.0 data backwards compatible: 4.0 indexes by gene_order
     if (isV2) {
       geneOrder = layerConfig.gene_index_names;
       if (!geneOrder) {
@@ -278,6 +278,7 @@ export class ZarrDataSet {
     if (!this.geneGroupedSource) {
       this.geneGroupedSource = this.getTranscriptContext()
         .then(({ layerConfig }) =>
+          // 4.0 data backwards compatible: 4.0 data has no gene store
           (layerConfig.format_version ?? 1) >= 2
             ? GeneGroupedTranscriptSource.open(this.storeFactory(ZARR_SUBPATHS.transcriptsByGene.base), layerConfig)
             : null
@@ -309,6 +310,7 @@ export class ZarrDataSet {
       .slice(ZARR_SUBPATHS.transcripts.base.length + 1);
     const tileSize = (layerConfig.tile_size / Math.pow(2, layerConfig.layers)) * Math.pow(2, level);
 
+    // 4.0 data backwards compatible
     if ((layerConfig.format_version ?? 1) < 2) {
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
         this.openTileArray(store, tilePath, 'cell_id'),

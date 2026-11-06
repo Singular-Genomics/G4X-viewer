@@ -4,7 +4,14 @@ import {
   getTileDataProps,
   LayerDataItem
 } from './transcript-layer.types';
-import { CompositeLayer, GetPickingInfoParams, Layer, LayerContext, UpdateParameters } from '@deck.gl/core';
+import {
+  CompositeLayer,
+  FilterContext,
+  GetPickingInfoParams,
+  Layer,
+  LayerContext,
+  UpdateParameters
+} from '@deck.gl/core';
 import { PolygonLayer, TextLayer, ScatterplotLayer } from '@deck.gl/layers';
 import { TileLayer } from '@deck.gl/geo-layers';
 import type { _Tileset2D as Tileset2D } from '@deck.gl/geo-layers';
@@ -28,6 +35,7 @@ import {
   sameItems
 } from './tile-buckets';
 import { GENE_LOOKUP_EXTENSIONS, WHITE, createGeneLookupTexture, fillGeneLookup } from './gene-lookup-extension';
+import { PickCuller } from './pick-culling';
 
 // Reuse the parsed colormap while the colormap reference is unchanged (layer is rebuilt every render).
 let parsedColorMapCache: { colormap: ColorMapEntry[]; parsed: Record<string, number[]> } | null = null;
@@ -91,7 +99,28 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
       buckets: new Map<string, TileBucket>(),
       sequencer: new TileSequencer<object>(),
       visibleItems: [] as LayerDataItem[],
-      labels: null as LabelsState | null
+      labels: null as LabelsState | null,
+      pickCuller: new PickCuller(),
+      settleRedraw: 0
+    });
+  }
+
+  finalizeState() {
+    cancelAnimationFrame((this.state as unknown as { settleRedraw: number }).settleRedraw);
+    super.finalizeState();
+  }
+
+  /**
+   * WORKAROUND (root cause unknown): the first frame after the bucket buffers are replaced sometimes draws an image
+   * tile (or the overview image) blank although every layer's state is correct. Seen on ANGLE's OpenGL backend
+   * (NVIDIA); a GPU sync (gl.finish) before the transcript draw also avoids it, which points at a driver timing issue.
+   * Nothing redraws a still view, so draw once more on the next frame. Remove once the cause is fixed.
+   */
+  scheduleSettleRedraw() {
+    const state = this.state as unknown as { settleRedraw: number };
+    cancelAnimationFrame(state.settleRedraw);
+    state.settleRedraw = requestAnimationFrame(() => {
+      (this.getCurrentLayer() as Layer | null)?.setNeedsRedraw();
     });
   }
 
@@ -100,9 +129,12 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
     return Boolean(this.state?.tileset?.selectedTiles?.every((tile) => tile.isLoaded));
   }
 
-  // Bucket sublayers span several tiles, so the per-tile viewport culling of TileLayer does not apply.
-  filterSubLayer() {
-    return true;
+  // Bucket sublayers span several tiles, so TileLayer's per-tile culling does not apply; picks are culled per bucket.
+  filterSubLayer(context: FilterContext) {
+    return (this.state as unknown as { pickCuller: PickCuller }).pickCuller.shouldDraw(
+      context,
+      this.props.pointSize + 1
+    );
   }
 
   getPickingInfo({ info, sourceLayer }: GetPickingInfoParams): any {
@@ -150,6 +182,9 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
     else state.visibleItems = visible;
 
     const nextBuckets = updateBuckets(entries, state.buckets);
+    if (nextBuckets.size !== state.buckets.size || [...nextBuckets].some(([key, b]) => state.buckets.get(key) !== b)) {
+      this.scheduleSettleRedraw();
+    }
     state.buckets = nextBuckets;
 
     const layers: Layer[] = [];
@@ -236,6 +271,7 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
             this.getSubLayerProps({
               id: `discarded-${bucket.key}`,
               data: bucket.data,
+              pickBounds: bucket.bounds,
               getLineWidth: 0.2,
               getRadius: pointSize,
               radiusUnits: 'pixels',
@@ -256,6 +292,7 @@ class TranscriptTileLayer extends TileLayer<LayerDataItem[], TranscriptTileLayer
             id: `points-${bucket.key}`,
             data: bucket.data,
             bucket,
+            pickBounds: bucket.bounds,
             getFillColor: WHITE,
             getRadius: pointSize,
             radiusUnits: 'pixels',
@@ -557,6 +594,7 @@ class TranscriptLayer extends CompositeLayer<TranscriptLayerProps> {
           const loader = this.state.loader as ZarrTranscriptLoader | false;
           const points = loader ? await loader.loadTileData(index.z, index.x, index.y) : emptyTile();
 
+          // 4.0 data backwards compatible
           // Legacy datasets without gene_order register genes while decoding: refresh the lookup if any appeared
           const registry = this.state.registry as GeneRegistry | null;
           if (registry && registry.version !== this.state.lookupRegistryVersion) {
