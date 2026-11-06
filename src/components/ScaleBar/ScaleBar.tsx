@@ -4,10 +4,10 @@ import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
 import { makeBoundingBox } from './utils';
 import { ScaleBarIcon } from './ScaleBarIcon';
 
-export function ScaleBar() {
+export function ScaleBar({ left = 8, bottom = 8 }: { left?: number; bottom?: number }) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const sx = styles(theme);
+  const sx = styles(theme, left, bottom);
   const viewState = useViewerStore(useShallow((store) => store.viewState));
   const physicalSize = useViewerStore((store) => store.physicalSize);
 
@@ -17,11 +17,11 @@ export function ScaleBar() {
   const viewLength = boundingBox[2][0] - boundingBox[0][0];
   const barLength = viewLength * 0.05;
 
-  const unit = physicalSize?.unit || 'μm';
+  const unit = physicalSize?.unit || 'µm';
   const size = physicalSize?.size || 1;
 
   const displayNumber = (barLength * size).toPrecision(5);
-  const displayUnit = unit;
+  const displayUnit = /^micromet(er|re)s?$/i.test(unit) || unit === 'μm' ? 'µm' : unit;
 
   const scale = Math.pow(2, viewState.zoom);
   const barWidthInPixels = barLength * scale;
@@ -46,31 +46,34 @@ export function ScaleBar() {
   );
 }
 
-const styles = (theme: Theme) => ({
+const styles = (theme: Theme, left: number, bottom: number) => ({
   container: {
     position: 'absolute',
-    right: 8,
-    bottom: 8,
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
+    width: 'max-content',
+    left,
+    bottom,
+    backgroundColor: alpha(theme.palette.background.paper, 0.5),
     padding: '2px 6px',
-    borderRadius: '10px',
+    borderRadius: '3px',
     zIndex: 10,
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: '8px',
     [theme.breakpoints.up('md')]: {
-      right: 55,
-      bottom: 50,
+      bottom,
       padding: '4px 8px'
     }
   },
   iconContainer: {
     display: 'flex',
+    alignItems: 'center',
+    flexShrink: 0,
     justifyContent: 'center'
   },
   text: {
     color: theme.palette.text.primary,
-    textAlign: 'center',
-    width: '100%'
+    textAlign: 'right',
+    whiteSpace: 'nowrap'
   }
 });

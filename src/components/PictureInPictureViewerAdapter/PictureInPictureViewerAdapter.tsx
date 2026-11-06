@@ -254,6 +254,7 @@ export const PictureInPictureViewerAdapter = ({
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
+            showScaleBar={!isUiHidden}
             overviewOn={!isUiHidden && isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}

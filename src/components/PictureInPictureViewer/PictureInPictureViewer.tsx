@@ -1,3 +1,5 @@
+import { ScaleBar } from '../ScaleBar';
+import { useTheme } from '@mui/material';
 import { ColorPaletteExtension } from '@hms-dbmi/viv';
 import { DETAIL_VIEW_ID, OVERVIEW_VIEW_ID, OverviewView, getDefaultInitialViewState, VivViewer } from '@hms-dbmi/viv';
 import * as React from 'react';
@@ -7,6 +9,10 @@ import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function PictureInPictureViewer(props: PictureInPictureViewerProps) {
+  const theme = useTheme();
+  const overviewBorderColor = [1, 3, 5].map((offset) =>
+    parseInt(theme.palette.gx.darkGrey[500].slice(offset, offset + 2), 16)
+  );
   const {
     loader,
     contrastLimits,
@@ -16,6 +22,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
     colormap,
     overview,
     overviewOn,
+    showScaleBar = true,
     selections,
     hoverHooks = { handleValue: () => {}, handleCoordnate: () => {} },
     height,
@@ -84,7 +91,7 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   };
 
   const views = [detailView];
-  const layerProps = [layerConfig];
+  const layerProps: (typeof layerConfig & { viewportOutlineColor?: number[] })[] = [layerConfig];
   const viewStates = [{ ...baseViewState, id: DETAIL_VIEW_ID }];
   const overviewSource =
     brightfieldImageSource && isBrightfieldLayerVisible
@@ -96,6 +103,9 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
           selections: brightfieldSelections
         }
       : { loader, contrastLimits, colors, channelsVisible, selections };
+
+  let scaleBarLeft = 8;
+  let scaleBarBottom = 8;
 
   if (overviewOn && overviewSource.loader?.[0]?.getRaster) {
     // It's unclear why this is needed because OverviewView.filterViewState sets "zoom" and "target".
@@ -113,10 +123,14 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
       ...overview
     } as any);
 
+    scaleBarLeft = overviewView.x + overviewView.width + 8;
+    scaleBarBottom = overviewView.margin;
+
     views.push(overviewView as any);
     layerProps.push({
       ...layerConfig,
       ...overviewSource,
+      viewportOutlineColor: overviewBorderColor,
       lensEnabled: false
     });
     viewStates.push(overviewViewState as any);
@@ -125,14 +139,22 @@ export default function PictureInPictureViewer(props: PictureInPictureViewerProp
   if (!loader) return null;
 
   return (
-    <VivViewer
-      layerProps={layerProps as any}
-      views={views as any}
-      viewStates={viewStates as any}
-      hoverHooks={hoverHooks as any}
-      onViewStateChange={onViewStateChange as any}
-      onHover={onHover as any}
-      deckProps={deckProps}
-    />
+    <>
+      <VivViewer
+        layerProps={layerProps as any}
+        views={views as any}
+        viewStates={viewStates as any}
+        hoverHooks={hoverHooks as any}
+        onViewStateChange={onViewStateChange as any}
+        onHover={onHover as any}
+        deckProps={deckProps}
+      />
+      {showScaleBar && (
+        <ScaleBar
+          left={scaleBarLeft}
+          bottom={scaleBarBottom}
+        />
+      )}
+    </>
   );
 }

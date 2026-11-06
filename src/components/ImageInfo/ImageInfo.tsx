@@ -1,6 +1,5 @@
 import { useViewerStore } from '../../stores/ViewerStore';
 import { useChannelsStore } from '../../stores/ChannelsStore';
-import { ScaleBar } from '../ScaleBar';
 import { MobileChannelLegend } from '../MobileChannelLegend';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -16,7 +15,6 @@ export const ImageInfo = () => {
       {level && (
         <>
           <MobileChannelLegend />
-          <ScaleBar />
         </>
       )}
     </>

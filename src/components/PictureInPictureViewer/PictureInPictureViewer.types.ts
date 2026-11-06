@@ -53,6 +53,7 @@ export type PictureInPictureViewerProps = {
   selections: any[];
   overview?: OverviewSettings;
   overviewOn: boolean;
+  showScaleBar?: boolean;
   hoverHooks?: HoverHooks;
   viewStates?: ViewState[];
   height: number;

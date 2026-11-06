@@ -1,5 +1,5 @@
 export const DEFAULT_OVERVIEW = {
-  margin: 25,
+  margin: 8,
   scale: 0.15,
   position: 'bottom-left'
 };
