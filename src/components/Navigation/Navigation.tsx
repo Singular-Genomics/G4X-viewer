@@ -1,6 +1,7 @@
 import { Box, IconButton, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
+import { GxThemeModeToggle } from '../../shared/components/GxThemeModeToggle';
 import { NavigationProps, NavigationView } from './Navigation.types';
 import { useTranslation } from 'react-i18next';
 import { SocialIcons } from '../SocialIcons/SocialIcons';
@@ -84,6 +85,7 @@ export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onTogg
           </Tabs>
         </Box>
         <Box sx={sx.actionsSection}>
+          <GxThemeModeToggle />
           <Tooltip
             title={
               currentView === 'viewer'

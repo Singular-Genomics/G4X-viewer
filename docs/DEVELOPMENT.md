@@ -163,7 +163,7 @@ Keep scientific data colors (channel colors, cluster colormaps, heatmap scales, 
 
 Both app entry points use `CssBaseline` and `ThemeProvider` with `forceThemeRerender`. Custom styles and Plotly consume resolved palette values, so the provider must refresh those values when the color scheme changes. Plotly layouts should start with `getPlotTheme(theme)` from `src/themes/plotTheme.ts`; retain its axis colors when adding custom axis settings.
 
-To check a styling change, switch **Light / Dark** in View Settings and inspect the sidebar, filter tables, Fill/Border toggles (including the last-active disabled button), dropdown menus, floating graphs, settings dialogs, tooltips, and dashboard plots. The `/components` route also has a theme switch for inspecting shared controls. Confirm that changing modes preserves selections and data colors.
+To check a styling change, switch **Light / Dark** in the main header, to the left of **Hide viewer controls** and inspect the sidebar, filter tables, Fill/Border toggles (including the last-active disabled button), dropdown menus, floating graphs, settings dialogs, tooltips, and dashboard plots. The `/components` route also has a theme switch for inspecting shared controls. Confirm that changing modes preserves selections and data colors.
 
 ## Web Workers
 
