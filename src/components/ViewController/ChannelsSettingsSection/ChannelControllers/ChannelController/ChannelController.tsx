@@ -119,7 +119,10 @@ export const ChannelController = ({
             sx={sx.soloRadio}
           />
         </Tooltip>
-        <Box sx={isSoloMode ? sx.selectDimmed : undefined}>
+        <Box
+          className="channel-visibility-control"
+          sx={isSoloMode ? sx.selectDimmed : undefined}
+        >
           <GxCheckbox
             onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
             disabled={disabled}
@@ -127,15 +130,6 @@ export const ChannelController = ({
             disableTouchRipple
           />
         </Box>
-        <Tooltip
-          title={t('tooltips.channelSettings.currentPixelIntensity')}
-          arrow
-          placement="top"
-        >
-          <Box sx={sx.valueWrapper}>
-            <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
-          </Box>
-        </Tooltip>
         <GxSelect
           value={name}
           onChange={(e) => onSelectionChange(e.target.value as string)}
@@ -183,7 +177,16 @@ export const ChannelController = ({
             ))
           ]}
         </GxSelect>
-        <Box>
+        <Tooltip
+          title={t('tooltips.channelSettings.currentPixelIntensity')}
+          arrow
+          placement="top"
+        >
+          <Box sx={sx.valueWrapper}>
+            <Box>{getPixelValueDisplay(pixelValue, isLoading)}</Box>
+          </Box>
+        </Tooltip>
+        <Box sx={sx.headerActions}>
           <ChannelOptions
             color={color}
             defaultColor={defaultColor}
@@ -291,7 +294,8 @@ export const ChannelController = ({
 const styles = (theme: Theme): Record<string, SxProps> => ({
   soloRadio: {
     padding: '8px',
-    paddingRight: '2px',
+    paddingRight: 0,
+    marginRight: '0px',
     '&, &.Mui-checked': {
       color: theme.palette.gx.accent.greenBlue
     },
@@ -308,11 +312,20 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       backgroundColor: 'unset'
     }
   },
+  headerActions: {
+    display: 'flex',
+    alignItems: 'center',
+    flexShrink: 0,
+    marginLeft: 'auto'
+  },
   headerWrapper: {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
-    marginBlock: '0 4px'
+    marginBlock: '0 10px',
+    '& .channel-visibility-control .MuiCheckbox-root': {
+      paddingLeft: 0
+    }
   },
   valueWrapper: {
     display: 'flex',
@@ -326,8 +339,10 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     maxWidth: '90px'
   },
   channelSelect: {
-    flexGrow: 1,
-    minWidth: 0
+    height: '35px',
+    flex: '1 1 200px',
+    minWidth: 0,
+    maxWidth: '200px'
   },
   groupHeader: {
     fontSize: '11px',

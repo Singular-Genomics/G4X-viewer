@@ -87,6 +87,7 @@ export const ChannelRangeSlider = ({
         <Input
           id="channel_min"
           type="number"
+          disableUnderline
           disabled={isLoading}
           sx={sx.textField}
           value={minInputValue}
@@ -111,6 +112,7 @@ export const ChannelRangeSlider = ({
         <Input
           id="channel_max"
           type="number"
+          disableUnderline
           disabled={isLoading}
           sx={sx.textField}
           value={maxInputValue}
@@ -136,17 +138,19 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     padding: '0 2px'
   },
   textField: {
-    marginBottom: '8px',
-    minWidth: '60px',
-    '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+    width: '48px',
+    minWidth: 0,
+    flexShrink: 0,
+    borderRadius: '4px',
+    backgroundColor: theme.palette.background.default,
+    color: theme.palette.text.primary,
+    '& .MuiInputBase-input': {
+      padding: '3px 4px',
+      fontSize: '14px',
+      textAlign: 'center'
     },
-    '&.MuiInputBase-input': {
-      cursor: 'auto'
-    },
-    '&.MuiInputBase-root::after': {
-      borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
+    '&.Mui-focused': {
+      outline: `1px solid ${theme.palette.primary.main}`
     }
   },
   rangeSlider: {
