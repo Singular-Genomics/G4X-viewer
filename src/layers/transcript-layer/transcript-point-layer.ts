@@ -6,10 +6,6 @@ import { Model } from '@luma.gl/engine';
 
 import { fs, vs, transcriptPointUniforms } from './transcript-point-layer.glsl';
 
-/** `?txPointLayer=0` selects the stock ScatterplotLayer (A/B comparison) */
-export const POINT_LAYER_ENABLED =
-  typeof window === 'undefined' || new URLSearchParams(window.location.search).get('txPointLayer') !== '0';
-
 const DEFAULT_COLOR: [number, number, number, number] = [0, 0, 0, 255];
 const SMOOTH_EDGE_RADIUS = 0.5;
 
@@ -146,9 +142,9 @@ function neededSpriteSize(context: LayerContext, props: SpriteProps): number {
 // depth test the points would lose to the image layers drawn before them. Draw order alone decides.
 const POINT_PARAMETERS = { depthCompare: 'always' } as const;
 
-/** Point-sprite layer, or a stock ScatterplotLayer when disabled or when the sprite exceeds the GPU's point size limit */
+/** Point-sprite layer, or a stock ScatterplotLayer when the sprite exceeds the GPU's point size limit */
 export function createPointLayer(context: LayerContext, props: SpriteProps): Layer {
-  const usePoints = POINT_LAYER_ENABLED && neededSpriteSize(context, props) <= getMaxPointSize(context.device);
+  const usePoints = neededSpriteSize(context, props) <= getMaxPointSize(context.device);
   return usePoints
     ? new TranscriptPointLayer({ ...props, parameters: { ...POINT_PARAMETERS, ...props.parameters } } as any)
     : new ScatterplotLayer(props as any);
