@@ -258,7 +258,7 @@
     "metadataPlaceholder": "{sample}_run_metadata.json",
     "uploadedFileSizeHelper": "Max: {{size}}",
     "uploadedFileSizeError": "Uploaded file exceeds allowed limit of: {{size}}",
-    "folderUploadButton": "Open Local Folder",
+    "folderUploadButton": "Local Zarr Store",
     "folderInvalidDirectory": "Selected folder is not a valid OME-Zarr directory",
     "folderSuccess": "Successfully loaded image from folder: {{name}}",
     "folderImagesAccessTitle": "Access to images folder required",

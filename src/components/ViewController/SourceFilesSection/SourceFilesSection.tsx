@@ -13,8 +13,9 @@ export const SourceFilesSection = () => {
 
 const sx = {
   sourceFilesSectionContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '16px'
+    display: 'grid',
+    gridTemplateColumns: 'minmax(0, 1fr) 172px',
+    alignItems: 'start',
+    gap: '8px'
   }
 };

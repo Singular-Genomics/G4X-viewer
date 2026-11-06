@@ -112,12 +112,26 @@ export default function ZarrSourceInput() {
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   textField: {
+    '& .MuiFilledInput-root': {
+      borderRadius: '6px',
+      overflow: 'hidden'
+    },
+    '& .MuiFilledInput-root::before': {
+      borderBottom: 'none'
+    },
+    '& .MuiFilledInput-root:hover:not(.Mui-disabled, .Mui-error)::before': {
+      borderBottom: 'none'
+    },
+    '& .MuiFilledInput-root::after': {
+      borderBottom: `2px solid ${theme.palette.primary.main}`,
+      transform: 'translateX(-100%)',
+      transition: 'transform 150ms ease'
+    },
+    '& .MuiFilledInput-root.Mui-focused::after': {
+      transform: 'translateX(0)'
+    },
     '& .MuiFormLabel-root.Mui-focused': {
       color: theme.palette.gx.accent.greenBlue
-    },
-    '& .MuiInputBase-root::after': {
-      borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
     },
     '& .MuiFormHelperText-root': {
       whiteSpace: 'nowrap',

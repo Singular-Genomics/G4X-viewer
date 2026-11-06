@@ -47,9 +47,10 @@ export const LocalFolderButton = () => {
 
 const styles = (theme: Theme) => ({
   folderButton: {
-    borderStyle: 'dashed',
+    borderStyle: 'solid',
+    borderRadius: '6px',
     width: '100%',
-    height: '40px',
+    height: '48px',
     fontWeight: 700,
     borderColor: theme.palette.gx.accent.greenBlue,
     color: theme.palette.gx.accent.greenBlue,
