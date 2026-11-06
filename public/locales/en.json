@@ -1,5 +1,7 @@
 {
   "brightfieldImages": {
+    "imageToggleLabel": "fH&E",
+    "opacityLabel": "Opacity",
     "addImage": "Add fH&E Image",
     "availableImage": "Available fH&E Images",
     "duplicateImageError": "Image with same name already has been loaded",
@@ -211,7 +213,7 @@
     "imageLoadErrorLocal": "Failed to load image. Please check the folder and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
-    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in the fH&E section instead.",
+    "heImageNotSupported": "fH&E images are loaded from the dataset. Load the dataset in Source Data, then use the fH&E control under Multi-Channel to adjust visibility and opacity.",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",

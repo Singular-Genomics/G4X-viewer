@@ -6,8 +6,6 @@ import {
 } from './BrightfieldImagesStore.types';
 import { MAX_UINT16_VALUE } from '../../shared/constants';
 
-export const MAX_NUMBER_OF_IMAGES = 10;
-
 const DEFAULT_VALUES: BrightfieldImagesStoreValues = {
   brightfieldImageSource: null,
   loader: [{ labels: [], shape: [] }],
@@ -36,7 +34,18 @@ export const useBrightfieldImagesStore = create<BrightfieldImagesStore>((set, ge
     const { loader, image } = get();
     return Array.isArray(loader[0]) ? loader[image] : loader;
   },
-  toggleImageLayer: () => set((store) => ({ isLayerVisible: !store.isLayerVisible })),
+  toggleImageLayer: () => {
+    const { brightfieldImageSource, availableImages, isLayerVisible } = get();
+    if (!brightfieldImageSource) {
+      const image = availableImages[0];
+      if (!image) return;
+      // Select the dataset's image once; hiding it retains the source and loader.
+      get().setActiveImage(image);
+      set({ isLayerVisible: true });
+      return;
+    }
+    set({ isLayerVisible: !isLayerVisible });
+  },
   setActiveImage: (file: AvailableImageEntry | null) => {
     if (file === null) {
       set({

@@ -12,24 +12,19 @@ This section describes how to load, display, and adjust the fH&E image layer.
 
 <br>
 
-These controls manage fH&E visibility, opacity, and optional image upload.
+These controls manage the single fH&E image supplied by the dataset. The top of **Multi-Channel** contains one row with an **fH&E** toggle, an **Opacity** slider, and an editable percentage value.
 
 ## features
 
-- <b><u>Layer Opacity:</u></b>
+- <b><u>fH&E:</u></b>
 
-      Adjusts the transparency of the fH&E image layer.
+      Enables or disables the dataset's fH&E image. The image is selected on first enable; disabling it hides it while retaining the loaded image and its opacity setting. The toggle is disabled when no image is available.
 
-- <b><u>Toggle Visibility:</u></b>
+- <b><u>Opacity:</u></b>
 
-      Shows or hides the fH&E image.
+      Adjusts transparency from **0%** (fully transparent) to **100%** (fully opaque). Use the slider or type a percentage and press Enter or leave the field. Opacity controls are disabled while the image is off. Values are restored when the image is enabled again.
 
-- <b><u>Upload Data:</u></b>
-
-      These controls are used to load an fH&E image into the viewer. For Zarr-based datasets, the fH&E image is typically loaded automatically.
-
-      - **Upload from Cloud:** Select an image file from a cloud-based source, such as an Amazon S3 bucket.
-      - **Upload from File:** Select an image file from a locally accessible storage device.
+The image is supplied through Source Data; there are no separate image-selection, Add Image, or Cloud Upload controls in these controls.
 
 <br>
 

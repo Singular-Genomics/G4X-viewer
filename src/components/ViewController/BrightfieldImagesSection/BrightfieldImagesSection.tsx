@@ -1,74 +1,136 @@
-import { Box, Typography } from '@mui/material';
-import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
-import { useState } from 'react';
-import { GxSlider } from '../../../shared/components/GxSlider';
-import { BrightfieldImageSelector } from './BrightfieldImageSelector/BrightfieldImageSelector';
+import { Box, Input, Theme, ToggleButton, Typography, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
+import { useBrightfieldImagesStore } from '../../../stores/BrightfieldImagesStore';
+import { GxSlider } from '../../../shared/components/GxSlider';
+import { getControlButtonStyles } from '../../../shared/components/controlButton.styles';
 
 export const BrightfieldImagesSection = () => {
-  const sx = styles();
+  const theme = useTheme();
+  const sx = styles(theme);
   const { t } = useTranslation();
+  const [brightfieldImageSource, availableImages, opacity, isLayerVisible, toggleImageLayer] =
+    useBrightfieldImagesStore(
+      useShallow((store) => [
+        store.brightfieldImageSource,
+        store.availableImages,
+        store.opacity,
+        store.isLayerVisible,
+        store.toggleImageLayer
+      ])
+    );
+  const isImageEnabled = !!brightfieldImageSource && isLayerVisible;
+  const hasImage = !!brightfieldImageSource || availableImages.length > 0;
+  const [sliderValue, setSliderValue] = useState(Math.round(opacity * 100));
+  const [inputValue, setInputValue] = useState(String(Math.round(opacity * 100)));
 
-  const { brightfieldImageSource, opacity, availableImages } = useBrightfieldImagesStore();
+  useEffect(() => {
+    const percent = Math.round(opacity * 100);
+    setSliderValue(percent);
+    setInputValue(String(percent));
+  }, [opacity]);
 
-  const [opacitySliderValue, setOpacitySliderValue] = useState<number>(opacity * 100);
+  const commitOpacity = (percent: number) => {
+    setSliderValue(percent);
+    setInputValue(String(percent));
+    useBrightfieldImagesStore.setState({ opacity: percent / 100 });
+  };
+
+  const commitInputValue = () => {
+    const parsed = inputValue.trim() === '' ? NaN : Number(inputValue);
+    const percent = Number.isFinite(parsed) ? Math.round(Math.min(100, Math.max(0, parsed))) : sliderValue;
+    commitOpacity(percent);
+  };
 
   return (
-    <Box sx={sx.sectionContainer}>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.layerOpacityLabel')}</Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '16px',
-            marginLeft: '8px'
+    <Box sx={sx.row}>
+      <ToggleButton
+        value="brightfield"
+        selected={isImageEnabled}
+        onChange={toggleImageLayer}
+        disabled={!hasImage}
+        color="primary"
+        sx={sx.toggleButton}
+      >
+        {t('brightfieldImages.imageToggleLabel')}
+      </ToggleButton>
+      <Typography
+        id="brightfield-opacity-label"
+        component="label"
+        sx={sx.label}
+      >
+        {t('brightfieldImages.opacityLabel')}
+      </Typography>
+      <Box sx={sx.slider}>
+        <GxSlider
+          aria-labelledby="brightfield-opacity-label"
+          value={sliderValue}
+          onChange={(_, newValue) => {
+            const value = Array.isArray(newValue) ? newValue[0] : newValue;
+            setSliderValue(value);
+            setInputValue(String(value));
           }}
-        >
-          <Typography>0%</Typography>
-          <GxSlider
-            value={opacitySliderValue}
-            onChange={(_, newValue) => {
-              setOpacitySliderValue(Array.isArray(newValue) ? newValue[0] : newValue);
-            }}
-            onChangeCommitted={() =>
-              useBrightfieldImagesStore.setState({
-                opacity: +(opacitySliderValue / 100).toFixed(2)
-              })
-            }
-            min={0}
-            max={100}
-            step={1}
-            disabled={!brightfieldImageSource}
-          />
-          <Typography>100%</Typography>
-        </Box>
+          onChangeCommitted={(_, newValue) => commitOpacity(Array.isArray(newValue) ? newValue[0] : newValue)}
+          valueLabelFormat={(value: number) => `${value}%`}
+          min={0}
+          max={100}
+          step={1}
+          disabled={!isImageEnabled}
+        />
       </Box>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('brightfieldImages.availableImage')}</Typography>
-        <BrightfieldImageSelector images={availableImages} />
-      </Box>
+      <Input
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
+        onBlur={commitInputValue}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            event.currentTarget.querySelector('input')?.blur();
+          }
+        }}
+        size="small"
+        type="number"
+        inputProps={{
+          'aria-labelledby': 'brightfield-opacity-label',
+          min: 0,
+          max: 100,
+          step: 1
+        }}
+        sx={sx.input}
+        disabled={!isImageEnabled}
+      />
     </Box>
   );
 };
 
-const styles = () => ({
-  sectionContainer: {
+const styles = (theme: Theme) => ({
+  row: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '16px'
-  },
-  subsectionTitle: {
-    fontWeight: 700,
-    marginLeft: '8px',
+    alignItems: 'center',
+    gap: '8px',
     marginBottom: '8px'
   },
-  sliderWrapper: {
-    display: 'flex',
-    alignItems: 'center'
+  toggleButton: {
+    ...getControlButtonStyles(theme),
+    width: 114,
+    flexShrink: 0,
+    padding: '6px 4px',
+    fontSize: '0.75rem'
   },
-  opacitySlider: {
-    padding: '0 8px 0 16px'
+  label: {
+    fontSize: '0.75rem',
+    flexShrink: 0
+  },
+  slider: {
+    flex: 1,
+    minWidth: 0,
+    padding: '0 4px'
+  },
+  input: {
+    width: 52,
+    flexShrink: 0,
+    '& .MuiInputBase-input': {
+      textAlign: 'center'
+    }
   }
 });

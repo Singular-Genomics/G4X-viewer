@@ -12,9 +12,7 @@ import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksLayerSection } from './CellMasksLayerSection';
 import { ChannelsSettingsSection } from './ChannelsSettingsSection/ChannelsSettingsSection';
-import { BrightfieldImagesSection } from './BrightfieldImagesSection/BrightfieldImagesSection';
 import { useTranslation } from 'react-i18next';
-import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
@@ -43,9 +41,6 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
   );
   const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
-  );
-  const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
-    useShallow((store) => [store.isLayerVisible, store.toggleImageLayer])
   );
   const [isChannelLayerVisible, toggleChannelLayerVisibility] = useChannelsStore(
     useShallow((store) => [store.isLayerVisible, store.toggleLayerVisibility])
@@ -127,7 +122,7 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('channelSettings.sectionTitle')}
-            disabled={!imageLoaded || isRgb}
+            disabled={!imageLoaded}
             headerAction={
               <GxCheckbox
                 checked={isChannelLayerVisible}
@@ -138,22 +133,7 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
               />
             }
           >
-            <ChannelsSettingsSection />
-          </GxCollapsibleSection>
-          <GxCollapsibleSection
-            sectionTitle={t('brightfieldImages.sectionTitle')}
-            disabled={!imageLoaded}
-            headerAction={
-              <GxCheckbox
-                checked={isBrightfieldLayerVisible}
-                onChange={toggleBrightfieldLayer}
-                disabled={!imageLoaded}
-                disableTouchRipple
-                sx={sx.headerCheckbox}
-              />
-            }
-          >
-            <BrightfieldImagesSection />
+            <ChannelsSettingsSection isRgb={!!isRgb} />
           </GxCollapsibleSection>
           <GxCollapsibleSection
             sectionTitle={t('transcriptsSettings.sectionTitle')}
