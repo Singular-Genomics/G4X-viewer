@@ -12,6 +12,7 @@ const primary = {
 };
 
 const darkGrey = {
+  50: '#1b1b1b',
   100: '#212426',
   300: '#2E3337',
   500: '#3F4447',
@@ -127,8 +128,8 @@ export const darkPalette: PaletteOptions = {
   background: {
     default: darkGrey[100],
     paper: darkGrey[300],
-    settingsPanel: darkGrey[300],
-    viewport: primary.greyDark
+    settingsPanel: darkGrey[100],
+    viewport: darkGrey[50]
   },
   text: { primary: colors.lightGrey[900], secondary: colors.mediumGrey[900] },
   divider: colors.mediumGrey[500]
