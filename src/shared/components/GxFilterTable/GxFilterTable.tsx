@@ -104,7 +104,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiDataGrid-columnHeaderTitle': {
       color: theme.palette.text.secondary,
-      textTransform: 'uppercase',
+      textTransform: 'none',
       fontWeight: 700
     },
     '& .MuiDataGrid-footerContainer': {

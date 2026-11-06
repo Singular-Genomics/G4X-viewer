@@ -151,7 +151,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     marginBottom: '8px'
   },
   selectionLabel: {
-    textTransform: 'uppercase',
+    textTransform: 'none',
     marginLeft: '8px'
   },
   sliderContainer: {

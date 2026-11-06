@@ -312,7 +312,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   groupHeader: {
     fontSize: '11px',
     fontWeight: 700,
-    textTransform: 'uppercase',
+    textTransform: 'none',
     letterSpacing: '0.05em',
     color: theme.palette.gx.accent.greenBlue,
     lineHeight: '28px',

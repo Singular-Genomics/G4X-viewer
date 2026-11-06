@@ -115,7 +115,7 @@ const styles = (theme: Theme) => ({
   sectionHeader: {
     fontSize: '13px',
     fontWeight: 700,
-    textTransform: 'uppercase',
+    textTransform: 'none',
     letterSpacing: '0.05em',
     color: theme.palette.gx.accent.greenBlue,
     marginBottom: '8px'

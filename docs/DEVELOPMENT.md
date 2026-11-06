@@ -155,6 +155,8 @@ const styles = (theme: Theme) => ({
 });
 ```
 
+Button labels and section headings preserve the casing of their translated text. The shared theme disables automatic uppercase button typography; retain acronyms such as UMAP and RNA as written.
+
 ### Light and dark mode
 
 `src/themes/palette.ts` defines the shared brand colors and the light/dark semantic palettes. Use `theme.palette.background.settingsPanel` for the settings sidebar, `background.viewport` for the imaging viewport, `background.default` for other application surfaces, `background.paper` for controls and floating panels, `text.primary` / `text.secondary` for text, `divider` for borders, and `action.*` for hover, selected, and disabled states. Fixed neutral colors from `palette.gx` should not be used for interface surfaces or text.

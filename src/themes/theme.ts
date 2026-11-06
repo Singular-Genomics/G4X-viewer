@@ -10,7 +10,10 @@ export const gxTheme = createTheme({
     dark: { palette: darkPalette }
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif'
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    button: {
+      textTransform: 'none'
+    }
   },
   components: {
     MuiDialog: {

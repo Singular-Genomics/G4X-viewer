@@ -47,7 +47,7 @@ const styles = (theme: Theme) => ({
   titleText: {
     fontWeight: '700',
     fontSize: 'inherit',
-    textTransform: 'uppercase',
+    textTransform: 'none',
     mb: '4px'
   },
   divider: {

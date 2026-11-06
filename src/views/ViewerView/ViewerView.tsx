@@ -157,7 +157,7 @@ const styles = (theme: Theme) => ({
   loadingText: {
     fontSize: '30px',
     color: theme.palette.text.primary,
-    textTransform: 'uppercase'
+    textTransform: 'none'
   },
   infoText: {
     color: theme.palette.getContrastText(theme.palette.background.viewport),

@@ -10,7 +10,7 @@
     "invalidFileError": "Invalid input file name. Only .ome.tiff and .tif extensions allowed",
     "layerOpacityLabel": "Layer Opacity",
     "noImages": "No fH&E images have been loaded",
-    "sectionTitle": "Brightfield Images Settings"
+    "sectionTitle": "fH&E"
   },
   "channelSettings": {
     "addChannel": "Add Channel",
@@ -30,7 +30,7 @@
     "overview": "Overview",
     "overviewDisabledWhileDrawing": "Overview is hidden while ROI drawing is enabled",
     "removeChannel": "Remove Channel",
-    "sectionTitle": "Channel Settings",
+    "sectionTitle": "Multi-Channel",
     "sliderRangeSectionTitle": "Slider Range",
     "sliderRangeMinLabel": "Range Min",
     "sliderRangeMaxLabel": "Range Max",
@@ -197,7 +197,7 @@
     "graphFiltersLabel": "Graph Filters",
     "graphFilterUmapLabel": "UMAP",
     "graphInvalidSubsampling": "Invalid subsampling value",
-    "sectionTitle": "Segmentation Layer Settings",
+    "sectionTitle": "Cells",
     "umapMenuPointSize": "Point Size",
     "umapMenuSubsamplingStep": "Subsampling Step",
     "umapMenuSubsamplingStepTooltip": "Determines the interval for sampling data set, reducing density and increasing performance"
@@ -210,7 +210,7 @@
     "imageLoadErrorLocal": "Failed to load image. Please check the folder and try again.",
     "imageSuccess": "Successfully loaded image from URL: {{filename}}",
     "imageUploadButton": "Upload Image File",
-    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in Brightfield Images Settings section instead.",
+    "heImageNotSupported": "H&E images are not supported here. Please upload H&E images in the fH&E section instead.",
     "metadataInputLabel": "Metadata File",
     "metadataInvalidFile": "Invalid file format. Only .json files are allowed",
     "metadataInvalidJsonError": "Error loading Run Metadata file. The file contains invalid values. Please check your file.",
@@ -221,7 +221,7 @@
     "multiFileButtonLabel": "Multi-file",
     "notReadableErrorWarning": "Error loading transcript file. In some cases, in some machines / browsers, loading in a large transcript .tar file may fail and cause issues to persist in the application.",
     "notReadableErrorWorkaround": "Please close and reopen the window or tab this application is running in before loading in another transcript file. You may need to quit the browser application and restart it if this issue persists.",
-    "sectionTitle": "Source Files",
+    "sectionTitle": "Source Data",
     "segmentationSuccess": "Successfully loaded {{count}} cells from {{filename}}",
     "proteinNamesExtractionError": "Failed to extract protein names from metadata",
     "segmentationLoadError": "Cell segmentation data could not be loaded",
@@ -278,7 +278,7 @@
     "disabledLayerWarning": "Transcript layer is disabled",
     "pointFilters": "Point Filters",
     "pointSize": "Point Size",
-    "sectionTitle": "Transcript Layer Settings",
+    "sectionTitle": "Transcripts",
     "clickToChange": "Click to change",
     "subsamplingControlLabel": "Enable transcript subsampling control",
     "subsamplingControlWarning": "You are about to override the number of visible transcript layers.\nThese operations demand significant computational resources and might cause the application to crash.\nPerform these operations if:",

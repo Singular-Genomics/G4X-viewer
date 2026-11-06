@@ -789,7 +789,7 @@ const styles = (theme: Theme) => ({
   sectionTitle: {
     fontSize: '16px',
     fontWeight: 700,
-    textTransform: 'uppercase',
+    textTransform: 'none',
     letterSpacing: '0.04em'
   },
   sectionDivider: {
