@@ -35,6 +35,24 @@ export const PictureInPictureViewerAdapter = ({
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
+  const imageShape = loader[0]?.shape;
+  const imageWidth = imageShape?.[imageShape.length - 1] ?? 0;
+  const imageHeight = imageShape?.[imageShape.length - 2] ?? 0;
+  const isOnImage = (coords?: number[] | null) =>
+    !!coords &&
+    Number.isFinite(coords[0]) &&
+    Number.isFinite(coords[1]) &&
+    coords[0] >= 0 &&
+    coords[0] < imageWidth &&
+    coords[1] >= 0 &&
+    coords[1] < imageHeight;
+
+  const clearCursorCoordinates = () => {
+    const { hoverCoordinates } = useViewerStore.getState();
+    if (hoverCoordinates.x || hoverCoordinates.y) {
+      useViewerStore.setState({ hoverCoordinates: { x: '', y: '' } });
+    }
+  };
   const { t } = useTranslation();
   const { containerRef, containerSize } = useResizableContainer();
   const cellMasksLayer = useCellSegmentationLayer();
@@ -225,6 +243,7 @@ export const PictureInPictureViewerAdapter = ({
       ref={containerRef}
       onPointerDownCapture={handlePointerDownCapture}
       onContextMenu={handleContextMenu}
+      onPointerLeave={clearCursorCoordinates}
     >
       {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
@@ -244,6 +263,9 @@ export const PictureInPictureViewerAdapter = ({
             deckProps={deckProps}
             colormap={colormap}
             onViewportLoad={onViewportLoad}
+            onHover={({ coordinate, sourceLayer }) => {
+              if (!sourceLayer || !isOnImage(coordinate)) clearCursorCoordinates();
+            }}
             viewStates={viewState ? [viewState] : []}
             onViewStateChange={({ viewState: newViewState, viewId }: { viewState: any; viewId: any }) => {
               // Update the viewState immediately
@@ -264,14 +286,18 @@ export const PictureInPictureViewerAdapter = ({
                       Number.isInteger(value) ? value.toString() : FILL_PIXEL_VALUE
                     )
                   }),
-                handleCoordnate: (coords: number[]) =>
-                  coords &&
+                handleCoordnate: (coords: number[]) => {
+                  if (!isOnImage(coords)) {
+                    clearCursorCoordinates();
+                    return;
+                  }
                   useViewerStore.setState({
                     hoverCoordinates: {
                       x: coords[0].toFixed(0).toString(),
                       y: coords[1].toFixed(0).toString()
                     }
-                  })
+                  });
+                }
               } as any
             }
           />

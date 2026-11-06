@@ -1,13 +1,11 @@
-import { Box, Typography } from '@mui/material';
+import { InputBase, Theme } from '@mui/material';
 import { useState, useCallback } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
-import { GxInput } from '../../../../shared/components/GxInput';
 import { makeBoundingBox } from '../../../ScaleBar/utils';
 import { useTranslation } from 'react-i18next';
 
 export const ZoomInput = () => {
-  const sx = styles();
   const { t } = useTranslation();
 
   const viewState = useViewerStore(useShallow((store) => store.viewState));
@@ -19,13 +17,11 @@ export const ZoomInput = () => {
   const viewLength = boundingBox ? boundingBox[2][0] - boundingBox[0][0] : 0;
   const barLength = viewLength * 0.05;
 
-  const unit = physicalSize?.unit ?? 'μm';
   const size = physicalSize?.size ?? 1;
 
   const displayNumber = (barLength * size).toPrecision(5);
   const numericValue = parseFloat(displayNumber);
   const formattedNumber = numericValue.toFixed(1);
-  const displayValue = `${formattedNumber} ${unit}`;
 
   const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -64,50 +60,34 @@ export const ZoomInput = () => {
     }
   }, []);
 
-  if (!viewState || !physicalSize) return null;
-
   return (
-    <Box sx={sx.container}>
-      <Typography sx={sx.label}>{t('viewSettings.scale')}</Typography>
-      <Box sx={sx.inputContainer}>
-        <GxInput
-          value={isEditing ? inputValue : displayValue}
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          onKeyPress={handleKeyPress}
-          size="small"
-          sx={sx.input}
-        />
-      </Box>
-    </Box>
+    <InputBase
+      value={!viewState || !physicalSize ? '--' : isEditing ? inputValue : formattedNumber}
+      disabled={!viewState || !physicalSize}
+      onChange={handleInputChange}
+      onFocus={handleInputFocus}
+      onBlur={handleInputBlur}
+      onKeyDown={handleKeyPress}
+      fullWidth
+      inputProps={{ 'aria-label': t('viewSettings.scale') }}
+      sx={sx.input}
+    />
   );
 };
 
-const styles = () => ({
-  container: {
-    display: 'flex',
-    flexDirection: 'row' as const,
-    alignItems: 'center',
-    gap: '8px',
-    paddingLeft: '8px',
-    paddingRight: '8px'
-  },
-  label: {
-    fontWeight: 500,
-    minWidth: '80px'
-  },
-  inputContainer: {
-    flex: 1,
-    maxWidth: '120px'
-  },
+const sx = {
   input: {
-    '& .MuiOutlinedInput-root': {
-      height: '32px',
-      fontSize: '14px'
+    height: '28px',
+    minWidth: 0,
+    fontSize: '14px',
+    borderRadius: '6px',
+    backgroundColor: 'background.paper',
+    '& .MuiInputBase-input': {
+      textAlign: 'left',
+      padding: '2px 10px'
     },
-    '& .MuiOutlinedInput-input': {
-      textAlign: 'center' as const
+    '&.Mui-focused': {
+      boxShadow: (theme: Theme) => `inset 0 -2px 0 ${theme.palette.primary.main}`
     }
   }
-});
+};

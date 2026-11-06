@@ -4,13 +4,10 @@ import { useTranscriptLayerStore } from '../../../stores/TranscriptLayerStore';
 import { LAYER_ZOOM_OFFSET } from '../../../shared/constants';
 import { Theme, Typography, useTheme } from '@mui/material';
 import { useViewerStore } from '../../../stores/ViewerStore';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 export const PercentageOfTranscripts = () => {
   const theme = useTheme();
   const sx = styles(theme);
-  const { t } = useTranslation();
   const viewState = useViewerStore(useShallow((store) => store.viewState));
   const layerConfig = useZarrDataStore(useShallow((store) => store.layerConfig));
   const [maxVisibleLayersRaw, overrideLayers] = useTranscriptLayerStore(
@@ -27,14 +24,14 @@ export const PercentageOfTranscripts = () => {
 
   const percentageValues = Array.from(
     { length: (overrideLayers ? maxVisibleLayers : layerConfig.layers) + 1 },
-    (_, i) => `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
+    (_, i) => `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}`
   ).reverse();
 
   const currentZoom = viewState?.zoom || 0;
 
-  const percentageOfTranscripts = useMemo(() => {
+  const percentageOfTranscripts = (() => {
     if (zoomBrakePoints.length === 0) {
-      return '100%';
+      return '100';
     }
 
     if (currentZoom < zoomBrakePoints[0]) {
@@ -42,7 +39,7 @@ export const PercentageOfTranscripts = () => {
     }
 
     if (currentZoom >= zoomBrakePoints[zoomBrakePoints.length - 1]) {
-      return percentageValues.pop();
+      return percentageValues[percentageValues.length - 1];
     }
 
     for (let i = 1; i < zoomBrakePoints.length; i++) {
@@ -52,10 +49,9 @@ export const PercentageOfTranscripts = () => {
     }
 
     return '---';
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentZoom, viewState?.zoom, layerConfig]);
+  })();
 
-  return <Typography sx={sx.footerText}>{`${t('general.transcripts')}: ${percentageOfTranscripts}`}</Typography>;
+  return <Typography sx={sx.footerText}>{percentageOfTranscripts}</Typography>;
 };
 
 const styles = (theme: Theme) => ({
