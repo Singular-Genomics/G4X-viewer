@@ -68,17 +68,26 @@ export const ChannelSettingsImportExportButtons = () => {
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   buttonsContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '16px',
-    marginTop: '12px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: '8px',
     width: '100%',
-    padding: '0'
+    '& .MuiButton-root': {
+      height: '36px',
+      minWidth: 0,
+      padding: '4px 6px',
+      fontSize: '0.75rem',
+      whiteSpace: 'nowrap',
+      '& .MuiButton-startIcon': {
+        marginLeft: 0,
+        marginRight: '4px',
+        '& > *': { fontSize: '16px' }
+      }
+    }
   },
   exportButton: {
     background: theme.palette.gx.gradients.brand(),
     color: theme.palette.common.white,
-    padding: '7px 16px',
     flex: 1
   },
   importButton: {
@@ -86,7 +95,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     color: theme.palette.gx.accent.greenBlue,
     border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    padding: '7px 16px',
     flex: 1
   },
   importButtonActive: {

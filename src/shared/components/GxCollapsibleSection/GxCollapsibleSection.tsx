@@ -5,6 +5,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const GxCollapsibleSection = ({
   sectionTitle,
+  sectionIcon,
   children,
   defultState = 'collapsed',
   unmountOnExit = true,
@@ -61,6 +62,15 @@ export const GxCollapsibleSection = ({
           aria-expanded={expanded}
           aria-controls={contentId}
         >
+          {sectionIcon && (
+            <Box
+              component="span"
+              aria-hidden="true"
+              sx={sx.sectionIcon}
+            >
+              {sectionIcon}
+            </Box>
+          )}
           <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>{sectionTitle}</Typography>
           <ExpandMoreIcon
             style={{
@@ -144,6 +154,12 @@ const sx = {
       backgroundColor: 'transparent'
     }
   },
+  sectionIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    flexShrink: 0,
+    marginRight: '8px'
+  },
   sectionTitle: {
     fontSize: '1.2rem',
     fontWeight: 800,
@@ -159,7 +175,11 @@ const sx = {
     paddingRight: '12px'
   },
   collapseIcon: {
-    marginLeft: 'auto'
+    marginLeft: 'auto',
+    color: (theme: Theme) => theme.palette.text.disabled,
+    '.Mui-disabled &': {
+      color: 'inherit'
+    }
   },
   sectionContentContainer: {
     position: 'relative',

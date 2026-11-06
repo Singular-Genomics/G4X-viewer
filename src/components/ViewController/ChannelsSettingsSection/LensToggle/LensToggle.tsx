@@ -1,11 +1,10 @@
-import { Box, Collapse, FormControlLabel, MenuItem, Theme, Typography, useTheme } from '@mui/material';
+import { Box, MenuItem, Theme, ToggleButton, Tooltip, Typography, useTheme } from '@mui/material';
 import { GxSelect } from '../../../../shared/components/GxSelect/GxSelect';
+import { getControlButtonStyles } from '../../../../shared/components/controlButton.styles';
 import { useChannelsStore } from '../../../../stores/ChannelsStore/ChannelsStore';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
-import { GxCheckbox } from '../../../../shared/components/GxCheckbox';
 import { useTranslation } from 'react-i18next';
-import { InfoTooltip } from '../../../InfoTooltip';
 
 export const LensToggle = () => {
   const theme = useTheme();
@@ -17,30 +16,37 @@ export const LensToggle = () => {
   );
 
   const currentChannelIndices = selections.map((sel) => sel.c);
+  const hasChannels = currentChannelIndices.length > 0;
 
   return (
-    <Box>
-      <Box sx={sx.labelWithTooltip}>
-        <FormControlLabel
-          label={t('channelSettings.lens')}
-          control={
-            <GxCheckbox
-              onChange={toggleLens}
-              checked={isLensOn}
-              disableTouchRipple
-            />
-          }
-        />
-        <InfoTooltip title={t('tooltips.channelSettings.lens')} />
-      </Box>
-      <Collapse
-        in={isLensOn}
-        sx={sx.subSectionWrapper}
+    <Box sx={sx.row}>
+      <Tooltip
+        title={t('tooltips.channelSettings.lens')}
+        arrow
       >
-        <Typography sx={sx.selectTitle}>{`${t('channelSettings.highlightedChannel')}:`}</Typography>
+        <Box
+          component="span"
+          sx={sx.toggleWrapper}
+        >
+          <ToggleButton
+            value="lens"
+            selected={isLensOn}
+            onChange={toggleLens}
+            disabled={!hasChannels}
+            color="primary"
+            sx={sx.toggleButton}
+          >
+            {t('channelSettings.lens')}
+          </ToggleButton>
+        </Box>
+      </Tooltip>
+      <Box sx={sx.selector}>
         <GxSelect
+          sx={sx.select}
           value={lensSelection}
           fullWidth
+          disabled={!hasChannels}
+          inputProps={{ 'aria-label': t('channelSettings.highlightedChannel') }}
           onChange={(e) =>
             useViewerStore.setState({
               lensSelection: e.target.value as number
@@ -56,22 +62,41 @@ export const LensToggle = () => {
             </MenuItem>
           ))}
         </GxSelect>
-      </Collapse>
+      </Box>
     </Box>
   );
 };
 
 const styles = (theme: Theme) => ({
-  labelWithTooltip: {
+  select: {
+    height: '36px',
+    '& .MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline, &.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
+        border: 0
+      }
+  },
+  row: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: '12px',
+    paddingLeft: '8px',
+    marginBottom: '8px'
   },
-  subSectionWrapper: {
-    marginLeft: '32px',
-    borderLeft: `5px solid ${theme.palette.divider}`,
-    paddingLeft: '8px'
+  toggleWrapper: {
+    display: 'inline-flex',
+    flexShrink: 0
   },
-  selectTitle: {
-    marginBottom: '4px'
+  toggleButton: {
+    ...getControlButtonStyles(theme),
+    width: 114,
+    padding: '2px 4px',
+    fontSize: '1rem',
+    fontWeight: 700
+  },
+  selector: {
+    flex: 1,
+    minWidth: 0,
+    maxWidth: '200px',
+    marginLeft: 'auto'
   }
 });

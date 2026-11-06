@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, SvgIcon, Tooltip, Typography } from '@mui/material';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { LensToggle } from './LensToggle';
 import { ChannelControllers } from './ChannelControllers';
@@ -6,7 +6,6 @@ import { AddChannel } from './ChannelControllers/AddChannel';
 import { ColormapSelector } from './ColormapSelector';
 import { useChannelsStore } from '../../../stores/ChannelsStore';
 import { useTranslation } from 'react-i18next';
-import { InfoTooltip } from '../../InfoTooltip';
 import { ChannelSettingsImportExportButtons } from './ChannelControllers/ChannelSettingsImportExportButtons';
 import { GxCollapsibleSection } from '../../../shared/components/GxCollapsibleSection';
 import { BrightfieldImagesSection } from '../BrightfieldImagesSection';
@@ -31,22 +30,35 @@ export const ChannelsSettingsSection = ({ isRgb = false }: { isRgb?: boolean }) 
           </Box>
           <GxCollapsibleSection
             sectionTitle={t('channelSettings.advanced')}
+            sectionIcon={
+              <SvgIcon
+                fontSize="small"
+                viewBox="0 -960 960 960"
+              >
+                <path d="M440-120v-240h80v80h320v80H520v80h-80Zm-320-80v-80h240v80H120Zm160-160v-80H120v-80h160v-80h80v240h-80Zm160-80v-80h400v80H440Zm160-160v-240h80v80h160v80H680v80h-80Zm-480-80v-80h400v80H120Z" />
+              </SvgIcon>
+            }
             unmountOnExit={false}
-            customStyles={{ sectionContainer: sx.advancedSection }}
+            customStyles={{ sectionContainer: sx.advancedSection, contentContainer: sx.advancedContent }}
           >
-            <Box>
-              <Box sx={sx.titleWithTooltip}>
+            {!colormap && shape[labels.indexOf('c')] > 1 && <LensToggle />}
+            <Box sx={sx.colorModeRow}>
+              <Tooltip
+                title={t('tooltips.channelSettings.proteomicsColormap')}
+                arrow
+              >
                 <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
-                <InfoTooltip title={t('tooltips.channelSettings.proteomicsColormap')} />
+              </Tooltip>
+              <Box sx={sx.colorModeSelector}>
+                <ColormapSelector />
               </Box>
-              <ColormapSelector />
             </Box>
-            {!colormap && shape[labels.indexOf('c')] > 1 && (
-              <Box sx={sx.togglesWrapper}>
-                <LensToggle />
+            <Box sx={sx.colorModeRow}>
+              <Typography sx={sx.controlsTitle}>{t('channelSettings.configuration')}</Typography>
+              <Box sx={sx.colorModeSelector}>
+                <ChannelSettingsImportExportButtons />
               </Box>
-            )}
-            <ChannelSettingsImportExportButtons />
+            </Box>
           </GxCollapsibleSection>
         </>
       )}
@@ -55,13 +67,13 @@ export const ChannelsSettingsSection = ({ isRgb = false }: { isRgb?: boolean }) 
 };
 
 const sx = {
-  togglesWrapper: {
-    padding: '8px'
-  },
   controlsTitle: {
-    fontWeight: 700
+    fontWeight: 700,
+    flexShrink: 0,
+    whiteSpace: 'nowrap'
   },
   controlsTitleStandalone: {
+    fontSize: '1.2rem',
     fontWeight: 700,
     paddingLeft: '8px'
   },
@@ -72,13 +84,26 @@ const sx = {
     gap: '12px',
     marginBottom: '8px'
   },
-  titleWithTooltip: {
+  colorModeRow: {
     display: 'flex',
     alignItems: 'center',
+    gap: '12px',
     paddingLeft: '8px',
     marginBottom: '8px'
   },
+  colorModeSelector: {
+    flex: 1,
+    minWidth: 0,
+    maxWidth: '200px',
+    marginLeft: 'auto'
+  },
   advancedSection: {
+    marginLeft: '20px',
     marginTop: '12px'
+  },
+  advancedContent: {
+    '&::after': {
+      display: 'none'
+    }
   }
 };
