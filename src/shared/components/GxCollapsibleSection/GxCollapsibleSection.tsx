@@ -145,8 +145,13 @@ const sx = {
     }
   },
   sectionTitle: {
-    fontWeight: 700,
-    textWrap: 'nowrap'
+    fontSize: '1.2rem',
+    fontWeight: 800,
+    color: (theme: Theme) => theme.palette.text.primary,
+    textWrap: 'nowrap',
+    '.Mui-disabled &': {
+      color: 'inherit'
+    }
   },
   headerAction: {
     display: 'flex',
