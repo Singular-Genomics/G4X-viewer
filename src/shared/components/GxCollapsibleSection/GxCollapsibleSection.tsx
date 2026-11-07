@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { GxCollapsibleSectionProps } from './GxCollapsibleSection.types';
-import { Box, Button, Collapse, IconButton, SxProps, Theme, Typography } from '@mui/material';
+import { Box, Button, Collapse, IconButton, SxProps, Theme, Typography, lighten } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const GxCollapsibleSection = ({
@@ -134,15 +134,16 @@ const sx = {
     position: 'relative',
     padding: '0 8px',
     color: (theme: Theme) => theme.palette.text.primary,
+    backgroundColor: (theme: Theme) => theme.palette.background.paper,
     width: '100%',
-    borderRadius: 0,
+    borderRadius: '6px',
     overflow: 'hidden',
     transition: (theme: Theme) =>
       theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
         duration: 150
       }),
     '&:hover': {
-      backgroundColor: (theme: Theme) => theme.palette.action.hover
+      backgroundColor: (theme: Theme) => lighten(theme.palette.background.paper, 0.08)
     },
     '&[aria-disabled="true"]': {
       color: (theme: Theme) => theme.palette.action.disabled,
@@ -215,6 +216,7 @@ const sx = {
   },
   sectionContentContainer: {
     position: 'relative',
+    backgroundColor: (theme: Theme) => theme.palette.background.settingsPanel,
     padding: '8px 0px 19px',
     '&::after': {
       content: '""',
