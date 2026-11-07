@@ -32,6 +32,7 @@ export const PictureInPictureViewerAdapter = ({
 }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const areToolsVisible = useViewerStore((store) => store.areToolsVisible);
   const getLoader = useChannelsStore((store) => store.getLoader);
   const [brightfieldImageSource] = useBrightfieldImagesStore(useShallow((store) => [store.brightfieldImageSource]));
   const loader = getLoader();
@@ -254,7 +255,7 @@ export const PictureInPictureViewerAdapter = ({
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
-            showScaleBar={!isUiHidden}
+            showScaleBar={!isUiHidden && areToolsVisible}
             overviewOn={!isUiHidden && isOverviewOn && !isPolygonDrawingEnabled}
             height={containerSize.height}
             width={containerSize.width}
@@ -302,7 +303,7 @@ export const PictureInPictureViewerAdapter = ({
               } as any
             }
           />
-          {!isUiHidden && isDesktop && (
+          {!isUiHidden && isDesktop && areToolsVisible && (
             <PolygonDrawingMenu
               takeScreenshot={takeScreenshot}
               isViewerActive={isViewerActive}

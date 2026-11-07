@@ -25,6 +25,7 @@ const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
 
 export const ViewerView = ({ className, isViewerActive = true, isUiHidden = false }: ViewerViewProps) => {
   const theme = useTheme();
+  const isStatusVisible = useViewerStore((store) => store.isStatusVisible);
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const { t } = useTranslation();
@@ -102,7 +103,7 @@ export const ViewerView = ({ className, isViewerActive = true, isUiHidden = fals
           onPanelWidthChange={setSidePanelWidth}
         />
       )}
-      {!isUiHidden && <ActiveFiltersPanel />}
+      {!isUiHidden && isStatusVisible && <ActiveFiltersPanel />}
       {!isUiHidden && <MobileWelcomeModal />}
     </Box>
   );

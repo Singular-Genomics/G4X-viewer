@@ -6,6 +6,8 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   isTranscriptTilesLoading: false,
   isViewerLoading: undefined,
   isOverviewOn: true,
+  areToolsVisible: true,
+  isStatusVisible: true,
   isLensOn: false,
   useColorMap: false,
   colormap: '',

@@ -1,4 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { getViewportToggleStyles } from '../../../shared/components/viewportToggle.styles';
+import { useViewerStore } from '../../../stores/ViewerStore';
+import { Box, ToggleButton, Typography } from '@mui/material';
 import { GlobalSelectionSliders } from './GlobalSelectionSliders';
 import { ImageDetails } from './ImageDetails';
 import { PolygonLayerToggle } from './PolygonLayerToggle';
@@ -8,6 +10,14 @@ import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
+  const areToolsVisible = useViewerStore((store) => store.areToolsVisible);
+  const isStatusVisible = useViewerStore((store) => store.isStatusVisible);
+  const handleToggleTools = () => {
+    if (areToolsVisible && usePolygonDrawingStore.getState().isPolygonDrawingEnabled) {
+      usePolygonDrawingStore.getState().togglePolygonDrawing();
+    }
+    useViewerStore.setState({ areToolsVisible: !areToolsVisible });
+  };
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
   return (
     <Box sx={sx.sectionContainer}>
@@ -21,8 +31,29 @@ export const ViewControlsSection = () => {
           </Box>
         </Box>
       )}
-      <Box sx={sx.togglesSubSection}>
-        <OverviewToggle />
+      <Box sx={sx.viewportItemsSection}>
+        <Typography sx={sx.subsectionTitle}>{t('viewSettings.viewportItems')}</Typography>
+        <Box sx={sx.viewportToggles}>
+          <OverviewToggle />
+          <ToggleButton
+            value="tools"
+            selected={areToolsVisible}
+            onChange={handleToggleTools}
+            color="primary"
+            sx={(theme) => getViewportToggleStyles(theme)}
+          >
+            {t('viewSettings.tools')}
+          </ToggleButton>
+          <ToggleButton
+            value="status"
+            selected={isStatusVisible}
+            onChange={() => useViewerStore.setState({ isStatusVisible: !isStatusVisible })}
+            color="primary"
+            sx={(theme) => getViewportToggleStyles(theme)}
+          >
+            {t('viewSettings.status')}
+          </ToggleButton>
+        </Box>
       </Box>
     </Box>
   );
@@ -38,6 +69,20 @@ const sx = {
     fontWeight: 700,
     paddingLeft: '8px',
     marginBottom: '8px'
+  },
+  viewportItemsSection: {
+    marginTop: '16px'
+  },
+  viewportToggles: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+    alignItems: 'center',
+    gap: '8px',
+    paddingInline: '8px',
+    '& .MuiToggleButton-root': {
+      width: '100%',
+      minWidth: 0
+    }
   },
   togglesSubSection: {
     display: 'flex',

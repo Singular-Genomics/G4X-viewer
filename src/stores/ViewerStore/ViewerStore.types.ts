@@ -8,6 +8,8 @@ export type ViewerStoreValues = {
   isTranscriptTilesLoading: boolean;
   isViewerLoading?: ViewerLoadingStatus;
   isOverviewOn: boolean;
+  areToolsVisible: boolean;
+  isStatusVisible: boolean;
   isLensOn: boolean;
   useColorMap: boolean;
   colormap: string;
