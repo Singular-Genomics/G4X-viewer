@@ -36,6 +36,8 @@ export const AdvancedViewOptions = () => {
       <Box sx={sx.optionsToggleWrapper}>
         <FormControlLabel
           label={t('transcriptsSettings.subsamplingControlLabel')}
+          labelPlacement="start"
+          sx={sx.controlLabel}
           control={
             <GxSwitch
               checked={overrideLayers}
@@ -75,6 +77,19 @@ const sx = {
     flexDirection: 'column',
     gap: '8px',
     paddingLeft: '8px'
+  },
+  controlLabel: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '8px',
+    margin: 0,
+    '& .MuiFormControlLabel-label': {
+      fontSize: '1rem',
+      fontWeight: 700
+    },
+    '& .MuiSwitch-root': {
+      flexShrink: 0
+    }
   },
   modalContentText: {
     fontWeight: 'bold',

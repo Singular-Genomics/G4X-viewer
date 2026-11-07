@@ -1,4 +1,5 @@
-import { Box, Theme, Tooltip, tooltipClasses, Typography } from '@mui/material';
+import { getSliderHandleStyles } from '../../../../../shared/components/sliderControls.styles';
+import { Box, Tooltip, useTheme } from '@mui/material';
 import { GxSlider } from '../../../../../shared/components/GxSlider';
 import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';
@@ -6,11 +7,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from '../AdvancedViewOptions.helpers';
-import InfoIcon from '@mui/icons-material/Info';
 import { useTranslation } from 'react-i18next';
 
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [sliderValuer, setSliderValue] = useState(0);
   const { layers } = useZarrDataStore((store) => store.layerConfig);
   const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
@@ -27,7 +28,16 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
     () =>
       Array.from({ length: layers + 1 }, (_, i) => ({
         value: layers - i,
-        label: `${+(Math.pow(0.2, i) * 100).toPrecision(2) / 1}%`
+        label:
+          i === 0 ? (
+            '1'
+          ) : i === 1 ? (
+            '1/5'
+          ) : (
+            <span>
+              1/5<sup>{i}</sup>
+            </span>
+          )
       })),
     [layers]
   );
@@ -41,58 +51,43 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   );
 
   return (
-    <Box sx={sx.sliderWrapper}>
-      <Box sx={sx.textWrapper}>
-        <Typography
-          sx={{
-            ...(disabled ? { color: 'text.disabled' } : {})
-          }}
-        >
-          {t('transcriptsSettings.subsamplingSliderLabel')}
-        </Typography>
-        <Tooltip
-          title={t('transcriptsSettings.subsamplingSliderTooltip')}
-          placement="top"
-          arrow
-          slotProps={{ popper: { sx: sx.infoTooltip } }}
-          disableHoverListener={disabled}
-        >
-          <InfoIcon
-            sx={{
-              ...(disabled ? { color: 'text.disabled' } : sx.infoIcon)
-            }}
-          />
-        </Tooltip>
+    <Tooltip
+      title={t('transcriptsSettings.subsamplingSliderTooltip')}
+      placement="top"
+      arrow
+      disableHoverListener={disabled}
+    >
+      <Box sx={sx.sliderWrapper}>
+        <GxSlider
+          aria-label={t('transcriptsSettings.subsamplingControlLabel')}
+          sx={getSliderHandleStyles(theme)}
+          max={layers}
+          min={0}
+          step={1}
+          marks={sliderMarks}
+          value={sliderValuer}
+          disabled={disabled}
+          onChangeCommitted={(_, newValue) => onMaxLayerChange(newValue as number)}
+          onChange={(_, newValue) => setSliderValue(newValue as number)}
+        />
       </Box>
-      <GxSlider
-        max={layers}
-        min={0}
-        step={1}
-        marks={sliderMarks}
-        value={sliderValuer}
-        disabled={disabled}
-        onChangeCommitted={(_, newValue) => onMaxLayerChange(newValue as number)}
-        onChange={(_, newValue) => setSliderValue(newValue as number)}
-      />
-    </Box>
+    </Tooltip>
   );
 };
 
 const sx = {
   sliderWrapper: {
-    gap: '24px',
-    padding: '0 24px 0 16px'
-  },
-  textWrapper: {
-    display: 'flex',
-    gap: '8px'
-  },
-  infoTooltip: {
-    [`&.${tooltipClasses.popper}[data-popper-placement*="top"] .${tooltipClasses.tooltip}`]: {
-      marginBottom: '0px'
+    minWidth: 0,
+    padding: '0 16px 16px',
+    '& .MuiSlider-markLabel': {
+      lineHeight: '20px',
+      '& sup': {
+        position: 'relative',
+        top: '-0.5em',
+        verticalAlign: 'baseline',
+        lineHeight: 0,
+        fontSize: '75%'
+      }
     }
-  },
-  infoIcon: {
-    color: (theme: Theme) => theme.palette.gx.accent.info
   }
 };

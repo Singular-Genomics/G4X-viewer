@@ -4,5 +4,6 @@ export type MaxLayerSliderProps = {
 
 export type MaxLayerSliderMark = {
   value: number;
-  label: string;
+  label: ReactNode;
 };
+import { ReactNode } from 'react';

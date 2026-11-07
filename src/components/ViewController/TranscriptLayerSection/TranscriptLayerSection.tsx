@@ -31,13 +31,9 @@ export const TranscriptLayerSection = () => {
   return (
     <Box sx={sx.sectionContainer}>
       <Box>
-        <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.advancedOptions')}</Typography>
         <AdvancedViewOptions />
       </Box>
-      <Box>
-        <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointSize')}</Typography>
-        <PointSizeSlider />
-      </Box>
+      <PointSizeSlider />
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('transcriptsSettings.pointFilters')}</Typography>

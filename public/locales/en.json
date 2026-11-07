@@ -291,7 +291,7 @@
     "pointSize": "Point Size",
     "sectionTitle": "Transcripts",
     "clickToChange": "Click to change",
-    "subsamplingControlLabel": "Enable transcript subsampling control",
+    "subsamplingControlLabel": "Control Minimum Tx Density",
     "subsamplingControlWarning": "You are about to override the number of visible transcript layers.\nThese operations demand significant computational resources and might cause the application to crash.\nPerform these operations if:",
     "subsamplingControlWarningCaseOne": "Your PC is equipped with high-end components (mainly GPU and CPU) and allows for hardware acceleration.",
     "subsamplingControlWarningCaseTwo": "Your transcript dataset contains less than 5 million points",

@@ -27,10 +27,10 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
     {
       field: 'gene_name',
       headerName: t('transcript.geneName'),
-      headerAlign: 'center',
+      headerAlign: 'left',
       filterable: true,
       flex: 1,
-      renderCell: (params) => <Typography>{params.row.gene_name}</Typography>
+      renderCell: (params) => <Typography sx={{ width: '100%', textAlign: 'left' }}>{params.row.gene_name}</Typography>
     },
     {
       field: 'color',
