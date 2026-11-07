@@ -128,17 +128,19 @@ const styles = (theme: Theme) => ({
     right: 0,
     zIndex: 50,
     height: `${NAVIGATION_HEIGHT_MOBILE}px`,
-    background: theme.palette.background.paper,
+    background: theme.palette.background.topBar,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingInline: '12px',
+    paddingLeft: `${(NAVIGATION_HEIGHT_MOBILE - 36) / 2}px`,
+    paddingRight: '12px',
     pointerEvents: 'none',
     overflow: 'hidden',
     [theme.breakpoints.up('md')]: {
       height: `${NAVIGATION_HEIGHT_DESKTOP}px`,
       justifyContent: 'space-between',
-      paddingInline: '24px'
+      paddingLeft: `${(NAVIGATION_HEIGHT_DESKTOP - 36) / 2}px`,
+      paddingRight: '24px'
     }
   },
   leftSection: {
@@ -188,6 +190,7 @@ const styles = (theme: Theme) => ({
     whiteSpace: 'nowrap'
   },
   versionText: {
+    opacity: 0.5,
     fontSize: '12px',
     lineHeight: '12px',
     color: theme.palette.text.primary,

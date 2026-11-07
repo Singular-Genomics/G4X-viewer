@@ -6,6 +6,7 @@ declare module '@mui/material/styles' {
   }
 
   interface TypeBackground {
+    topBar: string;
     settingsPanel: string;
     viewport: string;
   }

@@ -38,6 +38,7 @@ const lightGrey = {
 };
 
 const blue = {
+  100: '#101f29',
   200: '#182F3E',
   400: '#123F5D',
   600: '#0C507D',
@@ -121,6 +122,7 @@ export const lightPalette: PaletteOptions = {
   background: {
     default: colors.lightGrey[100],
     paper: primary.white,
+    topBar: primary.white,
     settingsPanel: colors.lightGrey[100],
     viewport: primary.greyDark
   },
@@ -134,6 +136,7 @@ export const darkPalette: PaletteOptions = {
   background: {
     default: darkGrey[100],
     paper: darkGrey[300],
+    topBar: blue[100],
     settingsPanel: darkGrey[100],
     viewport: darkGrey[10]
   },
