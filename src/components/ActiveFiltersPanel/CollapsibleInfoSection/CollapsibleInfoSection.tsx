@@ -19,11 +19,11 @@ export const CollapsibleInfoSection = ({ title, data, totalCount }: CollapsibleI
                   key={groupTitle}
                   sx={sx.layerGroup}
                 >
-                  <Typography sx={sx.layerTitle}>• {groupTitle}:</Typography>
+                  {groupTitle !== title && <Typography sx={sx.layerTitle}>• {groupTitle}:</Typography>}
                   {items.map((item, index) => (
                     <Typography
                       key={index}
-                      sx={sx.filterItem}
+                      sx={{ ...sx.filterItem, ...(groupTitle === title && { marginLeft: 0 }) }}
                     >
                       - {item}
                     </Typography>

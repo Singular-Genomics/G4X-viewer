@@ -50,7 +50,6 @@ export const GxInfoBox = ({
         disableTouchRipple
       >
         <Box sx={sx.headerContent}>
-          <Typography variant="subtitle2">{title}</Typography>
           {tag !== undefined && (
             <Typography
               variant="body2"
@@ -59,6 +58,7 @@ export const GxInfoBox = ({
               {tag}
             </Typography>
           )}
+          <Typography variant="subtitle2">{title}</Typography>
         </Box>
         <ExpandMoreIcon
           className="expand-icon"
@@ -82,8 +82,8 @@ export const GxInfoBox = ({
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: 2,
+    backgroundColor: theme.palette.background.settingsPanel,
+    borderRadius: '4px',
     overflow: 'visible',
     transition: 'all 300ms ease-in-out',
     '&:hover': {
@@ -100,7 +100,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     gap: '6px',
     width: '100%',
     padding: '8px 10px',
-    borderRadius: 0,
+    borderRadius: '4px',
     color: theme.palette.text.primary,
     '&:hover': {
       backgroundColor: theme.palette.action.hover

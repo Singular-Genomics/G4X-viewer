@@ -380,10 +380,10 @@
   },
   "hiddenLayers": {
     "title": "Hidden Layers",
-    "transcriptLayer": "Transcript Layer",
-    "segmentationLayer": "Segmentation Layer",
-    "channelsLayer": "Channels Layer",
-    "brightfieldLayer": "Brightfield Layer",
+    "transcriptLayer": "Transcripts",
+    "segmentationLayer": "Cells",
+    "channelsLayer": "Multi-Channel",
+    "brightfieldLayer": "fH&E",
     "polygonLayer": "ROI Polygons Layer"
   },
   "roiDetails": {
