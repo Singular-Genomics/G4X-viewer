@@ -86,14 +86,7 @@ const styles = (theme: Theme) => ({
     display: 'inline-flex',
     flexShrink: 0
   },
-  toggleButton: {
-    ...getControlButtonStyles(theme),
-    border: 0,
-    width: 114,
-    padding: '2px 4px',
-    fontSize: '1rem',
-    fontWeight: 700
-  },
+  toggleButton: { ...getControlButtonStyles(theme) },
   selector: {
     flex: 1,
     minWidth: 0,

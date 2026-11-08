@@ -114,12 +114,12 @@ const styles = (theme: Theme) => ({
     padding: '6px 16px',
     flexShrink: 0,
     whiteSpace: 'nowrap',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     border: '1px solid',
-    borderColor: theme.palette.gx.accent.greenBlue,
+    borderColor: theme.palette.primary.main,
     borderRadius: '6px',
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+      backgroundColor: alpha(theme.palette.primary.main, 0.2)
     }
   }
 });

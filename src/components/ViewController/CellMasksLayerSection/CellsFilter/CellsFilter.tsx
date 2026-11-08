@@ -105,14 +105,14 @@ const styles = (theme: Theme) => ({
     padding: '16px',
     justifyContent: 'center',
     border: '1px dashed',
-    borderColor: theme.palette.gx.accent.error
+    borderColor: theme.palette.gx.message.error
   },
   errorIcon: {
-    color: theme.palette.gx.accent.error,
+    color: theme.palette.gx.message.error,
     marginRight: '8px'
   },
   errorText: {
-    color: theme.palette.gx.accent.error,
+    color: theme.palette.gx.message.error,
     fontWeight: 700
   },
   disabledWrapper: {

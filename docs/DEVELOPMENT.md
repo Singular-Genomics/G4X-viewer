@@ -209,3 +209,18 @@ enqueueSnackbar(t('info.processing'), { variant: 'info' });
 **Types**: Create `.types.ts` files for complex types  
 **Errors**: Use notistack for user notifications  
 **Strings**: Use translation keys, never hardcode text
+
+### Theme color families
+
+The shared color families are `theme.palette.gx.neutrals`, `blues`, `blueGreens`,
+and `greens`. The neutral scale contains 21 sRGB shades at 5% intervals:
+`black`, numeric keys `5, 10, …, 95`, and `white`, increasing from black to white. For example,
+`theme.palette.gx.neutrals[25]` is `#404040`. Use semantic background, text, and
+border roles for interface styling where possible; their light/dark defaults map
+to this shared scale. `neutrals.black` and `neutrals.white` name its endpoints.
+
+In `palette.ts`, color families live in `colors`, MUI color roles such as `primary`
+and `secondary` live in `muiColorRoles`, and `commonPalette` contains only shared UI
+element assignments. Each light/dark palette combines these and adds mode-specific
+assignments. Shared background fields must also be spread into each mode's
+`background` object, since JavaScript object spread is shallow.

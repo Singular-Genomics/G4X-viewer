@@ -139,16 +139,16 @@ const styles = (theme: Theme) => ({
       background: theme.palette.gx.gradients.brand()
     },
     success: {
-      background: theme.palette.gx.gradients.success()
+      background: theme.palette.gx.message.success
     },
     error: {
-      background: theme.palette.gx.gradients.danger()
+      background: theme.palette.gx.message.error
     },
     warning: {
-      background: theme.palette.gx.gradients.warning()
+      background: theme.palette.gx.message.warning
     },
     info: {
-      background: theme.palette.gx.gradients.info()
+      background: theme.palette.gx.message.info
     }
   },
   snackbarContentWrapper: {

@@ -11,7 +11,7 @@ import { useShallow } from 'zustand/react/shallow';
 export default function PictureInPictureViewer(props: PictureInPictureViewerProps) {
   const theme = useTheme();
   const overviewBorderColor = [1, 3, 5].map((offset) =>
-    parseInt(theme.palette.gx.darkGrey[500].slice(offset, offset + 2), 16)
+    parseInt(theme.palette.gx.neutrals[25].slice(offset, offset + 2), 16)
   );
   const {
     loader,

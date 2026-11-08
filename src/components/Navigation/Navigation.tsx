@@ -255,8 +255,8 @@ const styles = (theme: Theme) => ({
       color: theme.palette.text.primary,
       background: theme.palette.action.selected,
       backdropFilter: 'blur(15px)',
-      borderBottom: `2px solid ${theme.palette.gx.accent.greenBlue}`,
-      boxShadow: `0 0 12px ${theme.palette.gx.accent.greenBlue}50`
+      borderBottom: `2px solid ${theme.palette.gx.accent.purple}`,
+      boxShadow: `0 0 12px ${theme.palette.gx.accent.purple}50`
     },
     '&:hover:not(.Mui-selected)': {
       color: theme.palette.text.primary,

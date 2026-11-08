@@ -102,7 +102,7 @@ export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
 
       const labels = sortedClusters.map(([clusterId]) => clusterId);
       const values = sortedClusters.map(([, count]) => count);
-      const colors = sortedClusters.map(([clusterId]) => colorMap[clusterId] || theme.palette.gx.mediumGrey[500]);
+      const colors = sortedClusters.map(([clusterId]) => colorMap[clusterId] || theme.palette.gx.neutrals[65]);
 
       const col = roiIndex % cols;
       const row = Math.floor(roiIndex / cols);
@@ -135,7 +135,7 @@ export const PieChartPlot = ({ selectedRois, settings }: PieChartPlotProps) => {
     }
 
     return pieData;
-  }, [selectedCells, orderedRois, colorMapConfig, theme.palette.gx.mediumGrey, dimensions.width, t]);
+  }, [selectedCells, orderedRois, colorMapConfig, theme.palette.gx.neutrals, dimensions.width, t]);
 
   const layout: Partial<Layout> = useMemo(() => {
     const annotations: any[] = [];

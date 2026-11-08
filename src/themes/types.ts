@@ -1,30 +1,20 @@
 export interface GxPalette {
-  primary: GxPrimaryColor;
-  darkGrey: GxTonalGreyColor;
-  mediumGrey: GxTonalGreyColor;
-  lightGrey: GxTonalGreyColor;
-  blue: GxTonalColor & { main: string };
-  blueGreen: GxTonalColor;
-  green: GxTonalColor & { main: string };
+  neutrals: GxNeutralColors;
+  pures: GxPureColor;
+  blues: GxTonalColor;
+  blueGreens: GxTonalColor;
+  greens: GxTonalColor & { main: string };
   accent: GxAccentColor;
+  message: GxMessageColor;
   gradients: GxGradients;
 }
 
-export interface GxPrimaryColor {
+export interface GxNeutralColors extends Record<
+  5 | 10 | 15 | 20 | 25 | 30 | 35 | 40 | 45 | 50 | 55 | 60 | 65 | 70 | 75 | 80 | 85 | 90 | 95,
+  string
+> {
   white: string;
   black: string;
-  greyDark: string;
-  greyMedium: string;
-  greyLight: string;
-  greyExtraLight: string;
-}
-
-export interface GxTonalGreyColor {
-  100: string;
-  300: string;
-  500: string;
-  700: string;
-  900: string;
 }
 
 export interface GxTonalColor {
@@ -42,19 +32,25 @@ export interface GxAccentColor {
   orange: string;
   yellow: string;
   greenBlue: string;
-  /** @deprecated Use yellow. */
-  darkGold: string;
+}
+
+export interface GxPureColor {
+  red: string;
+  green: string;
+  blue: string;
+  yellow: string;
+  cyan: string;
+  magenta: string;
+}
+
+export interface GxMessageColor {
   error: string;
   info: string;
+  success: string;
+  warning: string;
 }
 
 export interface GxGradients {
-  default: (angle?: number) => string;
-  warning: (angle?: number) => string;
-  danger: (angle?: number) => string;
-  info: (angle?: number) => string;
-  success: (angle?: number) => string;
   brand: (angle?: number) => string;
-  blueGreen: (angle?: number) => string;
-  purpleBlue: (angle?: number) => string;
+  default: (angle?: number) => string;
 }

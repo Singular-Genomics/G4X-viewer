@@ -52,11 +52,11 @@ const styles = (theme: Theme) => ({
     width: '100%',
     height: '48px',
     fontWeight: 700,
-    borderColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.accent.greenBlue,
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
     '&:hover': {
-      borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+      borderColor: theme.palette.primary.main,
+      backgroundColor: alpha(theme.palette.primary.main, 0.2)
     },
     transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease'
   },

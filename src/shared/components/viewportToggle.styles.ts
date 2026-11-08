@@ -11,16 +11,16 @@ export const getViewportToggleStyles = (theme: Theme) => ({
   lineHeight: 1.25,
   border: '1px solid',
   borderRadius: '6px',
-  borderColor: theme.palette.gx.darkGrey[700],
-  color: theme.palette.gx.mediumGrey[700],
+  borderColor: theme.palette.gx.neutrals[35],
+  color: theme.palette.gx.neutrals[75],
   backgroundColor: 'transparent',
   boxShadow: 'none',
   '&.Mui-selected': {
-    borderColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.accent.greenBlue,
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
     backgroundColor: 'transparent'
   },
   '&:hover, &.Mui-selected:hover': {
-    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+    backgroundColor: alpha(theme.palette.primary.main, 0.2)
   }
 });

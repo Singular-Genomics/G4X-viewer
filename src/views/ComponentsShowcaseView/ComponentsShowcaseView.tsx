@@ -862,17 +862,17 @@ const styles = (theme: Theme) => ({
   dangerButton: {
     color: theme.palette.common.white,
     fontWeight: 600,
-    background: theme.palette.gx.gradients.danger()
+    background: theme.palette.gx.message.error
   },
   warningButton: {
     color: theme.palette.common.white,
     fontWeight: 600,
-    background: theme.palette.gx.gradients.warning()
+    background: theme.palette.gx.message.warning
   },
   infoButton: {
     color: theme.palette.common.white,
     fontWeight: 600,
-    background: theme.palette.gx.gradients.info()
+    background: theme.palette.gx.message.info
   },
   iconButtonDemo: {
     color: theme.palette.text.primary,

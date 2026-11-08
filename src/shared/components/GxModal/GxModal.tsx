@@ -272,26 +272,26 @@ const styles = (theme: Theme, size: string) => {
 const colorVariants = {
   danger: {
     banner: {
-      background: (theme: Theme) => theme.palette.gx.gradients.danger()
+      background: (theme: Theme) => theme.palette.gx.message.error
     },
     button: {
-      background: (theme: Theme) => theme.palette.gx.gradients.danger()
+      background: (theme: Theme) => theme.palette.gx.message.error
     }
   },
   warning: {
     banner: {
-      background: (theme: Theme) => theme.palette.gx.gradients.warning()
+      background: (theme: Theme) => theme.palette.gx.message.warning
     },
     button: {
-      background: (theme: Theme) => theme.palette.gx.gradients.warning()
+      background: (theme: Theme) => theme.palette.gx.message.warning
     }
   },
   info: {
     banner: {
-      background: (theme: Theme) => theme.palette.gx.gradients.info()
+      background: (theme: Theme) => theme.palette.gx.message.info
     },
     button: {
-      background: (theme: Theme) => theme.palette.gx.gradients.info()
+      background: (theme: Theme) => theme.palette.gx.message.info
     }
   },
   singular: {

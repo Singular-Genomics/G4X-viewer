@@ -82,7 +82,7 @@ const styles = (theme: Theme) => ({
     borderRadius: '999px',
     opacity: 1,
     color: theme.palette.common.white,
-    background: theme.palette.gx.darkGrey[500],
+    background: theme.palette.gx.neutrals[25],
     boxShadow: `inset 0 1px 3px ${alpha(theme.palette.common.black, 0.25)}`,
     '& .MuiSvgIcon-root': {
       position: 'absolute',

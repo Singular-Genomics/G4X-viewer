@@ -51,7 +51,7 @@ const sx = {
     alignItems: 'center'
   },
   warningIcon: {
-    color: (theme: Theme) => theme.palette.gx.accent.darkGold,
+    color: (theme: Theme) => theme.palette.gx.message.warning,
     border: ''
   },
   warningTooltip: {

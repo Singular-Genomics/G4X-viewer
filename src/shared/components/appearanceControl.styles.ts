@@ -3,15 +3,7 @@ import { getControlButtonStyles } from './controlButton.styles';
 import { getSliderHandleStyles } from './sliderControls.styles';
 
 export const getAppearanceControlStyles = (theme: Theme) => ({
-  toggleButton: {
-    ...getControlButtonStyles(theme),
-    border: 0,
-    width: 114,
-    flexShrink: 0,
-    padding: '2px 4px',
-    fontSize: '1rem',
-    fontWeight: 700
-  },
+  toggleButton: { ...getControlButtonStyles(theme) },
   label: {
     fontSize: '0.75rem',
     flexShrink: 0
@@ -28,8 +20,8 @@ export const getAppearanceControlStyles = (theme: Theme) => ({
     width: 52,
     flexShrink: 0,
     borderRadius: '6px',
-    backgroundColor: theme.palette.gx.darkGrey[500],
-    color: theme.palette.getContrastText(theme.palette.gx.darkGrey[500]),
+    backgroundColor: theme.palette.gx.neutrals[25],
+    color: theme.palette.getContrastText(theme.palette.gx.neutrals[25]),
     '& .MuiInputBase-input': {
       textAlign: 'center',
       padding: '3px 6px',

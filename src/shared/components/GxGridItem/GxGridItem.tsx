@@ -91,7 +91,7 @@ const styles = (theme: Theme, backgroundColor?: string) => ({
     backgroundColor: 'transparent',
     transition: 'color 150ms ease-in-out',
     '&:hover': {
-      color: theme.palette.gx.accent.error,
+      color: theme.palette.gx.message.error,
       backgroundColor: 'transparent'
     }
   },

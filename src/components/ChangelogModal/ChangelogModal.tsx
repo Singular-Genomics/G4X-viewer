@@ -197,7 +197,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   link: {
     fontSize: '13px',
-    color: theme.palette.gx.accent.info,
+    color: theme.palette.gx.message.info,
     width: 'fit-content'
   },
   moreWrapper: {

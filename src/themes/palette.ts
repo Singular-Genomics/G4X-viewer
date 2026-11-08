@@ -1,44 +1,44 @@
 import { PaletteOptions } from '@mui/material';
 import { GxPalette } from './types';
 
-// SG colors: use the reference's HEX labels as the source of truth.
-const primary = {
-  white: '#FFFFFF',
+// Neutral greys in 5% sRGB steps, with named black and white endpoints.
+const neutrals = {
   black: '#000000',
-  greyDark: '#1E1E1E',
-  greyMedium: '#CCCCCC',
-  greyLight: '#F2F2F2',
-  greyExtraLight: '#F8F8F8'
+  5: '#0D0D0D',
+  10: '#1A1A1A',
+  15: '#262626',
+  20: '#333333',
+  25: '#404040',
+  30: '#4D4D4D',
+  35: '#595959',
+  40: '#666666',
+  45: '#737373',
+  50: '#808080',
+  55: '#8C8C8C',
+  60: '#999999',
+  65: '#A6A6A6',
+  70: '#B3B3B3',
+  75: '#C0C0C0',
+  80: '#CCCCCC',
+  85: '#D9D9D9',
+  90: '#E6E6E6',
+  95: '#F2F2F2',
+  white: '#FFFFFF'
 };
 
-const darkGrey = {
-  10: '#101010',
-  50: '#1b1b1b',
-  100: '#212426',
-  300: '#2E3337',
-  500: '#3F4447',
-  700: '#515558',
-  900: '#626668'
+const pures = {
+  black: neutrals.black,
+  white: neutrals.white,
+  red: '#FF0000',
+  green: '#00FF00',
+  blue: '#0000FF',
+  yellow: '#FFFF00',
+  cyan: '#00FFFF',
+  magenta: '#FF00FF'
 };
 
-const mediumGrey = {
-  100: '#7D7F81',
-  300: '#8E9092',
-  500: '#A0A1A2',
-  700: '#B2B2B3',
-  900: '#C3C3C4'
-};
-
-const lightGrey = {
-  100: '#D0D0D0',
-  300: '#D7D7D7',
-  500: '#DFDFDF',
-  700: '#E7E7E7',
-  900: '#EEEEEE'
-};
-
-const blue = {
-  100: '#101f29',
+// Brand colors follow the SG reference's HEX labels.
+const blues = {
   200: '#182F3E',
   400: '#123F5D',
   600: '#0C507D',
@@ -46,14 +46,15 @@ const blue = {
   main: '#0071BC'
 };
 
-const blueGreen = {
-  200: '#007EB7',
-  400: '#008BB2',
-  600: '#0097AE',
-  800: '#00B1A4'
+const blueGreens = {
+  200: '#01557c', // This one is not in the SG reference's HEX labels. Was added manually.
+  400: '#007EB7',
+  600: '#008BB2',
+  800: '#0097AE',
+  main: '#00B1A4'
 };
 
-const green = {
+const greens = {
   200: '#184137',
   400: '#12644F',
   600: '#0C8668',
@@ -62,12 +63,22 @@ const green = {
 };
 
 const accents = {
+  green: greens.main,
+  greenBlue: blueGreens.main,
+  blue: blues.main,
   purple: '#A661FF',
   magenta: '#DA54A4',
   red: '#F45959',
   redDark: '#CB4A4A',
   orange: '#F28622',
   yellow: '#FFB800'
+};
+
+const messages = {
+  error: accents.red,
+  info: blues.main,
+  success: greens.main,
+  warning: accents.orange
 };
 
 const gradient =
@@ -78,68 +89,63 @@ const gradient =
 // Mode-invariant brand colors. Mode-aware roles (background/text/divider)
 // live in lightPalette/darkPalette below, not here.
 export const colors: GxPalette = {
-  primary,
-  lightGrey,
-  mediumGrey,
-  darkGrey,
-  blue,
-  blueGreen,
-  green,
-  accent: {
-    ...accents,
-    greenBlue: blue.main,
-    darkGold: accents.yellow,
-    error: accents.red,
-    info: blue.main
-  },
+  neutrals,
+  pures,
+  blues,
+  blueGreens,
+  greens,
+  accent: accents,
+  message: messages,
   gradients: {
-    default: gradient(darkGrey[500], primary.greyDark),
-    success: gradient(green.main, green[600]),
-    warning: gradient(accents.yellow, accents.orange),
-    danger: gradient(accents.red, accents.redDark),
-    info: gradient(blue.main, blue[600]),
-    brand: gradient(blue.main, accents.purple),
-    blueGreen: gradient(blueGreen[200], blueGreen[800]),
-    // The purple sample has no HEX label for its blue endpoint; use SG Blue.
-    purpleBlue: gradient(accents.purple, blue.main)
+    brand: gradient(blues.main, accents.purple),
+    default: gradient(neutrals[25], neutrals[10])
   }
 };
 
-const commonPalette = {
-  gx: colors,
-  sectionDivider: darkGrey[500],
-  primary: { main: blue.main, light: blue.main, dark: blue[600] },
+// MUI's required color roles, separate from UI element assignments.
+const muiColorRoles = {
+  primary: { main: accents.redDark, light: pures.magenta, dark: blues[600] },
   secondary: { main: accents.purple },
-  success: { main: green.main, light: green.main, dark: green[600] },
+  success: { main: pures.magenta, light: pures.magenta, dark: greens[600] },
   warning: { main: accents.orange, light: accents.yellow, dark: accents.orange },
   error: { main: accents.red, light: accents.red, dark: accents.redDark },
-  info: { main: blue.main, light: blue.main, dark: blue[600] }
+  info: { main: pures.magenta, light: pures.magenta, dark: blues[600] }
+};
+
+// Shared UI element assignments, applied in both light and dark mode.
+const commonPalette = {
+  gx: colors,
+  ...muiColorRoles,
+  sectionDivider: neutrals[25],
+  background: {
+    viewport: neutrals[5]
+  }
 };
 
 export const lightPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'light',
   background: {
-    default: colors.lightGrey[100],
-    paper: primary.white,
-    topBar: primary.white,
-    settingsPanel: colors.lightGrey[100],
-    viewport: primary.greyDark
+    ...commonPalette.background,
+    default: neutrals[80],
+    paper: neutrals.white,
+    topBar: neutrals.white,
+    settingsPanel: neutrals[80]
   },
-  text: { primary: darkGrey[100], secondary: darkGrey[700] },
-  divider: colors.mediumGrey[500]
+  text: { primary: neutrals[10], secondary: neutrals[35] },
+  divider: neutrals[65]
 };
 
 export const darkPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'dark',
   background: {
-    default: darkGrey[100],
-    paper: darkGrey[300],
-    topBar: blue[100],
-    settingsPanel: darkGrey[100],
-    viewport: darkGrey[10]
+    ...commonPalette.background,
+    default: neutrals[10],
+    paper: neutrals[20],
+    topBar: blues[200],
+    settingsPanel: neutrals[10]
   },
-  text: { primary: colors.lightGrey[900], secondary: colors.mediumGrey[900] },
-  divider: colors.mediumGrey[500]
+  text: { primary: neutrals[90], secondary: neutrals[75] },
+  divider: neutrals[65]
 };
