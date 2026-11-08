@@ -50,7 +50,7 @@ const styles = (theme: Theme) => ({
     borderStyle: 'solid',
     borderRadius: '6px',
     width: '100%',
-    height: '48px',
+    height: '42px',
     fontWeight: 700,
     borderColor: theme.palette.primary.main,
     color: theme.palette.primary.main,

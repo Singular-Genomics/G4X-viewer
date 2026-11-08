@@ -105,11 +105,7 @@ export const colors: GxPalette = {
 // MUI's required color roles, separate from UI element assignments.
 const muiColorRoles = {
   primary: { main: accents.redDark, light: pures.magenta, dark: blues[600] },
-  secondary: { main: accents.purple },
-  success: { main: pures.magenta, light: pures.magenta, dark: greens[600] },
-  warning: { main: accents.orange, light: accents.yellow, dark: accents.orange },
-  error: { main: accents.red, light: accents.red, dark: accents.redDark },
-  info: { main: pures.magenta, light: pures.magenta, dark: blues[600] }
+  secondary: { main: accents.purple }
 };
 
 // Shared UI element assignments, applied in both light and dark mode.
@@ -127,10 +123,10 @@ export const lightPalette: PaletteOptions = {
   mode: 'light',
   background: {
     ...commonPalette.background,
-    default: neutrals[80],
-    paper: neutrals.white,
     topBar: neutrals.white,
-    settingsPanel: neutrals[80]
+    settingsPanel: neutrals[80],
+    default: neutrals[80],
+    paper: neutrals.white
   },
   text: { primary: neutrals[10], secondary: neutrals[35] },
   divider: neutrals[65]
@@ -141,11 +137,11 @@ export const darkPalette: PaletteOptions = {
   mode: 'dark',
   background: {
     ...commonPalette.background,
-    default: neutrals[10],
-    paper: neutrals[20],
     topBar: blues[200],
-    settingsPanel: neutrals[10]
+    settingsPanel: neutrals[10],
+    default: neutrals[10],
+    paper: neutrals[20]
   },
-  text: { primary: neutrals[90], secondary: neutrals[75] },
+  text: { primary: neutrals[75], secondary: neutrals[60] },
   divider: neutrals[65]
 };

@@ -1,4 +1,4 @@
-import { Box, SvgIcon, TextField, Theme, useTheme, InputAdornment, IconButton, SxProps } from '@mui/material';
+import { SvgIcon, TextField, Theme, useTheme, InputAdornment, IconButton, SxProps } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useTranslation } from 'react-i18next';
@@ -96,29 +96,32 @@ export default function ZarrSourceInput() {
   return (
     <TextField
       variant="filled"
-      label={
-        <Box
-          component="span"
-          sx={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-        >
-          <SvgIcon
-            viewBox="0 -960 960 960"
-            sx={{ fontSize: '18px' }}
-          >
-            <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-240Z" />
-          </SvgIcon>
-          {t('sourceFiles.zarrInputLabel')}
-        </Box>
-      }
+      hiddenLabel
       size="small"
       fullWidth
       value={cloudImageUrl}
       onChange={(e) => handleChange(e.target.value)}
       onKeyDown={handleKeyDown}
-      placeholder={t('sourceFiles.zarrInputPlaceholder')}
+      placeholder={t('sourceFiles.zarrInputLabel')}
       helperText={imageName && (!cloudImageUrl || submitted) ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
       sx={sx.textField}
-      slotProps={{ input: { endAdornment, inputRef } }}
+      slotProps={{
+        htmlInput: { 'aria-label': t('sourceFiles.zarrInputLabel') },
+        input: {
+          endAdornment,
+          inputRef,
+          startAdornment: (
+            <InputAdornment position="start">
+              <SvgIcon
+                viewBox="0 -960 960 960"
+                sx={sx.cloudIcon}
+              >
+                <path d="M260-160q-91 0-155.5-63T40-377q0-78 47-139t123-78q25-92 100-149t170-57q117 0 198.5 81.5T760-520q69 8 114.5 59.5T920-340q0 75-52.5 127.5T740-160H260Zm0-80h480q42 0 71-29t29-71q0-42-29-71t-71-29h-60v-80q0-83-58.5-141.5T480-720q-83 0-141.5 58.5T280-520h-20q-58 0-99 41t-41 99q0 58 41 99t99 41Zm220-240Z" />
+              </SvgIcon>
+            </InputAdornment>
+          )
+        }
+      }}
     />
   );
 }
@@ -126,8 +129,14 @@ export default function ZarrSourceInput() {
 const styles = (theme: Theme): Record<string, SxProps> => ({
   textField: {
     '& .MuiFilledInput-root': {
+      height: '42px',
+      alignItems: 'center',
       borderRadius: '6px',
       overflow: 'hidden'
+    },
+    '& .MuiFilledInput-input': {
+      paddingTop: 0,
+      paddingBottom: 0
     },
     '& .MuiFilledInput-root::before': {
       borderBottom: 'none'
@@ -143,9 +152,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     '& .MuiFilledInput-root.Mui-focused::after': {
       transform: 'translateX(0)'
     },
-    '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
-    },
     '& .MuiFormHelperText-root': {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
@@ -154,11 +160,15 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       color: theme.palette.text.primary
     }
   },
+  cloudIcon: {
+    fontSize: '18px',
+    color: theme.palette.text.primary,
+    opacity: theme.vars?.opacity.inputPlaceholder ?? (theme.palette.mode === 'dark' ? 0.5 : 0.42)
+  },
   iconButton: {
     color: theme.palette.text.primary,
     padding: '2px',
     alignSelf: 'center',
-    marginTop: '12px',
     marginRight: '-4px'
   },
   iconSize: {

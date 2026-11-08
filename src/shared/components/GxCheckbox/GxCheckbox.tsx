@@ -1,4 +1,4 @@
-import { Checkbox, CheckboxProps, Theme } from '@mui/material';
+import { Checkbox, CheckboxProps } from '@mui/material';
 import React, { ForwardedRef } from 'react';
 
 export const GxCheckbox = React.forwardRef((props: CheckboxProps, ref: ForwardedRef<HTMLButtonElement>) => (
@@ -12,9 +12,9 @@ export const GxCheckbox = React.forwardRef((props: CheckboxProps, ref: Forwarded
 const sx = {
   checkbox: {
     padding: '8px 8px',
-    '&, &.Mui-checked': {
-      color: (theme: Theme) => theme.palette.gx.accent.greenBlue
-    },
+    // '&, &.Mui-checked': {
+    //   color: (theme: Theme) => theme.palette.gx.accent.greenBlue
+    // },
     '&:hover': {
       backgroundColor: 'unset'
     }

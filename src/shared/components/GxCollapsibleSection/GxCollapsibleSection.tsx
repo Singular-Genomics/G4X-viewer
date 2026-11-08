@@ -132,11 +132,11 @@ const sx = {
     display: 'flex',
     alignItems: 'center',
     position: 'relative',
-    padding: '0 8px',
+    padding: '0px 12px',
     color: (theme: Theme) => theme.palette.text.primary,
     backgroundColor: (theme: Theme) => theme.palette.background.paper,
     width: '100%',
-    borderRadius: '6px',
+    borderRadius: '4px',
     overflow: 'hidden',
     transition: (theme: Theme) =>
       theme.transitions.create(['background-color', 'box-shadow', 'border-color', 'color'], {
@@ -171,7 +171,7 @@ const sx = {
     flex: 1,
     minWidth: 0,
     justifyContent: 'flex-start',
-    padding: '8px 0',
+    padding: '6px 0',
     color: 'inherit',
     borderRadius: 0,
     '&:hover': {
@@ -182,7 +182,7 @@ const sx = {
     display: 'flex',
     alignItems: 'center',
     flexShrink: 0,
-    marginRight: '8px'
+    marginRight: '12px'
   },
   sectionTitle: {
     fontSize: '1.2rem',
@@ -217,15 +217,19 @@ const sx = {
   sectionContentContainer: {
     position: 'relative',
     backgroundColor: (theme: Theme) => theme.palette.background.settingsPanel,
-    padding: '8px 0px 19px',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      bottom: 0,
-      left: '5%',
-      width: '90%',
-      height: '3px',
-      backgroundColor: (theme: Theme) => theme.palette.sectionDivider
-    }
+    padding: '18px 40px 35px',
+    paddingTop: '18px',
+    paddingBottom: '35px',
+    paddingRight: '0px',
+    paddingLeft: '0px'
+    // '&::after': {
+    //   content: '""',
+    //   position: 'absolute',
+    //   bottom: 0,
+    //   left: '5%',
+    //   width: '90%',
+    //   height: '3px',
+    //   backgroundColor: (theme: Theme) => theme.palette.sectionDivider
+    // }
   }
 };
