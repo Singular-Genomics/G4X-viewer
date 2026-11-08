@@ -6,6 +6,8 @@ import i18n from 'i18next';
 import { gxTheme } from './themes/theme';
 import { GxSnackbar } from './shared/components/GxSnackbar/GxSnackbar';
 import { ComponentsShowcaseView } from './views/ComponentsShowcaseView';
+import { ButtonReferenceView } from './views/ButtonReferenceView/ButtonReferenceView';
+import { ColorReferenceView } from './views/ColorReferenceView/ColorReferenceView';
 
 i18n
   .use(HttpBackend)
@@ -18,7 +20,13 @@ i18n
     fallbackLng: 'en'
   });
 
-export const ComponentsShowcaseApp = () => {
+export const ComponentsShowcaseApp = ({
+  buttonReference = false,
+  colorReference = false
+}: {
+  buttonReference?: boolean;
+  colorReference?: boolean;
+}) => {
   return (
     <ThemeProvider
       theme={gxTheme}
@@ -37,7 +45,13 @@ export const ComponentsShowcaseApp = () => {
           gxSnackbar: GxSnackbar
         }}
       >
-        <ComponentsShowcaseView />
+        {colorReference ? (
+          <ColorReferenceView />
+        ) : buttonReference ? (
+          <ButtonReferenceView />
+        ) : (
+          <ComponentsShowcaseView />
+        )}
       </SnackbarProvider>
     </ThemeProvider>
   );

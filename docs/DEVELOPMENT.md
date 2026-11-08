@@ -209,3 +209,45 @@ enqueueSnackbar(t('info.processing'), { variant: 'info' });
 **Types**: Create `.types.ts` files for complex types  
 **Errors**: Use notistack for user notifications  
 **Strings**: Use translation keys, never hardcode text
+
+## Button design reference
+
+Open `/ui-reference` on the development server (for example,
+`http://localhost:5173/ui-reference`) to review the proposed button system without
+loading a dataset. This is a design mockup; existing viewer controls are unchanged.
+
+Describe buttons as **Size · Appearance · Behavior · Icon placement**, for example
+**Medium · Outlined · Toggle · Leading icon**, or refer to a numbered example:
+B01–B04 are Filled, Outlined, Tonal, and Text actions; B05–B08 are the matching toggles.
+The builder provides a working preview, a copyable specification, state comparisons,
+and a light/dark theme switch.
+
+Proposed dimensions live in
+`src/views/ButtonReferenceView/buttonReference.ts`: Small is 28px high, Medium 36px,
+and Large 44px. All examples use 6px corners. Outlined toggles keep the same background
+when switching on/off; border and text distinguish their states.
+
+Manual verification: open the reference in both themes, inspect B06, change each
+builder option, click the preview to toggle it, copy its specification, and compare
+the state and size rows. Check the page at a narrow browser width as well.
+
+## Interactive color reference
+
+Open `/ui-reference/colors` on the development server to experiment with UI colors
+without loading data. The light/dark switch selects independent drafts initialized
+from the repository palette. Enable **Pick element** and click the preview, or choose
+an element in the editor. Assign an existing palette token and edit its hex color,
+opacity, or choose a theme swatch. Elements sharing a token update together.
+
+Drafts are stored locally under `g4x-color-reference-v1`; **Copy configuration** and
+**Export JSON** include both palettes and all element-to-token assignments.
+**Import JSON** validates and replaces both drafts. **Reset current palette** restores
+only the selected mode. Preview assignments are design proposals and do not change
+viewer styling or scientific data colors. Applying new bindings requires updating
+the corresponding component styles.
+
+Manual verification: change the top bar color; change the section header color and
+observe other elements sharing `background.paper`; assign the header a different
+token; inspect text, controls, and status bubbles; switch light/dark; reload to check
+persistence; export and reimport the configuration; try an invalid import and confirm
+the draft is preserved.
