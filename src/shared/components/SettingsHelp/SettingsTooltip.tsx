@@ -47,8 +47,10 @@ export const SettingsTooltip = ({ title, helpTitle, children, ...props }: Settin
         id={descriptionId}
         sx={{
           position: 'absolute',
-          width: 1,
-          height: 1,
+          top: 0,
+          left: 0,
+          width: '1px',
+          height: '1px',
           padding: 0,
           margin: '-1px',
           overflow: 'hidden',
