@@ -30,7 +30,13 @@ export const TranscriptLayerSection = () => {
   );
 
   return (
-    <Box sx={sx.sectionContainer}>
+    <Box
+      component="fieldset"
+      disabled={!isTranscriptLayerOn}
+      inert={!isTranscriptLayerOn}
+      aria-disabled={!isTranscriptLayerOn}
+      sx={sx.sectionContainer}
+    >
       <Box>
         <AdvancedViewOptions />
       </Box>
@@ -51,7 +57,15 @@ const sx = {
     overflowX: 'hidden',
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px'
+    gap: '8px',
+    border: 0,
+    padding: 0,
+    margin: 0,
+    minWidth: 0,
+    '&:disabled': {
+      filter: 'grayscale(1)',
+      opacity: 0.5
+    }
   },
   subsectionWrapper: {
     display: 'flex',

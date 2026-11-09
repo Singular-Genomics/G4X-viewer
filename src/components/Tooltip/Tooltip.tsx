@@ -77,8 +77,8 @@ const styles = (theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
     padding: '8px 16px',
-    border: `5px solid ${theme.palette.divider}`,
-    borderRadius: '10px',
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: '6px',
     cursor: 'crosshair',
     fontSize: '13px'
   }
