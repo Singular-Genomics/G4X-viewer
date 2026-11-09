@@ -8,7 +8,6 @@ import SendIcon from '@mui/icons-material/Send';
 import { useConsolidatedSnackbar } from '../../../../hooks/useConsolidatedSnackbar.hook.tsx';
 import { IMAGE_URL_PARAM } from '../../../../hooks/useCloudImageLoader.hook';
 import { loadZarrFromUrl } from '../../../../utils/loadZarrFromUrl';
-import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 
 const getInitialCloudImageUrl = () =>
@@ -21,7 +20,6 @@ export default function ZarrSourceInput() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [cloudImageUrl, setCloudImageUrl] = useState(getInitialCloudImageUrl);
   const [submitted, setSubmitted] = useState(!!getInitialCloudImageUrl());
-  const imageName = useViewerStore((store) => store.source?.description);
   const zarrUrl = useZarrDataStore((store) => store.zarrUrl);
   const previousZarrUrlRef = useRef(zarrUrl);
 
@@ -108,7 +106,6 @@ export default function ZarrSourceInput() {
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={t('sourceFiles.zarrInputLabel')}
-        helperText={imageName && (!cloudImageUrl || submitted) ? `${t('sourceFiles.zarrFileName')}: ${imageName}` : ' '}
         sx={sx.textField}
         slotProps={{
           htmlInput: { 'aria-label': t('sourceFiles.zarrInputLabel') },
@@ -157,13 +154,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiFilledInput-root.Mui-focused::after': {
       transform: 'translateX(0)'
-    },
-    '& .MuiFormHelperText-root': {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      fontSize: '0.8rem',
-      color: theme.palette.text.primary
     }
   },
   cloudIcon: {
