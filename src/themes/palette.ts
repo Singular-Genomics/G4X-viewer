@@ -87,7 +87,7 @@ const gradient =
     `linear-gradient(${angle}deg, ${start} 0%, ${end} 100%)`;
 
 // Mode-invariant brand colors. Mode-aware roles (background/text/divider)
-// live in lightPalette/darkPalette below, not here.
+// live in defaultPalette/altPalette below, not here.
 export const colors: GxPalette = {
   neutrals,
   pures,
@@ -102,11 +102,17 @@ export const colors: GxPalette = {
   }
 };
 
-// Shared UI element assignments, applied in both light and dark mode.
-const commonPalette = {
+// Complete dark palette. All app-specific assignments are defined here.
+export const defaultPalette = {
+  mode: 'dark',
   gx: colors,
+
+  // MUI defaults for components outside the section-specific assignments.
+  background: { default: neutrals[10], paper: neutrals[20] },
+  text: { primary: neutrals[75], secondary: neutrals[60] },
   primary: { main: greens[400], light: pures.magenta, dark: greens[200] },
   secondary: { main: accents.purple },
+
   navBar: {
     background: blues[200],
     text: neutrals[75],
@@ -116,6 +122,32 @@ const commonPalette = {
     hoverBackground: alpha(neutrals.white, 0.08),
     divider: neutrals[65]
   },
+
+  settingsPanel: {
+    background: neutrals[10],
+    surface: neutrals[20],
+    text: neutrals[75],
+    secondaryText: neutrals[60],
+    sections: {
+      background: neutrals[20],
+      text: neutrals[75],
+      divider: neutrals[65]
+    },
+    toggleButton: {
+      background: neutrals[15],
+      text: neutrals[60],
+      activeBackground: alpha(greens[400], 0.2),
+      activeText: greens[400],
+      hoverBackground: alpha(neutrals[20], 0.75),
+      activeHoverBackground: alpha(greens[400], 0.1)
+    },
+    layerToggle: {
+      thumb: neutrals[80],
+      backgroundOn: greens[400],
+      backgroundOff: neutrals[10]
+    }
+  },
+
   viewport: {
     background: neutrals[5],
     tools: {
@@ -130,58 +162,36 @@ const commonPalette = {
     },
     status: { background: neutrals[10], text: neutrals[75] }
   }
-};
+} satisfies PaletteOptions;
 
-const commonSettings = {
-  sections: {
-    divider: neutrals[65]
-  },
-  toggleButton: {
-    background: neutrals[15],
-    activeBackground: alpha(commonPalette.primary.main, 0.2),
-    activeText: commonPalette.primary.main,
-    hoverBackground: alpha(neutrals[20], 0.75),
-    activeHoverBackground: alpha(commonPalette.primary.main, 0.1)
-  }
-};
-
-export const lightPalette: PaletteOptions = {
-  ...commonPalette,
+// Light adjustments only. Spread each nested group before overriding its fields
+// so new default assignments are inherited automatically.
+export const altPalette = {
+  ...defaultPalette,
   mode: 'light',
+
+  background: { ...defaultPalette.background, default: neutrals[80], paper: neutrals.white },
+  text: { ...defaultPalette.text, primary: neutrals[10], secondary: neutrals[35] },
+
   settingsPanel: {
+    ...defaultPalette.settingsPanel,
     background: neutrals[80],
-    surface: neutrals.white,
+    surface: neutrals[90],
     text: neutrals[10],
     secondaryText: neutrals[35],
-    sections: { ...commonSettings.sections, background: neutrals.white, text: neutrals[10] },
-    layerToggle: {
-      thumb: neutrals[10],
-      backgroundOn: commonPalette.primary.main,
-      backgroundOff: neutrals[80]
+    sections: {
+      ...defaultPalette.settingsPanel.sections,
+      background: neutrals[95],
+      text: neutrals[10]
     },
-    toggleButton: { ...commonSettings.toggleButton, text: neutrals[35] }
-  },
-  // MUI defaults for components outside the section-specific assignments.
-  background: { default: neutrals[80], paper: neutrals.white },
-  text: { primary: neutrals[10], secondary: neutrals[35] }
-};
-
-export const darkPalette: PaletteOptions = {
-  ...commonPalette,
-  mode: 'dark',
-  settingsPanel: {
-    background: neutrals[10],
-    surface: neutrals[20],
-    text: neutrals[75],
-    secondaryText: neutrals[60],
-    sections: { ...commonSettings.sections, background: neutrals[20], text: neutrals[75] },
-    layerToggle: {
-      thumb: neutrals[75],
-      backgroundOn: commonPalette.primary.main,
-      backgroundOff: neutrals[10]
+    toggleButton: {
+      ...defaultPalette.settingsPanel.toggleButton,
+      text: neutrals[10],
+      background: neutrals[70]
     },
-    toggleButton: { ...commonSettings.toggleButton, text: neutrals[60] }
-  },
-  background: { default: neutrals[10], paper: neutrals[20] },
-  text: { primary: neutrals[75], secondary: neutrals[60] }
-};
+    layerToggle: {
+      ...defaultPalette.settingsPanel.layerToggle,
+      backgroundOff: neutrals[60]
+    }
+  }
+} satisfies PaletteOptions;

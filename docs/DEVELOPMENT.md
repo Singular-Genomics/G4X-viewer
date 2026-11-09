@@ -165,14 +165,16 @@ Button labels and section headings preserve the casing of their translated text.
 - `theme.palette.settingsPanel`: sidebar background, surfaces, text, section headers, layer switches, and toggle buttons.
 - `theme.palette.viewport`: canvas background, tools (including the scale bar), object hover cards, and status panels.
 
-Shared assignments live in `commonViewport` and `commonSettings`; each light/dark palette
-adds its mode-specific values. Nested overrides must spread their shared object explicitly
-because JavaScript object spread is shallow. For example, use
-`theme.palette.viewport.tools.activeBackground` for the active ROI tool color and
-`theme.palette.settingsPanel.sections.background` for the settings header background.
+`defaultPalette` defines the complete dark palette. `altPalette` spreads it,
+sets `mode: 'light'`, and overrides only the values that differ in light mode.
+Spread each nested group before overriding individual fields so other default
+assignments continue to be inherited (for example,
+`sections: { ...defaultPalette.settingsPanel.sections, background: ... }`).
+Use `theme.palette.viewport.tools.activeBackground` for the active ROI tool color
+and `theme.palette.settingsPanel.sections.background` for settings header backgrounds.
 
-`gx` contains reusable color families; `muiColorRoles` contains MUI's required
-`primary` / `secondary` roles. Standard MUI `background`, `text`, `divider`, and
+`gx` contains reusable color families. MUI's required `primary` / `secondary`
+roles are defined in `defaultPalette`. Standard MUI `background`, `text`, `divider`, and
 `action` roles remain defaults for general components and dialogs. App section
 assignments are independent of these defaults. Add new assignment fields to the
 matching interfaces in `src/themes/types.ts`; the three groups are registered in
@@ -236,9 +238,9 @@ and `greens`. The neutral scale contains 21 sRGB shades at 5% intervals:
 border roles for interface styling where possible; their light/dark defaults map
 to this shared scale. `neutrals.black` and `neutrals.white` name its endpoints.
 
-In `palette.ts`, color families live in `colors` and MUI color roles live in
-`muiColorRoles`. App assignments live in the `navBar`, `settingsPanel`, and
-`viewport` groups described above.
+In `palette.ts`, color families live in `colors`. `defaultPalette` contains the
+MUI color roles and the `navBar`, `settingsPanel`, and `viewport` assignments;
+`altPalette` inherits these and supplies the light-mode adjustments.
 
 ### Settings Info View
 

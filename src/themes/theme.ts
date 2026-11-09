@@ -1,13 +1,13 @@
 import { alpha, createTheme } from '@mui/material';
-import { lightPalette, darkPalette } from './palette';
+import { altPalette, defaultPalette } from './palette';
 import { TOOLTIP_ENTER_DELAY } from '../shared/constants';
 
 export const gxTheme = createTheme({
   // MUI defaults to 'media' (OS-only), which makes setMode() a no-op.
   cssVariables: { colorSchemeSelector: 'data-mui-color-scheme' },
   colorSchemes: {
-    light: { palette: lightPalette },
-    dark: { palette: darkPalette }
+    light: { palette: altPalette },
+    dark: { palette: defaultPalette }
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
