@@ -64,7 +64,7 @@ refactor: simplify store structure
 ```
 
 **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`  
-*More info: [Conventional Commits](https://www.conventionalcommits.org/)*
+_More info: [Conventional Commits](https://www.conventionalcommits.org/)_
 
 ## Naming Conventions
 
@@ -180,7 +180,7 @@ The application frequently processes large scientific datasets (cell segmentatio
 
 **Location**: Place workers in `component/worker/` or `layer/worker/` directories
 
-*Learn more: [Web Workers Guide](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)*
+_Learn more: [Web Workers Guide](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers)_
 
 ## User Notifications
 
@@ -224,3 +224,25 @@ and `secondary` live in `muiColorRoles`, and `commonPalette` contains only share
 element assignments. Each light/dark palette combines these and adds mode-specific
 assignments. Shared background fields must also be spread into each mode's
 `background` object, since JavaScript object spread is shallow.
+
+### Settings Info View
+
+The bottom of the settings panel contains a fixed, collapsible Info View. Settings
+scroll independently above it. Hovering a control or focusing it with the keyboard
+shows its help; moving to an area without help clears it to a neutral prompt.
+The Show/Hide preference is saved locally as `g4x-settings-info-view-visible`.
+
+Wrap settings controls in `SettingsTooltip` from `shared/components/SettingsHelp`.
+Its `title` is the help body and optional `helpTitle` is the heading (include the
+channel name for repeated channel controls). Use translated strings in
+`public/locales/en.json`, under `settingsHelp` or the existing `tooltips` keys.
+Existing Tooltip props remain supported. Inside `SettingsHelpProvider`, help
+appears in Info View with no floating tooltip; outside it, the component uses the
+usual MUI Tooltip. `SettingsHelpRegion` delegates hover and focus events, including
+nested controls and React portals. The filter table uses this same component for
+its internal tooltip slot.
+
+Manual checks: hover and keyboard-focus controls, move between channels and then
+onto blank space, hide/reopen Info View, reload to check the preference, and scroll
+settings while checking the footer stays in place. Also check filter table search,
+color pickers, and menus, and confirm tooltips outside settings still float.

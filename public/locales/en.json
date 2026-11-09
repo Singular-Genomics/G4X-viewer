@@ -470,15 +470,15 @@
   },
   "tooltips": {
     "viewSettings": {
-      "tControl": "T Control",
-      "zControl": "Z Control"
+      "tControl": "Choose the time point displayed by the image channels.",
+      "zControl": "Choose the Z plane displayed by the image channels."
     },
     "channelSettings": {
       "lens": "A lens to highlight a specific protein channel in color, displaying all other active channels in grayscale.",
       "export": "Export the current protein settings as a JSON file.",
       "import": "Import protein channel settings from a JSON file.",
       "currentPixelIntensity": "Intensity value of the specific protein channel at the location of your cursor.",
-      "minMaxDisplay": "All pixels above/below these values will display as zero.",
+      "minMaxDisplay": "Set the lower and upper display intensity limits for this channel. Type the values directly or drag the slider handles.",
       "proteomicsColormap": "Choose a color mapping mode: Additive Blend ('None') for mixed overlapping signals, or Colormaps (Any other preset) for predefined intensity gradients."
     },
     "segmentationSettings": {
@@ -502,5 +502,49 @@
     "github": "GitHub",
     "email": "Email",
     "documentation": "Documentation"
+  },
+  "settingsHelp": {
+    "title": "Info View",
+    "show": "Show Info View",
+    "hide": "Hide Info View",
+    "showShort": "Show",
+    "hideShort": "Hide",
+    "prompt": "Hover over a control, or focus it with the keyboard, to see what it does.",
+    "channelTitle": "{{control}} · {{channel}}",
+    "intensity": "Cursor intensity",
+    "sections": {
+      "sourceData": "Open a remote Zarr store by URL or select a local Zarr folder. Share the current settings, view the summary report, or inspect run metadata.",
+      "viewSettings": "Inspect image dimensions, scale, cursor position, and transcript density. Choose which supporting items are visible in the viewport.",
+      "channels": "Show or hide individual channels, choose their display colors, and adjust intensity limits. Advanced contains the lens, color mode, and configuration import/export.",
+      "transcripts": "Control transcript point size, minimum display density, and gene filters. The section switch shows or hides transcript points.",
+      "cells": "Choose a segmentation source and cluster assignment, adjust cell fill and borders, and filter cell populations. The section switch shows or hides Cells."
+    },
+    "controls": {
+      "url": "Paste a URL to a remote Zarr store and press Enter or the arrow button to load it. Press Escape to clear the field.",
+      "share": "Copy a link or settings configuration to reproduce this view, or paste a configuration to apply it.",
+      "summary": "Open the summary report included with the current dataset. You can also open the report in a separate tab.",
+      "metadata": "Inspect run and sample metadata for the current dataset.",
+      "fill": "Show or hide cell fill and adjust its opacity. Drag the slider or type a value from 1 to 100. At least one of Fill or Border must remain enabled.",
+      "border": "Show or hide cell borders and adjust their width. Drag the slider or type a value from 0.2 to 3. At least one of Fill or Border must remain enabled.",
+      "brightfield": "Show or hide the fH&E image and adjust its opacity. Drag the slider or enter a value from 0 to 100.",
+      "pointSize": "Adjust the displayed transcript point size. Drag the slider or enter a value from 0.1 to 10.",
+      "overview": "Show or hide the overview image. The overview is temporarily hidden while drawing an ROI.",
+      "tools": "Show or hide the screenshot and ROI tools and the scale bar. Hiding the tools also exits ROI drawing mode without deleting existing ROIs.",
+      "status": "Show or hide the viewport status panels, including Hidden Layers, Active Filters, and ROI Details.",
+      "segmentationSource": "Choose which segmentation to display. Available cluster assignments and cell data depend on this source.",
+      "clusterSource": "Choose the cluster assignment used for cell colors and filtering. Each assignment remembers its own filter selection.",
+      "filterEnable": "Enable or disable the current filter selection. While enabled, selecting or deselecting rows applies the changes immediately.",
+      "filterDiscarded": "Show the items discarded by the current filters. This control is available while filters are enabled.",
+      "filterClear": "Clear the current filter selection.",
+      "channelVisible": "Show or hide this channel without removing it from Channel Controls.",
+      "channelSelect": "Choose the image channel displayed by this row. Morphology channels and protein channels are grouped separately.",
+      "channelColor": "Choose the display color for this channel. This changes its appearance, not the source data.",
+      "channelRange": "Switch between a wider slider range and the contracted intensity range. The selected minimum and maximum values are preserved.",
+      "channelReset": "Restore this channel's default intensity display limits.",
+      "channelRemove": "Remove this channel row from the viewer. The source data is preserved and the channel can be added again.",
+      "channelAdd": "Add another channel row, then choose which image channel it displays.",
+      "filterTable": "Select the rows to include in the filter. Use the filter and search controls above the table to find entries.",
+      "activeOnly": "Limit the table to the currently selected filter entries."
+    }
   }
 }

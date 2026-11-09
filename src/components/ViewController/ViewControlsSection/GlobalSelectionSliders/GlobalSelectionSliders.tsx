@@ -7,7 +7,7 @@ import { unstable_batchedUpdates } from 'react-dom';
 import { PropertiesUpdateType } from '../../../../stores/ChannelsStore/ChannelsStore.types';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { InfoTooltip } from '../../../InfoTooltip';
+import { SettingsTooltip } from '../../../../shared/components/SettingsHelp';
 
 export const GlobalSelectionSliders = () => {
   const theme = useTheme();
@@ -102,37 +102,34 @@ export const GlobalSelectionSliders = () => {
               size={'grow'}
               sx={sx.sliderContainer}
             >
-              <Slider
-                value={globalSelection[label]}
-                onChange={(event, newValue) => {
-                  useViewerStore.setState({
-                    globalSelection: {
-                      ...globalSelection,
-                      [label]: newValue
-                    }
-                  });
-                  if (event.type === 'keydown') {
-                    changeSelection(event, newValue, label);
-                  }
-                }}
-                onChangeCommitted={(event, newValue) => changeSelection(event, newValue, label)}
-                size="small"
-                valueLabelDisplay="auto"
-                step={1}
-                min={0}
-                max={maxValue}
-                sx={sx.slider}
-                disabled={isAnyChannelLoading || !hasNavigationData}
-              />
-            </Grid>
-            {isControlWithTooltip && (
-              <Grid
-                size="auto"
-                sx={sx.tooltipContainer}
+              <SettingsTooltip
+                title={isControlWithTooltip ? tooltipText : ''}
+                helpTitle={label.toUpperCase()}
               >
-                <InfoTooltip title={tooltipText} />
-              </Grid>
-            )}
+                <Slider
+                  value={globalSelection[label]}
+                  onChange={(event, newValue) => {
+                    useViewerStore.setState({
+                      globalSelection: {
+                        ...globalSelection,
+                        [label]: newValue
+                      }
+                    });
+                    if (event.type === 'keydown') {
+                      changeSelection(event, newValue, label);
+                    }
+                  }}
+                  onChangeCommitted={(event, newValue) => changeSelection(event, newValue, label)}
+                  size="small"
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={0}
+                  max={maxValue}
+                  sx={sx.slider}
+                  disabled={isAnyChannelLoading || !hasNavigationData}
+                />
+              </SettingsTooltip>
+            </Grid>
           </Grid>
         );
       })}

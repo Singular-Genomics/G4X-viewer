@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../shared/components/SettingsHelp';
 import { getAppearanceControlStyles } from '../../../shared/components/appearanceControl.styles';
 import { Box, Input, Theme, ToggleButton, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -44,64 +45,69 @@ export const BrightfieldImagesSection = () => {
   };
 
   return (
-    <Box sx={sx.row}>
-      <ToggleButton
-        value="brightfield"
-        selected={isImageEnabled}
-        onChange={toggleImageLayer}
-        disabled={!hasImage}
-        color="primary"
-        sx={sx.toggleButton}
-      >
-        {t('brightfieldImages.imageToggleLabel')}
-      </ToggleButton>
-      <Typography
-        id="brightfield-opacity-label"
-        component="label"
-        sx={sx.label}
-      >
-        {t('brightfieldImages.opacityLabel')}
-      </Typography>
-      <Box sx={sx.slider}>
-        <GxSlider
-          sx={sx.sliderControl}
-          aria-labelledby="brightfield-opacity-label"
-          value={sliderValue}
-          onChange={(_, newValue) => {
-            const value = Array.isArray(newValue) ? newValue[0] : newValue;
-            setSliderValue(value);
-            setInputValue(String(value));
+    <SettingsTooltip
+      title={t('settingsHelp.controls.brightfield')}
+      helpTitle={t('brightfieldImages.imageToggleLabel')}
+    >
+      <Box sx={sx.row}>
+        <ToggleButton
+          value="brightfield"
+          selected={isImageEnabled}
+          onChange={toggleImageLayer}
+          disabled={!hasImage}
+          color="primary"
+          sx={sx.toggleButton}
+        >
+          {t('brightfieldImages.imageToggleLabel')}
+        </ToggleButton>
+        <Typography
+          id="brightfield-opacity-label"
+          component="label"
+          sx={sx.label}
+        >
+          {t('brightfieldImages.opacityLabel')}
+        </Typography>
+        <Box sx={sx.slider}>
+          <GxSlider
+            sx={sx.sliderControl}
+            aria-labelledby="brightfield-opacity-label"
+            value={sliderValue}
+            onChange={(_, newValue) => {
+              const value = Array.isArray(newValue) ? newValue[0] : newValue;
+              setSliderValue(value);
+              setInputValue(String(value));
+            }}
+            onChangeCommitted={(_, newValue) => commitOpacity(Array.isArray(newValue) ? newValue[0] : newValue)}
+            valueLabelFormat={(value: number) => `${value}%`}
+            min={0}
+            max={100}
+            step={1}
+            disabled={!isImageEnabled}
+          />
+        </Box>
+        <Input
+          disableUnderline
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          onBlur={commitInputValue}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.currentTarget.querySelector('input')?.blur();
+            }
           }}
-          onChangeCommitted={(_, newValue) => commitOpacity(Array.isArray(newValue) ? newValue[0] : newValue)}
-          valueLabelFormat={(value: number) => `${value}%`}
-          min={0}
-          max={100}
-          step={1}
+          size="small"
+          type="number"
+          inputProps={{
+            'aria-labelledby': 'brightfield-opacity-label',
+            min: 0,
+            max: 100,
+            step: 1
+          }}
+          sx={sx.input}
           disabled={!isImageEnabled}
         />
       </Box>
-      <Input
-        disableUnderline
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-        onBlur={commitInputValue}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.currentTarget.querySelector('input')?.blur();
-          }
-        }}
-        size="small"
-        type="number"
-        inputProps={{
-          'aria-labelledby': 'brightfield-opacity-label',
-          min: 0,
-          max: 100,
-          step: 1
-        }}
-        sx={sx.input}
-        disabled={!isImageEnabled}
-      />
-    </Box>
+    </SettingsTooltip>
   );
 };
 

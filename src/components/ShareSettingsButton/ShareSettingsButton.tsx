@@ -1,3 +1,4 @@
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
 import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
 import { useState } from 'react';
 import {
@@ -11,7 +12,6 @@ import {
   SvgIcon,
   TextField,
   Theme,
-  Tooltip,
   Typography,
   alpha,
   useTheme
@@ -121,7 +121,10 @@ export const ShareSettingsButton = () => {
 
   return (
     <Box>
-      <Tooltip title={t('general.shareSettings')}>
+      <Tooltip
+        title={t('settingsHelp.controls.share')}
+        helpTitle={t('general.share')}
+      >
         <Button
           onClick={handleOpen}
           size="small"

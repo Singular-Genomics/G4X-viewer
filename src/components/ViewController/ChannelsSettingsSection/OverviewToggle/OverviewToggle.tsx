@@ -1,4 +1,5 @@
-import { Box, ToggleButton, Theme, Tooltip, tooltipClasses, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../../shared/components/SettingsHelp';
+import { Box, ToggleButton, Theme, tooltipClasses, useTheme } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';

@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../../shared/components/SettingsHelp';
 import { getAppearanceControlStyles } from '../../../../shared/components/appearanceControl.styles';
 import { Box, ToggleButton, Input, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -46,70 +47,75 @@ export const CellMasksFillSettings = () => {
   };
 
   return (
-    <Box sx={sx.strokeSettingsContainer}>
-      <ToggleButton
-        value="fill"
-        selected={showCellFill}
-        onChange={toggleCellFill}
-        disabled={showCellFill && !showBoundary}
-        color="primary"
-        sx={sx.toggleButton}
-      >
-        {t('segmentationSettings.fillToggleLabel')}
-      </ToggleButton>
-      <Box sx={sx.sliderInputContainer}>
-        <Typography
-          id="cell-fill-alpha-label"
-          component="label"
-          sx={sx.label}
+    <SettingsTooltip
+      title={t('settingsHelp.controls.fill')}
+      helpTitle={t('segmentationSettings.fillToggleLabel')}
+    >
+      <Box sx={sx.strokeSettingsContainer}>
+        <ToggleButton
+          value="fill"
+          selected={showCellFill}
+          onChange={toggleCellFill}
+          disabled={showCellFill && !showBoundary}
+          color="primary"
+          sx={sx.toggleButton}
         >
-          {t('segmentationSettings.fillAlphaLabel')}
-        </Typography>
-        <Box sx={sx.sliderInputItem}>
-          <GxSlider
-            sx={sx.sliderControl}
-            aria-labelledby="cell-fill-alpha-label"
-            value={sliderValue * 100}
-            onChange={(_, newValue) => {
-              const value = Array.isArray(newValue) ? newValue[0] : newValue;
-              setSliderValue(+(value / 100).toFixed(2));
-              setInputValue(String(Math.round(value)));
-            }}
-            onChangeCommitted={() => {
-              setCellFillOpacity(sliderValue);
-            }}
-            valueLabelFormat={(value: number) => `${Math.round(value)}%`}
-            step={0.1}
-            disabled={!showCellFill}
-            min={MIN_FILL_OPACITY}
-            max={MAX_FILL_OPACITY}
-          />
-        </Box>
-        <Box sx={{ width: 52, flexShrink: 0 }}>
-          <Input
-            disableUnderline
-            value={inputValue}
-            onChange={(event) => setInputValue(event.target.value)}
-            onBlur={commitInputValue}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.currentTarget.querySelector('input')?.blur();
-              }
-            }}
-            size="small"
-            type="number"
-            inputProps={{
-              'aria-labelledby': 'cell-fill-alpha-label',
-              step: FILL_OPACITY_STEP.toString(),
-              max: MAX_FILL_OPACITY.toString(),
-              min: MIN_FILL_OPACITY.toString()
-            }}
-            sx={sx.input}
-            disabled={!showCellFill}
-          />
+          {t('segmentationSettings.fillToggleLabel')}
+        </ToggleButton>
+        <Box sx={sx.sliderInputContainer}>
+          <Typography
+            id="cell-fill-alpha-label"
+            component="label"
+            sx={sx.label}
+          >
+            {t('segmentationSettings.fillAlphaLabel')}
+          </Typography>
+          <Box sx={sx.sliderInputItem}>
+            <GxSlider
+              sx={sx.sliderControl}
+              aria-labelledby="cell-fill-alpha-label"
+              value={sliderValue * 100}
+              onChange={(_, newValue) => {
+                const value = Array.isArray(newValue) ? newValue[0] : newValue;
+                setSliderValue(+(value / 100).toFixed(2));
+                setInputValue(String(Math.round(value)));
+              }}
+              onChangeCommitted={() => {
+                setCellFillOpacity(sliderValue);
+              }}
+              valueLabelFormat={(value: number) => `${Math.round(value)}%`}
+              step={0.1}
+              disabled={!showCellFill}
+              min={MIN_FILL_OPACITY}
+              max={MAX_FILL_OPACITY}
+            />
+          </Box>
+          <Box sx={{ width: 52, flexShrink: 0 }}>
+            <Input
+              disableUnderline
+              value={inputValue}
+              onChange={(event) => setInputValue(event.target.value)}
+              onBlur={commitInputValue}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.currentTarget.querySelector('input')?.blur();
+                }
+              }}
+              size="small"
+              type="number"
+              inputProps={{
+                'aria-labelledby': 'cell-fill-alpha-label',
+                step: FILL_OPACITY_STEP.toString(),
+                max: MAX_FILL_OPACITY.toString(),
+                min: MIN_FILL_OPACITY.toString()
+              }}
+              sx={sx.input}
+              disabled={!showCellFill}
+            />
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </SettingsTooltip>
   );
 };
 

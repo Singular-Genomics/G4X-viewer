@@ -1,4 +1,5 @@
-import { IconButton, Tooltip } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
+import { IconButton } from '@mui/material';
 import { InfoOutlined } from '@mui/icons-material';
 import { InfoTooltipProps } from './InfoTooltip.types';
 
@@ -10,6 +11,7 @@ export const InfoTooltip = ({ title, size = 'small' }: InfoTooltipProps) => {
       placement="top"
     >
       <IconButton
+        aria-label={title}
         size={size}
         sx={sx.infoButton}
       >

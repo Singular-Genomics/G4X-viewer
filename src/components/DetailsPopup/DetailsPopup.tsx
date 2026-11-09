@@ -1,5 +1,6 @@
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
 import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
-import { Box, Button, IconButton, SvgIcon, Typography, Popover, Theme, useTheme, alpha, Tooltip } from '@mui/material';
+import { Box, Button, IconButton, SvgIcon, Typography, Popover, Theme, useTheme, alpha } from '@mui/material';
 import { useState } from 'react';
 import { formatDetailsPopupData } from './DetailsPopup.helpers';
 import { useViewerStore } from '../../stores/ViewerStore';
@@ -62,7 +63,8 @@ export const DetailsPopup = () => {
   return (
     <Box>
       <Tooltip
-        title={t('general.runMetadataTooltip')}
+        title={t('settingsHelp.controls.metadata')}
+        helpTitle={t('general.metadata')}
         arrow
       >
         <Button

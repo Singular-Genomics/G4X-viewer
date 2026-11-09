@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../../shared/components/SettingsHelp';
 import { getAppearanceControlStyles } from '../../../../shared/components/appearanceControl.styles';
 import { Box, ToggleButton, Input, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
@@ -63,70 +64,75 @@ export const CellMasksBoundarySettings = () => {
 
   return (
     <>
-      <Box sx={sx.strokeSettingsContainer}>
-        <ToggleButton
-          value="border"
-          selected={showBoundary}
-          onChange={handleToggleBoundary}
-          disabled={showBoundary && !showCellFill}
-          color="primary"
-          sx={sx.toggleButton}
-        >
-          {t('segmentationSettings.borderToggleLabel')}
-        </ToggleButton>
-        <Box sx={sx.sliderInputContainer}>
-          <Typography
-            id="cell-border-width-label"
-            component="label"
-            sx={sx.label}
+      <SettingsTooltip
+        title={t('settingsHelp.controls.border')}
+        helpTitle={t('segmentationSettings.borderToggleLabel')}
+      >
+        <Box sx={sx.strokeSettingsContainer}>
+          <ToggleButton
+            value="border"
+            selected={showBoundary}
+            onChange={handleToggleBoundary}
+            disabled={showBoundary && !showCellFill}
+            color="primary"
+            sx={sx.toggleButton}
           >
-            {t('segmentationSettings.borderWidthLabel')}
-          </Typography>
-          <Box sx={sx.sliderInputItem}>
-            <GxSlider
-              sx={sx.sliderControl}
-              aria-labelledby="cell-border-width-label"
-              value={sliderValue}
-              onChange={(_, newValue) => {
-                const value = Array.isArray(newValue) ? newValue[0] : newValue;
-                setSliderValue(+value.toFixed(1));
-                setInputValue(value.toFixed(1));
-              }}
-              onChangeCommitted={() => {
-                setBoundaryWidth(sliderValue);
-              }}
-              valueLabelFormat={(value: number) => `${value.toFixed(1)}px`}
-              step={BOUNDARY_WIDTH_STEP}
-              min={MIN_BOUNDARY_WIDTH}
-              max={MAX_BOUNDARY_WIDTH}
-              disabled={!showBoundary}
-            />
-          </Box>
-          <Box sx={{ width: 52, flexShrink: 0 }}>
-            <Input
-              disableUnderline
-              value={inputValue}
-              onChange={(event) => setInputValue(event.target.value)}
-              onBlur={commitInputValue}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.currentTarget.querySelector('input')?.blur();
-                }
-              }}
-              size="small"
-              type="number"
-              inputProps={{
-                'aria-labelledby': 'cell-border-width-label',
-                step: BOUNDARY_WIDTH_STEP.toString(),
-                max: MAX_BOUNDARY_WIDTH.toString(),
-                min: MIN_BOUNDARY_WIDTH.toString()
-              }}
-              sx={sx.input}
-              disabled={!showBoundary}
-            />
+            {t('segmentationSettings.borderToggleLabel')}
+          </ToggleButton>
+          <Box sx={sx.sliderInputContainer}>
+            <Typography
+              id="cell-border-width-label"
+              component="label"
+              sx={sx.label}
+            >
+              {t('segmentationSettings.borderWidthLabel')}
+            </Typography>
+            <Box sx={sx.sliderInputItem}>
+              <GxSlider
+                sx={sx.sliderControl}
+                aria-labelledby="cell-border-width-label"
+                value={sliderValue}
+                onChange={(_, newValue) => {
+                  const value = Array.isArray(newValue) ? newValue[0] : newValue;
+                  setSliderValue(+value.toFixed(1));
+                  setInputValue(value.toFixed(1));
+                }}
+                onChangeCommitted={() => {
+                  setBoundaryWidth(sliderValue);
+                }}
+                valueLabelFormat={(value: number) => `${value.toFixed(1)}px`}
+                step={BOUNDARY_WIDTH_STEP}
+                min={MIN_BOUNDARY_WIDTH}
+                max={MAX_BOUNDARY_WIDTH}
+                disabled={!showBoundary}
+              />
+            </Box>
+            <Box sx={{ width: 52, flexShrink: 0 }}>
+              <Input
+                disableUnderline
+                value={inputValue}
+                onChange={(event) => setInputValue(event.target.value)}
+                onBlur={commitInputValue}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.querySelector('input')?.blur();
+                  }
+                }}
+                size="small"
+                type="number"
+                inputProps={{
+                  'aria-labelledby': 'cell-border-width-label',
+                  step: BOUNDARY_WIDTH_STEP.toString(),
+                  max: MAX_BOUNDARY_WIDTH.toString(),
+                  min: MIN_BOUNDARY_WIDTH.toString()
+                }}
+                sx={sx.input}
+                disabled={!showBoundary}
+              />
+            </Box>
           </Box>
         </Box>
-      </Box>
+      </SettingsTooltip>
       <GxModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

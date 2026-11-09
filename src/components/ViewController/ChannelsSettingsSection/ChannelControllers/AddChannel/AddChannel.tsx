@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../../../shared/components/SettingsHelp';
 import { useShallow } from 'zustand/react/shallow';
 import { useCallback } from 'react';
 import { Button, Theme, alpha, useTheme } from '@mui/material';
@@ -94,18 +95,23 @@ export const AddChannel = () => {
   ]);
 
   return (
-    <Button
-      disabled={
-        selections.length >= MAX_CHANNELS ||
-        (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
-      }
-      onClick={handleChannelAdd}
-      size="small"
-      startIcon={<AddIcon />}
-      sx={sx.addChannelButton}
+    <SettingsTooltip
+      title={t('settingsHelp.controls.channelAdd')}
+      helpTitle={t('channelSettings.addChannel')}
     >
-      {t('channelSettings.addChannel')}
-    </Button>
+      <Button
+        disabled={
+          selections.length >= MAX_CHANNELS ||
+          (isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE)
+        }
+        onClick={handleChannelAdd}
+        size="small"
+        startIcon={<AddIcon />}
+        sx={sx.addChannelButton}
+      >
+        {t('channelSettings.addChannel')}
+      </Button>
+    </SettingsTooltip>
   );
 };
 

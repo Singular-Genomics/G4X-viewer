@@ -1,4 +1,5 @@
-import { Button, alpha, Box, Theme, useTheme, Tooltip, Typography } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../../shared/components/SettingsHelp';
+import { Button, alpha, Box, Theme, useTheme, Typography } from '@mui/material';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { useTranslation } from 'react-i18next';
 import { useDirectoryPicker } from './useDirectoryPicker.hook';
@@ -14,6 +15,7 @@ export const LocalFolderButton = () => {
 
   return (
     <Tooltip
+      helpTitle={t('sourceFiles.folderUploadButton')}
       title={t(supported ? 'tooltips.sourceFiles.folderUploadButton' : 'tooltips.sourceFiles.folderUploadUnsupported')}
       arrow
     >

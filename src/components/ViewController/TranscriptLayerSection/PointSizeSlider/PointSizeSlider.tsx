@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../../shared/components/SettingsHelp';
 import { useShallow } from 'zustand/react/shallow';
 import { Box, Input, Typography, useTheme } from '@mui/material';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
@@ -39,49 +40,54 @@ export const PointSizeSlider = () => {
   };
 
   return (
-    <Box sx={sx.row}>
-      <Typography
-        id="transcript-point-size-label"
-        component="label"
-        sx={sx.label}
-      >
-        {t('transcriptsSettings.pointSize')}
-      </Typography>
-      <Box sx={controls.slider}>
-        <GxSlider
-          sx={controls.sliderControl}
-          aria-labelledby="transcript-point-size-label"
-          value={sliderValue}
-          onChangeCommitted={(_, newValue) => commitSize(Array.isArray(newValue) ? newValue[0] : newValue)}
-          onChange={(_, newValue) => {
-            const value = Array.isArray(newValue) ? newValue[0] : newValue;
-            setSliderValue(value);
-            setInputValue(String(value));
+    <SettingsTooltip
+      title={t('settingsHelp.controls.pointSize')}
+      helpTitle={t('transcriptsSettings.pointSize')}
+    >
+      <Box sx={sx.row}>
+        <Typography
+          id="transcript-point-size-label"
+          component="label"
+          sx={sx.label}
+        >
+          {t('transcriptsSettings.pointSize')}
+        </Typography>
+        <Box sx={controls.slider}>
+          <GxSlider
+            sx={controls.sliderControl}
+            aria-labelledby="transcript-point-size-label"
+            value={sliderValue}
+            onChangeCommitted={(_, newValue) => commitSize(Array.isArray(newValue) ? newValue[0] : newValue)}
+            onChange={(_, newValue) => {
+              const value = Array.isArray(newValue) ? newValue[0] : newValue;
+              setSliderValue(value);
+              setInputValue(String(value));
+            }}
+            step={POINT_SIZE_STEP}
+            min={MIN_POINT_SIZE}
+            max={MAX_POINT_SIZE}
+          />
+        </Box>
+        <Input
+          disableUnderline
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          onBlur={commitInputValue}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') event.currentTarget.querySelector('input')?.blur();
           }}
-          step={POINT_SIZE_STEP}
-          min={MIN_POINT_SIZE}
-          max={MAX_POINT_SIZE}
+          size="small"
+          type="number"
+          inputProps={{
+            'aria-labelledby': 'transcript-point-size-label',
+            step: POINT_SIZE_STEP,
+            max: MAX_POINT_SIZE,
+            min: MIN_POINT_SIZE
+          }}
+          sx={controls.input}
         />
       </Box>
-      <Input
-        disableUnderline
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-        onBlur={commitInputValue}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') event.currentTarget.querySelector('input')?.blur();
-        }}
-        size="small"
-        type="number"
-        inputProps={{
-          'aria-labelledby': 'transcript-point-size-label',
-          step: POINT_SIZE_STEP,
-          max: MAX_POINT_SIZE,
-          min: MIN_POINT_SIZE
-        }}
-        sx={controls.input}
-      />
-    </Box>
+    </SettingsTooltip>
   );
 };
 

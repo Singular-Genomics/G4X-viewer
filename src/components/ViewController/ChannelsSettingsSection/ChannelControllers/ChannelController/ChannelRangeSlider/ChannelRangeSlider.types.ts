@@ -1,4 +1,5 @@
 export type ChannelRangeSliderProps = {
+  channelName?: string;
   slider: [number, number];
   domain: [number, number];
   color: [number, number, number];

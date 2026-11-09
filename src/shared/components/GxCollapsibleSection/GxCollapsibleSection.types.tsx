@@ -2,6 +2,7 @@ import { SxProps, Theme } from '@mui/material';
 
 export type GxCollapsibleSectionProps = {
   sectionTitle: string;
+  helpText?: string;
   sectionIcon?: React.ReactNode;
   defultState?: GxCollapsibleSectionState;
   disabled?: boolean;

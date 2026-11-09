@@ -1,4 +1,5 @@
-import { IconButton, SxProps, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../../shared/components/SettingsHelp';
+import { IconButton, SxProps, Theme, Typography, useTheme } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useCellSegmentationLayerStore } from '../../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';

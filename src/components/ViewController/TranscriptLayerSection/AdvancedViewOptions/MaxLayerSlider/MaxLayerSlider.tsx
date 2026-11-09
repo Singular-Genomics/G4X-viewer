@@ -1,5 +1,6 @@
+import { SettingsTooltip as Tooltip } from '../../../../../shared/components/SettingsHelp';
 import { getSliderHandleStyles } from '../../../../../shared/components/sliderControls.styles';
-import { Box, Tooltip, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { GxSlider } from '../../../../../shared/components/GxSlider';
 import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';

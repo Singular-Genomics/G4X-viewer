@@ -1,4 +1,5 @@
-import { Box, MenuItem, Theme, ToggleButton, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../../shared/components/SettingsHelp';
+import { Box, MenuItem, Theme, ToggleButton, Typography, useTheme } from '@mui/material';
 import { GxSelect } from '../../../../shared/components/GxSelect/GxSelect';
 import { getControlButtonStyles } from '../../../../shared/components/controlButton.styles';
 import { useChannelsStore } from '../../../../stores/ChannelsStore/ChannelsStore';
@@ -40,29 +41,34 @@ export const LensToggle = () => {
           </ToggleButton>
         </Box>
       </Tooltip>
-      <Box sx={sx.selector}>
-        <GxSelect
-          sx={sx.select}
-          value={lensSelection}
-          fullWidth
-          disabled={!hasChannels}
-          inputProps={{ 'aria-label': t('channelSettings.highlightedChannel') }}
-          onChange={(e) =>
-            useViewerStore.setState({
-              lensSelection: e.target.value as number
-            })
-          }
-        >
-          {currentChannelIndices.map((channelIndex, relativeIndex) => (
-            <MenuItem
-              key={channelOptions[channelIndex as number] + String(relativeIndex)}
-              value={relativeIndex}
-            >
-              <Typography>{channelOptions[channelIndex as number]}</Typography>
-            </MenuItem>
-          ))}
-        </GxSelect>
-      </Box>
+      <Tooltip
+        title={t('tooltips.channelSettings.lens')}
+        helpTitle={t('channelSettings.lens')}
+      >
+        <Box sx={sx.selector}>
+          <GxSelect
+            sx={sx.select}
+            value={lensSelection}
+            fullWidth
+            disabled={!hasChannels}
+            inputProps={{ 'aria-label': t('channelSettings.highlightedChannel') }}
+            onChange={(e) =>
+              useViewerStore.setState({
+                lensSelection: e.target.value as number
+              })
+            }
+          >
+            {currentChannelIndices.map((channelIndex, relativeIndex) => (
+              <MenuItem
+                key={channelOptions[channelIndex as number] + String(relativeIndex)}
+                value={relativeIndex}
+              >
+                <Typography>{channelOptions[channelIndex as number]}</Typography>
+              </MenuItem>
+            ))}
+          </GxSelect>
+        </Box>
+      </Tooltip>
     </Box>
   );
 };

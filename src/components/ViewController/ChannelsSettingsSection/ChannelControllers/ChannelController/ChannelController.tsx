@@ -1,3 +1,4 @@
+import { SettingsTooltip as Tooltip } from '../../../../../shared/components/SettingsHelp';
 import { calculateExpandedRange, getPixelValueDisplay, MORPHOLOGY_KEYWORDS } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
 import {
@@ -10,7 +11,6 @@ import {
   Radio,
   SxProps,
   Theme,
-  Tooltip,
   Typography,
   useTheme
 } from '@mui/material';
@@ -52,6 +52,8 @@ export const ChannelController = ({
   const theme = useTheme();
   const sx = styles(theme);
   const { t } = useTranslation();
+
+  const channelHelpTitle = (control: string) => t('settingsHelp.channelTitle', { control, channel: name });
 
   const channelOptions = useViewerStore((store) => store.channelOptions);
 
@@ -108,10 +110,12 @@ export const ChannelController = ({
     <>
       <Box sx={sx.headerWrapper}>
         <Tooltip
+          helpTitle={channelHelpTitle(t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo'))}
           title={t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo')}
           arrow
         >
           <Radio
+            slotProps={{ input: { 'aria-label': t(isSoloed ? 'channelSettings.exitSolo' : 'channelSettings.solo') } }}
             checked={isSoloed}
             onClick={onSoloToggle}
             disabled={disabled}
@@ -120,65 +124,76 @@ export const ChannelController = ({
             sx={sx.soloRadio}
           />
         </Tooltip>
-        <Box
-          className="channel-visibility-control"
-          sx={isSoloMode ? sx.selectDimmed : undefined}
-        >
-          <GxCheckbox
-            onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
-            disabled={disabled}
-            checked={isSoloMode ? presoloVisible : channelVisible}
-            disableTouchRipple
-          />
-        </Box>
-        <GxSelect
-          value={name}
-          onChange={(e) => onSelectionChange(e.target.value as string)}
-          sx={sx.channelSelect}
-          disabled={disabled}
-        >
-          {morphologyOptions.length > 0 && [
-            <ListSubheader
-              key="morphology-header"
-              sx={sx.groupHeader}
-            >
-              {t('channelSettings.groupMorphology')}
-            </ListSubheader>,
-            ...morphologyOptions.map((opt) => (
-              <MenuItem
-                disabled={disabled}
-                key={opt}
-                value={opt}
-              >
-                <Typography>{opt}</Typography>
-              </MenuItem>
-            ))
-          ]}
-          {morphologyOptions.length > 0 && proteinOptions.length > 0 && (
-            <Divider
-              key="group-divider"
-              sx={sx.groupDivider}
-            />
-          )}
-          {proteinOptions.length > 0 && [
-            <ListSubheader
-              key="proteins-header"
-              sx={sx.groupHeader}
-            >
-              {t('channelSettings.groupProteins')}
-            </ListSubheader>,
-            ...proteinOptions.map((opt) => (
-              <MenuItem
-                disabled={disabled}
-                key={opt}
-                value={opt}
-              >
-                <Typography>{opt}</Typography>
-              </MenuItem>
-            ))
-          ]}
-        </GxSelect>
         <Tooltip
+          title={t('settingsHelp.controls.channelVisible')}
+          helpTitle={name}
+        >
+          <Box
+            className="channel-visibility-control"
+            sx={isSoloMode ? sx.selectDimmed : undefined}
+          >
+            <GxCheckbox
+              onChange={isSoloMode ? toggleSelectInSoloMode : toggleIsOn}
+              disabled={disabled}
+              checked={isSoloMode ? presoloVisible : channelVisible}
+              disableTouchRipple
+            />
+          </Box>
+        </Tooltip>
+        <Tooltip
+          title={t('settingsHelp.controls.channelSelect')}
+          helpTitle={name}
+        >
+          <GxSelect
+            value={name}
+            onChange={(e) => onSelectionChange(e.target.value as string)}
+            sx={sx.channelSelect}
+            disabled={disabled}
+          >
+            {morphologyOptions.length > 0 && [
+              <ListSubheader
+                key="morphology-header"
+                sx={sx.groupHeader}
+              >
+                {t('channelSettings.groupMorphology')}
+              </ListSubheader>,
+              ...morphologyOptions.map((opt) => (
+                <MenuItem
+                  disabled={disabled}
+                  key={opt}
+                  value={opt}
+                >
+                  <Typography>{opt}</Typography>
+                </MenuItem>
+              ))
+            ]}
+            {morphologyOptions.length > 0 && proteinOptions.length > 0 && (
+              <Divider
+                key="group-divider"
+                sx={sx.groupDivider}
+              />
+            )}
+            {proteinOptions.length > 0 && [
+              <ListSubheader
+                key="proteins-header"
+                sx={sx.groupHeader}
+              >
+                {t('channelSettings.groupProteins')}
+              </ListSubheader>,
+              ...proteinOptions.map((opt) => (
+                <MenuItem
+                  disabled={disabled}
+                  key={opt}
+                  value={opt}
+                >
+                  <Typography>{opt}</Typography>
+                </MenuItem>
+              ))
+            ]}
+          </GxSelect>
+        </Tooltip>
+        <Tooltip
+          helpTitle={channelHelpTitle(t('settingsHelp.intensity'))}
           title={t('tooltips.channelSettings.currentPixelIntensity')}
           arrow
           placement="top"
@@ -189,6 +204,7 @@ export const ChannelController = ({
         </Tooltip>
         <Box sx={sx.headerActions}>
           <ChannelOptions
+            channelName={name}
             color={color}
             defaultColor={defaultColor}
             slider={slider}
@@ -204,7 +220,8 @@ export const ChannelController = ({
             handleSliderChange={handleSliderChange}
           />
           <Tooltip
-            title={t('channelSettings.removeChannel')}
+            helpTitle={channelHelpTitle(t('channelSettings.removeChannel'))}
+            title={t('settingsHelp.controls.channelRemove')}
             arrow
           >
             <IconButton
@@ -221,6 +238,7 @@ export const ChannelController = ({
       </Box>
       <Box sx={sx.sliderRow}>
         <ChannelRangeSlider
+          channelName={name}
           color={color}
           slider={slider}
           domain={domain}
@@ -239,11 +257,8 @@ export const ChannelController = ({
           sx={sx.sliderRowIcons}
         >
           <Tooltip
-            title={t(
-              sliderRangeMode === 'expanded'
-                ? 'channelSettings.sliderRangeModeExpanded'
-                : 'channelSettings.sliderRangeModeContract'
-            )}
+            helpTitle={channelHelpTitle(t('channelSettings.sliderRangeSectionTitle'))}
+            title={t('settingsHelp.controls.channelRange')}
             arrow
           >
             <IconButton
@@ -272,7 +287,8 @@ export const ChannelController = ({
             </IconButton>
           </Tooltip>
           <Tooltip
-            title={t('channelSettings.resetSlider')}
+            helpTitle={channelHelpTitle(t('channelSettings.resetSlider'))}
+            title={t('settingsHelp.controls.channelReset')}
             arrow
           >
             <span>
@@ -395,9 +411,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderRadius: '6px',
     backgroundColor: theme.palette.background.paper,
     overflow: 'hidden',
-    '& > span': {
-      display: 'flex'
-    },
     '& .MuiIconButton-root': {
       borderRadius: 0,
       padding: '2.5px 5px',

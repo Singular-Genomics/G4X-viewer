@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../../shared/components/SettingsHelp';
 import { Box, CircularProgress, MenuItem, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GxSelect } from '../../../../shared/components/GxSelect';
@@ -26,64 +27,74 @@ export const SegmentationSelectors = () => {
   return (
     <Box sx={sx.wrapper}>
       {showSegmentationSelector && (
-        <Box sx={sx.row}>
-          <Typography sx={sx.label}>{t('segmentationSettings.segmentationSelectLabel')}</Typography>
-          <Box sx={sx.selectWrapper}>
-            <GxSelect
-              sx={sx.select}
-              inputProps={{ 'aria-label': t('segmentationSettings.segmentationSelectLabel') }}
-              value={selectedSegmentationLabel}
-              onChange={(e) => handleSegmentationChange(e.target.value as string)}
-              disabled={isLoading}
-              fullWidth
-            >
-              {availableSegmentations.map((seg) => (
-                <MenuItem
-                  key={seg.label}
-                  value={seg.label}
-                >
-                  {seg.label}
-                </MenuItem>
-              ))}
-            </GxSelect>
-            {isLoading && (
-              <CircularProgress
-                size={16}
-                sx={sx.spinner}
-              />
-            )}
+        <SettingsTooltip
+          title={t('settingsHelp.controls.segmentationSource')}
+          helpTitle={t('segmentationSettings.segmentationSelectLabel')}
+        >
+          <Box sx={sx.row}>
+            <Typography sx={sx.label}>{t('segmentationSettings.segmentationSelectLabel')}</Typography>
+            <Box sx={sx.selectWrapper}>
+              <GxSelect
+                sx={sx.select}
+                inputProps={{ 'aria-label': t('segmentationSettings.segmentationSelectLabel') }}
+                value={selectedSegmentationLabel}
+                onChange={(e) => handleSegmentationChange(e.target.value as string)}
+                disabled={isLoading}
+                fullWidth
+              >
+                {availableSegmentations.map((seg) => (
+                  <MenuItem
+                    key={seg.label}
+                    value={seg.label}
+                  >
+                    {seg.label}
+                  </MenuItem>
+                ))}
+              </GxSelect>
+              {isLoading && (
+                <CircularProgress
+                  size={16}
+                  sx={sx.spinner}
+                />
+              )}
+            </Box>
           </Box>
-        </Box>
+        </SettingsTooltip>
       )}
       {showClusterLabelSelector && (
-        <Box sx={sx.row}>
-          <Typography sx={sx.label}>{t('segmentationSettings.clusterLabelSelectLabel')}</Typography>
-          <Box sx={sx.selectWrapper}>
-            <GxSelect
-              sx={sx.select}
-              inputProps={{ 'aria-label': t('segmentationSettings.clusterLabelSelectLabel') }}
-              value={selectedClusterLabelKey}
-              onChange={(e) => handleClusterLabelChange(e.target.value as string)}
-              disabled={isLoading}
-              fullWidth
-            >
-              {availableClusterLabels.map((label) => (
-                <MenuItem
-                  key={label.key}
-                  value={label.key}
-                >
-                  {label.displayName}
-                </MenuItem>
-              ))}
-            </GxSelect>
-            {isLoading && (
-              <CircularProgress
-                size={16}
-                sx={sx.spinner}
-              />
-            )}
+        <SettingsTooltip
+          title={t('settingsHelp.controls.clusterSource')}
+          helpTitle={t('segmentationSettings.clusterLabelSelectLabel')}
+        >
+          <Box sx={sx.row}>
+            <Typography sx={sx.label}>{t('segmentationSettings.clusterLabelSelectLabel')}</Typography>
+            <Box sx={sx.selectWrapper}>
+              <GxSelect
+                sx={sx.select}
+                inputProps={{ 'aria-label': t('segmentationSettings.clusterLabelSelectLabel') }}
+                value={selectedClusterLabelKey}
+                onChange={(e) => handleClusterLabelChange(e.target.value as string)}
+                disabled={isLoading}
+                fullWidth
+              >
+                {availableClusterLabels.map((label) => (
+                  <MenuItem
+                    key={label.key}
+                    value={label.key}
+                  >
+                    {label.displayName}
+                  </MenuItem>
+                ))}
+              </GxSelect>
+              {isLoading && (
+                <CircularProgress
+                  size={16}
+                  sx={sx.spinner}
+                />
+              )}
+            </Box>
           </Box>
-        </Box>
+        </SettingsTooltip>
       )}
     </Box>
   );

@@ -1,3 +1,4 @@
+import { SettingsTooltip as Tooltip } from '../../../../../shared/components/SettingsHelp';
 import {
   ClickAwayListener,
   // Divider,
@@ -7,7 +8,6 @@ import {
   Popper,
   SvgIcon,
   Theme,
-  Tooltip,
   alpha,
   useTheme
 } from '@mui/material';
@@ -19,7 +19,13 @@ import { ColorHsv } from '../../../../../shared/components/GxColorPicker/GxColor
 import { HsvToRgb, RgbToHsv } from '../../../../../shared/components/GxColorPicker/GxColorPicker.helpers';
 // import { SliderThreshold } from './SliderRange/SliderThreshold';
 
-export const ChannelOptions = ({ color, defaultColor, handleColorSelect, disabled }: ChannelOptionsProps) => {
+export const ChannelOptions = ({
+  channelName,
+  color,
+  defaultColor,
+  handleColorSelect,
+  disabled
+}: ChannelOptionsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const sx = styles(theme);
@@ -46,7 +52,8 @@ export const ChannelOptions = ({ color, defaultColor, handleColorSelect, disable
   return (
     <>
       <Tooltip
-        title={t('channelSettings.channelOptionsTooltip')}
+        title={t('settingsHelp.controls.channelColor')}
+        helpTitle={channelName}
         arrow
       >
         <IconButton

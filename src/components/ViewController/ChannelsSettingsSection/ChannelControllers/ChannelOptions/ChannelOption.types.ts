@@ -1,4 +1,5 @@
 export type ChannelOptionsProps = {
+  channelName?: string;
   color: [number, number, number];
   defaultColor: [number, number, number];
   slider: [number, number];

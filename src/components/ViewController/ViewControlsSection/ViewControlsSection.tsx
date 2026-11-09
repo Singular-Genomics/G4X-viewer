@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../../../shared/components/SettingsHelp';
 import { getViewportToggleStyles } from '../../../shared/components/viewportToggle.styles';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { Box, ToggleButton, Typography } from '@mui/material';
@@ -34,25 +35,40 @@ export const ViewControlsSection = () => {
       <Box sx={sx.viewportItemsSection}>
         <Typography sx={sx.subsectionTitle}>{t('viewSettings.viewportItems')}</Typography>
         <Box sx={sx.viewportToggles}>
-          <OverviewToggle />
-          <ToggleButton
-            value="tools"
-            selected={areToolsVisible}
-            onChange={handleToggleTools}
-            color="primary"
-            sx={(theme) => getViewportToggleStyles(theme)}
+          <SettingsTooltip
+            title={t('settingsHelp.controls.overview')}
+            helpTitle={t('channelSettings.overview')}
           >
-            {t('viewSettings.tools')}
-          </ToggleButton>
-          <ToggleButton
-            value="status"
-            selected={isStatusVisible}
-            onChange={() => useViewerStore.setState({ isStatusVisible: !isStatusVisible })}
-            color="primary"
-            sx={(theme) => getViewportToggleStyles(theme)}
+            <OverviewToggle />
+          </SettingsTooltip>
+          <SettingsTooltip
+            title={t('settingsHelp.controls.tools')}
+            helpTitle={t('viewSettings.tools')}
           >
-            {t('viewSettings.status')}
-          </ToggleButton>
+            <ToggleButton
+              value="tools"
+              selected={areToolsVisible}
+              onChange={handleToggleTools}
+              color="primary"
+              sx={(theme) => getViewportToggleStyles(theme)}
+            >
+              {t('viewSettings.tools')}
+            </ToggleButton>
+          </SettingsTooltip>
+          <SettingsTooltip
+            title={t('settingsHelp.controls.status')}
+            helpTitle={t('viewSettings.status')}
+          >
+            <ToggleButton
+              value="status"
+              selected={isStatusVisible}
+              onChange={() => useViewerStore.setState({ isStatusVisible: !isStatusVisible })}
+              color="primary"
+              sx={(theme) => getViewportToggleStyles(theme)}
+            >
+              {t('viewSettings.status')}
+            </ToggleButton>
+          </SettingsTooltip>
         </Box>
       </Box>
     </Box>

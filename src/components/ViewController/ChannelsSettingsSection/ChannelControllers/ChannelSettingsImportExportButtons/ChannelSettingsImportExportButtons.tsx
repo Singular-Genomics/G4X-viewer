@@ -1,5 +1,6 @@
+import { SettingsTooltip as Tooltip } from '../../../../../shared/components/SettingsHelp';
 import { getConfigurationImportExportStyles } from '../../../../../shared/components/configurationImportExport.styles';
-import { Box, Button, Tooltip, useTheme } from '@mui/material';
+import { Box, Button, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import UploadIcon from '@mui/icons-material/Upload';
 import { useTranslation } from 'react-i18next';

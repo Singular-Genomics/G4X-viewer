@@ -1,3 +1,4 @@
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
 import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
 import {
   Box,
@@ -11,8 +12,7 @@ import {
   DialogTitle,
   Typography,
   Button,
-  CircularProgress,
-  Tooltip
+  CircularProgress
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -106,7 +106,8 @@ export const SummaryButton = () => {
   return (
     <Box>
       <Tooltip
-        title={t('general.summaryReportTooltip')}
+        title={t('settingsHelp.controls.summary')}
+        helpTitle={t('general.summary')}
         arrow
       >
         <Button

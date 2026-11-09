@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../SettingsHelp';
 import { Box, FormControlLabel, SxProps, Theme, alpha, useTheme } from '@mui/material';
 import {
   DataGrid,
@@ -12,6 +13,10 @@ import { useMemo, useState } from 'react';
 import { GxFilterTableProps, GxFilterTableRowPropBase } from './GxFilterTable.types';
 import { GxCheckbox } from '../GxCheckbox';
 import { useTranslation } from 'react-i18next';
+
+function GridTooltip(props: GridSlotProps['baseTooltip']) {
+  return <SettingsTooltip {...props} />;
+}
 
 function GridCheckbox({ slotProps, ...rest }: GridSlotProps['baseCheckbox']) {
   return (
@@ -70,47 +75,52 @@ export const GxFilterTable = <T extends GxFilterTableRowPropBase>({
     <>
       <Box sx={sx.tableContainer}>
         <Box sx={sx.gridWrapper}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            density="compact"
-            disableColumnMenu
-            disableColumnResize
-            pageSizeOptions={[100]}
-            showToolbar
-            disableColumnSelector
-            rowSelectionModel={{ ids: activeFilters, type: 'include' }}
-            onRowSelectionModelChange={(newSelection) => {
-              onSetFilter(new Set(newSelection.ids as Set<string>));
-            }}
-            disableRowSelectionExcludeModel
-            keepNonExistentRowsSelected
-            checkboxSelection
-            slots={{
-              baseCheckbox: GridCheckbox,
-              toolbar: FilterTableToolbar
-            }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true
-              }
-            }}
-            hideFooter
-            sx={sx.filtersTable}
-          />
-        </Box>
-        <FormControlLabel
-          label={t('general.filterShowActiveOnly')}
-          labelPlacement="end"
-          sx={sx.activeFiltersSwitchWrapper}
-          control={
-            <GxCheckbox
-              onChange={() => setActiveOnly((prev) => !prev)}
-              checked={activeOnly}
-              disableTouchRipple
+          <SettingsTooltip title={t('settingsHelp.controls.filterTable')}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              density="compact"
+              disableColumnMenu
+              disableColumnResize
+              pageSizeOptions={[100]}
+              showToolbar
+              disableColumnSelector
+              rowSelectionModel={{ ids: activeFilters, type: 'include' }}
+              onRowSelectionModelChange={(newSelection) => {
+                onSetFilter(new Set(newSelection.ids as Set<string>));
+              }}
+              disableRowSelectionExcludeModel
+              keepNonExistentRowsSelected
+              checkboxSelection
+              slots={{
+                baseCheckbox: GridCheckbox,
+                baseTooltip: GridTooltip,
+                toolbar: FilterTableToolbar
+              }}
+              slotProps={{
+                toolbar: {
+                  showQuickFilter: true
+                }
+              }}
+              hideFooter
+              sx={sx.filtersTable}
             />
-          }
-        />
+          </SettingsTooltip>
+        </Box>
+        <SettingsTooltip title={t('settingsHelp.controls.activeOnly')}>
+          <FormControlLabel
+            label={t('general.filterShowActiveOnly')}
+            labelPlacement="end"
+            sx={sx.activeFiltersSwitchWrapper}
+            control={
+              <GxCheckbox
+                onChange={() => setActiveOnly((prev) => !prev)}
+                checked={activeOnly}
+                disableTouchRipple
+              />
+            }
+          />
+        </SettingsTooltip>
       </Box>
     </>
   );

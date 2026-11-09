@@ -1,4 +1,5 @@
-import { Box, Theme, Tooltip, Typography, tooltipClasses } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../shared/components/SettingsHelp';
+import { Box, Theme, Typography, tooltipClasses } from '@mui/material';
 import { PointSizeSlider } from './PointSizeSlider';
 import { PointFilter } from './PointsFilter/PointFilter';
 import WarningIcon from '@mui/icons-material/Warning';

@@ -1,8 +1,9 @@
+import { SettingsTooltip as Tooltip } from '../../../../../../shared/components/SettingsHelp';
 import {
   getSliderHandleStyles,
   getSliderValueFieldStyles
 } from '../../../../../../shared/components/sliderControls.styles';
-import { Box, Input, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { Box, Input, SxProps, Theme, useTheme } from '@mui/material';
 import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
@@ -14,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 const DEBOUNCE_TIME_MS = 300;
 
 export const ChannelRangeSlider = ({
+  channelName,
   color,
   slider,
   domain,
@@ -83,6 +85,7 @@ export const ChannelRangeSlider = ({
 
   return (
     <Tooltip
+      helpTitle={channelName}
       title={t('tooltips.channelSettings.minMaxDisplay')}
       arrow
       placement="top"

@@ -1,4 +1,5 @@
-import { alpha, Box, ClickAwayListener, IconButton, Popover, SxProps, Theme, Tooltip, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../SettingsHelp';
+import { alpha, Box, ClickAwayListener, IconButton, Popover, SxProps, Theme, useTheme } from '@mui/material';
 import { GxFilterTableColorCellProps } from './GxFilterTableColorCell.types';
 import { useRef, useState } from 'react';
 import LensIcon from '@mui/icons-material/Lens';

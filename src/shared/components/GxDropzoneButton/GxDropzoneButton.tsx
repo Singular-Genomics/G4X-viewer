@@ -1,15 +1,5 @@
-import {
-  Box,
-  Button,
-  TextField,
-  Theme,
-  alpha,
-  useTheme,
-  IconButton,
-  Typography,
-  SxProps,
-  Tooltip
-} from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../SettingsHelp';
+import { Box, Button, TextField, Theme, alpha, useTheme, IconButton, Typography, SxProps } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { GxDropzoneButtonProps } from './GxDropzoneButton.types';
 import { useTranslation } from 'react-i18next';

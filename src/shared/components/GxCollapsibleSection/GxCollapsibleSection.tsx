@@ -1,3 +1,4 @@
+import { SettingsTooltip } from '../SettingsHelp';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { GxCollapsibleSectionProps } from './GxCollapsibleSection.types';
 import { Box, Button, Collapse, IconButton, SxProps, Theme, Typography, lighten } from '@mui/material';
@@ -5,6 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const GxCollapsibleSection = ({
   sectionTitle,
+  helpText,
   sectionIcon,
   children,
   defultState = 'collapsed',
@@ -45,65 +47,70 @@ export const GxCollapsibleSection = ({
         } as SxProps
       }
     >
-      <Box
-        sx={
-          {
-            ...sx.sectionHeader,
-            ...customStyles?.headerContainer
-          } as SxProps
-        }
-        aria-disabled={disabled || undefined}
+      <SettingsTooltip
+        title={helpText ?? ''}
+        helpTitle={sectionTitle}
       >
-        <Button
-          sx={sx.sectionExpandButton}
-          disabled={disabled}
-          onClick={handleIconClick}
-          aria-expanded={expanded}
-          aria-controls={contentId}
+        <Box
+          sx={
+            {
+              ...sx.sectionHeader,
+              ...customStyles?.headerContainer
+            } as SxProps
+          }
+          aria-disabled={disabled || undefined}
         >
-          {sectionIcon && (
-            <Box
-              component="span"
-              aria-hidden="true"
-              sx={sx.sectionIcon}
-            >
-              {sectionIcon}
-            </Box>
-          )}
-          <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>{sectionTitle}</Typography>
-          {!headerAction && (
-            <ExpandMoreIcon
-              style={{
-                transform: `rotate(${expanded ? '180deg' : '0deg'})`,
-                transition: 'transform 300ms ease-in-out'
-              }}
-              sx={sx.collapseIcon}
-              fontSize="medium"
-            />
-          )}
-        </Button>
-        {headerAction && (
-          <>
-            <Box sx={sx.headerAction}>{headerAction}</Box>
-            <IconButton
-              disabled={disabled}
-              onClick={handleIconClick}
-              aria-label={sectionTitle}
-              aria-expanded={expanded}
-              aria-controls={contentId}
-              sx={sx.expandIconButton}
-            >
+          <Button
+            sx={sx.sectionExpandButton}
+            disabled={disabled}
+            onClick={handleIconClick}
+            aria-expanded={expanded}
+            aria-controls={contentId}
+          >
+            {sectionIcon && (
+              <Box
+                component="span"
+                aria-hidden="true"
+                sx={sx.sectionIcon}
+              >
+                {sectionIcon}
+              </Box>
+            )}
+            <Typography sx={{ ...sx.sectionTitle, ...customStyles?.titleText } as any}>{sectionTitle}</Typography>
+            {!headerAction && (
               <ExpandMoreIcon
                 style={{
                   transform: `rotate(${expanded ? '180deg' : '0deg'})`,
                   transition: 'transform 300ms ease-in-out'
                 }}
+                sx={sx.collapseIcon}
                 fontSize="medium"
               />
-            </IconButton>
-          </>
-        )}
-      </Box>
+            )}
+          </Button>
+          {headerAction && (
+            <>
+              <Box sx={sx.headerAction}>{headerAction}</Box>
+              <IconButton
+                disabled={disabled}
+                onClick={handleIconClick}
+                aria-label={sectionTitle}
+                aria-expanded={expanded}
+                aria-controls={contentId}
+                sx={sx.expandIconButton}
+              >
+                <ExpandMoreIcon
+                  style={{
+                    transform: `rotate(${expanded ? '180deg' : '0deg'})`,
+                    transition: 'transform 300ms ease-in-out'
+                  }}
+                  fontSize="medium"
+                />
+              </IconButton>
+            </>
+          )}
+        </Box>
+      </SettingsTooltip>
       <Collapse
         onEntered={handleExpandScroll}
         in={expanded}

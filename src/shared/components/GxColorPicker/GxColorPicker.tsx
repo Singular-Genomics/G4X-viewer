@@ -1,3 +1,4 @@
+import { SettingsTooltip as Tooltip } from '../SettingsHelp';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ColorHex, GxColorPickerProps } from './GxColorPicker.types';
 import {
@@ -10,7 +11,7 @@ import {
   isValidHex
 } from './GxColorPicker.helpers';
 import { useInteractiveColorPicker } from './GxColorPicker.hooks';
-import { alpha, Box, Button, IconButton, Slider, Theme, Tooltip, useTheme } from '@mui/material';
+import { alpha, Box, Button, IconButton, Slider, Theme, useTheme } from '@mui/material';
 import LensIcon from '@mui/icons-material/Lens';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';

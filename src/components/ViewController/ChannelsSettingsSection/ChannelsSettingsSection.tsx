@@ -1,4 +1,5 @@
-import { Box, SvgIcon, Tooltip, Typography } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../shared/components/SettingsHelp';
+import { Box, SvgIcon, Typography } from '@mui/material';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { LensToggle } from './LensToggle';
 import { ChannelControllers } from './ChannelControllers';
@@ -49,9 +50,14 @@ export const ChannelsSettingsSection = ({ isRgb = false }: { isRgb?: boolean }) 
               >
                 <Typography sx={sx.controlsTitle}>{t('channelSettings.colormapSelect')}</Typography>
               </Tooltip>
-              <Box sx={sx.colorModeSelector}>
-                <ColormapSelector />
-              </Box>
+              <Tooltip
+                title={t('tooltips.channelSettings.proteomicsColormap')}
+                helpTitle={t('channelSettings.colormapSelect')}
+              >
+                <Box sx={sx.colorModeSelector}>
+                  <ColormapSelector />
+                </Box>
+              </Tooltip>
             </Box>
             <Box sx={sx.colorModeRow}>
               <Typography sx={sx.controlsTitle}>{t('channelSettings.configuration')}</Typography>

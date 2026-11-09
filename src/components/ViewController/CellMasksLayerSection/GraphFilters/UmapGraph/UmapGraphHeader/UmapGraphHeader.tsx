@@ -1,4 +1,5 @@
-import { Box, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../../../../shared/components/SettingsHelp';
+import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { GxInput } from '../../../../../../shared/components/GxInput';
 import { useEffect, useMemo, useState } from 'react';
 import { InputErrors } from './UmapGraphHeader.types';

@@ -1,4 +1,5 @@
-import { Tooltip, Typography } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../SettingsHelp';
+import { Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { GxOverflowTooltipProps } from './GxOverflowTooltip.types';
 
