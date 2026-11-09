@@ -239,7 +239,7 @@
     "proteinNamesExtractionError": "Failed to extract protein names from metadata",
     "segmentationLoadError": "Cell segmentation data could not be loaded",
     "zarrInputLabel": "Zarr Store URL",
-    "loadedZarrStore": "Loaded Zarr Store",
+    "loadedZarrStore": "Loaded",
     "zarrInputPlaceholder": "Enter URL to .zarr file",
     "zarrInvalidFile": "Invalid URL. Please enter a URL that ends in .zarr",
     "zarrNotFound": "Zarr store not found or inaccessible. Check the URL and try again.",
