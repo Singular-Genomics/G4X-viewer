@@ -7,10 +7,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
 import { GxModal } from '../../../../shared/components/GxModal';
 import { useTranslation } from 'react-i18next';
+import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 
 export const AdvancedViewOptions = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
   const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
   );
@@ -36,6 +38,7 @@ export const AdvancedViewOptions = () => {
       <Box sx={sx.optionsToggleWrapper}>
         <FormControlLabel
           label={t('transcriptsSettings.subsamplingControlLabel')}
+          disabled={!transcriptConfigLoaded}
           control={
             <GxSwitch
               checked={overrideLayers}
@@ -43,7 +46,7 @@ export const AdvancedViewOptions = () => {
             />
           }
         />
-        <MaxLayerSlider disabled={!overrideLayers} />
+        <MaxLayerSlider disabled={!overrideLayers || !transcriptConfigLoaded} />
       </Box>
       <GxModal
         isOpen={isModalOpen}
