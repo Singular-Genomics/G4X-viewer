@@ -1,9 +1,9 @@
 import { Theme } from '@mui/material';
-import { getControlButtonStyles } from './controlButton.styles';
+import { getToggleButtonStyles } from './toggleButton.styles';
 import { getSliderHandleStyles } from './sliderControls.styles';
 
 export const getAppearanceControlStyles = (theme: Theme) => ({
-  toggleButton: { ...getControlButtonStyles(theme) },
+  toggleButton: { ...getToggleButtonStyles(theme), width: 114 },
   label: {
     fontSize: '0.75rem',
     flexShrink: 0
@@ -21,15 +21,15 @@ export const getAppearanceControlStyles = (theme: Theme) => ({
     flexShrink: 0,
     borderRadius: '6px',
     backgroundColor: theme.palette.gx.neutrals[25],
-    color: theme.palette.getContrastText(theme.palette.gx.neutrals[25]),
+    color: theme.palette.text.primary,
     '& .MuiInputBase-input': {
       textAlign: 'center',
       padding: '3px 6px',
       fontSize: '14px'
     },
     '&.Mui-focused': {
-      outline: 'none',
-      boxShadow: `inset 0 -2px 0 ${theme.palette.primary.main}`
+      outline: 'none'
+      // boxShadow: `inset 0 -2px 0 ${theme.palette.primary.main}`
     }
   }
 });

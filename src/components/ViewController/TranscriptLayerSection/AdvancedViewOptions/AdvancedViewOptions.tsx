@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { Box, FormControlLabel, Typography } from '@mui/material';
-import { GxSwitch } from '../../../../shared/components/GxSwitch';
+import { Box, ToggleButton, Typography } from '@mui/material';
+import { getToggleButtonStyles } from '../../../../shared/components/toggleButton.styles';
 import { MaxLayerSlider } from './MaxLayerSlider';
 import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -34,17 +34,14 @@ export const AdvancedViewOptions = () => {
   return (
     <>
       <Box sx={sx.optionsToggleWrapper}>
-        <FormControlLabel
-          label={t('transcriptsSettings.subsamplingControlLabel')}
-          labelPlacement="start"
-          sx={sx.controlLabel}
-          control={
-            <GxSwitch
-              checked={overrideLayers}
-              onChange={toggleLayerControls}
-            />
-          }
-        />
+        <ToggleButton
+          value="minimum-transcript-density"
+          selected={overrideLayers}
+          onChange={toggleLayerControls}
+          sx={getToggleButtonStyles}
+        >
+          {t('transcriptsSettings.subsamplingControlLabel')}
+        </ToggleButton>
         <MaxLayerSlider disabled={!overrideLayers} />
       </Box>
       <GxModal
@@ -77,19 +74,6 @@ const sx = {
     flexDirection: 'column',
     gap: '8px',
     paddingLeft: '8px'
-  },
-  controlLabel: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '8px',
-    margin: 0,
-    '& .MuiFormControlLabel-label': {
-      fontSize: '1rem',
-      fontWeight: 700
-    },
-    '& .MuiSwitch-root': {
-      flexShrink: 0
-    }
   },
   modalContentText: {
     fontWeight: 'bold',

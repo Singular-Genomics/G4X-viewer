@@ -52,8 +52,8 @@ export const getSliderValueFieldStyles = (theme: Theme): SxProps<Theme> => ({
 export const getSliderHandleStyles = (theme: Theme): SxProps<Theme> => ({
   marginTop: 0,
   '& .MuiSlider-thumb': {
-    height: '16px',
-    width: '4px',
+    height: '18px',
+    width: '6px',
     borderRadius: '3px'
   },
   '& .MuiSlider-thumb:hover': {

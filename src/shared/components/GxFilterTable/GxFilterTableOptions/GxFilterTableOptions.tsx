@@ -1,5 +1,5 @@
 import { SettingsTooltip } from '../../SettingsHelp';
-import { getControlButtonStyles } from '../../controlButton.styles';
+import { getToggleButtonStyles } from '../../toggleButton.styles';
 import { Box, Button, ToggleButton, Theme, useTheme } from '@mui/material';
 import { GxFilterTableOptionsProps } from './GxFilterTableOptions.types';
 import { useTranslation } from 'react-i18next';
@@ -67,11 +67,15 @@ const styles = (theme: Theme) => ({
     gap: '8px',
     marginBottom: '8px',
     '& button': {
-      ...getControlButtonStyles(theme),
+      ...getToggleButtonStyles(theme),
       minWidth: 0,
       padding: '6px 4px',
       fontSize: '0.75rem',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      '&.Mui-disabled': {
+        ...getToggleButtonStyles(theme)['&.Mui-disabled'],
+        color: theme.palette.action.disabled
+      }
     }
   }
 });

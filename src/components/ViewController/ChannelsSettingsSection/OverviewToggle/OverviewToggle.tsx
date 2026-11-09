@@ -4,7 +4,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { usePolygonDrawingStore } from '../../../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
-import { getViewportToggleStyles } from '../../../../shared/components/viewportToggle.styles';
+import { getToggleButtonStyles } from '../../../../shared/components/toggleButton.styles';
 import { useTranslation } from 'react-i18next';
 
 const OverviewHiddenWarning = () => {
@@ -23,7 +23,7 @@ const OverviewHiddenWarning = () => {
 };
 
 export const OverviewToggle = () => {
-  const controls = getViewportToggleStyles(useTheme());
+  const controls = getToggleButtonStyles(useTheme());
   const { t } = useTranslation();
   const [isOverviewOn, toggleOverview] = useViewerStore(
     useShallow((store) => [store.isOverviewOn, store.toggleOverview])

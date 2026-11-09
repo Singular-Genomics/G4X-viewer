@@ -63,7 +63,7 @@
     "closeShareSettings": "Close share settings",
     "cloudUpload": "Cloud Upload",
     "clusterEntry": "Cluster {{index}}",
-    "colormapConfig": "Colormap Configuration",
+    "colormapConfig": "Colormap Config",
     "colormapImportSuccess": "Custom color map imported!",
     "colormapImportFailure": "Failed to load the custom colormap",
     "colormapExportFailure": "Failed to export the custom colormap",

@@ -143,7 +143,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       backgroundColor: theme.palette.background.paper,
       cursor: 'pointer',
       '&.Mui-selected': {
-        backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.4)
+        backgroundColor: alpha(theme.palette.primary.main, 0.2)
       }
     },
     '& .MuiDataGrid-container--top [role=row]': {
@@ -156,9 +156,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiDataGrid-footerContainer': {
       background: theme.palette.background.paper
-    },
-    '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiCheckbox-root': {
-      color: theme.palette.gx.accent.greenBlue
     }
   },
   gridWrapper: {
@@ -168,6 +165,10 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     maxHeight: '480px'
   },
   filtersTable: {
+    '& .MuiDataGrid-cellCheckbox:focus, & .MuiDataGrid-cellCheckbox:focus-within, & .MuiDataGrid-columnHeaderCheckbox:focus, & .MuiDataGrid-columnHeaderCheckbox:focus-within':
+      {
+        outline: 'none'
+      },
     '& .MuiDataGrid-cell': {
       display: 'flex',
       alignItems: 'center',

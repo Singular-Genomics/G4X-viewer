@@ -150,5 +150,15 @@ const styles = (theme: Theme): Record<string, SxProps<Theme>> => ({
     padding: '0 2px'
   },
   textField: getSliderValueFieldStyles(theme),
-  rangeSlider: getSliderHandleStyles(theme)
+  rangeSlider: {
+    ...getSliderHandleStyles(theme),
+    '& .MuiSlider-thumb': {
+      height: '15px',
+      width: '4px',
+      borderRadius: '3px'
+    }
+    // '& .MuiSlider-thumb:hover': {
+    //   boxShadow: 'none'
+    // }
+  }
 });

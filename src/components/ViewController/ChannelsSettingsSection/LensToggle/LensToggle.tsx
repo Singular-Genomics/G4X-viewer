@@ -1,7 +1,7 @@
 import { SettingsTooltip as Tooltip } from '../../../../shared/components/SettingsHelp';
 import { Box, MenuItem, Theme, ToggleButton, Typography, useTheme } from '@mui/material';
 import { GxSelect } from '../../../../shared/components/GxSelect/GxSelect';
-import { getControlButtonStyles } from '../../../../shared/components/controlButton.styles';
+import { getToggleButtonStyles } from '../../../../shared/components/toggleButton.styles';
 import { useChannelsStore } from '../../../../stores/ChannelsStore/ChannelsStore';
 import { useViewerStore } from '../../../../stores/ViewerStore/ViewerStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -93,7 +93,7 @@ const styles = (theme: Theme) => ({
     display: 'inline-flex',
     flexShrink: 0
   },
-  toggleButton: { ...getControlButtonStyles(theme) },
+  toggleButton: { ...getToggleButtonStyles(theme), width: 114 },
   selector: {
     flex: 1,
     minWidth: 0,

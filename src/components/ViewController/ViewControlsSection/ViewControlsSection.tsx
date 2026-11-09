@@ -1,5 +1,5 @@
 import { SettingsTooltip } from '../../../shared/components/SettingsHelp';
-import { getViewportToggleStyles } from '../../../shared/components/viewportToggle.styles';
+import { getToggleButtonStyles } from '../../../shared/components/toggleButton.styles';
 import { useViewerStore } from '../../../stores/ViewerStore';
 import { Box, ToggleButton, Typography } from '@mui/material';
 import { GlobalSelectionSliders } from './GlobalSelectionSliders';
@@ -50,7 +50,7 @@ export const ViewControlsSection = () => {
               selected={areToolsVisible}
               onChange={handleToggleTools}
               color="primary"
-              sx={(theme) => getViewportToggleStyles(theme)}
+              sx={(theme) => getToggleButtonStyles(theme)}
             >
               {t('viewSettings.tools')}
             </ToggleButton>
@@ -64,7 +64,7 @@ export const ViewControlsSection = () => {
               selected={isStatusVisible}
               onChange={() => useViewerStore.setState({ isStatusVisible: !isStatusVisible })}
               color="primary"
-              sx={(theme) => getViewportToggleStyles(theme)}
+              sx={(theme) => getToggleButtonStyles(theme)}
             >
               {t('viewSettings.status')}
             </ToggleButton>
