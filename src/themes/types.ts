@@ -60,3 +60,52 @@ export interface GxLayerToggleColors {
   backgroundOn: string;
   backgroundOff: string;
 }
+
+export interface GxNavBarColors {
+  background: string;
+  text: string;
+  secondaryText: string;
+  accent: string;
+  selectedBackground: string;
+  hoverBackground: string;
+  divider: string;
+}
+
+export interface GxSettingsPanelColors {
+  background: string;
+  surface: string;
+  text: string;
+  secondaryText: string;
+  sections: {
+    background: string;
+    text: string;
+    divider: string;
+  };
+  layerToggle: GxLayerToggleColors;
+  toggleButton: {
+    background: string;
+    text: string;
+    activeBackground: string;
+    activeText: string;
+    hoverBackground: string;
+    activeHoverBackground: string;
+  };
+}
+
+export interface GxViewportColors {
+  background: string;
+  tools: {
+    background: string;
+    activeBackground: string;
+    text: string;
+  };
+  tooltip: {
+    background: string;
+    text: string;
+    border: string;
+  };
+  status: {
+    background: string;
+    text: string;
+  };
+}

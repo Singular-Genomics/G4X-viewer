@@ -30,7 +30,8 @@ const sx = {
     '&.Mui-checked': {
       transform: 'translateX(22px)',
       '& + .MuiSwitch-track': {
-        backgroundColor: (theme: Theme) => (theme.vars?.palette.layerToggle ?? theme.palette.layerToggle).backgroundOn,
+        backgroundColor: (theme: Theme) =>
+          (theme.vars?.palette.settingsPanel.layerToggle ?? theme.palette.settingsPanel.layerToggle).backgroundOn,
         opacity: 1
       }
     },
@@ -46,12 +47,14 @@ const sx = {
   '& .MuiSwitch-thumb': {
     width: 14,
     height: 14,
-    backgroundColor: (theme: Theme) => (theme.vars?.palette.layerToggle ?? theme.palette.layerToggle).thumb,
+    backgroundColor: (theme: Theme) =>
+      (theme.vars?.palette.settingsPanel.layerToggle ?? theme.palette.settingsPanel.layerToggle).thumb,
     boxShadow: 'none'
   },
   '& .MuiSwitch-track': {
     borderRadius: '999px',
-    backgroundColor: (theme: Theme) => (theme.vars?.palette.layerToggle ?? theme.palette.layerToggle).backgroundOff,
+    backgroundColor: (theme: Theme) =>
+      (theme.vars?.palette.settingsPanel.layerToggle ?? theme.palette.settingsPanel.layerToggle).backgroundOff,
     opacity: 1
   },
   '@media (prefers-reduced-motion: reduce)': {

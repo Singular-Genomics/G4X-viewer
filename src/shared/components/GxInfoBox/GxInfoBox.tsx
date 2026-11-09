@@ -82,7 +82,7 @@ export const GxInfoBox = ({
 
 const styles = (theme: Theme): Record<string, SxProps> => ({
   container: {
-    backgroundColor: theme.palette.background.settingsPanel,
+    backgroundColor: theme.palette.viewport.status.background,
     borderRadius: '4px',
     overflow: 'visible',
     transition: 'all 300ms ease-in-out',
@@ -101,7 +101,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     width: '100%',
     padding: '8px 10px',
     borderRadius: '4px',
-    color: theme.palette.text.primary,
+    color: theme.palette.viewport.status.text,
     '&:hover': {
       backgroundColor: theme.palette.action.hover
     }
@@ -133,6 +133,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     padding: 2,
     borderTop: 1,
     borderColor: theme.palette.divider,
-    color: theme.palette.text.primary
+    color: theme.palette.viewport.status.text
   }
 });

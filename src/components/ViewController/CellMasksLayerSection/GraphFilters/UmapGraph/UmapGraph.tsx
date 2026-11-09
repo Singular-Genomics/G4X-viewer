@@ -87,7 +87,7 @@ export const UmapGraph = () => {
         ? [
             {
               line: {
-                color: theme.palette.text.primary,
+                color: theme.palette.settingsPanel.text,
                 width: 2,
                 dash: 'solid'
               },

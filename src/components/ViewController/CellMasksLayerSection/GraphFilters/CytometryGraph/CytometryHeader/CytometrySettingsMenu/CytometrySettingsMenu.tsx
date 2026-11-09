@@ -360,7 +360,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     height: '100%',
     width: 'min-fit',
     display: 'flex',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.settingsPanel.surface,
     marginLeft: '1px',
     padding: '8px'
   },
@@ -375,6 +375,6 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   helperText: {
     fontSize: '11px',
-    color: theme.palette.text.secondary
+    color: theme.palette.settingsPanel.secondaryText
   }
 });

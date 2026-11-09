@@ -29,7 +29,10 @@ export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onTogg
     <Box sx={sx.navigationContainer}>
       <Box sx={sx.leftSection}>
         <Box sx={sx.logoSection}>
-          <GxLogo size={36} />
+          <GxLogo
+            size={36}
+            color={theme.palette.navBar.text}
+          />
           <Box sx={sx.logoTextWrapper}>
             <Typography sx={sx.logoText}>{t('general.appTitle')}</Typography>
             <Typography
@@ -128,7 +131,7 @@ const styles = (theme: Theme) => ({
     right: 0,
     zIndex: 50,
     height: `${NAVIGATION_HEIGHT_MOBILE}px`,
-    background: theme.palette.background.topBar,
+    background: theme.palette.navBar.background,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -183,7 +186,7 @@ const styles = (theme: Theme) => ({
     position: 'relative'
   },
   logoText: {
-    color: theme.palette.text.primary,
+    color: theme.palette.navBar.text,
     fontWeight: 700,
     fontSize: '20px',
     lineHeight: '20px',
@@ -193,7 +196,7 @@ const styles = (theme: Theme) => ({
     opacity: 0.5,
     fontSize: '12px',
     lineHeight: '12px',
-    color: theme.palette.text.primary,
+    color: theme.palette.navBar.text,
     alignSelf: 'flex-end',
     background: 'none',
     border: 'none',
@@ -204,7 +207,7 @@ const styles = (theme: Theme) => ({
     textDecorationColor: 'transparent',
     transition: 'text-decoration-color 0.2s ease',
     '&:hover': {
-      textDecorationColor: theme.palette.text.primary
+      textDecorationColor: theme.palette.navBar.text
     }
   },
   tabsSection: {
@@ -222,10 +225,10 @@ const styles = (theme: Theme) => ({
   },
   viewerUiButton: {
     padding: '8px',
-    color: theme.palette.text.primary,
+    color: theme.palette.navBar.text,
     '&:hover': {
-      color: theme.palette.text.primary,
-      backgroundColor: alpha(theme.palette.text.primary, 0.1)
+      color: theme.palette.navBar.text,
+      backgroundColor: alpha(theme.palette.navBar.text, 0.1)
     }
   },
   viewerUiButtonPlaceholder: {
@@ -242,7 +245,7 @@ const styles = (theme: Theme) => ({
     }
   },
   tab: {
-    color: theme.palette.text.primary,
+    color: theme.palette.navBar.text,
     fontWeight: 600,
     fontSize: '15px',
     textTransform: 'capitalize',
@@ -252,15 +255,15 @@ const styles = (theme: Theme) => ({
     borderRadius: '6px',
     borderBottom: '2px solid transparent',
     '&.Mui-selected': {
-      color: theme.palette.text.primary,
-      background: theme.palette.action.selected,
+      color: theme.palette.navBar.text,
+      background: theme.palette.navBar.selectedBackground,
       backdropFilter: 'blur(15px)',
-      borderBottom: `2px solid ${theme.palette.gx.accent.purple}`,
-      boxShadow: `0 0 12px ${theme.palette.gx.accent.purple}50`
+      borderBottom: `2px solid ${theme.palette.navBar.accent}`,
+      boxShadow: `0 0 12px ${theme.palette.navBar.accent}50`
     },
     '&:hover:not(.Mui-selected)': {
-      color: theme.palette.text.primary,
-      background: theme.palette.action.hover,
+      color: theme.palette.navBar.text,
+      background: theme.palette.navBar.hoverBackground,
       backdropFilter: 'blur(12px)'
     }
   },
@@ -279,15 +282,15 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     padding: '5px 10px',
-    background: theme.palette.action.hover,
+    background: theme.palette.navBar.hoverBackground,
     borderRadius: '4px',
-    border: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.navBar.divider}`,
     cursor: 'pointer'
   },
   mobilePreviewText: {
     fontSize: '11px',
     fontWeight: 600,
-    color: theme.palette.text.primary,
+    color: theme.palette.navBar.text,
     lineHeight: 1
   }
 });

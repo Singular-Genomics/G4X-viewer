@@ -117,7 +117,7 @@ const styles = (theme: Theme) => ({
     overflow: 'hidden'
   },
   viewerWrapper: {
-    backgroundColor: theme.palette.background.viewport,
+    backgroundColor: theme.palette.viewport.background,
     width: '100%',
     flex: 1,
     minWidth: 0,
@@ -155,7 +155,7 @@ const styles = (theme: Theme) => ({
     textTransform: 'none'
   },
   infoText: {
-    color: theme.palette.getContrastText(theme.palette.background.viewport),
+    color: theme.palette.getContrastText(theme.palette.viewport.background),
     fontSize: '16px'
   }
 });

@@ -37,12 +37,12 @@ const sx = {
     cursor: 'pointer'
   },
   modeText: {
-    color: 'text.secondary',
+    color: 'navBar.secondaryText',
     fontSize: '1rem',
     fontWeight: 400,
     transition: 'color 150ms ease'
   },
   activeModeText: {
-    color: 'text.primary'
+    color: 'navBar.text'
   }
 };

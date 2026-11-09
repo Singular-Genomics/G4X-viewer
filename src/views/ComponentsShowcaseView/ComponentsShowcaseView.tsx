@@ -816,7 +816,7 @@ const styles = (theme: Theme) => ({
     border: `1px solid ${theme.palette.divider}`
   },
   sidebarPanel: {
-    background: theme.palette.background.settingsPanel,
+    background: theme.palette.settingsPanel.background,
     color: theme.palette.text.primary,
     borderRadius: '8px',
     padding: '16px',

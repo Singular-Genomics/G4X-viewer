@@ -108,12 +108,12 @@ export const ChannelOptions = ({
 
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
+    backgroundColor: alpha(theme.palette.settingsPanel.surface, 0.94),
     padding: '8px',
     width: '272px'
   },
   channelOptionsButton: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.settingsPanel.secondaryText,
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: 'unset'

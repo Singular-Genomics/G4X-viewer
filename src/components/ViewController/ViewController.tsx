@@ -202,7 +202,8 @@ const styles = (theme: Theme) => ({
   },
 
   viewControllerContentWrapper: {
-    backgroundColor: theme.palette.background.settingsPanel,
+    backgroundColor: theme.palette.settingsPanel.background,
+    color: theme.palette.settingsPanel.text,
 
     padding: '18px 18px 10px 18px',
     height: '100%',
@@ -256,13 +257,13 @@ const styles = (theme: Theme) => ({
       top: '12px',
       width: '8px',
       height: '70px',
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.settingsPanel.sections.background,
       borderTopLeftRadius: '8px',
       borderBottomLeftRadius: '8px',
       pointerEvents: 'none'
     },
     '&:hover::before': {
-      backgroundColor: lighten(theme.palette.background.paper, 0.1)
+      backgroundColor: lighten(theme.palette.settingsPanel.sections.background, 0.1)
     }
   }
 });

@@ -13,7 +13,7 @@ export const getConfigurationImportExportStyles = (theme: Theme): Record<string,
     padding: '4px 6px',
     fontSize: '0.75rem',
     whiteSpace: 'nowrap',
-    color: theme.palette.text.primary,
+    color: theme.palette.settingsPanel.text,
 
     backgroundColor: alpha(theme.palette.primary.main, 0.25),
     '&:hover': {

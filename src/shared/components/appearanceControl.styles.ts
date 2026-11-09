@@ -21,7 +21,7 @@ export const getAppearanceControlStyles = (theme: Theme) => ({
     flexShrink: 0,
     borderRadius: '6px',
     backgroundColor: theme.palette.gx.neutrals[25],
-    color: theme.palette.text.primary,
+    color: theme.palette.settingsPanel.text,
     '& .MuiInputBase-input': {
       textAlign: 'center',
       padding: '3px 6px',

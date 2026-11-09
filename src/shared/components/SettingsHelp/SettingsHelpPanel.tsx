@@ -40,7 +40,7 @@ export const SettingsHelpPanel = () => {
         </Typography>
         <Typography
           component="span"
-          sx={{ fontSize: '0.75rem', color: 'text.secondary' }}
+          sx={{ fontSize: '0.75rem', color: 'settingsPanel.secondaryText' }}
         >
           {t(help.visible ? 'settingsHelp.hideShort' : 'settingsHelp.showShort')}
         </Typography>
@@ -55,7 +55,13 @@ export const SettingsHelpPanel = () => {
           aria-atomic="true"
           sx={sx.content}
         >
-          <Box sx={{ fontSize: '0.875rem', lineHeight: 1.55, color: help.help ? 'text.primary' : 'text.secondary' }}>
+          <Box
+            sx={{
+              fontSize: '0.875rem',
+              lineHeight: 1.55,
+              color: help.help ? 'settingsPanel.text' : 'settingsPanel.secondaryText'
+            }}
+          >
             {help.help?.content ?? t('settingsHelp.prompt')}
           </Box>
         </Box>
@@ -70,7 +76,7 @@ const sx = {
     right: '4px',
     width: 28,
     height: 28,
-    color: 'text.secondary',
+    color: 'settingsPanel.secondaryText',
     zIndex: 1
   },
   panel: {
@@ -78,7 +84,7 @@ const sx = {
     marginTop: '12px',
     borderTop: '1px solid',
     borderColor: 'divider',
-    backgroundColor: 'background.paper',
+    backgroundColor: 'settingsPanel.surface',
     borderRadius: '6px'
   },
   header: {
@@ -88,7 +94,7 @@ const sx = {
     gap: '8px',
     minHeight: 36,
     padding: '6px 10px',
-    color: 'text.primary',
+    color: 'settingsPanel.text',
     borderRadius: '6px'
   },
   content: {

@@ -1,4 +1,4 @@
-import { PaletteOptions } from '@mui/material';
+import { alpha, PaletteOptions } from '@mui/material';
 import { GxPalette } from './types';
 
 // Neutral greys in 5% sRGB steps, with named black and white endpoints.
@@ -102,58 +102,86 @@ export const colors: GxPalette = {
   }
 };
 
-// MUI's required color roles, separate from UI element assignments.
-const muiColorRoles = {
-  primary: { main: greens[400], light: pures.magenta, dark: greens[200] },
-  secondary: { main: accents.purple }
-};
-
 // Shared UI element assignments, applied in both light and dark mode.
 const commonPalette = {
   gx: colors,
-  ...muiColorRoles,
-  sectionDivider: neutrals[25],
-  background: {
-    viewport: neutrals[5],
-    viewportTools: neutrals[15],
-    viewportToolTip: neutrals[10]
+  primary: { main: greens[400], light: pures.magenta, dark: greens[200] },
+  secondary: { main: accents.purple },
+  navBar: {
+    background: blues[200],
+    text: neutrals[75],
+    secondaryText: neutrals[60],
+    accent: accents.purple,
+    selectedBackground: alpha(neutrals.white, 0.16),
+    hoverBackground: alpha(neutrals.white, 0.08),
+    divider: neutrals[65]
+  },
+  viewport: {
+    background: neutrals[5],
+    tools: {
+      background: neutrals[15],
+      activeBackground: greens[200],
+      text: neutrals[65]
+    },
+    tooltip: {
+      background: neutrals[10],
+      text: neutrals[75],
+      border: neutrals[65]
+    },
+    status: { background: neutrals[10], text: neutrals[75] }
+  }
+};
+
+const commonSettings = {
+  sections: {
+    divider: neutrals[65]
+  },
+  toggleButton: {
+    background: neutrals[15],
+    activeBackground: alpha(commonPalette.primary.main, 0.2),
+    activeText: commonPalette.primary.main,
+    hoverBackground: alpha(neutrals[20], 0.75),
+    activeHoverBackground: alpha(commonPalette.primary.main, 0.1)
   }
 };
 
 export const lightPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'light',
-  background: {
-    ...commonPalette.background,
-    topBar: neutrals.white,
-    settingsPanel: neutrals[80],
-    default: neutrals[80],
-    paper: neutrals.white
+  settingsPanel: {
+    background: neutrals[80],
+    surface: neutrals.white,
+    text: neutrals[10],
+    secondaryText: neutrals[35],
+    sections: { ...commonSettings.sections, background: neutrals.white, text: neutrals[10] },
+    layerToggle: {
+      thumb: neutrals[10],
+      backgroundOn: commonPalette.primary.main,
+      backgroundOff: neutrals[80]
+    },
+    toggleButton: { ...commonSettings.toggleButton, text: neutrals[35] }
   },
-  layerToggle: {
-    thumb: neutrals[10],
-    backgroundOn: muiColorRoles.primary.main,
-    backgroundOff: neutrals[80]
-  },
-  text: { primary: neutrals[10], secondary: neutrals[35] },
-  divider: neutrals[65]
+  // MUI defaults for components outside the section-specific assignments.
+  background: { default: neutrals[80], paper: neutrals.white },
+  text: { primary: neutrals[10], secondary: neutrals[35] }
 };
 
 export const darkPalette: PaletteOptions = {
   ...commonPalette,
   mode: 'dark',
-  background: {
-    ...commonPalette.background,
-    topBar: blues[200],
-    settingsPanel: neutrals[10],
-    default: neutrals[10],
-    paper: neutrals[20]
+  settingsPanel: {
+    background: neutrals[10],
+    surface: neutrals[20],
+    text: neutrals[75],
+    secondaryText: neutrals[60],
+    sections: { ...commonSettings.sections, background: neutrals[20], text: neutrals[75] },
+    layerToggle: {
+      thumb: neutrals[75],
+      backgroundOn: commonPalette.primary.main,
+      backgroundOff: neutrals[10]
+    },
+    toggleButton: { ...commonSettings.toggleButton, text: neutrals[60] }
   },
-  layerToggle: {
-    thumb: neutrals[75],
-    backgroundOn: muiColorRoles.primary.main,
-    backgroundOff: neutrals[10]
-  },
-  text: { primary: neutrals[75], secondary: neutrals[60] },
-  divider: neutrals[65]
+  background: { default: neutrals[10], paper: neutrals[20] },
+  text: { primary: neutrals[75], secondary: neutrals[60] }
 };

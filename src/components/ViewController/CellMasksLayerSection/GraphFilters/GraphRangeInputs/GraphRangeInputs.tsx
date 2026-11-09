@@ -178,7 +178,7 @@ const styles = (theme: Theme) => ({
     paddingBlock: '8px',
     height: 'min-content',
     marginTop: 'auto',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.settingsPanel.surface,
     paddingInline: '8px'
   },
   input: {
@@ -200,7 +200,7 @@ const styles = (theme: Theme) => ({
     color: theme.palette.gx.accent.greenBlue,
     border: '2px solid',
     borderColor: theme.palette.gx.accent.greenBlue,
-    background: theme.palette.background.paper,
+    background: theme.palette.settingsPanel.surface,
     '&.Mui-disabled': {
       borderColor: theme.palette.divider,
       color: theme.palette.action.disabled

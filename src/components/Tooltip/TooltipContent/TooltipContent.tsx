@@ -51,7 +51,7 @@ const styles = (theme: Theme) => ({
     mb: '4px'
   },
   divider: {
-    borderColor: theme.palette.divider,
+    borderColor: theme.palette.viewport.tooltip.border,
     mb: '6px'
   },
   dataRow: {

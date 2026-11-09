@@ -1,18 +1,18 @@
 import { alpha, Theme } from '@mui/material';
 
 export const getViewportToolButtonStyles = (theme: Theme, active = false) => ({
-  color: theme.palette.gx.neutrals[65],
+  color: theme.palette.viewport.tools.text,
   backgroundColor: alpha(
-    active ? theme.palette.primary.dark : theme.palette.background.viewportTools,
+    active ? theme.palette.viewport.tools.activeBackground : theme.palette.viewport.tools.background,
     active ? 1 : 0.75
   ),
   transition: 'color 100ms ease-in-out',
   '&:hover': {
-    backgroundColor: alpha(theme.palette.background.viewportTools, active ? 0.5 : 0.5)
+    backgroundColor: alpha(theme.palette.viewport.tools.background, active ? 0.5 : 0.5)
   },
   '&.Mui-disabled': {
-    color: alpha(theme.palette.gx.neutrals[65], 0.5),
-    backgroundColor: alpha(theme.palette.background.viewportTools, 0.15),
+    color: alpha(theme.palette.viewport.tools.text, 0.5),
+    backgroundColor: alpha(theme.palette.viewport.tools.background, 0.15),
     cursor: 'default'
   }
 });

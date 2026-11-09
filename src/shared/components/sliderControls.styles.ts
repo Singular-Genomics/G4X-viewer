@@ -5,8 +5,8 @@ export const getSliderValueFieldStyles = (theme: Theme): SxProps<Theme> => ({
   width: '48px',
   minWidth: 0,
   flexShrink: 0,
-  backgroundColor: theme.palette.background.default,
-  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.settingsPanel.background,
+  color: theme.palette.settingsPanel.secondaryText,
   '&::after': {
     content: '""',
     position: 'absolute',

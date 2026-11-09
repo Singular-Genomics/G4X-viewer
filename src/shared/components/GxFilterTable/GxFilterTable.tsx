@@ -140,22 +140,22 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       borderRadius: '0px !important'
     },
     '& .MuiDataGrid-row': {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.settingsPanel.surface,
       cursor: 'pointer',
       '&.Mui-selected': {
         backgroundColor: alpha(theme.palette.primary.main, 0.2)
       }
     },
     '& .MuiDataGrid-container--top [role=row]': {
-      background: `${theme.palette.background.paper} !important`
+      background: `${theme.palette.settingsPanel.surface} !important`
     },
     '& .MuiDataGrid-columnHeaderTitle': {
-      color: theme.palette.text.secondary,
+      color: theme.palette.settingsPanel.secondaryText,
       textTransform: 'none',
       fontWeight: 700
     },
     '& .MuiDataGrid-footerContainer': {
-      background: theme.palette.background.paper
+      background: theme.palette.settingsPanel.surface
     }
   },
   gridWrapper: {

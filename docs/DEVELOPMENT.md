@@ -159,7 +159,24 @@ Button labels and section headings preserve the casing of their translated text.
 
 ### Light and dark mode
 
-`src/themes/palette.ts` defines the shared brand colors and the light/dark semantic palettes. Use `theme.palette.background.settingsPanel` for the settings sidebar, `background.viewport` for the imaging viewport, `background.default` for other application surfaces, `background.paper` for controls and floating panels, `text.primary` / `text.secondary` for text, `divider` for borders, and `action.*` for hover, selected, and disabled states. Fixed neutral colors from `palette.gx` should not be used for interface surfaces or text.
+`src/themes/palette.ts` groups app-specific color assignments by section:
+
+- `theme.palette.navBar`: header background, text, tab accent, and hover/selected backgrounds.
+- `theme.palette.settingsPanel`: sidebar background, surfaces, text, section headers, layer switches, and toggle buttons.
+- `theme.palette.viewport`: canvas background, tools (including the scale bar), object hover cards, and status panels.
+
+Shared assignments live in `commonViewport` and `commonSettings`; each light/dark palette
+adds its mode-specific values. Nested overrides must spread their shared object explicitly
+because JavaScript object spread is shallow. For example, use
+`theme.palette.viewport.tools.activeBackground` for the active ROI tool color and
+`theme.palette.settingsPanel.sections.background` for the settings header background.
+
+`gx` contains reusable color families; `muiColorRoles` contains MUI's required
+`primary` / `secondary` roles. Standard MUI `background`, `text`, `divider`, and
+`action` roles remain defaults for general components and dialogs. App section
+assignments are independent of these defaults. Add new assignment fields to the
+matching interfaces in `src/themes/types.ts`; the three groups are registered in
+`src/mui.d.ts`.
 
 Keep scientific data colors (channel colors, cluster colormaps, heatmap scales, and exported image annotations) independent of the interface theme. White lettering on brand gradients and black modal backdrops intentionally use `palette.common` for contrast.
 
@@ -219,11 +236,9 @@ and `greens`. The neutral scale contains 21 sRGB shades at 5% intervals:
 border roles for interface styling where possible; their light/dark defaults map
 to this shared scale. `neutrals.black` and `neutrals.white` name its endpoints.
 
-In `palette.ts`, color families live in `colors`, MUI color roles such as `primary`
-and `secondary` live in `muiColorRoles`, and `commonPalette` contains only shared UI
-element assignments. Each light/dark palette combines these and adds mode-specific
-assignments. Shared background fields must also be spread into each mode's
-`background` object, since JavaScript object spread is shallow.
+In `palette.ts`, color families live in `colors` and MUI color roles live in
+`muiColorRoles`. App assignments live in the `navBar`, `settingsPanel`, and
+`viewport` groups described above.
 
 ### Settings Info View
 

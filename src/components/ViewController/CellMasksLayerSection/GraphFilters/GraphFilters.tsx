@@ -83,7 +83,7 @@ const styles = (theme: Theme) => ({
     display: 'flex',
     fontWeight: 700,
     borderColor: theme.palette.divider,
-    color: theme.palette.text.primary,
+    color: theme.palette.settingsPanel.text,
     gap: '8px',
     '&.Mui-selected.Mui-disabled': {
       background: theme.palette.action.disabledBackground
