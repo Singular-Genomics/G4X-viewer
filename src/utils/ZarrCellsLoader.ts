@@ -16,23 +16,25 @@ export type ClusterLabelEntry = {
 
 export async function loadCellsFromZarr(
   zarrDataSet: ZarrDataSet,
-  segmentationFolderName: string
+  segmentationFolderName: string,
+  clusterLabelKey?: string
 ): Promise<ZarrCellsData> {
   const paths = createZarrPaths(zarrDataSet.getBaseURL());
   const cellsGroup = await open(new NoCacheFetchStore(paths.cells.segmentation(segmentationFolderName)), {
     kind: 'group'
   });
-  return loadCellsFromGroup(cellsGroup);
+  return loadCellsFromGroup(cellsGroup, clusterLabelKey);
 }
 
 export async function loadCellsFromStoreFactory(
   storeFactory: ZarritaStoreFactory,
-  segmentationFolderName: string
+  segmentationFolderName: string,
+  clusterLabelKey?: string
 ): Promise<ZarrCellsData> {
   const cellsGroup = await open(storeFactory(ZARR_SUBPATHS.cells.segmentation(segmentationFolderName)) as any, {
     kind: 'group'
   });
-  return loadCellsFromGroup(cellsGroup);
+  return loadCellsFromGroup(cellsGroup, clusterLabelKey);
 }
 
 export async function fetchClusterIdsFromStoreFactory(
@@ -47,7 +49,7 @@ export async function fetchClusterIdsFromStoreFactory(
   return { data: chunk.data, columnCount: chunk.shape[1] };
 }
 
-async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
+async function loadCellsFromGroup(cellsGroup: any, clusterLabelKey?: string): Promise<ZarrCellsData> {
   try {
     const openAndGet = (location: Parameters<typeof open>[0]) => open(location, { kind: 'array' }).then(get);
 
@@ -104,7 +106,8 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
     const geneIndptr = geneIndptrChunk.data as Int32Array;
 
     const clusterLabels = parseClusterLabels(cellsGroup.attrs);
-    const defaultLabel = clusterLabels[0];
+    // Requested label if present, else the first
+    const initialLabel = clusterLabels.find((label) => label.key === clusterLabelKey) ?? clusterLabels[0];
 
     // cluster_id is a 2D array [N, numLabels]; use index from .zattrs for each label
     const columnCount = clusterIdsChunk.shape[1];
@@ -148,7 +151,7 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
       cellMasks.push({
         cellId: String(cellIds[i]),
         area: areas[i],
-        clusterId: getClusterId(i, defaultLabel.index),
+        clusterId: getClusterId(i, initialLabel.index),
         vertices,
         centroid: [positionData[i * 2], positionData[i * 2 + 1]],
         proteinValues: proteinVals,
@@ -160,10 +163,10 @@ async function loadCellsFromGroup(cellsGroup: any): Promise<ZarrCellsData> {
       });
     }
 
-    const colormap = buildColormap(defaultLabel);
+    const colormap = buildColormap(initialLabel);
     const metadata: SegmentationMetadata = { proteinNames, geneNames };
 
-    return { cellMasks, colormap, metadata, clusterLabels };
+    return { cellMasks, colormap, metadata, clusterLabels, selectedClusterLabelKey: initialLabel.key };
   } catch (error) {
     throw new Error(`Failed to load cells from Zarr: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }

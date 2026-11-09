@@ -54,6 +54,7 @@ export type ZarrCellsData = {
   colormap: ColormapEntry[];
   metadata: SegmentationMetadata;
   clusterLabels: ClusterLabelEntry[];
+  selectedClusterLabelKey: string;
 };
 
 export type ZarrRunMetadata = {

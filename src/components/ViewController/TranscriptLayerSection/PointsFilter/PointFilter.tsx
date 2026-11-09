@@ -12,10 +12,13 @@ export const PointFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { useColorMap, colormapExportFileName } = useTranscriptSource();
+  const { useColorMap, useDataStatus, colormapExportFileName } = useTranscriptSource();
   const { colorMapConfig, setColormapConfig } = useColorMap();
+  const { hasData, configLoaded } = useDataStatus();
 
   const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
+  // Colormap is lazy-loaded, so it's missing only after the config load finished
+  const isColormapMissing = hasData && configLoaded && !isColormapConfigValid;
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -81,7 +84,7 @@ export const PointFilter = () => {
 
   return (
     <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledWrapper) }}>
-      {!isColormapConfigValid && (
+      {isColormapMissing && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
           <Typography sx={sx.errorText}>{t('general.filterMissingColormap')}</Typography>

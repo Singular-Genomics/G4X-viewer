@@ -10,6 +10,7 @@ export type TranscriptSource = 'transcripts' | 'directSeq';
 type TranscriptSourceBinding = {
   useLayerStore: typeof useTranscriptLayerStore;
   useColorMap: () => { colorMapConfig: ColorMapEntry[]; setColormapConfig: (colorMapConfig: ColorMapEntry[]) => void };
+  useDataStatus: () => { hasData: boolean; configLoaded: boolean };
   useLayersCount: () => number;
   colormapExportFileName: string;
   nameColumns: { field: 'gene_name' | 'gene' | 'variant'; labelKey: string }[];
@@ -35,6 +36,10 @@ const TRANSCRIPT_SOURCE_BINDINGS: Record<TranscriptSource, TranscriptSourceBindi
   transcripts: {
     useLayerStore: useTranscriptLayerStore,
     useColorMap: useTranscriptsColorMap,
+    useDataStatus: () =>
+      useZarrDataStore(
+        useShallow((store) => ({ hasData: store.hasTranscriptsData, configLoaded: store.transcriptConfigLoaded }))
+      ),
     useLayersCount: () => useZarrDataStore((store) => store.layerConfig.layers),
     colormapExportFileName: 'custom_transcripts-colormap',
     nameColumns: [{ field: 'gene_name', labelKey: 'transcript.geneName' }],
@@ -43,6 +48,10 @@ const TRANSCRIPT_SOURCE_BINDINGS: Record<TranscriptSource, TranscriptSourceBindi
   directSeq: {
     useLayerStore: useDirectSeqLayerStore,
     useColorMap: useDirectSeqColorMap,
+    useDataStatus: () =>
+      useZarrDataStore(
+        useShallow((store) => ({ hasData: store.directSeq.hasData, configLoaded: store.directSeq.configLoaded }))
+      ),
     useLayersCount: () => useZarrDataStore((store) => store.directSeq.layerConfig.layers),
     colormapExportFileName: 'custom_direct-seq-colormap',
     nameColumns: [
