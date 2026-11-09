@@ -8,6 +8,7 @@ export const SegmentationSelectors = () => {
 
   const {
     isLoading,
+    isSegmentationLoaded,
     availableSegmentations,
     selectedSegmentationLabel,
     availableClusterLabels,
@@ -32,7 +33,7 @@ export const SegmentationSelectors = () => {
             <GxSelect
               value={selectedSegmentationLabel}
               onChange={(e) => handleSegmentationChange(e.target.value as string)}
-              disabled={isLoading}
+              disabled={isLoading || !isSegmentationLoaded}
               fullWidth
             >
               {availableSegmentations.map((seg) => (
