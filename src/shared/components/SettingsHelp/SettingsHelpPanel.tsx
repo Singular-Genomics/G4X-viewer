@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useId } from 'react';
@@ -10,6 +10,18 @@ export const SettingsHelpPanel = () => {
   const { t } = useTranslation();
   const contentId = useId();
   if (!help) return null;
+  if (!help.visible)
+    return (
+      <IconButton
+        onClick={help.toggleVisible}
+        aria-expanded={false}
+        aria-label={t('settingsHelp.show')}
+        size="small"
+        sx={sx.collapsedButton}
+      >
+        <InfoOutlinedIcon sx={{ fontSize: 18 }} />
+      </IconButton>
+    );
   return (
     <Box sx={sx.panel}>
       <Button
@@ -24,7 +36,7 @@ export const SettingsHelpPanel = () => {
           component="span"
           sx={{ fontSize: '0.875rem', fontWeight: 700, flex: 1, textAlign: 'left' }}
         >
-          {t('settingsHelp.title')}
+          {help.help?.title ?? t('settingsHelp.title')}
         </Typography>
         <Typography
           component="span"
@@ -43,7 +55,6 @@ export const SettingsHelpPanel = () => {
           aria-atomic="true"
           sx={sx.content}
         >
-          {help.help?.title && <Typography sx={sx.controlTitle}>{help.help.title}</Typography>}
           <Box sx={{ fontSize: '0.875rem', lineHeight: 1.55, color: help.help ? 'text.primary' : 'text.secondary' }}>
             {help.help?.content ?? t('settingsHelp.prompt')}
           </Box>
@@ -53,6 +64,15 @@ export const SettingsHelpPanel = () => {
   );
 };
 const sx = {
+  collapsedButton: {
+    position: 'absolute',
+    bottom: '4px',
+    right: '4px',
+    width: 28,
+    height: 28,
+    color: 'text.secondary',
+    zIndex: 1
+  },
   panel: {
     flexShrink: 0,
     marginTop: '12px',
@@ -72,11 +92,11 @@ const sx = {
     borderRadius: '6px'
   },
   content: {
-    height: 'clamp(100px, 18vh, 160px)',
+    // Reduce the whole panel by 20%, accounting for its fixed 36px header.
+    height: 'calc(clamp(80px, 14.4vh, 128px) - 7.2px)',
     overflowY: 'auto',
     padding: '4px 12px 12px',
     overflowWrap: 'anywhere',
     scrollbarWidth: 'thin'
-  },
-  controlTitle: { fontWeight: 700, fontSize: '0.875rem', marginBottom: '6px', lineHeight: 1.4 }
+  }
 };

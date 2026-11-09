@@ -23,6 +23,7 @@ export const LensToggle = () => {
     <Box sx={sx.row}>
       <Tooltip
         title={t('tooltips.channelSettings.lens')}
+        helpTitle={t('channelSettings.lens')}
         arrow
       >
         <Box

@@ -17,7 +17,10 @@ export const GxFilterTableOptions = ({
 
   return (
     <Box sx={sx.optionsContainer}>
-      <SettingsTooltip title={t('settingsHelp.controls.filterEnable')}>
+      <SettingsTooltip
+        title={t('settingsHelp.controls.filterEnable')}
+        helpTitle={t('general.filterEnable')}
+      >
         <ToggleButton
           value="enable"
           selected={isFilterEnabled}
@@ -27,7 +30,10 @@ export const GxFilterTableOptions = ({
           {t('general.filterEnable')}
         </ToggleButton>
       </SettingsTooltip>
-      <SettingsTooltip title={t('settingsHelp.controls.filterDiscarded')}>
+      <SettingsTooltip
+        title={t('settingsHelp.controls.filterDiscarded')}
+        helpTitle={t('general.filterShowDiscarded')}
+      >
         <ToggleButton
           value="showDiscarded"
           selected={isFilterEnabled && isShowDiscardedEnabled}
@@ -38,7 +44,10 @@ export const GxFilterTableOptions = ({
           {t('general.filterShowDiscarded')}
         </ToggleButton>
       </SettingsTooltip>
-      <SettingsTooltip title={t('settingsHelp.controls.filterClear')}>
+      <SettingsTooltip
+        title={t('settingsHelp.controls.filterClear')}
+        helpTitle={t('general.clear')}
+      >
         <Button
           variant="outlined"
           onClick={onClearFilters}
