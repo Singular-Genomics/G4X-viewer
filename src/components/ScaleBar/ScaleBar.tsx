@@ -52,7 +52,8 @@ const styles = (theme: Theme, left: number, bottom: number) => ({
     width: 'max-content',
     left,
     bottom,
-    backgroundColor: alpha(theme.palette.background.paper, 0.5),
+    color: theme.palette.gx.neutrals[65],
+    backgroundColor: alpha(theme.palette.background.viewportTools, 0.75),
     padding: '2px 6px',
     borderRadius: '3px',
     zIndex: 10,
@@ -72,7 +73,7 @@ const styles = (theme: Theme, left: number, bottom: number) => ({
     justifyContent: 'center'
   },
   text: {
-    color: theme.palette.text.primary,
+    color: 'inherit',
     textAlign: 'right',
     whiteSpace: 'nowrap'
   }

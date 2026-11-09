@@ -1,3 +1,4 @@
+import { getViewportToolButtonStyles } from '../../shared/components/viewportToolButton.styles';
 import {
   Box,
   IconButton,
@@ -337,29 +338,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     flexDirection: 'column',
     gap: 1
   },
-  controlButton: {
-    color: theme.palette.text.primary,
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
-    transition: 'color 100ms ease-in-out',
-    '&:hover': {
-      backgroundColor: theme.palette.background.paper
-    },
-    '&.Mui-disabled': {
-      color: theme.palette.action.disabled,
-      backgroundColor: alpha(theme.palette.background.paper, 0.94)
-    }
-  },
-  controlButtonDisabled: {
-    color: theme.palette.action.disabled,
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.background.paper, 0.94)
-    },
-    '&.Mui-disabled': {
-      color: theme.palette.action.disabled,
-      backgroundColor: alpha(theme.palette.background.paper, 0.94)
-    }
-  },
+  controlButton: getViewportToolButtonStyles(theme),
   modalContent: {
     width: { xs: '100%', sm: '70vw', md: '700px' }
   },

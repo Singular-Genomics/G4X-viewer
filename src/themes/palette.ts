@@ -104,7 +104,7 @@ export const colors: GxPalette = {
 
 // MUI's required color roles, separate from UI element assignments.
 const muiColorRoles = {
-  primary: { main: greens[400], light: pures.magenta, dark: blues[600] },
+  primary: { main: greens[400], light: pures.magenta, dark: greens[200] },
   secondary: { main: accents.purple }
 };
 
@@ -114,7 +114,9 @@ const commonPalette = {
   ...muiColorRoles,
   sectionDivider: neutrals[25],
   background: {
-    viewport: neutrals[5]
+    viewport: neutrals[5],
+    viewportTools: neutrals[15],
+    viewportToolTip: neutrals[10]
   }
 };
 

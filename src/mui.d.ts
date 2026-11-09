@@ -9,6 +9,8 @@ declare module '@mui/material/styles' {
     topBar: string;
     settingsPanel: string;
     viewport: string;
+    viewportTools: string;
+    viewportToolTip: string;
   }
 
   interface Palette extends MuiPalette {

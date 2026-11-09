@@ -1,4 +1,5 @@
-import { Box, IconButton, Theme, alpha, useTheme } from '@mui/material';
+import { getViewportToolButtonStyles } from '../../shared/components/viewportToolButton.styles';
+import { Box, IconButton, Theme, useTheme } from '@mui/material';
 import { usePolygonDrawingStore } from '../../stores/PolygonDrawingStore';
 import { useShallow } from 'zustand/react/shallow';
 import CreateIcon from '@mui/icons-material/Create';
@@ -247,13 +248,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
             placement="left"
           >
             <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor:
-                  mode instanceof DrawPolygonMode
-                    ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                    : alpha(theme.palette.background.paper, 0.5)
-              }}
+              sx={getViewportToolButtonStyles(theme, mode instanceof DrawPolygonMode)}
               onClick={setDrawPolygonMode}
               color="primary"
               disabled={isDetecting}
@@ -267,13 +262,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
             placement="left"
           >
             <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor:
-                  mode instanceof ModifyMode && !isViewMode
-                    ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                    : alpha(theme.palette.background.paper, 0.5)
-              }}
+              sx={getViewportToolButtonStyles(theme, mode instanceof ModifyMode && !isViewMode)}
               onClick={setModifyMode}
               color="primary"
               disabled={isDetecting}
@@ -287,12 +276,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
             placement="left"
           >
             <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor: isViewMode
-                  ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                  : alpha(theme.palette.background.paper, 0.5)
-              }}
+              sx={getViewportToolButtonStyles(theme, isViewMode)}
               onClick={setViewMode}
               color="primary"
               disabled={isDetecting}
@@ -306,12 +290,7 @@ export const PolygonDrawingMenu = ({ takeScreenshot, isViewerActive }: PolygonDr
             placement="left"
           >
             <IconButton
-              sx={{
-                ...sx.controlButton,
-                backgroundColor: isDeleteMode
-                  ? alpha(theme.palette.gx.accent.greenBlue, 0.5)
-                  : alpha(theme.palette.background.paper, 0.5)
-              }}
+              sx={getViewportToolButtonStyles(theme, isDeleteMode)}
               onClick={setDeleteMode}
               color="primary"
               disabled={isDetecting}
@@ -380,17 +359,5 @@ const styles = (theme: Theme) => ({
     flexDirection: 'column',
     gap: 1
   },
-  controlButton: {
-    color: theme.palette.text.primary,
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
-    transition: 'color 100ms ease-in-out',
-    '&:hover': {
-      backgroundColor: theme.palette.background.paper
-    },
-    '&.Mui-disabled': {
-      color: theme.palette.action.disabled,
-      backgroundColor: alpha(theme.palette.background.paper, 0.94),
-      cursor: 'default'
-    }
-  }
+  controlButton: getViewportToolButtonStyles(theme)
 });

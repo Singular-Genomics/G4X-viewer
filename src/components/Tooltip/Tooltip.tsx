@@ -74,7 +74,7 @@ const styles = (theme: Theme) => ({
     display: 'none'
   },
   tooltipContainer: {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.viewportToolTip,
     color: theme.palette.text.primary,
     padding: '8px 16px',
     border: `1px solid ${theme.palette.divider}`,
