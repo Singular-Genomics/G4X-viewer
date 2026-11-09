@@ -127,7 +127,7 @@ export const SummaryButton = () => {
             component="span"
             className="source-data-action-label"
           >
-            {t('general.summaryReport')}
+            {t('general.summary')}
           </Box>
         </Button>
       </Tooltip>

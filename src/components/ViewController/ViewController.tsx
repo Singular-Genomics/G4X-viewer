@@ -195,20 +195,27 @@ const styles = (theme: Theme) => ({
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.background.settingsPanel,
 
-    padding: '16px 4px 8px 20px',
+    padding: '18px 18px 10px 18px',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
     overflow: 'auto',
-    scrollbarWidth: 'thin'
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
   },
   viewControllerSectionsWrapper: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
-    paddingRight: '8px',
+    paddingRight: '0px',
     overflowY: 'scroll',
-    scrollbarColor: `${theme.palette.divider} transparent`
+    // scrollbarColor: `${theme.palette.divider} transparent`,
+    scrollbarWidth: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
   },
   viewControllerLoaderWrapper: {
     display: 'flex',

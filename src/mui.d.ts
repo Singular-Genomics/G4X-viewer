@@ -1,4 +1,4 @@
-import { GxPalette } from './themes/types';
+import { GxLayerToggleColors, GxPalette } from './themes/types';
 
 declare module '@mui/material/styles' {
   interface CssThemeVariables {
@@ -14,11 +14,13 @@ declare module '@mui/material/styles' {
   interface Palette extends MuiPalette {
     gx: GxPalette;
     sectionDivider: string;
+    layerToggle: GxLayerToggleColors;
   }
 
   interface PaletteOptions extends MuiPaletteOptions {
     gx: GxPalette;
     sectionDivider?: string;
+    layerToggle?: GxLayerToggleColors;
   }
 }
 

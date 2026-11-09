@@ -104,7 +104,7 @@ export const colors: GxPalette = {
 
 // MUI's required color roles, separate from UI element assignments.
 const muiColorRoles = {
-  primary: { main: accents.redDark, light: pures.magenta, dark: blues[600] },
+  primary: { main: greens[400], light: pures.magenta, dark: blues[600] },
   secondary: { main: accents.purple }
 };
 
@@ -128,6 +128,11 @@ export const lightPalette: PaletteOptions = {
     default: neutrals[80],
     paper: neutrals.white
   },
+  layerToggle: {
+    thumb: neutrals[10],
+    backgroundOn: muiColorRoles.primary.main,
+    backgroundOff: neutrals[80]
+  },
   text: { primary: neutrals[10], secondary: neutrals[35] },
   divider: neutrals[65]
 };
@@ -141,6 +146,11 @@ export const darkPalette: PaletteOptions = {
     settingsPanel: neutrals[10],
     default: neutrals[10],
     paper: neutrals[20]
+  },
+  layerToggle: {
+    thumb: neutrals[75],
+    backgroundOn: muiColorRoles.primary.main,
+    backgroundOff: neutrals[10]
   },
   text: { primary: neutrals[75], secondary: neutrals[60] },
   divider: neutrals[65]

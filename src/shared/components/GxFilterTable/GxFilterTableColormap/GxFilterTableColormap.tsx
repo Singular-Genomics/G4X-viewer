@@ -32,7 +32,7 @@ export const GxFilterTableColormap = ({ onDrop, onExport }: GxFilterTableColorma
   }
 
   const importButtonStyle = {
-    ...sx.importButton,
+    ...sx.button,
     ...(isDragActive && sx.importButtonActive),
     ...(isDragActive && isDragAccept && sx.importButtonAccept),
     ...(isDragActive && isDragReject && sx.importButtonReject)
@@ -46,7 +46,7 @@ export const GxFilterTableColormap = ({ onDrop, onExport }: GxFilterTableColorma
           <Button
             startIcon={<DownloadIcon />}
             fullWidth
-            sx={sx.exportButton}
+            sx={sx.button}
             onClick={onExport}
           >
             {t('general.export')}

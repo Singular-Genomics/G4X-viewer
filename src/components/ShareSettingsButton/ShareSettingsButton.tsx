@@ -140,7 +140,7 @@ export const ShareSettingsButton = () => {
             component="span"
             className="source-data-action-label"
           >
-            {t('general.shareSettings')}
+            {t('general.share')}
           </Box>
         </Button>
       </Tooltip>

@@ -54,3 +54,9 @@ export interface GxGradients {
   brand: (angle?: number) => string;
   default: (angle?: number) => string;
 }
+
+export interface GxLayerToggleColors {
+  thumb: string;
+  backgroundOn: string;
+  backgroundOff: string;
+}

@@ -26,7 +26,7 @@ export const ChannelSettingsImportExportButtons = () => {
   }
 
   const importButtonStyle = {
-    ...sx.importButton,
+    ...sx.button,
     ...(isDragActive && sx.importButtonActive),
     ...(isDragActive && isDragAccept && sx.importButtonAccept),
     ...(isDragActive && isDragReject && sx.importButtonReject)
@@ -42,7 +42,7 @@ export const ChannelSettingsImportExportButtons = () => {
         <Button
           startIcon={<DownloadIcon />}
           onClick={exportChannelSettings}
-          sx={sx.exportButton}
+          sx={sx.button}
           fullWidth
         >
           {t('general.export')}

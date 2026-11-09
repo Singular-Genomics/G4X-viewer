@@ -1,6 +1,5 @@
 import { getSourceDataActionStyles } from '../../shared/components/sourceDataAction.styles';
 import { Box, Button, IconButton, SvgIcon, Typography, Popover, Theme, useTheme, alpha, Tooltip } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { formatDetailsPopupData } from './DetailsPopup.helpers';
 import { useViewerStore } from '../../stores/ViewerStore';
@@ -24,14 +23,28 @@ export const DetailsPopup = () => {
     setAnchorEl(null);
   };
 
-  const renderDataSection = (sectionTitle: string, sectionData: Record<string, any>) => (
+  const renderDataSection = (sectionTitle: string, sectionData: Record<string, any>, showClose = false) => (
     <>
-      <Typography
-        variant="h6"
-        sx={sx.sectionTitle}
-      >
-        {sectionTitle}
-      </Typography>
+      <Box sx={sx.sectionHeader}>
+        <Typography
+          variant="h6"
+          sx={sx.sectionTitle}
+        >
+          {sectionTitle}
+        </Typography>
+        {showClose && (
+          <IconButton
+            onClick={handleClose}
+            size="small"
+            sx={sx.closeButton}
+            aria-label={t('general.close')}
+          >
+            <SvgIcon viewBox="0 -960 960 960">
+              <path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" />
+            </SvgIcon>
+          </IconButton>
+        )}
+      </Box>
       <Box sx={sx.dataSection}>
         {formatDetailsPopupData({ section: sectionData, smpInfoOrder: detailsData.smpInfoOrder }).map((item, index) => (
           <Box
@@ -74,27 +87,20 @@ export const DetailsPopup = () => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'right'
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right'
         }}
         transitionDuration={250}
         sx={sx.popover}
       >
         <Box sx={sx.contentContainer}>
-          <IconButton
-            onClick={handleClose}
-            size="small"
-            sx={sx.closeButton}
-          >
-            <CloseIcon />
-          </IconButton>
-          {Object.entries(detailsData.data).map(([sectionKey, sectionData]) => (
+          {Object.entries(detailsData.data).map(([sectionKey, sectionData], index) => (
             <Box key={sectionKey}>
-              {renderDataSection(sectionKey.split('_').join(' '), sectionData as Record<string, any>)}
+              {renderDataSection(sectionKey.split('_').join(' '), sectionData as Record<string, any>, index === 0)}
             </Box>
           ))}
         </Box>
@@ -106,55 +112,63 @@ export const DetailsPopup = () => {
 const styles = (theme: Theme) => ({
   infoButton: getSourceDataActionStyles(theme),
   closeButton: {
-    position: 'absolute',
-    top: '8px',
-    right: '8px',
-    color: theme.palette.text.primary,
+    flexShrink: 0,
+    color: theme.palette.gx.neutrals[25],
+    backgroundColor: theme.palette.gx.neutrals[10],
     '&:hover': {
-      backgroundColor: alpha(theme.palette.text.primary, 0.1)
+      color: alpha(theme.palette.gx.accent.redDark, 0.85),
+      backgroundColor: theme.palette.gx.neutrals[10]
     }
   },
   popover: {
     '& .MuiPopover-paper': {
       backgroundColor: theme.palette.background.default,
-      border: `5px solid ${theme.palette.divider}`,
+      border: `1px solid ${theme.palette.gx.neutrals[10]}`,
       borderRadius: '10px'
     }
   },
   contentContainer: {
-    padding: '16px',
+    padding: '26px',
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
     minWidth: '400px',
     position: 'relative'
   },
+  sectionHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '16px',
+    marginBottom: '20px'
+  },
   sectionTitle: {
     color: theme.palette.text.primary,
     fontWeight: '700',
-    marginBottom: '8px',
-    fontSize: '1.1rem'
+    fontSize: '1.4rem'
   },
   dataSection: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px'
+    gap: '4px'
   },
   dataRow: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: '16px'
+    gap: '10px'
   },
   label: {
-    color: theme.palette.text.primary,
-    fontWeight: '500',
-    fontSize: '0.95rem'
+    color: theme.palette.text.secondary,
+    fontWeight: '400',
+    fontSize: '0.95rem',
+    minWidth: '140px'
   },
   value: {
     color: theme.palette.text.primary,
     fontWeight: '700',
     textAlign: 'right',
+    // minWidth: '200px',
     maxWidth: '300px',
     wordWrap: 'break-word',
     fontSize: '0.95rem'

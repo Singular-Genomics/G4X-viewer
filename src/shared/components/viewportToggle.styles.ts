@@ -7,20 +7,24 @@ export const getViewportToggleStyles = (theme: Theme) => ({
   flexShrink: 0,
   whiteSpace: 'nowrap',
   fontSize: '1rem',
-  fontWeight: theme.typography.button.fontWeight,
   lineHeight: 1.25,
   border: '1px solid',
   borderRadius: '6px',
-  borderColor: theme.palette.gx.neutrals[35],
-  color: theme.palette.gx.neutrals[75],
+  borderColor: theme.palette.gx.neutrals[25],
+  color: theme.palette.text.secondary,
   backgroundColor: 'transparent',
   boxShadow: 'none',
   '&.Mui-selected': {
-    borderColor: theme.palette.primary.main,
+    // borderColor: theme.palette.primary.main,
     color: theme.palette.primary.main,
     backgroundColor: 'transparent'
   },
-  '&:hover, &.Mui-selected:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.2)
+  '&.Mui-selected:hover': {
+    borderColor: alpha(theme.palette.primary.main, 0.5)
+    // backgroundColor: alpha(theme.palette.primary.main, 0.2)
+  },
+  '&:hover': {
+    // borderColor: alpha(theme.palette.primary.main, 0.5),
+    // backgroundColor: alpha(theme.palette.primary.main, 0.2)
   }
 });
