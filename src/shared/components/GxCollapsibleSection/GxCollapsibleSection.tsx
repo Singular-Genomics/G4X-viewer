@@ -223,7 +223,7 @@ const sx = {
   },
   sectionContentContainer: {
     position: 'relative',
-    backgroundColor: (theme: Theme) => theme.palette.settingsPanel.background,
+    backgroundColor: (theme: Theme) => theme.palette.settingsPanel.surface,
     padding: '18px 40px 35px',
     paddingTop: '18px',
     paddingBottom: '35px',

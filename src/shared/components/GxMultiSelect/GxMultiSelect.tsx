@@ -79,7 +79,7 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
   return {
     rounded: {
       borderRadius: '8px',
-      background: theme.palette.settingsPanel.surface,
+      background: theme.palette.settingsPanel.background1,
       minHeight: '40px',
       height: 'auto',
       color: theme.palette.settingsPanel.text,
@@ -133,7 +133,7 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
       '& .MuiPaper-root': {
         border: '1px solid',
         borderColor: theme.palette.divider,
-        background: theme.palette.settingsPanel.surface,
+        background: theme.palette.settingsPanel.background1,
         filter: 'none',
         fontSize: '14px',
         boxSizing: 'border-box',

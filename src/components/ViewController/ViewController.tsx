@@ -202,7 +202,7 @@ const styles = (theme: Theme) => ({
   },
 
   viewControllerContentWrapper: {
-    backgroundColor: theme.palette.settingsPanel.background,
+    backgroundColor: theme.palette.settingsPanel.surface,
     color: theme.palette.settingsPanel.text,
 
     padding: '18px 18px 10px 18px',

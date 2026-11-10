@@ -108,7 +108,7 @@ export const ChannelOptions = ({
 
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
-    backgroundColor: alpha(theme.palette.settingsPanel.surface, 0.94),
+    backgroundColor: alpha(theme.palette.settingsPanel.background1, 0.94),
     padding: '8px',
     width: '272px'
   },

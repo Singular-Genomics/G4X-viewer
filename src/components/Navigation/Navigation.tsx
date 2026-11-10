@@ -131,7 +131,7 @@ const styles = (theme: Theme) => ({
     right: 0,
     zIndex: 50,
     height: `${NAVIGATION_HEIGHT_MOBILE}px`,
-    background: theme.palette.navBar.background,
+    background: theme.palette.navBar.surface,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',

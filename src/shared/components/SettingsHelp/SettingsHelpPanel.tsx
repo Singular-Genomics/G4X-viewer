@@ -84,7 +84,7 @@ const sx = {
     marginTop: '12px',
     borderTop: '1px solid',
     borderColor: 'divider',
-    backgroundColor: 'settingsPanel.surface',
+    backgroundColor: 'settingsPanel.background1',
     borderRadius: '6px'
   },
   header: {

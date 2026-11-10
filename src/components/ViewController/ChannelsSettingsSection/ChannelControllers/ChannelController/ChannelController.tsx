@@ -354,7 +354,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderRadius: '6px',
     height: '35px',
     marginLeft: '10px',
-    background: theme.palette.settingsPanel.background,
+    background: theme.palette.settingsPanel.surface,
     flexShrink: 0,
     width: '76.5px'
   },
@@ -409,14 +409,14 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     flexShrink: 0,
     marginLeft: 'auto',
     borderRadius: '6px',
-    backgroundColor: theme.palette.settingsPanel.surface,
+    backgroundColor: theme.palette.settingsPanel.background1,
     overflow: 'hidden',
     '& .MuiIconButton-root': {
       borderRadius: 0,
       padding: '2.5px 5px',
       color: theme.palette.settingsPanel.secondaryText,
       '&:hover': {
-        backgroundColor: theme.palette.settingsPanel.background
+        backgroundColor: theme.palette.settingsPanel.surface
       },
       '&.Mui-disabled': {
         color: theme.palette.action.disabled,

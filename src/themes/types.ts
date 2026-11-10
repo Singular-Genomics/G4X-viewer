@@ -62,7 +62,7 @@ export interface GxLayerToggleColors {
 }
 
 export interface GxNavBarColors {
-  background: string;
+  surface: string;
   text: string;
   secondaryText: string;
   accent: string;
@@ -72,8 +72,8 @@ export interface GxNavBarColors {
 }
 
 export interface GxSettingsPanelColors {
-  background: string;
   surface: string;
+  background1: string;
   text: string;
   secondaryText: string;
   sections: {
@@ -93,7 +93,7 @@ export interface GxSettingsPanelColors {
 }
 
 export interface GxViewportColors {
-  background: string;
+  surface: string;
   tools: {
     background: string;
     activeBackground: string;

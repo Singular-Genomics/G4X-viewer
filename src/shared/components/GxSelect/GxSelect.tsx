@@ -25,7 +25,7 @@ const styles = (theme: Theme) => ({
   rounded: {
     overflow: 'hidden',
     borderRadius: '8px',
-    background: theme.palette.settingsPanel.surface,
+    background: theme.palette.settingsPanel.background1,
     height: '40px',
     color: theme.palette.settingsPanel.text,
     fontSize: '14px',

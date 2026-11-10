@@ -264,8 +264,8 @@ export const CytometryGraph = () => {
     hovermode: 'closest',
     uirevision: 'true',
     margin: { t: 50, r: 100, b: 80, l: 100 },
-    paper_bgcolor: theme.palette.settingsPanel.surface,
-    plot_bgcolor: theme.palette.settingsPanel.surface,
+    paper_bgcolor: theme.palette.settingsPanel.background1,
+    plot_bgcolor: theme.palette.settingsPanel.background1,
     xaxis: {
       ...getPlotTheme(theme).xaxis,
       title: {
@@ -364,7 +364,7 @@ export const CytometryGraph = () => {
           }}
         />
       </Box>
-      <Box sx={{ backgroundColor: theme.palette.settingsPanel.surface, paddingInline: '32px' }}>
+      <Box sx={{ backgroundColor: theme.palette.settingsPanel.background1, paddingInline: '32px' }}>
         <GxColorscaleSlider
           scaleMin={heatmapData.metadata?.zMin}
           scaleMax={heatmapData.metadata?.zMax}
@@ -418,7 +418,7 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '8px',
-    background: alpha(theme.palette.settingsPanel.surface, 0.94)
+    background: alpha(theme.palette.settingsPanel.background1, 0.94)
   },
   loaderProgressValueText: {
     color: theme.palette.settingsPanel.text,

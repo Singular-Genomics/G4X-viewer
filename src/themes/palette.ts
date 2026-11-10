@@ -114,7 +114,7 @@ export const defaultPalette = {
   secondary: { main: accents.purple },
 
   navBar: {
-    background: blues[200],
+    surface: blues[200],
     text: neutrals[75],
     secondaryText: neutrals[60],
     accent: accents.purple,
@@ -124,8 +124,8 @@ export const defaultPalette = {
   },
 
   settingsPanel: {
-    background: neutrals[10],
-    surface: neutrals[20],
+    surface: neutrals[10],
+    background1: neutrals[90],
     text: neutrals[75],
     secondaryText: neutrals[60],
     sections: {
@@ -149,7 +149,7 @@ export const defaultPalette = {
   },
 
   viewport: {
-    background: neutrals[5],
+    surface: neutrals[5],
     tools: {
       background: neutrals[15],
       activeBackground: greens[200],
@@ -175,8 +175,8 @@ export const altPalette = {
 
   settingsPanel: {
     ...defaultPalette.settingsPanel,
-    background: neutrals[80],
-    surface: neutrals[90],
+    surface: neutrals[80],
+    background1: neutrals[90],
     text: neutrals[10],
     secondaryText: neutrals[35],
     sections: {

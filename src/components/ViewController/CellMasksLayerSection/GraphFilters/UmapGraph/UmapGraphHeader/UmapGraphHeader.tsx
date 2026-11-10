@@ -126,7 +126,7 @@ const styles = (theme: Theme) => ({
   headerWrapper: {
     display: 'flex',
     height: 'min-content',
-    backgroundColor: theme.palette.settingsPanel.surface,
+    backgroundColor: theme.palette.settingsPanel.background1,
     gap: '12px',
     padding: '8px 8px 0 8px'
   },
