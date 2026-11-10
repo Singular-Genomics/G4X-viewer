@@ -48,6 +48,7 @@ export type PictureInPictureViewerProps = {
   contrastLimits: [number, number][];
   colors: [number, number, number][];
   channelsVisible: boolean[];
+  overviewChannelsVisible?: boolean[];
   colormap?: string;
   loader: PixelSource[];
   selections: any[];

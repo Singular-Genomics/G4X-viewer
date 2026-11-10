@@ -238,6 +238,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
             contrastLimits={contrastLimits}
             colors={colors}
             channelsVisible={visibleChannels}
+            overviewChannelsVisible={channelsVisible}
             loader={loader}
             selections={selections}
             overview={isDesktop ? DEFAULT_OVERVIEW : DEFAULT_OVERVIEW_MOBILE}
