@@ -157,14 +157,14 @@ const sx = {
       pointerEvents: 'none'
     },
     '&:after': {
-      background: (theme: Theme) => theme.palette.settingsPanel.sections.divider,
+      background: (theme: Theme) => theme.palette.primary.main,
       bottom: 0,
       content: '""',
       display: 'block',
-      height: '1px',
+      height: '2px',
       left: 0,
       position: 'absolute',
-      transition: 'transform 150ms ease',
+      transition: 'transform 300ms ease',
       width: '100%',
       transform: 'translateX(-100%)'
     },
@@ -229,14 +229,5 @@ const sx = {
     paddingBottom: '35px',
     paddingRight: '0px',
     paddingLeft: '0px'
-    // '&::after': {
-    //   content: '""',
-    //   position: 'absolute',
-    //   bottom: 0,
-    //   left: '5%',
-    //   width: '90%',
-    //   height: '3px',
-    //   backgroundColor: (theme: Theme) => theme.palette.settingsPanel.sections.divider
-    // }
   }
 };

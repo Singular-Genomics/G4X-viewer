@@ -71,11 +71,6 @@ export interface GxNavBarColors {
 
 export interface GxSettingsPanelColors {
   surface: string;
-
-  sections: {
-    background: string;
-    divider: string;
-  };
   layerToggle: GxLayerToggleColors;
 }
 

@@ -130,11 +130,6 @@ export const defaultPalette = {
 
   settingsPanel: {
     surface: neutrals[10],
-    sections: {
-      background: accents.purple,
-      divider: neutrals[65]
-    },
-
     layerToggle: {
       thumb: neutrals[80],
       backgroundOn: greens[400],
@@ -177,10 +172,6 @@ export const altPalette = {
   settingsPanel: {
     ...defaultPalette.settingsPanel,
     surface: neutrals[80],
-    sections: {
-      background: accents.purple,
-      divider: neutrals[65]
-    },
     layerToggle: {
       ...defaultPalette.settingsPanel.layerToggle,
       backgroundOff: neutrals[60]
