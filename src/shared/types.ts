@@ -38,6 +38,9 @@ export type PointData = {
   position: number[];
   geneName: string;
   cellId: string;
+  // Direct-Seq only
+  sequence?: string;
+  meanQs?: number;
 };
 
 export type TileData = {

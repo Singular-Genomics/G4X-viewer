@@ -238,6 +238,7 @@
     "transcriptsFileUploadButton": "Upload Transcript File",
     "transcriptsLoadError": "Transcript data is missing",
     "transcriptsConfigLoadError": "Failed to load transcript configuration",
+    "directSeqConfigLoadError": "Failed to load Direct-Seq configuration",
     "transcriptsMissingColormap": "Missing colormap config, transcript metadata filtering will be unavailable",
     "transcriptsUnpackError": "Error unpacking {{file}}",
     "transcriptsUnpackSuccess": "Successfully unpacked",
@@ -258,12 +259,22 @@
   "tooltip": {
     "objectLabel": "Object",
     "objectCell": "Cell",
-    "objectTranscript": "Transcript"
+    "objectTranscript": "Transcript",
+    "objectDirectSeq": "Direct-Seq"
   },
   "transcript": {
     "cellId": "Cell ID",
     "color": "Color",
     "geneName": "Gene Name",
+    "metadataColumns": {
+      "gene": "Gene",
+      "hotspot": "Hotspot",
+      "variant": "Variant",
+      "length": "Length"
+    },
+    "targetName": "Target",
+    "sequence": "Sequence",
+    "meanQs": "mean QS",
     "position": "Position"
   },
   "transcriptsSettings": {
@@ -271,6 +282,8 @@
     "disabledLayerWarning": "Transcript layer is disabled",
     "pointFilters": "Point Filters",
     "pointSize": "Point Size",
+    "pointOutline": "Point Outline",
+    "pointOutlineLabel": "Show outline around points",
     "sectionTitle": "Transcript Layer Settings",
     "clickToChange": "Click to change",
     "subsamplingControlLabel": "Enable transcript subsampling control",
@@ -279,6 +292,9 @@
     "subsamplingControlWarningCaseTwo": "Your transcript dataset contains less than 5 million points",
     "subsamplingSliderLabel": "Percent of transcripts shown",
     "subsamplingSliderTooltip": "We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling"
+  },
+  "directSeqSettings": {
+    "sectionTitle": "Direct-Seq"
   },
   "viewer": {
     "clearSelectionDescription": " Are you sure you want to remove all {{polygonCount}} ROIs? This action cannot be undone.",
@@ -334,6 +350,10 @@
     "showFilteredPoints": "Show filtered points",
     "transcriptsLayer": "Transcripts Layer",
     "transcriptsLayerDisabled": "Transcripts Layer disabled",
+    "directSeqLayer": "Direct-Seq Layer",
+    "targetFilter_one": "Gene/Variant == {{target}}",
+    "targetFilter_other": "Gene/Variant == {{count}} variants",
+    "targetFilter_zero": "Gene/Variant == none",
     "clusterFilter_one": "Cluster ID == {{clusterId}}",
     "clusterFilter_other": "Cluster ID == {{count}} clusters",
     "clusterFilter_zero": "Cluster ID == none",

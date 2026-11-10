@@ -15,6 +15,15 @@ export type ZarrDataStoreValues = {
   pendingTranscriptAttrs: Record<string, any> | null;
   zarrStoreFactory: ZarritaStoreFactory | undefined;
   zarrDataSet: ZarrDataSet | null;
+  directSeq: DirectSeqData;
+};
+
+// Direct-Seq (optional second batch of transcripts), loaded on demand
+export type DirectSeqData = {
+  hasData: boolean;
+  configLoaded: boolean;
+  layerConfig: LayerConfig;
+  colorMapConfig: ColorMapEntry[];
 };
 
 export type ZarrDataStoreMethods = {
@@ -28,12 +37,15 @@ export type ZarrDataStoreMethods = {
   setTranscriptConfigLoaded: (loaded: boolean) => void;
   setPendingTranscriptAttrs: (attrs: Record<string, any> | null) => void;
   setZarrStoreFactory: (factory: ZarritaStoreFactory | undefined) => void;
+  setDirectSeqData: (data: Partial<DirectSeqData>) => void;
   reset: () => void;
 };
 
 export type ColorMapEntry = {
   gene_name: string;
   color: number[];
+  // Extra per-target fields (e.g. gene, hotspot, variant, length), each key becomes a filter table column
+  metadata?: Record<string, unknown>;
 };
 
 export type ConfigFileData = {
