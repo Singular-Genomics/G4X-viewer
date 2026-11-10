@@ -1,6 +1,9 @@
 import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
+import {
+  getClusterLabelFilterState,
+  useCellSegmentationLayerStore
+} from '../../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useZarrDataStore } from '../../../stores/ZarrDataStore/ZarrDataStore';
 import {
   buildColormap,
@@ -73,6 +76,9 @@ export const useSegmentationSelectors = () => {
           selectedSegmentationLabel: newLabel,
           selectedClusterLabelKey: cellsData.clusterLabels[0].key,
           cellNameFilters: new Set<string>(),
+          clusterLabelFilters: {},
+          isCellNameFilterOn: false,
+          showFilteredCells: false,
           selectedCells: []
         });
       } finally {
@@ -105,13 +111,12 @@ export const useSegmentationSelectors = () => {
           return { ...mask, clusterId };
         });
 
-        useCellSegmentationLayerStore.setState({
+        useCellSegmentationLayerStore.setState((store) => ({
+          ...getClusterLabelFilterState(store, newKey),
           cellMasksData: updatedMasks,
           cellColormapConfig: buildColormap(targetLabel),
-          selectedClusterLabelKey: newKey,
-          cellNameFilters: new Set<string>(),
           selectedCells: []
-        });
+        }));
       } finally {
         setIsLoading(false);
       }
