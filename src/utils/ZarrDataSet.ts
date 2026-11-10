@@ -323,11 +323,11 @@ export class ZarrDataSet {
     };
   }
 
-  public async fetchCellsData(segmentationFolderName: string): Promise<ZarrCellsData> {
+  public async fetchCellsData(segmentationFolderName: string, clusterLabelKey?: string): Promise<ZarrCellsData> {
     if (this.isCustomStore) {
-      return loadCellsFromStoreFactory(this.storeFactory, segmentationFolderName);
+      return loadCellsFromStoreFactory(this.storeFactory, segmentationFolderName, clusterLabelKey);
     }
-    return loadCellsFromZarr(this, segmentationFolderName);
+    return loadCellsFromZarr(this, segmentationFolderName, clusterLabelKey);
   }
 
   public async fetchClusterIds(segmentationFolderName: string): Promise<{ data: any; columnCount: number }> {

@@ -133,6 +133,7 @@ export const useSegmentationSelectors = () => {
 
   return {
     isLoading,
+    isSegmentationLoaded: cellMasksData !== null,
     availableSegmentations,
     selectedSegmentationLabel,
     availableClusterLabels,
