@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material';
+import { Theme, lighten, darken, alpha } from '@mui/material';
 
 export const getToggleButtonStyles = (theme: Theme) => ({
   width: '100%',
@@ -12,23 +12,23 @@ export const getToggleButtonStyles = (theme: Theme) => ({
   // border: '0px solid',
   borderRadius: '6px',
   borderColor: 'transparent',
-  color: theme.palette.settingsPanel.toggleButton.text,
-  backgroundColor: theme.palette.settingsPanel.toggleButton.background,
+  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.background.level1,
   boxShadow: 'none',
   '&.Mui-disabled': {
     borderColor: 'transparent'
   },
   '&.Mui-selected': {
-    // borderColor: theme.palette.settingsPanel.toggleButton.activeText,
-    color: theme.palette.settingsPanel.toggleButton.activeText,
-    backgroundColor: theme.palette.settingsPanel.toggleButton.activeBackground
+    color: theme.palette.primary.main,
+    backgroundColor: alpha(theme.palette.primary.main, 0.2)
   },
   '&.Mui-selected:hover': {
-    // borderColor: alpha(theme.palette.settingsPanel.toggleButton.activeText, 0.5),
-    backgroundColor: theme.palette.settingsPanel.toggleButton.activeHoverBackground
+    backgroundColor: alpha(theme.palette.primary.main, 0.3)
   },
   '&:hover': {
-    // borderColor: alpha(theme.palette.settingsPanel.toggleButton.activeText, 0.5),
-    backgroundColor: theme.palette.settingsPanel.toggleButton.hoverBackground
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? lighten(theme.palette.background.level1, 0.05)
+        : darken(theme.palette.background.level1, 0.05)
   }
 });

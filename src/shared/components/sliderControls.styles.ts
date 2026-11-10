@@ -5,7 +5,7 @@ export const getSliderValueFieldStyles = (theme: Theme): SxProps<Theme> => ({
   width: '48px',
   minWidth: 0,
   flexShrink: 0,
-  backgroundColor: theme.palette.settingsPanel.surface,
+  backgroundColor: theme.palette.background.level1,
   color: theme.palette.text.secondary,
   '&::after': {
     content: '""',
@@ -61,5 +61,8 @@ export const getSliderHandleStyles = (theme: Theme): SxProps<Theme> => ({
   },
   '& .MuiSlider-thumb.Mui-active, & .MuiSlider-thumb.Mui-focusVisible': {
     boxShadow: `0 0 0 6px ${alpha(theme.palette.primary.main, 0.2)}`
+  },
+  '&.Mui-disabled .MuiSlider-track': {
+    border: 'none'
   }
 });

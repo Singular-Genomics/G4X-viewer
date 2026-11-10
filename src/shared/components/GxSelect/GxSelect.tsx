@@ -1,4 +1,4 @@
-import { Select, SelectProps, Theme, alpha, menuItemClasses, outlinedInputClasses, useTheme } from '@mui/material';
+import { Select, SelectProps, Theme, menuItemClasses, outlinedInputClasses, useTheme } from '@mui/material';
 
 export const GxSelect = ({ children, sx: customStyles, MenuProps: customMenuProps, ...rest }: SelectProps) => {
   const theme = useTheme();
@@ -50,12 +50,12 @@ const styles = (theme: Theme) => ({
     '&:hover': {
       [`& .${outlinedInputClasses.notchedOutline}`]: {
         border: '1px solid',
-        borderColor: theme.palette.gx.accent.greenBlue
+        borderColor: theme.palette.primary.main
       }
     },
     [`&.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]: {
       border: '1px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     }
   },
   roundedMenu: {
@@ -65,6 +65,7 @@ const styles = (theme: Theme) => ({
       filter: 'none',
       fontSize: '14px',
       boxSizing: 'border-box',
+      background: theme.palette.background.level1,
       '& .MuiMenu-list': {
         padding: '0'
       },
@@ -72,11 +73,11 @@ const styles = (theme: Theme) => ({
         fontSize: '14px',
         color: theme.palette.text.secondary,
         '&:hover': {
-          color: theme.palette.text.secondary,
-          background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
+          // color: theme.palette.text.primary,
+          // background: alpha(theme.palette.primary.main, 0.1)
         },
         [`&.${menuItemClasses.selected}`]: {
-          color: theme.palette.gx.accent.greenBlue
+          // color: theme.palette.primary.main
         }
       }
     }

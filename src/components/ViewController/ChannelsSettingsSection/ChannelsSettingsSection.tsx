@@ -86,9 +86,9 @@ const sx = {
   controlsHeader: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: '12px',
-    marginBottom: '8px'
+    justifyContent: 'space-between'
+    // gap: '12px',
+    // marginBottom: '0px'
   },
   colorModeRow: {
     display: 'flex',
@@ -104,7 +104,7 @@ const sx = {
     marginLeft: 'auto'
   },
   advancedSection: {
-    marginLeft: '20px',
+    // marginLeft: '20px',
     marginTop: '12px'
   },
   advancedContent: {

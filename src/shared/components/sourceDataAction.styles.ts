@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material';
+import { Theme, lighten, darken } from '@mui/material';
 
 export const getSourceDataActionStyles = (theme: Theme) => ({
   minWidth: 0,
@@ -24,7 +24,10 @@ export const getSourceDataActionStyles = (theme: Theme) => ({
     marginRight: '4px'
   },
   '&:hover': {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? lighten(theme.palette.background.level1, 0.05)
+        : darken(theme.palette.background.level1, 0.05),
     color: theme.palette.text.primary
   }
 });

@@ -60,11 +60,11 @@ const styles = (theme: Theme) => ({
     marginLeft: 'auto'
   },
   groupHeader: {
-    fontSize: '11px',
+    fontSize: '14px',
     fontWeight: 700,
     textTransform: 'none',
     letterSpacing: '0.05em',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     lineHeight: '28px',
     paddingTop: '4px',
     paddingBottom: 0

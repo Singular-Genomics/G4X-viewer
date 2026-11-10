@@ -135,7 +135,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       height: '42px',
       alignItems: 'center',
       borderRadius: '6px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      backgroundColor: theme.palette.background.level1
     },
     '& .MuiFilledInput-input': {
       paddingTop: 0,
@@ -158,11 +159,11 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   cloudIcon: {
     fontSize: '18px',
-    color: theme.palette.text.primary,
-    opacity: theme.vars?.opacity.inputPlaceholder ?? (theme.palette.mode === 'dark' ? 0.5 : 0.42)
+    color: theme.palette.text.secondary
+    // opacity: theme.vars?.opacity.inputPlaceholder ?? (theme.palette.mode === 'dark' ? 0.5 : 0.42)
   },
   iconButton: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.secondary,
     padding: '2px',
     alignSelf: 'center',
     marginRight: '-4px'

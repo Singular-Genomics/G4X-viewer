@@ -77,14 +77,6 @@ export interface GxSettingsPanelColors {
     divider: string;
   };
   layerToggle: GxLayerToggleColors;
-  toggleButton: {
-    background: string;
-    text: string;
-    activeBackground: string;
-    activeText: string;
-    hoverBackground: string;
-    activeHoverBackground: string;
-  };
 }
 
 export interface GxViewportColors {

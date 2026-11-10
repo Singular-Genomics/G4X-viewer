@@ -327,7 +327,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   removeChannelButton: {
     color: theme.palette.text.secondary,
     '&:hover': {
-      color: theme.palette.gx.accent.greenBlue,
+      color: theme.palette.primary.main,
       backgroundColor: 'unset'
     }
   },
@@ -354,7 +354,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     borderRadius: '6px',
     height: '35px',
     marginLeft: '10px',
-    background: theme.palette.settingsPanel.surface,
+    background: theme.palette.background.level1,
     flexShrink: 0,
     width: '76.5px'
   },
@@ -363,6 +363,8 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     flex: '1 1 200px',
     minWidth: 0,
     maxWidth: '200px',
+    backgroundColor: theme.palette.background.level1,
+
     '& .MuiSelect-select, & .MuiSelect-select .MuiTypography-root': {
       fontWeight: 700
     },
@@ -370,24 +372,26 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       color: alpha(theme.palette.text.secondary, 0.6)
     },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: alpha(theme.palette.text.secondary, 0.35)
+      borderColor: alpha(theme.palette.text.secondary, 0.35),
+      border: 'none'
     },
     '&:hover': {
       '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: alpha(theme.palette.text.secondary, 0.55)
+        borderColor: alpha(theme.palette.text.secondary, 0.55),
+        border: 'none'
       }
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      border: '1px solid',
-      borderColor: alpha(theme.palette.text.secondary, 0.75)
+      borderColor: alpha(theme.palette.text.secondary, 0.75),
+      border: 'none'
     }
   },
   groupHeader: {
-    fontSize: '11px',
+    fontSize: '14px',
     fontWeight: 700,
     textTransform: 'none',
     letterSpacing: '0.05em',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     lineHeight: '28px',
     paddingTop: '4px',
     paddingBottom: '0'
@@ -436,14 +440,14 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     marginBottom: '8px',
     width: '60px',
     '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     },
     '&.MuiInputBase-input': {
       cursor: 'auto'
     },
     '&.MuiInputBase-root::after': {
       borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     }
   }
 });

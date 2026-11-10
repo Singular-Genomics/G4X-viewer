@@ -5,8 +5,9 @@ import { getSliderHandleStyles } from './sliderControls.styles';
 export const getAppearanceControlStyles = (theme: Theme) => ({
   toggleButton: { ...getToggleButtonStyles(theme), width: 114 },
   label: {
-    fontSize: '0.75rem',
-    flexShrink: 0
+    fontSize: '0.85rem',
+    flexShrink: 0,
+    color: theme.palette.text.secondary
   },
   slider: {
     display: 'flex',
@@ -16,16 +17,18 @@ export const getAppearanceControlStyles = (theme: Theme) => ({
     padding: '0 4px'
   },
   sliderControl: getSliderHandleStyles(theme),
+
   input: {
-    width: 52,
+    width: 60,
+    height: 36,
     flexShrink: 0,
     borderRadius: '6px',
-    backgroundColor: theme.palette.gx.neutrals[25],
+    backgroundColor: theme.palette.background.level2,
     color: theme.palette.text.primary,
     '& .MuiInputBase-input': {
       textAlign: 'center',
       padding: '3px 6px',
-      fontSize: '14px'
+      fontSize: '16px'
     },
     '&.Mui-focused': {
       outline: 'none'

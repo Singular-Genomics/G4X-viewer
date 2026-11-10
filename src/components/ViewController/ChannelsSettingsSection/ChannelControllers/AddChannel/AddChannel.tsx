@@ -118,8 +118,11 @@ export const AddChannel = () => {
 const styles = (theme: Theme) => ({
   addChannelButton: {
     padding: '6px 16px',
+    height: '36px',
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    fontSize: '0.85rem',
+    fontWeight: 700,
     color: theme.palette.primary.main,
     border: '1px solid',
     borderColor: theme.palette.primary.main,

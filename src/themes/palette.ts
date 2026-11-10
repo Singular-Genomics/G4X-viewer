@@ -135,15 +135,6 @@ export const defaultPalette = {
       divider: neutrals[65]
     },
 
-    toggleButton: {
-      background: neutrals[15],
-      text: neutrals[60],
-      activeBackground: alpha(greens[400], 0.2),
-      activeText: greens[400],
-      hoverBackground: alpha(neutrals[20], 0.75),
-      activeHoverBackground: alpha(greens[400], 0.1)
-    },
-
     layerToggle: {
       thumb: neutrals[80],
       backgroundOn: greens[400],
@@ -173,20 +164,22 @@ export const altPalette = {
   ...defaultPalette,
   mode: 'light',
 
-  background: { ...defaultPalette.background, default: neutrals[80], paper: neutrals.white },
-  text: { ...defaultPalette.text, primary: neutrals[10], secondary: neutrals[35] },
+  background: {
+    default: neutrals[15],
+    paper: neutrals[20],
+    level1: neutrals[70],
+    level2: neutrals[85],
+    level3: neutrals[90]
+  },
+
+  text: { primary: neutrals[10], secondary: neutrals[25] },
 
   settingsPanel: {
     ...defaultPalette.settingsPanel,
     surface: neutrals[80],
     sections: {
-      ...defaultPalette.settingsPanel.sections,
-      background: neutrals[95]
-    },
-    toggleButton: {
-      ...defaultPalette.settingsPanel.toggleButton,
-      text: neutrals[10],
-      background: neutrals[70]
+      background: accents.purple,
+      divider: neutrals[65]
     },
     layerToggle: {
       ...defaultPalette.settingsPanel.layerToggle,

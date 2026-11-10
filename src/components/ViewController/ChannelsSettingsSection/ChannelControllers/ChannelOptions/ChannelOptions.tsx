@@ -8,7 +8,6 @@ import {
   Popper,
   SvgIcon,
   Theme,
-  alpha,
   useTheme
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -108,14 +107,16 @@ export const ChannelOptions = ({
 
 const styles = (theme: Theme) => ({
   channelOptionsPaper: {
-    backgroundColor: alpha(theme.palette.background.level1, 0.94),
-    padding: '8px',
-    width: '272px'
+    backgroundColor: theme.palette.settingsPanel.surface,
+    padding: '12px',
+    width: '290px',
+    border: '1px solid',
+    borderColor: theme.palette.text.secondary
   },
   channelOptionsButton: {
     color: theme.palette.text.secondary,
     '&:hover': {
-      color: theme.palette.gx.accent.greenBlue,
+      color: theme.palette.primary.main,
       backgroundColor: 'unset'
     }
   },
