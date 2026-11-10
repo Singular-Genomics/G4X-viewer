@@ -1,4 +1,5 @@
-import { Box, IconButton, Tab, Tabs, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
+import { Box, ButtonBase, Tab, Tabs, Theme, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { GxLogo } from '../../shared/components/GxLogo';
 import { GxThemeModeToggle } from '../../shared/components/GxThemeModeToggle';
@@ -8,8 +9,6 @@ import { SocialIcons } from '../SocialIcons/SocialIcons';
 import { NavigationRunInfo } from './NavigationRunInfo';
 import { ChangelogModal } from '../ChangelogModal';
 import { useChangelog } from '../../hooks/useChangelog.hook';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 export const NAVIGATION_HEIGHT_MOBILE = 58;
 export const NAVIGATION_HEIGHT_DESKTOP = 70;
@@ -89,30 +88,26 @@ export const Navigation = ({ currentView, isViewerUiHidden, onViewChange, onTogg
         </Box>
         <Box sx={sx.actionsSection}>
           <GxThemeModeToggle />
-          <Tooltip
-            title={
-              currentView === 'viewer'
-                ? t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')
-                : ''
-            }
-          >
-            <IconButton
-              onClick={currentView === 'viewer' ? onToggleViewerUi : undefined}
-              sx={{
-                ...sx.viewerUiButton,
-                ...(currentView === 'dashboard' ? sx.viewerUiButtonPlaceholder : {})
-              }}
-            >
-              {isViewerUiHidden ? (
-                <VisibilityOutlinedIcon fontSize="small" />
-              ) : (
-                <VisibilityOffOutlinedIcon fontSize="small" />
-              )}
-            </IconButton>
-          </Tooltip>
           <SocialIcons />
         </Box>
       </Box>
+      <Tooltip
+        helpTitle={t('navigation.viewer')}
+        title={
+          currentView === 'viewer' ? t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi') : ''
+        }
+        placement="left"
+      >
+        <ButtonBase
+          onClick={currentView === 'viewer' ? onToggleViewerUi : undefined}
+          aria-label={t(isViewerUiHidden ? 'navigation.showViewerUi' : 'navigation.hideViewerUi')}
+          aria-pressed={isViewerUiHidden}
+          sx={{
+            ...sx.viewerUiButton,
+            ...(currentView === 'dashboard' ? sx.viewerUiButtonPlaceholder : {})
+          }}
+        />
+      </Tooltip>
       <ChangelogModal
         isOpen={isOpen}
         onClose={closeChangelog}
@@ -224,11 +219,32 @@ const styles = (theme: Theme) => ({
     gap: '6px'
   },
   viewerUiButton: {
-    padding: '8px',
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: '20px',
+    height: '100%',
+    padding: 0,
+    display: 'none',
+    pointerEvents: 'auto',
     color: theme.palette.navBar.text,
-    '&:hover': {
-      color: theme.palette.navBar.text,
-      backgroundColor: alpha(theme.palette.navBar.text, 0.1)
+    background: theme.palette.navBar.surface,
+    '&::after': {
+      content: '""',
+      width: '4px',
+      height: '36px',
+      borderRadius: '3px',
+      backgroundColor: alpha(theme.palette.navBar.text, 0.5)
+    },
+    '&:hover::after, &[aria-pressed="true"]::after': {
+      backgroundColor: theme.palette.navBar.text
+    },
+    '&.Mui-focusVisible::after': {
+      outline: '2px solid currentColor',
+      outlineOffset: '3px'
+    },
+    [theme.breakpoints.up('md')]: {
+      display: 'flex'
     }
   },
   viewerUiButtonPlaceholder: {

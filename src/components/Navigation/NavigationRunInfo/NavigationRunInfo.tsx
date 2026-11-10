@@ -1,4 +1,5 @@
-import { Box, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../../shared/components/SettingsHelp';
+import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useViewerStore } from '../../../stores/ViewerStore/ViewerStore';

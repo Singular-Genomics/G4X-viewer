@@ -1,4 +1,5 @@
-import { alpha, Box, IconButton, Menu, MenuItem, Theme, Tooltip, Typography, useTheme } from '@mui/material';
+import { SettingsTooltip as Tooltip } from '../../shared/components/SettingsHelp';
+import { alpha, Box, IconButton, Menu, MenuItem, Theme, Typography, useTheme } from '@mui/material';
 import { Language, LinkedIn, GitHub, X, Email, MenuBook } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { socialLinks } from '../../config/socialLinks';

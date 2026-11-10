@@ -1,3 +1,4 @@
+import { SettingsHelpProvider, SettingsHelpRegion } from '../shared/components/SettingsHelp';
 import { Box } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
 import { Navigation, NavigationView } from './Navigation';
@@ -38,31 +39,33 @@ export default function G4XViewer() {
   });
 
   return (
-    <Box sx={sx.mainContainer}>
-      <Navigation
-        currentView={currentView}
-        isViewerUiHidden={isViewerUiHidden}
-        onViewChange={handleViewChange}
-        onToggleViewerUi={() => setIsViewerUiHidden((isHidden) => !isHidden)}
-      />
-      <Box sx={sx.contentContainer}>
-        <Box
-          ref={dashboardRef}
-          sx={getViewStyle('dashboard')}
-        >
-          <DashboardView />
+    <SettingsHelpProvider>
+      <SettingsHelpRegion sx={sx.mainContainer}>
+        <Navigation
+          currentView={currentView}
+          isViewerUiHidden={isViewerUiHidden}
+          onViewChange={handleViewChange}
+          onToggleViewerUi={() => setIsViewerUiHidden((isHidden) => !isHidden)}
+        />
+        <Box sx={sx.contentContainer}>
+          <Box
+            ref={dashboardRef}
+            sx={getViewStyle('dashboard')}
+          >
+            <DashboardView />
+          </Box>
+          <Box
+            ref={viewerRef}
+            sx={getViewStyle('viewer')}
+          >
+            <ViewerView
+              isViewerActive={currentView === 'viewer'}
+              isUiHidden={isViewerUiHidden}
+            />
+          </Box>
         </Box>
-        <Box
-          ref={viewerRef}
-          sx={getViewStyle('viewer')}
-        >
-          <ViewerView
-            isViewerActive={currentView === 'viewer'}
-            isUiHidden={isViewerUiHidden}
-          />
-        </Box>
-      </Box>
-    </Box>
+      </SettingsHelpRegion>
+    </SettingsHelpProvider>
   );
 }
 

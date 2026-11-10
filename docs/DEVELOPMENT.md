@@ -255,8 +255,9 @@ channel name for repeated channel controls). Use translated strings in
 `public/locales/en.json`, under `settingsHelp` or the existing `tooltips` keys.
 Existing Tooltip props remain supported. Inside `SettingsHelpProvider`, help
 appears in Info View with no floating tooltip; outside it, the component uses the
-usual MUI Tooltip. `SettingsHelpRegion` delegates hover and focus events, including
-nested controls and React portals. The filter table uses this same component for
+usual MUI Tooltip. `SettingsHelpProvider` and `SettingsHelpRegion` wrap the main app in
+`G4XViewer`, so navbar and settings controls share the same Info View. The region
+delegates hover and focus events, including nested controls and React portals. The filter table uses this same component for
 its internal tooltip slot.
 
 Manual checks: hover and keyboard-focus controls, move between channels and then

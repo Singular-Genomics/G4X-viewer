@@ -1,4 +1,4 @@
-import { SettingsHelpProvider, SettingsHelpRegion, SettingsHelpPanel } from '../../shared/components/SettingsHelp';
+import { SettingsHelpPanel } from '../../shared/components/SettingsHelp';
 import { Box, SvgIcon, Theme, lighten, useTheme } from '@mui/material';
 import { useMetadata } from '../../hooks/useMetadata.hook';
 import { guessRgb } from '../../legacy/utils';
@@ -100,95 +100,93 @@ export const ViewController = ({ imageLoaded, panelWidth, onPanelWidthChange }: 
   const isRgb = metadata && guessRgb(metadata);
 
   return (
-    <SettingsHelpProvider>
-      <Box sx={{ ...sx.viewControllerContainer, width: panelWidth }}>
-        <Box
-          sx={sx.resizeHandle}
-          onPointerDown={handleResizeStart}
-          onPointerMove={handleResize}
-          onPointerUp={handleResizeEnd}
-          onPointerCancel={handleResizeEnd}
-        />
-        <Box sx={sx.viewControllerContentWrapper}>
-          <SettingsHelpRegion sx={sx.viewControllerSectionsWrapper}>
-            <GxCollapsibleSection
-              sectionTitle={t('sourceFiles.sectionTitle')}
-              helpText={t('settingsHelp.sections.sourceData')}
-              sectionIcon={<StorageIcon fontSize="small" />}
-              defultState="open"
-            >
-              <SourceFilesSection />
-            </GxCollapsibleSection>
-            <GxCollapsibleSection
-              sectionTitle={t('viewSettings.sectionTitle')}
-              helpText={t('settingsHelp.sections.viewSettings')}
-              sectionIcon={
-                <SvgIcon
-                  fontSize="small"
-                  viewBox="0 -960 960 960"
-                >
-                  <path d="M200-120v-80h200v-80q-83 0-141.5-58.5T200-480q0-57 29-105t80-73q-4 22 1.5 43t17.5 40q-23 16-35.5 41T280-480q0 50 35 85t85 35h320v80H520v80h240v80H200Zm360-356-12-38-38 14-20-53q20-16 31-38.5t11-48.5q0-47-33-79.5T418-752l-18-50 38-14-14-36 76-28 12 38 38-14 110 300-38 14 14 38-76 28Zm-140-92q-30 0-51-21t-21-51q0-30 21-51t51-21q30 0 51 21t21 51q0 30-21 51t-51 21Z" />
-                </SvgIcon>
-              }
-              disabled={!imageLoaded}
-            >
-              <ViewControlsSection />
-            </GxCollapsibleSection>
-            <GxCollapsibleSection
-              sectionTitle={t('channelSettings.sectionTitle')}
-              helpText={t('settingsHelp.sections.channels')}
-              sectionIcon={<LayersIcon fontSize="small" />}
-              disabled={!imageLoaded}
-              headerAction={
-                <GxLayerToggle
-                  label={t('layerVisibility.toggle', { layer: t('channelSettings.sectionTitle') })}
-                  checked={isChannelLayerVisible}
-                  onChange={toggleChannelLayerVisibility}
-                  disabled={!imageLoaded || !!isRgb}
-                />
-              }
-            >
-              <ChannelsSettingsSection isRgb={!!isRgb} />
-            </GxCollapsibleSection>
-            <GxCollapsibleSection
-              sectionTitle={t('transcriptsSettings.sectionTitle')}
-              helpText={t('settingsHelp.sections.transcripts')}
-              sectionIcon={<ScatterPlotIcon fontSize="small" />}
-              disabled={!imageLoaded || !hasTranscriptsData}
-              unmountOnExit={false}
-              headerAction={
-                <GxLayerToggle
-                  label={t('layerVisibility.toggle', { layer: t('transcriptsSettings.sectionTitle') })}
-                  checked={isTranscriptLayerOn}
-                  onChange={toggleTranscriptLayer}
-                  disabled={!imageLoaded || !hasTranscriptsData}
-                />
-              }
-            >
-              <TranscriptLayerSection />
-            </GxCollapsibleSection>
-            <GxCollapsibleSection
-              sectionTitle={t('segmentationSettings.sectionTitle')}
-              helpText={t('settingsHelp.sections.cells')}
-              sectionIcon={<BubbleChartIcon fontSize="small" />}
-              disabled={!imageLoaded || !hasSegmentationData}
-              unmountOnExit={false}
-              headerAction={
-                <GxLayerToggle
-                  label={t('layerVisibility.toggle', { layer: t('segmentationSettings.sectionTitle') })}
-                  checked={isCellLayerOn}
-                  onChange={toggleCellLayer}
-                  disabled={!imageLoaded || !hasSegmentationData}
-                />
-              }
-            >
-              <CellMasksLayerSection />
-            </GxCollapsibleSection>
-          </SettingsHelpRegion>
-          <SettingsHelpPanel />
+    <Box sx={{ ...sx.viewControllerContainer, width: panelWidth }}>
+      <Box
+        sx={sx.resizeHandle}
+        onPointerDown={handleResizeStart}
+        onPointerMove={handleResize}
+        onPointerUp={handleResizeEnd}
+        onPointerCancel={handleResizeEnd}
+      />
+      <Box sx={sx.viewControllerContentWrapper}>
+        <Box sx={sx.viewControllerSectionsWrapper}>
+          <GxCollapsibleSection
+            sectionTitle={t('sourceFiles.sectionTitle')}
+            helpText={t('settingsHelp.sections.sourceData')}
+            sectionIcon={<StorageIcon fontSize="small" />}
+            defultState="open"
+          >
+            <SourceFilesSection />
+          </GxCollapsibleSection>
+          <GxCollapsibleSection
+            sectionTitle={t('viewSettings.sectionTitle')}
+            helpText={t('settingsHelp.sections.viewSettings')}
+            sectionIcon={
+              <SvgIcon
+                fontSize="small"
+                viewBox="0 -960 960 960"
+              >
+                <path d="M200-120v-80h200v-80q-83 0-141.5-58.5T200-480q0-57 29-105t80-73q-4 22 1.5 43t17.5 40q-23 16-35.5 41T280-480q0 50 35 85t85 35h320v80H520v80h240v80H200Zm360-356-12-38-38 14-20-53q20-16 31-38.5t11-48.5q0-47-33-79.5T418-752l-18-50 38-14-14-36 76-28 12 38 38-14 110 300-38 14 14 38-76 28Zm-140-92q-30 0-51-21t-21-51q0-30 21-51t51-21q30 0 51 21t21 51q0 30-21 51t-51 21Z" />
+              </SvgIcon>
+            }
+            disabled={!imageLoaded}
+          >
+            <ViewControlsSection />
+          </GxCollapsibleSection>
+          <GxCollapsibleSection
+            sectionTitle={t('channelSettings.sectionTitle')}
+            helpText={t('settingsHelp.sections.channels')}
+            sectionIcon={<LayersIcon fontSize="small" />}
+            disabled={!imageLoaded}
+            headerAction={
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('channelSettings.sectionTitle') })}
+                checked={isChannelLayerVisible}
+                onChange={toggleChannelLayerVisibility}
+                disabled={!imageLoaded || !!isRgb}
+              />
+            }
+          >
+            <ChannelsSettingsSection isRgb={!!isRgb} />
+          </GxCollapsibleSection>
+          <GxCollapsibleSection
+            sectionTitle={t('transcriptsSettings.sectionTitle')}
+            helpText={t('settingsHelp.sections.transcripts')}
+            sectionIcon={<ScatterPlotIcon fontSize="small" />}
+            disabled={!imageLoaded || !hasTranscriptsData}
+            unmountOnExit={false}
+            headerAction={
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('transcriptsSettings.sectionTitle') })}
+                checked={isTranscriptLayerOn}
+                onChange={toggleTranscriptLayer}
+                disabled={!imageLoaded || !hasTranscriptsData}
+              />
+            }
+          >
+            <TranscriptLayerSection />
+          </GxCollapsibleSection>
+          <GxCollapsibleSection
+            sectionTitle={t('segmentationSettings.sectionTitle')}
+            helpText={t('settingsHelp.sections.cells')}
+            sectionIcon={<BubbleChartIcon fontSize="small" />}
+            disabled={!imageLoaded || !hasSegmentationData}
+            unmountOnExit={false}
+            headerAction={
+              <GxLayerToggle
+                label={t('layerVisibility.toggle', { layer: t('segmentationSettings.sectionTitle') })}
+                checked={isCellLayerOn}
+                onChange={toggleCellLayer}
+                disabled={!imageLoaded || !hasSegmentationData}
+              />
+            }
+          >
+            <CellMasksLayerSection />
+          </GxCollapsibleSection>
         </Box>
+        <SettingsHelpPanel />
       </Box>
-    </SettingsHelpProvider>
+    </Box>
   );
 };
 
