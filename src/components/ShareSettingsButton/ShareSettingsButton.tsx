@@ -254,7 +254,7 @@ const styles = (theme: Theme) => ({
   shareButton: getSourceDataActionStyles(theme),
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: theme.palette.background.paper
+      backgroundColor: theme.palette.background.level1
     }
   },
   dialogTitle: {
@@ -262,22 +262,22 @@ const styles = (theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     background: theme.palette.gx.gradients.brand(),
-    padding: '16px 24px'
+    padding: '6px 24px'
   },
   dialogTitleText: {
     fontWeight: 700,
     fontSize: '1.25rem',
-    color: theme.palette.common.white
+    color: theme.palette.gx.neutrals[90]
   },
   dialogCloseButton: {
-    color: theme.palette.common.white,
+    color: theme.palette.gx.neutrals[90],
     '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.1)
+      backgroundColor: alpha(theme.palette.gx.neutrals[90], 0.1)
     }
   },
   dialogContent: {
     padding: '24px !important',
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.level1
   },
   sectionLabel: {
     fontWeight: 600,
@@ -293,7 +293,7 @@ const styles = (theme: Theme) => ({
   inputRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '12px'
   },
   textField: {
     '& .MuiInputBase-root': {
@@ -305,15 +305,15 @@ const styles = (theme: Theme) => ({
     color: theme.palette.text.secondary,
     '&:hover': {
       backgroundColor: alpha(theme.palette.text.primary, 0.1),
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     }
   },
   applyButton: {
     alignSelf: 'stretch',
     minWidth: '72px',
     background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.common.white,
-    fontWeight: 600,
+    color: theme.palette.gx.neutrals[90],
+    fontWeight: 700,
     '&.Mui-disabled': {
       background: theme.palette.action.disabledBackground,
       color: theme.palette.action.disabled

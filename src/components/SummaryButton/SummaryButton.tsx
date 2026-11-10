@@ -200,7 +200,7 @@ const styles = (theme: Theme) => ({
   summaryButton: getSourceDataActionStyles(theme),
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: theme.palette.background.paper,
+      backgroundColor: theme.palette.background.default,
       maxHeight: '95vh',
       height: '95vh',
       display: 'flex',
@@ -213,15 +213,15 @@ const styles = (theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     background: theme.palette.gx.gradients.brand(),
-    color: theme.palette.common.white,
+    color: theme.palette.gx.neutrals[90],
     fontWeight: 700,
-    padding: '16px 24px',
+    padding: '6px 24px',
     flexShrink: 0
   },
   dialogTitleText: {
     fontWeight: 700,
     fontSize: '1.25rem',
-    color: theme.palette.common.white
+    color: theme.palette.gx.neutrals[90]
   },
   dialogTitleActions: {
     display: 'flex',
@@ -229,20 +229,20 @@ const styles = (theme: Theme) => ({
     gap: '12px'
   },
   openInNewTabButton: {
-    color: theme.palette.common.white,
-    borderColor: theme.palette.common.white,
+    color: theme.palette.gx.neutrals[90],
+    borderColor: theme.palette.gx.neutrals[90],
     '&:hover': {
-      borderColor: theme.palette.common.white,
-      backgroundColor: alpha(theme.palette.common.white, 0.1)
+      borderColor: theme.palette.gx.neutrals[90],
+      backgroundColor: alpha(theme.palette.gx.neutrals[90], 0.1)
     },
     '&.Mui-disabled': {
       color: theme.palette.action.disabled
     }
   },
   dialogCloseButton: {
-    color: theme.palette.common.white,
+    color: theme.palette.gx.neutrals[90],
     '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.1)
+      backgroundColor: alpha(theme.palette.gx.neutrals[90], 0.1)
     }
   },
   dialogContent: {

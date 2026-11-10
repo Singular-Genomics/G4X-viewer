@@ -6,7 +6,7 @@ export const getSourceDataActionStyles = (theme: Theme) => ({
   minHeight: '36px',
   padding: '6px 8px',
   borderRadius: '6px',
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.background.level1,
   color: theme.palette.text.secondary,
   fontSize: '0.75rem',
   fontWeight: 600,
