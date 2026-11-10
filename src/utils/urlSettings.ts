@@ -74,18 +74,11 @@ export function applyTranscriptFilterUrlSettings(params: URLSearchParams): void 
 }
 
 export function applyCellFilterUrlSettings(params: URLSearchParams): void {
-  const { availableClusterLabels } = useCellSegmentationLayerStore.getState();
+  const { availableClusterLabels, selectedClusterLabelKey } = useCellSegmentationLayerStore.getState();
   if (!availableClusterLabels.length) return;
 
-  let label = availableClusterLabels[0];
-  const rawCk = params.get(URL_KEYS.segClusterKey);
-  if (rawCk) {
-    const found = availableClusterLabels.find((l) => l.key === rawCk);
-    if (found) {
-      label = found;
-      useCellSegmentationLayerStore.setState({ selectedClusterLabelKey: rawCk });
-    }
-  }
+  // Masks already use the loaded label (seg_ck goes to the loader)
+  const label = availableClusterLabels.find((l) => l.key === selectedClusterLabelKey) ?? availableClusterLabels[0];
 
   const rawFi = params.get(URL_KEYS.segFilterIndices);
   if (rawFi) {

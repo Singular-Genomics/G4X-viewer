@@ -3,7 +3,7 @@
 <span style="margin-top:-3rem; display:block;"><a href="https://g4x-viewer.singulargenomics.com">g4x-viewer.singulargenomics.com</a></span>
 <br>
 
-#### Explore the G4X-Viewer
+#### Explore G4X-data
 
 ![G4X Viewer](./images/homepage.png)
 
@@ -11,24 +11,24 @@
 
 <br>
 
-G4X-viewer is an advanced, open source project designed to visualize imaging data using modern web technologies. The project is continuously evolving to provide an intuitive and flexible interface for the analysis and presentation of complex datasets. Inspired by the [Viv](https://github.com/hms-dbmi/viv) library, our goal is to push the boundaries of interactive data visualization in web applications.
+G4X-viewer is an open-source, browser-based application for interactive visualization of [G4X-data](https://docs.singulargenomics.com/g4x_data/). Explore tissue images, transcripts, and segmented cells, adjust layer visibility, filter cells, and capture screenshots of features of interest. The available layers depend on the data included in your sample.
 
-The G4X-viewer enables you to visualize and interact with your [G4X data](https://docs.singulargenomics.com/g4x_data/g4x_output/) in a user-friendly interface. With it, you can begin to understand spatial patterning of your tissues, take screenshots of specific features of interest, subsample your data, and gain insights into your specific biological system.
+Use regions of interest (ROIs) to compare selected areas of your sample in the dashboard and export data for further analysis. Transcript display controls let you adjust how many transcripts are rendered while exploring large datasets.
 
-We provide a web-based version of the G4X-viewer that can be accessed through our [website](https://g4x-viewer.singulargenomics.com). For users who want to use it locally, we also provide installation instructions on our [Github](https://github.com/Singular-Genomics/G4X-viewer).
+Use the [hosted application](https://g4x-viewer.singulargenomics.com), or run the same web application locally using the instructions in the [GitHub repository](https://github.com/Singular-Genomics/G4X-viewer#getting-started).
 
-!!! tip
-    Older data sets may require use of our [legacy viewer](https://g4x-viewer.legacy.singulargenomics.com) if the data was generated before December 2025. In this legacy viewer, many analysis features will be unavailable.
+!!! tip "Data compatibility"
+    G4X-viewer v4 uses the `g4x-viewer.zarr` store. For older datasets that use separate viewer files, use the [legacy viewer](https://g4x-viewer.legacy.singulargenomics.com), or use [G4X-helpers migrate](https://docs.singulargenomics.com/G4X-helpers/features/migrate/) to convert supported legacy data and generate a v4-compatible viewer store.
 <br>
 
 ### [viewer](viewer/index.md)
 ---
 
-Navigate to the [viewer](viewer/index.md) page to learn how to interact with the G4X-viewer's core functions. These pages comprehensively go through all interactable elements on the viewer tab and how to use them, organized by which modalities and image layers are being manipulated.
+Start with the [viewer guide](viewer/index.md) to learn how to load your sample and use the controls for each data layer.
 
 The viewer pages include:
 
-+ uploading source files
++ loading source data
 + on-screen controls
 + protein layer controls
 + fH&E layer controls
@@ -42,7 +42,7 @@ The viewer pages include:
 ### [dashboard](dashboard/index.md)
 ---
 
-Navigate to the [dashboard](dashboard/index.md) page to learn how to use the dashboard tab to perform basic analysis on your data without ever leaving the G4X-viewer. All dashboard features are instanced with your viewer window to allow you to seamlessly jump between looking at your data and performing rapid analysis.
+Use the [dashboard guide](dashboard/index.md) to compare transcript, cell, and protein information across selected ROIs. The viewer and dashboard share the same session, so you can switch between spatial exploration and ROI comparisons. Available plots depend on the data in your sample.
 
 The dashboard pages include:
 
@@ -57,7 +57,7 @@ The dashboard pages include:
 ### [resources](resources.md)
 ---
 
-Please navigate to the G4X-viewer [resources](./resources.md) to help you leverage the suite of tools available in the G4X-viewer
+See [resources](./resources.md) for video tutorials and introductory slides. Some resources demonstrate earlier viewer versions, so controls and supported data formats may differ from v4.
 
 <br>
 
@@ -71,6 +71,6 @@ Found a bug or want to report another problem regarding G4X-viewer?
 :material-arrow-right-thin: please file a new issue on the G4X-viewer [issue tracker](https://github.com/Singular-Genomics/G4X-viewer/issues)  
 
 Want to get involved and add new features?  
-:material-arrow-right-thin: check out how to [contribute](https://github.com/Singular-Genomics/G4X-viewer?tab=contributing-ov-file#readme) 
+:material-arrow-right-thin: check out how to [contribute](contributing.md).
 
 --8<-- "_core/_partials/end_cap.md"

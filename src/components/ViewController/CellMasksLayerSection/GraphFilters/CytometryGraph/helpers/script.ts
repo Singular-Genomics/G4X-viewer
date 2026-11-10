@@ -5,18 +5,22 @@ import {
   CytometryWorkerStatus
 } from './cytometryWorker';
 
-const findMinMaxValue = (array: number[], includeZero = true): [number, number] => {
-  if (includeZero) {
-    return array.reduce(
-      (out, curr) => [curr < out[0] ? curr : out[0], curr > out[1] ? curr : out[1]],
-      [Infinity, -Infinity]
-    );
+const findMinMaxValue = (array: ArrayLike<number>, includeZero = true): [number, number] => {
+  let min = Infinity;
+  let max = -Infinity;
+
+  for (let i = 0; i < array.length; i++) {
+    const curr = array[i];
+
+    if ((includeZero || curr !== 0) && curr < min) {
+      min = curr;
+    }
+    if (curr > max) {
+      max = curr;
+    }
   }
 
-  return array.reduce(
-    (out, curr) => [curr !== 0 && curr < out[0] ? curr : out[0], curr > out[1] ? curr : out[1]],
-    [Infinity, -Infinity]
-  );
+  return [min, max];
 };
 
 function findBinIndex(value: number, bins: number[]) {
@@ -54,8 +58,8 @@ function findBin2D(x: number, y: number, xBins: number[], yBins: number[]) {
 }
 
 function processLinearBinning(
-  xValuesSampled: number[],
-  yValuesSampled: number[],
+  xValuesSampled: ArrayLike<number>,
+  yValuesSampled: ArrayLike<number>,
   xMin: number,
   xMax: number,
   yMin: number,
@@ -166,8 +170,8 @@ function processLinearBinning(
 
 function processLogarithmicBinning(
   cellIdsSampled: string[],
-  xValuesSampled: number[],
-  yValuesSampled: number[],
+  xValuesSampled: ArrayLike<number>,
+  yValuesSampled: ArrayLike<number>,
   xMin: number,
   xMax: number,
   yMin: number,
@@ -301,39 +305,23 @@ function processLogarithmicBinning(
 }
 
 onmessage = async function (e: MessageEvent<CytometryWorkerInput>) {
-  const { maskData, xProteinIndex, yProteinIndex, binXCount, binYCount, axisType, subsamplingStep, graphMode } = e.data;
+  const {
+    xValues: xValuesSampled,
+    yValues: yValuesSampled,
+    cellIds: idsSampled,
+    binXCount,
+    binYCount,
+    axisType,
+    graphMode
+  } = e.data;
 
-  if (!maskData.length) {
+  if (!xValuesSampled.length) {
     this.postMessage({
       completed: true,
       success: false,
       status: CytometryWorkerStatus.NO_MASK
     });
-  } else if (xProteinIndex < 0 || yProteinIndex < 0) {
-    this.postMessage({
-      completed: true,
-      success: false,
-      status: CytometryWorkerStatus.NO_PROTEIN
-    });
-  } else if (subsamplingStep <= 0) {
-    this.postMessage({
-      completed: true,
-      success: false,
-      status: CytometryWorkerStatus.INVALID
-    });
-  }
-
-  const sampledLength = Math.ceil(maskData.length / subsamplingStep);
-  const xValuesSampled = new Array<number>(sampledLength);
-  const yValuesSampled = new Array<number>(sampledLength);
-  const idsSampled = new Array(sampledLength);
-
-  let sampleIndex = 0;
-  for (let i = 0; i < maskData.length; i += subsamplingStep) {
-    xValuesSampled[sampleIndex] = maskData[i].proteinValues[xProteinIndex] + 1;
-    yValuesSampled[sampleIndex] = maskData[i].proteinValues[yProteinIndex] + 1;
-    idsSampled[sampleIndex] = maskData[i].cellId;
-    sampleIndex++;
+    return;
   }
 
   const [xMin, xMax] = findMinMaxValue(xValuesSampled, false);

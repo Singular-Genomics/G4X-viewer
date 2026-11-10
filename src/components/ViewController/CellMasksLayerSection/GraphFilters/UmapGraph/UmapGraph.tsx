@@ -40,7 +40,7 @@ export const UmapGraph = () => {
 
   useEffect(() => {
     if (cellMasksData) {
-      getPlotData(cellMasksData, settings.subsamplingValue)
+      getPlotData(cellMasksData, colorMapConfig, settings.subsamplingValue)
         .then((results) => setPlotData(results))
         .catch((reject) => {
           setPlotData(reject);
@@ -50,7 +50,7 @@ export const UmapGraph = () => {
           });
         });
     }
-  }, [cellMasksData, enqueueSnackbar, settings.subsamplingValue, t]);
+  }, [cellMasksData, colorMapConfig, enqueueSnackbar, settings.subsamplingValue, t]);
 
   useEffect(() => {
     const containerEl = containerRef.current;

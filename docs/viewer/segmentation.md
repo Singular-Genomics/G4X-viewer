@@ -42,27 +42,29 @@ These controls select segmentation and cluster sources, style cell masks, and ap
 
 - <b><u>Display Filtered Cells:</u></b>
 
-      Shows or hides cells specified by the filters below. Filtered cells display as gray polygons in the cell mask layer. The **Display Filtered Cells** option is available only when a filter is actively applied to the image.
-
-- <b><u>Import/Export Colormap:</u></b>
-
-      Import or export segmentation visualization settings and colormap configurations.
-
-      - **Import:** Click the button and select a previously saved JSON configuration file.
-      - **Export:** Configure the segmentation settings as desired, then click **Export** and choose a save location and filename.
+      Shows or hides cells excluded by the active filter. When shown, excluded cells appear as gray polygons in the cell mask layer. This option is available only when a filter is actively applied to the image.
 
 - <b><u>Cluster Filter Settings:</u></b>
 
       These features specify the filter state for cell mask overlays. They rely on clustering information and expression of protein or RNA species of interest. Clusters labeled **-1** were not assigned to a cluster, typically due to filtering or quality-control processes in onboard analysis.
 
-      - **Search Clusters:** Search clusters based on cluster names. Manually updated cluster names can be used to label cell types or other annotations.
+      - **Apply Filter:** Applies the current filter to the displayed image.
+      - **Clear Filter:** Clears the current filter from the displayed image.
+      - **Search Clusters:** Searches clusters by name. Manually updated cluster names can represent cell types or other annotations.
+      - **Export Colormap:** Exports the displayed cluster and color data.
+      - **Advanced Filter:** Opens additional options for filtering the cluster table.
       - **Toggle All:** Toggles selection of all clusters on or off.
       - **Toggle Cluster:** Toggles selection for a single cluster.
       - **Show Selected:** Hides all non-selected clusters.
       - **Change Channel Color:** Changes the color selection for a given cluster.
-      - **Change Page:** Changes the displayed page when there are too many clusters to display at once.
-      - **Apply Filter:** Applies the current filter to the displayed image.
-      - **Clear Filter:** Clears the current filter from the displayed image.
+      - **Change Page:** Moves between pages when there are too many clusters to display at once.
+
+- <b><u>Import/Export Colormap:</u></b>
+
+      Import or export the cluster colormap as a JSON configuration file.
+
+      - **Import:** Click **Import**, then select a previously saved JSON configuration file.
+      - **Export:** Configure the cluster colors as desired, then click **Export** and choose a save location and filename.
 
 - <b><u>UMAP Filter:</u></b>
 
