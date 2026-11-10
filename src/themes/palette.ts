@@ -113,8 +113,8 @@ export const defaultPalette = {
   background: {
     default: neutrals[10],
     paper: neutrals[20],
-    level1: neutrals[5],
-    level2: neutrals[15],
+    level1: neutrals[15],
+    level2: neutrals[20],
     level3: neutrals[25]
   },
 
@@ -134,6 +134,7 @@ export const defaultPalette = {
       background: accents.purple,
       divider: neutrals[65]
     },
+
     toggleButton: {
       background: neutrals[15],
       text: neutrals[60],
@@ -142,6 +143,7 @@ export const defaultPalette = {
       hoverBackground: alpha(neutrals[20], 0.75),
       activeHoverBackground: alpha(greens[400], 0.1)
     },
+
     layerToggle: {
       thumb: neutrals[80],
       backgroundOn: greens[400],

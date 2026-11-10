@@ -65,7 +65,7 @@ const sx = {
     textAlign: 'left',
     padding: '2px 10px',
     borderRadius: '6px',
-    backgroundColor: 'background.paper',
+    backgroundColor: 'background.level1',
     color: 'text.primary',
     fontSize: '14px',
     overflowWrap: 'anywhere',

@@ -81,7 +81,7 @@ const sx = {
     minWidth: 0,
     fontSize: '14px',
     borderRadius: '6px',
-    backgroundColor: 'background.paper',
+    backgroundColor: 'background.level1',
     '& .MuiInputBase-input': {
       textAlign: 'left',
       padding: '2px 10px'
