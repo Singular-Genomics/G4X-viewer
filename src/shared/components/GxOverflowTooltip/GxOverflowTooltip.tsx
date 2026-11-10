@@ -17,8 +17,6 @@ export const GxOverflowTooltip = ({ value, sx }: GxOverflowTooltipProps) => {
       title={overflowing ? value : ''}
       placement="bottom"
       arrow
-      enterDelay={100}
-      enterNextDelay={100}
     >
       <Typography
         ref={ref}

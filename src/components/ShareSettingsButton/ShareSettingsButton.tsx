@@ -245,14 +245,14 @@ const styles = (theme: Theme) => ({
   },
   dialog: {
     '& .MuiDialog-paper': {
-      backgroundColor: theme.palette.gx.primary.white
+      backgroundColor: theme.palette.background.paper
     }
   },
   dialogTitle: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    background: theme.palette.gx.gradients.brand(),
     padding: '16px 24px'
   },
   dialogTitleText: {
@@ -268,17 +268,17 @@ const styles = (theme: Theme) => ({
   },
   dialogContent: {
     padding: '24px !important',
-    backgroundColor: theme.palette.gx.lightGrey[700]
+    backgroundColor: theme.palette.background.paper
   },
   sectionLabel: {
     fontWeight: 600,
     fontSize: '0.875rem',
-    color: theme.palette.gx.primary.black,
+    color: theme.palette.text.primary,
     marginBottom: '4px'
   },
   helperText: {
     fontSize: '0.75rem',
-    color: theme.palette.gx.mediumGrey[300],
+    color: theme.palette.text.secondary,
     marginBottom: '8px'
   },
   inputRow: {
@@ -288,7 +288,7 @@ const styles = (theme: Theme) => ({
   },
   textField: {
     '& .MuiInputBase-root': {
-      backgroundColor: theme.palette.gx.primary.white,
+      backgroundColor: theme.palette.background.default,
       fontSize: '0.8125rem'
     }
   },

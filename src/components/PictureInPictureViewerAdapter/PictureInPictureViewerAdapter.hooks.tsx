@@ -5,7 +5,7 @@ import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
 import { getVivId } from '../../utils/utils';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import CellMasksLayer from '../../layers/cell-masks-layer/cell-masks-layer';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import TranscriptLayer from '../../layers/transcript-layer/transcript-layer';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
@@ -47,24 +47,21 @@ export const useResizableContainer = () => {
     height: number;
   }>({ width: 0, height: 0 });
 
-  const handleResize = useCallback(() => {
-    if (containerRef.current) {
-      setContainerSize({
-        width: containerRef.current.clientWidth,
-        height: containerRef.current.clientHeight
-      });
-    }
-  }, [containerRef]);
-
   useEffect(() => {
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('onControllerToggle', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('onControllerToggle', handleResize);
-    };
-  }, [handleResize]);
+    const containerEl = containerRef.current;
+    if (!containerEl) return;
+
+    // Unlike window resize, this also catches the side panel being resized or hidden.
+    const resizeObserver = new ResizeObserver(() =>
+      setContainerSize({
+        width: containerEl.clientWidth,
+        height: containerEl.clientHeight
+      })
+    );
+    resizeObserver.observe(containerEl);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   return {
     containerRef,

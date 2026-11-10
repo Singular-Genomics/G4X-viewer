@@ -4,6 +4,7 @@ import { useCellSegmentationLayerStore } from '../../../stores/CellSegmentationL
 import { useShallow } from 'zustand/react/shallow';
 import { CellMasksFillSettings } from './CellMasksFillSettings';
 import { CellMasksBoundarySettings } from './CellMasksBoundarySettings';
+import { CellMasksBoundaryToggle } from './CellMasksBoundaryToggle';
 import { CellsFilter } from './CellsFilter';
 import { GraphFilters } from './GraphFilters/GraphFilters';
 import { useTranslation } from 'react-i18next';
@@ -50,6 +51,7 @@ export const CellMasksLayerSection = () => {
       <Box>
         <Box sx={sx.subsectionWrapper}>
           <Typography sx={sx.subsectionTitle}>{t('segmentationSettings.boundaryLabel')}</Typography>
+          <CellMasksBoundaryToggle />
           {!isCellLayerOn && showBoundary && <DisabledLayerWarning />}
         </Box>
         <CellMasksBoundarySettings />

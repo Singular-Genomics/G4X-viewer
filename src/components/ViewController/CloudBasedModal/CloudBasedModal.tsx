@@ -59,7 +59,7 @@ export const CloudBasedModal = ({
 
 const styles = (theme: Theme) => ({
   modalBox: {
-    width: '700px'
+    width: { xs: '100%', sm: '70vw', md: '700px' }
   },
   textField: {
     marginTop: 1,

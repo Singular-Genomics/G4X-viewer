@@ -54,8 +54,6 @@ export const NavigationRunInfo = () => {
                 title={isTruncated ? rawValue : ''}
                 placement="bottom"
                 arrow
-                enterDelay={100}
-                enterNextDelay={100}
               >
                 <Typography sx={sx.value}>{displayValue}</Typography>
               </Tooltip>

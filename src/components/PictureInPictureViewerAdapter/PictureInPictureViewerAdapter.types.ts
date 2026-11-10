@@ -2,6 +2,7 @@ import { TiffPixelSource, ZarrPixelSource } from '@hms-dbmi/viv';
 
 export type PictureInPictureViewerAdapterProps = {
   isViewerActive?: boolean;
+  isUiHidden?: boolean;
 };
 
 export type PictureInPictureViewerConfig = {
