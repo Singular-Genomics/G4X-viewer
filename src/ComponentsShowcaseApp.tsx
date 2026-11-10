@@ -20,7 +20,11 @@ i18n
 
 export const ComponentsShowcaseApp = () => {
   return (
-    <ThemeProvider theme={gxTheme}>
+    <ThemeProvider
+      theme={gxTheme}
+      // Temporary: light until color requirements are known (contrast)
+      defaultMode="light"
+    >
       <SnackbarProvider
         anchorOrigin={{
           vertical: 'top',
