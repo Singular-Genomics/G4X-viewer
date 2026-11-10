@@ -25,9 +25,9 @@ const styles = (theme: Theme) => ({
   rounded: {
     overflow: 'hidden',
     borderRadius: '8px',
-    background: theme.palette.settingsPanel.background1,
+    background: theme.palette.background.level1,
     height: '40px',
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     fontSize: '14px',
     '& .MuiPaper-root': {
       filter: 'none'
@@ -70,9 +70,9 @@ const styles = (theme: Theme) => ({
       },
       '& .MuiMenuItem-root': {
         fontSize: '14px',
-        color: theme.palette.settingsPanel.secondaryText,
+        color: theme.palette.text.secondary,
         '&:hover': {
-          color: theme.palette.settingsPanel.secondaryText,
+          color: theme.palette.text.secondary,
           background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
         },
         [`&.${menuItemClasses.selected}`]: {

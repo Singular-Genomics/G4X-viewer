@@ -158,11 +158,11 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   cloudIcon: {
     fontSize: '18px',
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     opacity: theme.vars?.opacity.inputPlaceholder ?? (theme.palette.mode === 'dark' ? 0.5 : 0.42)
   },
   iconButton: {
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     padding: '2px',
     alignSelf: 'center',
     marginRight: '-4px'

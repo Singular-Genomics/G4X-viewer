@@ -79,10 +79,10 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
   return {
     rounded: {
       borderRadius: '8px',
-      background: theme.palette.settingsPanel.background1,
+      background: theme.palette.background.level1,
       minHeight: '40px',
       height: 'auto',
-      color: theme.palette.settingsPanel.text,
+      color: theme.palette.text.primary,
       width: '100%',
       transition: 'background 0.15s ease, color 0.15s ease',
       '& .MuiPaper-root': {
@@ -133,7 +133,7 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
       '& .MuiPaper-root': {
         border: '1px solid',
         borderColor: theme.palette.divider,
-        background: theme.palette.settingsPanel.background1,
+        background: theme.palette.background.level1,
         filter: 'none',
         fontSize: '14px',
         boxSizing: 'border-box',
@@ -143,10 +143,10 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
         },
         '& .MuiMenuItem-root': {
           fontSize: '14px',
-          color: theme.palette.settingsPanel.text,
+          color: theme.palette.text.primary,
           transition: 'background 0.15s ease, color 0.15s ease',
           '&:hover': {
-            color: theme.palette.settingsPanel.text,
+            color: theme.palette.text.primary,
             background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
           },
           [`&.${menuItemClasses.selected}`]: {

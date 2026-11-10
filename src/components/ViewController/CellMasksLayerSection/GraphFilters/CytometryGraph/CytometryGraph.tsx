@@ -264,8 +264,8 @@ export const CytometryGraph = () => {
     hovermode: 'closest',
     uirevision: 'true',
     margin: { t: 50, r: 100, b: 80, l: 100 },
-    paper_bgcolor: theme.palette.settingsPanel.background1,
-    plot_bgcolor: theme.palette.settingsPanel.background1,
+    paper_bgcolor: theme.palette.background.level1,
+    plot_bgcolor: theme.palette.background.level1,
     xaxis: {
       ...getPlotTheme(theme).xaxis,
       title: {
@@ -301,14 +301,14 @@ export const CytometryGraph = () => {
     height: dimensions.height,
     activeselection: {
       opacity: 1,
-      fillcolor: alpha(theme.palette.settingsPanel.text, 0.1)
+      fillcolor: alpha(theme.palette.text.primary, 0.1)
     },
     selections: [
       ...(selectionRange
         ? [
             {
               line: {
-                color: theme.palette.settingsPanel.text,
+                color: theme.palette.text.primary,
                 width: 2,
                 dash: 'solid'
               },
@@ -364,7 +364,7 @@ export const CytometryGraph = () => {
           }}
         />
       </Box>
-      <Box sx={{ backgroundColor: theme.palette.settingsPanel.background1, paddingInline: '32px' }}>
+      <Box sx={{ backgroundColor: theme.palette.background.level1, paddingInline: '32px' }}>
         <GxColorscaleSlider
           scaleMin={heatmapData.metadata?.zMin}
           scaleMax={heatmapData.metadata?.zMax}
@@ -418,16 +418,16 @@ const styles = (theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: '8px',
-    background: alpha(theme.palette.settingsPanel.background1, 0.94)
+    background: alpha(theme.palette.background.level1, 0.94)
   },
   loaderProgressValueText: {
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     fontSize: '24px',
     fontWeight: 700,
     marginBlockStart: '16px'
   },
   loaderProgressMessage: {
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     fontSize: '24px',
     fontWeight: 700
   },
@@ -444,6 +444,6 @@ const messageSx = {
     paddingInline: '16px'
   },
   downloadIcon: {
-    color: (theme: Theme) => theme.palette.settingsPanel.text
+    color: (theme: Theme) => theme.palette.text.primary
   }
 };

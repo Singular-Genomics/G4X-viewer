@@ -65,20 +65,15 @@ export interface GxNavBarColors {
   surface: string;
   text: string;
   secondaryText: string;
-  accent: string;
   selectedBackground: string;
   hoverBackground: string;
-  divider: string;
 }
 
 export interface GxSettingsPanelColors {
   surface: string;
-  background1: string;
-  text: string;
-  secondaryText: string;
+
   sections: {
     background: string;
-    text: string;
     divider: string;
   };
   layerToggle: GxLayerToggleColors;

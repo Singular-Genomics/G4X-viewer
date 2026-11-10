@@ -40,7 +40,7 @@ export const SettingsHelpPanel = () => {
         </Typography>
         <Typography
           component="span"
-          sx={{ fontSize: '0.75rem', color: 'settingsPanel.secondaryText' }}
+          sx={{ fontSize: '0.75rem', color: 'text.secondary' }}
         >
           {t(help.visible ? 'settingsHelp.hideShort' : 'settingsHelp.showShort')}
         </Typography>
@@ -59,7 +59,7 @@ export const SettingsHelpPanel = () => {
             sx={{
               fontSize: '0.875rem',
               lineHeight: 1.55,
-              color: help.help ? 'settingsPanel.text' : 'settingsPanel.secondaryText'
+              color: help.help ? 'text.primary' : 'text.secondary'
             }}
           >
             {help.help?.content ?? t('settingsHelp.prompt')}
@@ -76,7 +76,7 @@ const sx = {
     right: '4px',
     width: 28,
     height: 28,
-    color: 'settingsPanel.secondaryText',
+    color: 'text.secondary',
     zIndex: 1
   },
   panel: {
@@ -84,7 +84,7 @@ const sx = {
     marginTop: '12px',
     borderTop: '1px solid',
     borderColor: 'divider',
-    backgroundColor: 'settingsPanel.background1',
+    backgroundColor: 'background.level1',
     borderRadius: '6px'
   },
   header: {
@@ -94,7 +94,7 @@ const sx = {
     gap: '8px',
     minHeight: 36,
     padding: '6px 10px',
-    color: 'settingsPanel.text',
+    color: 'text.primary',
     borderRadius: '6px'
   },
   content: {

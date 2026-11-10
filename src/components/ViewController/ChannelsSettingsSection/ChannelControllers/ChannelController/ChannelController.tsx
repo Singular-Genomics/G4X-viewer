@@ -325,7 +325,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     opacity: 0.4
   },
   removeChannelButton: {
-    color: theme.palette.settingsPanel.secondaryText,
+    color: theme.palette.text.secondary,
     '&:hover': {
       color: theme.palette.gx.accent.greenBlue,
       backgroundColor: 'unset'
@@ -367,19 +367,19 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       fontWeight: 700
     },
     '& .MuiSelect-icon': {
-      color: alpha(theme.palette.settingsPanel.secondaryText, 0.6)
+      color: alpha(theme.palette.text.secondary, 0.6)
     },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: alpha(theme.palette.settingsPanel.secondaryText, 0.35)
+      borderColor: alpha(theme.palette.text.secondary, 0.35)
     },
     '&:hover': {
       '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: alpha(theme.palette.settingsPanel.secondaryText, 0.55)
+        borderColor: alpha(theme.palette.text.secondary, 0.55)
       }
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
       border: '1px solid',
-      borderColor: alpha(theme.palette.settingsPanel.secondaryText, 0.75)
+      borderColor: alpha(theme.palette.text.secondary, 0.75)
     }
   },
   groupHeader: {
@@ -409,12 +409,12 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     flexShrink: 0,
     marginLeft: 'auto',
     borderRadius: '6px',
-    backgroundColor: theme.palette.settingsPanel.background1,
+    backgroundColor: theme.palette.background.level1,
     overflow: 'hidden',
     '& .MuiIconButton-root': {
       borderRadius: 0,
       padding: '2.5px 5px',
-      color: theme.palette.settingsPanel.secondaryText,
+      color: theme.palette.text.secondary,
       '&:hover': {
         backgroundColor: theme.palette.settingsPanel.surface
       },

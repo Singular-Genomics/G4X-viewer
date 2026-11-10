@@ -91,7 +91,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiInputBase-input': {
       textAlign: 'center',
-      WebkitTextFillColor: theme.palette.settingsPanel.text
+      WebkitTextFillColor: theme.palette.text.primary
     },
     '&.MuiInputBase-root::before': {
       borderColor: `${theme.palette.divider}`,

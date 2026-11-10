@@ -203,7 +203,7 @@ const styles = (theme: Theme) => ({
 
   viewControllerContentWrapper: {
     backgroundColor: theme.palette.settingsPanel.surface,
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
 
     padding: '18px 18px 10px 18px',
     height: '100%',
@@ -257,13 +257,13 @@ const styles = (theme: Theme) => ({
       top: '12px',
       width: '8px',
       height: '70px',
-      backgroundColor: theme.palette.settingsPanel.sections.background,
+      backgroundColor: theme.palette.background.level1,
       borderTopLeftRadius: '8px',
       borderBottomLeftRadius: '8px',
       pointerEvents: 'none'
     },
     '&:hover::before': {
-      backgroundColor: lighten(theme.palette.settingsPanel.sections.background, 0.1)
+      backgroundColor: lighten(theme.palette.background.level1, 0.1)
     }
   }
 });

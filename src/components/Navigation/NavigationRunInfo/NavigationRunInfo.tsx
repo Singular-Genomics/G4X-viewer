@@ -76,7 +76,7 @@ const styles = (theme: Theme) => ({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: '10px',
-    borderLeft: `1px solid ${theme.palette.navBar.divider}`,
+    borderLeft: `1px solid ${theme.palette.navBar.text}`,
     paddingLeft: '20px',
     minWidth: 0,
     overflow: 'hidden',

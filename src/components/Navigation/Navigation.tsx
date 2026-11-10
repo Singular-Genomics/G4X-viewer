@@ -258,8 +258,8 @@ const styles = (theme: Theme) => ({
       color: theme.palette.navBar.text,
       background: theme.palette.navBar.selectedBackground,
       backdropFilter: 'blur(15px)',
-      borderBottom: `2px solid ${theme.palette.navBar.accent}`,
-      boxShadow: `0 0 12px ${theme.palette.navBar.accent}50`
+      borderBottom: `2px solid ${theme.palette.secondary.main}`,
+      boxShadow: `0 0 12px ${theme.palette.secondary.main}50`
     },
     '&:hover:not(.Mui-selected)': {
       color: theme.palette.navBar.text,
@@ -284,7 +284,7 @@ const styles = (theme: Theme) => ({
     padding: '5px 10px',
     background: theme.palette.navBar.hoverBackground,
     borderRadius: '4px',
-    border: `1px solid ${theme.palette.navBar.divider}`,
+    border: `1px solid ${theme.palette.navBar.text}`,
     cursor: 'pointer'
   },
   mobilePreviewText: {

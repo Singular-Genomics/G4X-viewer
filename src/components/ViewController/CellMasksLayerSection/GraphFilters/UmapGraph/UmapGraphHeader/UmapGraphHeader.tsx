@@ -126,7 +126,7 @@ const styles = (theme: Theme) => ({
   headerWrapper: {
     display: 'flex',
     height: 'min-content',
-    backgroundColor: theme.palette.settingsPanel.background1,
+    backgroundColor: theme.palette.background.level1,
     gap: '12px',
     padding: '8px 8px 0 8px'
   },
@@ -140,7 +140,7 @@ const styles = (theme: Theme) => ({
   helpIcon: {
     marginTop: '6px',
     fontSize: '20px',
-    color: theme.palette.settingsPanel.secondaryText
+    color: theme.palette.text.secondary
   },
   subsamplingWrapper: {
     display: 'flex',

@@ -201,7 +201,7 @@ const styles = (theme: Theme) => ({
   },
   channelControlerWrapper: {
     padding: '8px',
-    background: theme.palette.settingsPanel.background1,
+    background: theme.palette.background.level1,
     borderRadius: '4px'
   }
 });

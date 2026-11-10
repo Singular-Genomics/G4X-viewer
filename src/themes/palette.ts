@@ -107,30 +107,31 @@ export const defaultPalette = {
   mode: 'dark',
   gx: colors,
 
-  // MUI defaults for components outside the section-specific assignments.
-  background: { default: neutrals[10], paper: neutrals[20] },
-  text: { primary: neutrals[75], secondary: neutrals[60] },
   primary: { main: greens[400], light: pures.magenta, dark: greens[200] },
   secondary: { main: accents.purple },
+
+  background: {
+    default: neutrals[10],
+    paper: neutrals[20],
+    level1: neutrals[5],
+    level2: neutrals[15],
+    level3: neutrals[25]
+  },
+
+  text: { primary: neutrals[75], secondary: neutrals[60] },
 
   navBar: {
     surface: blues[200],
     text: neutrals[75],
     secondaryText: neutrals[60],
-    accent: accents.purple,
     selectedBackground: alpha(neutrals.white, 0.16),
-    hoverBackground: alpha(neutrals.white, 0.08),
-    divider: neutrals[65]
+    hoverBackground: alpha(neutrals.white, 0.08)
   },
 
   settingsPanel: {
     surface: neutrals[10],
-    background1: neutrals[90],
-    text: neutrals[75],
-    secondaryText: neutrals[60],
     sections: {
-      background: neutrals[20],
-      text: neutrals[75],
+      background: accents.purple,
       divider: neutrals[65]
     },
     toggleButton: {
@@ -176,13 +177,9 @@ export const altPalette = {
   settingsPanel: {
     ...defaultPalette.settingsPanel,
     surface: neutrals[80],
-    background1: neutrals[90],
-    text: neutrals[10],
-    secondaryText: neutrals[35],
     sections: {
       ...defaultPalette.settingsPanel.sections,
-      background: neutrals[95],
-      text: neutrals[10]
+      background: neutrals[95]
     },
     toggleButton: {
       ...defaultPalette.settingsPanel.toggleButton,

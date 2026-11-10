@@ -122,10 +122,10 @@ const styles = (theme: Theme) => ({
   },
   container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 },
   inputGroup: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start' },
-  label: { fontSize: 12, display: 'block', color: theme.palette.settingsPanel.text },
+  label: { fontSize: 12, display: 'block', color: theme.palette.text.primary },
   input: {
-    color: theme.palette.settingsPanel.text,
+    color: theme.palette.text.primary,
     width: '60px',
-    input: { color: theme.palette.settingsPanel.text, textAlign: 'left' }
+    input: { color: theme.palette.text.primary, textAlign: 'left' }
   }
 });

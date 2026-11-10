@@ -140,8 +140,8 @@ const sx = {
     alignItems: 'center',
     position: 'relative',
     padding: '0px 12px',
-    color: (theme: Theme) => theme.palette.settingsPanel.sections.text,
-    backgroundColor: (theme: Theme) => theme.palette.settingsPanel.sections.background,
+    color: (theme: Theme) => theme.palette.text.primary,
+    backgroundColor: (theme: Theme) => theme.palette.background.level3,
     width: '100%',
     borderRadius: '4px',
     overflow: 'hidden',
@@ -150,7 +150,7 @@ const sx = {
         duration: 150
       }),
     '&:hover': {
-      backgroundColor: (theme: Theme) => lighten(theme.palette.settingsPanel.sections.background, 0.08)
+      backgroundColor: (theme: Theme) => lighten(theme.palette.background.level3, 0.08)
     },
     '&[aria-disabled="true"]': {
       color: (theme: Theme) => theme.palette.action.disabled,
@@ -194,7 +194,7 @@ const sx = {
   sectionTitle: {
     fontSize: '1.2rem',
     fontWeight: 800,
-    color: (theme: Theme) => theme.palette.settingsPanel.sections.text,
+    color: (theme: Theme) => theme.palette.text.primary,
     textWrap: 'nowrap',
     '.Mui-disabled &': {
       color: 'inherit'

@@ -18,6 +18,11 @@ declare module '@mui/material/styles' {
     settingsPanel?: GxSettingsPanelColors;
     viewport?: GxViewportColors;
   }
+  interface TypeBackground {
+    level1: string;
+    level2: string;
+    level3: string;
+  }
 }
 
 export {};
