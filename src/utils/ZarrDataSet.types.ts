@@ -17,16 +17,15 @@ export type ZarrTranscriptAttrs = {
   layer_config?: ZarrLayerConfig;
   gene_colors?: ZarrGeneColors;
   gene_order?: string[];
-  // Direct-Seq equivalents of gene_colors / gene_order
-  metadata?: Record<string, ZarrDirectSeqTargetMetadata>;
+  // Per-target metadata, fully replaces gene_colors / gene_order when present
+  metadata?: Record<string, ZarrTargetMetadata>;
   metadata_order?: string[];
 };
 
-export type ZarrDirectSeqTargetMetadata = {
-  gene: string;
-  variant: string;
-  color: [number, number, number];
-};
+// `color` is required, every other field (gene, hotspot, variant, length, ...) becomes a filter table column
+export type ZarrTargetMetadata = { color: [number, number, number] } & Record<string, unknown>;
+
+export type ZarrColorMapAttrs = Pick<ZarrTranscriptAttrs, 'gene_colors' | 'gene_order' | 'metadata' | 'metadata_order'>;
 
 export type ZarrTranscriptSource = 'transcripts' | 'directSeq';
 

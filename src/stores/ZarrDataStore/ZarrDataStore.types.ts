@@ -44,9 +44,8 @@ export type ZarrDataStoreMethods = {
 export type ColorMapEntry = {
   gene_name: string;
   color: number[];
-  // Direct-Seq only
-  gene?: string;
-  variant?: string;
+  // Extra per-target fields (e.g. gene, hotspot, variant, length), each key becomes a filter table column
+  metadata?: Record<string, unknown>;
 };
 
 export type ConfigFileData = {

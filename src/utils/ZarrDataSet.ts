@@ -2,7 +2,7 @@ import { open, get, FetchStore } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
-  ZarrGeneColors,
+  ZarrColorMapAttrs,
   ZarrTranscriptAttrs,
   ZarrTranscriptSource,
   ZarrTranscriptField,
@@ -198,19 +198,10 @@ export class ZarrDataSet {
     return attrs.layer_config || null;
   }
 
-  public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
-    const attrs = await this.fetchTranscriptAttrs();
-    return attrs.gene_colors || null;
-  }
-
-  public async fetchTranscriptGeneOrder(): Promise<string[] | null> {
-    const attrs = await this.fetchTranscriptAttrs();
-    return attrs.gene_order || null;
-  }
-
-  public async fetchDirectSeqMetadata() {
-    const { metadata, metadata_order } = await this.fetchTranscriptAttrs('directSeq');
-    return metadata ? { metadata, order: metadata_order || null } : null;
+  // Everything the filter table and colormap are built from, `metadata` takes precedence over gene_colors / gene_order
+  public async fetchColorMapAttrs(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrColorMapAttrs> {
+    const { gene_colors, gene_order, metadata, metadata_order } = await this.fetchTranscriptAttrs(source);
+    return { gene_colors, gene_order, metadata, metadata_order };
   }
 
   public async detectLayerConfig(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrLayerConfig | null> {

@@ -7,7 +7,7 @@ import { useCellSegmentationLayerStore } from '../stores/CellSegmentationLayerSt
 import { useZarrDataStore } from '../stores/ZarrDataStore';
 import { useViewerStore } from '../stores/ViewerStore';
 import type { ColorMapEntry } from '../stores/ZarrDataStore';
-import type { ZarrDirectSeqTargetMetadata } from '../utils/ZarrDataSet.types';
+import type { ZarrColorMapAttrs, ZarrTargetMetadata } from '../utils/ZarrDataSet.types';
 import {
   applyCellFilterUrlSettings,
   applyCytometryFilterUrlSettings,
@@ -29,14 +29,27 @@ const toColorMapEntries = (colors: Record<string, number[]>, order: string[] | n
     order
   );
 
-const toDirectSeqColorMapEntries = (
-  metadata: Record<string, ZarrDirectSeqTargetMetadata>,
+// Every metadata field except `color` is kept, it drives the filter table columns
+const toMetadataColorMapEntries = (
+  metadata: Record<string, ZarrTargetMetadata>,
   order: string[] | null
 ): ColorMapEntry[] =>
   sortByOrder(
-    Object.entries(metadata).map(([gene_name, { color, gene, variant }]) => ({ gene_name, color, gene, variant })),
+    Object.entries(metadata).map(([gene_name, { color, ...fields }]) => ({ gene_name, color, metadata: fields })),
     order
   );
+
+// `metadata` fully replaces gene_colors / gene_order, the latter stay as a fallback for older datasets
+const attrsToColorMapEntries = ({
+  metadata,
+  metadata_order,
+  gene_colors,
+  gene_order
+}: ZarrColorMapAttrs): ColorMapEntry[] | null => {
+  if (metadata) return toMetadataColorMapEntries(metadata, metadata_order ?? null);
+  if (gene_colors) return toColorMapEntries(gene_colors, gene_order ?? null);
+  return null;
+};
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -65,14 +78,10 @@ export const useOnDemandDataLoader = () => {
             useZarrDataStore.getState().setLayerConfig(layerConfig);
           }
 
-          const [transcriptColors, geneOrder] = await Promise.all([
-            zarrDataSet.fetchTranscriptColors(),
-            zarrDataSet.fetchTranscriptGeneOrder()
-          ]);
+          const colorMapEntries = attrsToColorMapEntries(await zarrDataSet.fetchColorMapAttrs());
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
-          if (transcriptColors) {
-            const colorMapEntries = toColorMapEntries(transcriptColors, geneOrder);
+          if (colorMapEntries) {
             useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
@@ -80,11 +89,8 @@ export const useOnDemandDataLoader = () => {
           if (pendingTranscriptAttrs.layer_config) {
             useZarrDataStore.getState().setLayerConfig(pendingTranscriptAttrs.layer_config);
           }
-          if (pendingTranscriptAttrs.gene_colors) {
-            const colorMapEntries = Object.entries(pendingTranscriptAttrs.gene_colors).map(([gene_name, color]) => ({
-              gene_name,
-              color: color as number[]
-            }));
+          const colorMapEntries = attrsToColorMapEntries(pendingTranscriptAttrs);
+          if (colorMapEntries) {
             useZarrDataStore.getState().setLoadedColorMapConfig(colorMapEntries);
             useZarrDataStore.getState().setColormapConfig(colorMapEntries);
           }
@@ -115,14 +121,12 @@ export const useOnDemandDataLoader = () => {
           const layerConfig = await zarrDataSet.detectLayerConfig('directSeq');
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
-          const directSeqMetadata = await zarrDataSet.fetchDirectSeqMetadata();
+          const colorMapEntries = attrsToColorMapEntries(await zarrDataSet.fetchColorMapAttrs('directSeq'));
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
           setDirectSeqData({
             ...(layerConfig && { layerConfig }),
-            ...(directSeqMetadata && {
-              colorMapConfig: toDirectSeqColorMapEntries(directSeqMetadata.metadata, directSeqMetadata.order)
-            })
+            ...(colorMapEntries && { colorMapConfig: colorMapEntries })
           });
         }
 

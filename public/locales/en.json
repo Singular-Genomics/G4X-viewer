@@ -266,8 +266,12 @@
     "cellId": "Cell ID",
     "color": "Color",
     "geneName": "Gene Name",
-    "gene": "Gene",
-    "variant": "Variant",
+    "metadataColumns": {
+      "gene": "Gene",
+      "hotspot": "Hotspot",
+      "variant": "Variant",
+      "length": "Length"
+    },
     "targetName": "Target",
     "sequence": "Sequence",
     "meanQs": "mean QS",
