@@ -155,10 +155,10 @@ const styles = (theme: Theme) => ({
       borderColor: theme.palette.divider
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     },
     '& .MuiSvgIcon-root': {
       color: theme.palette.text.primary
@@ -215,10 +215,10 @@ const styles = (theme: Theme) => ({
         borderRadius: '10px'
       },
       '&::-webkit-scrollbar-thumb': {
-        background: darken(theme.palette.gx.accent.greenBlue, 0.1),
+        background: darken(theme.palette.primary.main, 0.1),
         borderRadius: '10px',
         '&:hover': {
-          background: theme.palette.gx.accent.greenBlue
+          background: theme.palette.primary.main
         }
       }
     },
@@ -227,10 +227,10 @@ const styles = (theme: Theme) => ({
         borderColor: theme.palette.divider
       },
       '&:hover fieldset': {
-        borderColor: theme.palette.gx.accent.greenBlue
+        borderColor: theme.palette.primary.main
       },
       '&.Mui-focused fieldset': {
-        borderColor: theme.palette.gx.accent.greenBlue
+        borderColor: theme.palette.primary.main
       }
     },
     '& .MuiInputBase-input::placeholder': {

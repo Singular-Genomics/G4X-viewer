@@ -65,14 +65,14 @@ const styles = (theme: Theme) => ({
     marginTop: 1,
     marginBottom: '8px',
     '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     },
     '& .MuiInputBase-input': {
       cursor: 'auto'
     },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     }
   }
 });

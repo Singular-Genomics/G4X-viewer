@@ -116,7 +116,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     whiteSpace: 'nowrap'
   },
   tag: {
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     padding: '2px 6px',
     borderRadius: 1,

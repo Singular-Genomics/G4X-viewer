@@ -156,7 +156,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   slider: {
     '&.MuiSlider-root': {
-      color: theme.palette.gx.accent.greenBlue,
+      color: theme.palette.primary.main,
       marginTop: '3px'
     },
     '&.Mui-disabled': {
@@ -164,7 +164,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       opacity: 0.75
     },
     '& .MuiSlider-thumb:hover': {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`
+      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.3)}`
     }
   },
   tooltipContainer: {

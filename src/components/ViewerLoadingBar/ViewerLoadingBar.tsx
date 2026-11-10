@@ -59,7 +59,7 @@ const styles = (theme: Theme) => ({
     },
     backgroundColor: {
       xs: 'transparent',
-      md: alpha(theme.palette.background.paper, 0.94)
+      md: alpha(theme.palette.background.level1, 0.94)
     },
     display: 'flex',
     flexDirection: 'column',
@@ -69,7 +69,7 @@ const styles = (theme: Theme) => ({
     }
   },
   loadingText: {
-    color: theme.palette.text.primary,
+    color: theme.palette.gx.neutrals[55],
     fontSize: '13px',
     fontWeight: 500,
     lineHeight: 1
@@ -80,9 +80,9 @@ const styles = (theme: Theme) => ({
       md: 4
     },
     borderRadius: '999px',
-    backgroundColor: alpha(theme.palette.background.paper, 0.94),
+    backgroundColor: alpha(theme.palette.background.level1, 0.94),
     '& .MuiLinearProgress-bar': {
-      backgroundColor: theme.palette.gx.accent.greenBlue,
+      backgroundColor: theme.palette.secondary.main,
       borderRadius: '999px'
     }
   }

@@ -166,7 +166,7 @@ export const SummaryButton = () => {
             <Box sx={sx.loadingContainer}>
               <CircularProgress
                 size={60}
-                sx={{ color: theme.palette.gx.accent.greenBlue }}
+                sx={{ color: theme.palette.primary.main }}
               />
             </Box>
           )}

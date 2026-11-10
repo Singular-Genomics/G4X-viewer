@@ -13,7 +13,7 @@ const sx = {
   checkbox: {
     padding: '8px 8px',
     // '&, &.Mui-checked': {
-    //   color: (theme: Theme) => theme.palette.gx.accent.greenBlue
+    //   color: (theme: Theme) => theme.palette.primary.main
     // },
     '&:hover': {
       backgroundColor: 'unset'

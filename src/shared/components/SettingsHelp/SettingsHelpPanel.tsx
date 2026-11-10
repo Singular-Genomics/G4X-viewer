@@ -38,12 +38,6 @@ export const SettingsHelpPanel = () => {
         >
           {help.help?.title ?? t('settingsHelp.title')}
         </Typography>
-        <Typography
-          component="span"
-          sx={{ fontSize: '0.75rem', color: 'text.secondary' }}
-        >
-          {t(help.visible ? 'settingsHelp.hideShort' : 'settingsHelp.showShort')}
-        </Typography>
         <ExpandMoreIcon sx={{ fontSize: 18, transform: help.visible ? 'rotate(0deg)' : 'rotate(180deg)' }} />
       </Button>
       {help.visible && (

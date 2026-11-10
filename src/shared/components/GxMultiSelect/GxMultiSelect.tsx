@@ -147,14 +147,14 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
           transition: 'background 0.15s ease, color 0.15s ease',
           '&:hover': {
             color: theme.palette.text.primary,
-            background: alpha(theme.palette.gx.accent.greenBlue, 0.1)
+            background: alpha(theme.palette.primary.main, 0.1)
           },
           [`&.${menuItemClasses.selected}`]: {
-            color: theme.palette.gx.accent.greenBlue,
+            color: theme.palette.primary.main,
             fontWeight: 500,
-            background: alpha(theme.palette.gx.accent.greenBlue, 0.2),
+            background: alpha(theme.palette.primary.main, 0.2),
             '&:hover': {
-              background: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+              background: alpha(theme.palette.primary.main, 0.2)
             }
           }
         }
@@ -173,7 +173,7 @@ const styles = (theme: Theme, _variant: 'light' | 'dark') => {
       },
       '& .MuiCheckbox-root': {
         '&, &.Mui-checked, &.MuiCheckbox-indeterminate': {
-          color: theme.palette.gx.accent.greenBlue
+          color: theme.palette.primary.main
         }
       }
     }

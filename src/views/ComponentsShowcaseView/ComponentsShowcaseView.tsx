@@ -853,7 +853,7 @@ const styles = (theme: Theme) => ({
   outlinedButton: {
     color: theme.palette.text.primary,
     borderColor: theme.palette.divider,
-    '&:hover': { borderColor: theme.palette.gx.accent.greenBlue },
+    '&:hover': { borderColor: theme.palette.primary.main },
     '&.Mui-disabled': {
       color: theme.palette.text.disabled,
       borderColor: theme.palette.divider
@@ -904,7 +904,7 @@ const styles = (theme: Theme) => ({
     padding: '12px 4px',
     borderRadius: '8px',
     border: `1px solid ${theme.palette.divider}`,
-    '&:hover': { borderColor: theme.palette.gx.accent.greenBlue }
+    '&:hover': { borderColor: theme.palette.primary.main }
   },
   iconGlyph: {
     color: theme.palette.text.primary

@@ -91,7 +91,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   slider: {
     marginTop: '3px',
     '&.MuiSlider-root': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     },
     '& .MuiSlider-thumb': {
       borderRadius: 'unset',
@@ -103,7 +103,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
       backgroundColor: theme.palette.text.primary
     },
     '& .MuiSlider-thumb:hover': {
-      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.gx.accent.greenBlue, 0.3)}`
+      boxShadow: `0px 0px 0px 8px ${alpha(theme.palette.primary.main, 0.3)}`
     },
     '&.MuiSlider-root.Mui-disabled': {
       color: theme.palette.action.disabled

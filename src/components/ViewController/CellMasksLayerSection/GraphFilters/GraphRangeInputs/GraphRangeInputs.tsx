@@ -197,9 +197,9 @@ const styles = (theme: Theme) => ({
   },
   clearButton: {
     height: '36px',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     border: '2px solid',
-    borderColor: theme.palette.gx.accent.greenBlue,
+    borderColor: theme.palette.primary.main,
     background: theme.palette.background.level1,
     '&.Mui-disabled': {
       borderColor: theme.palette.divider,

@@ -365,7 +365,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   reimportNote: {
     display: 'block',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     fontSize: '12px',
     marginTop: '4px',
     opacity: 1
@@ -378,10 +378,10 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   },
   formatButton: {
     height: 'fit-content',
-    backgroundColor: theme.palette.gx.accent.greenBlue,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.8)
+      backgroundColor: alpha(theme.palette.primary.main, 0.8)
     }
   },
   csvButton: {
@@ -414,7 +414,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     '& .MuiRadio-root': {
       color: theme.palette.text.secondary,
       '&.Mui-checked': {
-        color: theme.palette.gx.accent.greenBlue
+        color: theme.palette.primary.main
       }
     }
   }

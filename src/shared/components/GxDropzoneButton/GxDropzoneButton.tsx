@@ -131,7 +131,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
   textField: {
     marginBottom: '8px',
     '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     },
     '& .MuiInputBase-input': {
       cursor: 'auto'
@@ -146,7 +146,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     },
     '& .MuiInputBase-root::after': {
       borderBottom: '2px solid',
-      borderColor: theme.palette.gx.accent.greenBlue
+      borderColor: theme.palette.primary.main
     }
   },
   dropDownButton: {
@@ -154,11 +154,11 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     width: '100%',
     height: '40px',
     fontWeight: 700,
-    borderColor: theme.palette.gx.accent.greenBlue,
-    color: theme.palette.gx.accent.greenBlue,
+    borderColor: theme.palette.primary.main,
+    color: theme.palette.primary.main,
     '&:hover': {
-      borderColor: theme.palette.gx.accent.greenBlue,
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.2)
+      borderColor: theme.palette.primary.main,
+      backgroundColor: alpha(theme.palette.primary.main, 0.2)
     },
     transition: 'background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease'
   },
@@ -173,15 +173,15 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     }
   },
   cloudUploadIconActive: {
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1)
+      backgroundColor: alpha(theme.palette.primary.main, 0.1)
     }
   },
   dropzoneActive: {
     borderStyle: 'solid',
     borderWidth: '2px',
-    backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.1)
+    backgroundColor: alpha(theme.palette.primary.main, 0.1)
   },
   dropzoneAccept: {
     borderColor: theme.palette.success.main,

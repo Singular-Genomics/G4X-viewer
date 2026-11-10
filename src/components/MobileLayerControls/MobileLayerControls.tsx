@@ -184,10 +184,10 @@ const styles = (theme: Theme) => ({
   },
   switch: {
     '& .MuiSwitch-switchBase.Mui-checked': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     },
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-      backgroundColor: theme.palette.gx.accent.greenBlue
+      backgroundColor: theme.palette.primary.main
     }
   }
 });

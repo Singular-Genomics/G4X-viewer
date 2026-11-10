@@ -15,13 +15,13 @@ export const GxSwitch = (props: SwitchProps) => {
 const styles = (theme: Theme) => ({
   switch: {
     '& .MuiSwitch-switchBase.Mui-checked': {
-      color: theme.palette.gx.accent.greenBlue,
+      color: theme.palette.primary.main,
       '&:hover': {
-        backgroundColor: alpha(theme.palette.gx.accent.greenBlue, 0.3)
+        backgroundColor: alpha(theme.palette.primary.main, 0.3)
       }
     },
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-      backgroundColor: theme.palette.gx.accent.greenBlue
+      backgroundColor: theme.palette.primary.main
     }
   }
 });

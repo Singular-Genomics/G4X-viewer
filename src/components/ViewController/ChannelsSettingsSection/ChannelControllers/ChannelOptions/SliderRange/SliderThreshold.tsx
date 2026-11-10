@@ -117,7 +117,7 @@ const styles = (theme: Theme) => ({
     fontWeight: 700,
     textTransform: 'none',
     letterSpacing: '0.05em',
-    color: theme.palette.gx.accent.greenBlue,
+    color: theme.palette.primary.main,
     marginBottom: '8px'
   },
   container: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 3 },

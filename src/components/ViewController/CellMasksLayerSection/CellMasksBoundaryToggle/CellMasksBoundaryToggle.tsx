@@ -76,7 +76,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     padding: '2px',
     alignSelf: 'flex-start',
     '&:hover': {
-      color: theme.palette.gx.accent.greenBlue,
+      color: theme.palette.primary.main,
       backgroundColor: 'unset'
     }
   },

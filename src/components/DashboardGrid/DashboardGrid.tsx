@@ -132,7 +132,7 @@ const styles = (theme: Theme) => ({
       }
     },
     '& .react-grid-placeholder': {
-      background: theme.palette.gx.accent.greenBlue,
+      background: theme.palette.primary.main,
       opacity: 0.2,
       borderRadius: '8px'
     }

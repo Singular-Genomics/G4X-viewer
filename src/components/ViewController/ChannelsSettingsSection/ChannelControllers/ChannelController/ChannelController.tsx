@@ -315,7 +315,7 @@ const styles = (theme: Theme): Record<string, SxProps> => ({
     paddingRight: 0,
     marginRight: '0px',
     // '&, &.Mui-checked': {
-    //   color: theme.palette.gx.accent.greenBlue
+    //   color: theme.palette.primary.main
     // },
     '&:hover': {
       backgroundColor: 'unset'

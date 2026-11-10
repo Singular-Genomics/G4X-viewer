@@ -24,17 +24,17 @@ const styles = (theme: Theme) => ({
         borderColor: theme.palette.divider
       },
       '&.Mui-focused fieldset': {
-        borderColor: theme.palette.gx.accent.greenBlue,
+        borderColor: theme.palette.primary.main,
         borderWidth: '1px'
       }
     },
     '& .MuiInput-root': {
       '&::after': {
-        borderColor: theme.palette.gx.accent.greenBlue
+        borderColor: theme.palette.primary.main
       }
     },
     '& .MuiFormLabel-root.Mui-focused': {
-      color: theme.palette.gx.accent.greenBlue
+      color: theme.palette.primary.main
     }
   }
 });

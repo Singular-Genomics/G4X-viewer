@@ -14,7 +14,7 @@ export const GxRadio = React.forwardRef(
 // const sx = {
 //   radio: {
 //     // '&, &.Mui-checked': {
-//     //   color: (theme: Theme) => theme.palette.gx.accent.greenBlue
+//     //   color: (theme: Theme) => theme.palette.primary.main
 //     // }
 //   }
 // };
