@@ -6,9 +6,11 @@ import { useTranscriptSource } from '../../TranscriptSourceContext';
 import { GxFilterTable } from '../../../../../shared/components/GxFilterTable';
 import { useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 export const PointFiltersTable = () => {
-  const { useLayerStore, useColorMap } = useTranscriptSource();
+  const { t } = useTranslation();
+  const { useLayerStore, useColorMap, filterTableTitleKey } = useTranscriptSource();
   const columns = usePointFiltersTableColumns();
   const [activeFilters, setActiveFilters] = useState<GeneNameFilterType>(new Set());
   const [setGeneNamesFilter, clearGeneNameFilters, geneNameFilters, isGeneNameFilterActive] = useLayerStore(
@@ -60,6 +62,8 @@ export const PointFiltersTable = () => {
       onSetFilter={(filters) => setActiveFilters(filters)}
       clearDisabled={!isGeneNameFilterActive || activeFilters.size === 0}
       applyDisabled={!haveFiltersChanges || activeFilters.size === 0}
+      disableColumnResize={false}
+      floatingWindowTitle={t(filterTableTitleKey)}
     />
   );
 };

@@ -15,6 +15,7 @@ type TranscriptSourceBinding = {
   colormapExportFileName: string;
   // Header of the only name column when the dataset has no metadata to build columns from
   fallbackNameLabelKey: string;
+  filterTableTitleKey: string;
   hasPointOutline: boolean;
 };
 
@@ -44,6 +45,7 @@ const TRANSCRIPT_SOURCE_BINDINGS: Record<TranscriptSource, TranscriptSourceBindi
     useLayersCount: () => useZarrDataStore((store) => store.layerConfig.layers),
     colormapExportFileName: 'custom_transcripts-colormap',
     fallbackNameLabelKey: 'transcript.geneName',
+    filterTableTitleKey: 'transcriptsSettings.filterTableTitle',
     hasPointOutline: false
   },
   directSeq: {
@@ -56,6 +58,7 @@ const TRANSCRIPT_SOURCE_BINDINGS: Record<TranscriptSource, TranscriptSourceBindi
     useLayersCount: () => useZarrDataStore((store) => store.directSeq.layerConfig.layers),
     colormapExportFileName: 'custom_direct-seq-colormap',
     fallbackNameLabelKey: 'transcript.targetName',
+    filterTableTitleKey: 'directSeqSettings.filterTableTitle',
     hasPointOutline: true
   }
 };

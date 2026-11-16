@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { GetApplyQuickFilterFn, GridColDef } from '@mui/x-data-grid';
-import { Typography } from '@mui/material';
+import { Tooltip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { PointFiltersTableRowEntry } from './PointFiltersTable.types';
 import { GxFilterTableColorCell } from '../../../../../shared/components/GxFilterTable/GxFilterTableColorCell/GxFilterTableColorCell';
@@ -12,24 +12,27 @@ import {
   isNumericMetadataKey
 } from './PointFiltersTable.helpers';
 
+const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
+  if (!(value as string).startsWith('[')) {
+    return null;
+  }
+
+  const parsedValue = (value as string).replace(/\[|\]/g, '').split(' ').map(Number);
+  return (cellValue) => parsedValue.every((value) => (cellValue as Array<number>).includes(value));
+};
+
 export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEntry>[] => {
   const { t } = useTranslation();
   const { useColorMap, fallbackNameLabelKey } = useTranscriptSource();
   const { colorMapConfig, setColormapConfig } = useColorMap();
 
-  const geneColorQuickFilter: GetApplyQuickFilterFn<any, unknown> = (value) => {
-    if (!(value as string).startsWith('[')) {
-      return null;
-    }
-
-    const parsedValue = (value as string).replace(/\[|\]/g, '').split(' ').map(Number);
-    return (cellValue) => parsedValue.every((value) => (cellValue as Array<number>).includes(value));
-  };
-
-  const handleColorMapUpdate = (color: number[], geneName: string) => {
-    const updatedConfig = colorMapConfig.map((entry) => (entry.gene_name === geneName ? { ...entry, color } : entry));
-    setColormapConfig(updatedConfig);
-  };
+  const handleColorMapUpdate = useCallback(
+    (color: number[], geneName: string) => {
+      const updatedConfig = colorMapConfig.map((entry) => (entry.gene_name === geneName ? { ...entry, color } : entry));
+      setColormapConfig(updatedConfig);
+    },
+    [colorMapConfig, setColormapConfig]
+  );
 
   // Name columns come from the dataset metadata, entries without any fall back to the plain name column
   const nameColumns = useMemo((): GridColDef<PointFiltersTableRowEntry>[] => {
@@ -58,40 +61,49 @@ export const usePointFiltersTableColumns = (): GridColDef<PointFiltersTableRowEn
         headerAlign: 'center',
         filterable: true,
         flex: 1,
+        minWidth: 120,
         valueGetter: (_value, row) =>
           isNumeric ? (row.metadata?.[key] ?? null) : formatMetadataValue(row.metadata?.[key]),
-        // Many columns share a narrow panel, so long values get an ellipsis instead of being clipped on both sides
         renderCell: (params) => {
           const text = formatMetadataValue(params.value);
           return (
-            <Typography
-              noWrap
+            <Tooltip
               title={text}
+              arrow
             >
-              {text}
-            </Typography>
+              <Typography
+                noWrap
+                tabIndex={params.hasFocus ? 0 : -1}
+                sx={{ maxWidth: '100%' }}
+              >
+                {text}
+              </Typography>
+            </Tooltip>
           );
         }
       };
     });
   }, [colorMapConfig, fallbackNameLabelKey, t]);
 
-  return [
-    ...nameColumns,
-    {
-      field: 'color',
-      headerAlign: 'center',
-      headerName: t('transcript.color'),
-      filterable: false,
-      flex: 1,
-      getApplyQuickFilterFn: geneColorQuickFilter,
-      renderCell: (params) => (
-        <GxFilterTableColorCell
-          currentColor={params.row.color}
-          currnetValueName={params.row.gene_name}
-          handleColorUpdate={handleColorMapUpdate}
-        />
-      )
-    }
-  ];
+  return useMemo<GridColDef<PointFiltersTableRowEntry>[]>(
+    () => [
+      ...nameColumns,
+      {
+        field: 'color',
+        headerAlign: 'center',
+        headerName: t('transcript.color'),
+        filterable: false,
+        flex: 1,
+        getApplyQuickFilterFn: geneColorQuickFilter,
+        renderCell: (params) => (
+          <GxFilterTableColorCell
+            currentColor={params.row.color}
+            currnetValueName={params.row.gene_name}
+            handleColorUpdate={handleColorMapUpdate}
+          />
+        )
+      }
+    ],
+    [nameColumns, t, handleColorMapUpdate]
+  );
 };

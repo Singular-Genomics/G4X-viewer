@@ -89,6 +89,7 @@
     "noFileSelected": "No file selected",
     "none": "None",
     "openInNewTab": "Open in New Tab",
+    "openTableInWindow": "Open table in floating window",
     "previousColor": "Previous Color",
     "protein": "Protein",
     "shareLinkCopied": "Link copied to clipboard",
@@ -281,6 +282,7 @@
     "advancedOptions": "Advanced Options",
     "disabledLayerWarning": "Transcript layer is disabled",
     "pointFilters": "Point Filters",
+    "filterTableTitle": "Transcript Filters",
     "pointSize": "Point Size",
     "pointOutline": "Point Outline",
     "pointOutlineLabel": "Show outline around points",
@@ -294,7 +296,8 @@
     "subsamplingSliderTooltip": "We subsample transcripts as the viewer zooms out for performance. Density is preserved when subsampling"
   },
   "directSeqSettings": {
-    "sectionTitle": "Direct-Seq"
+    "sectionTitle": "Direct-Seq",
+    "filterTableTitle": "Direct-Seq Filters"
   },
   "viewer": {
     "clearSelectionDescription": " Are you sure you want to remove all {{polygonCount}} ROIs? This action cannot be undone.",
