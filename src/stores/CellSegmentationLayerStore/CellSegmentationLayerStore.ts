@@ -12,6 +12,7 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   boundaryWidth: 1,
   cellColormapConfig: [],
   cellNameFilters: new Set<string>(),
+  clusterLabelFilters: {},
   selectedCells: [],
   umapDataAvailable: false,
   segmentationMetadata: undefined,
@@ -19,6 +20,28 @@ const CELL_SEGMENTATION_STORE_DEFAULT_VALUES: CellSegmentationLayerStoreValues =
   selectedSegmentationLabel: '',
   availableClusterLabels: [],
   selectedClusterLabelKey: ''
+};
+
+// Save the outgoing label's applied filters and restore only the incoming label's state.
+export const getClusterLabelFilterState = (store: CellSegmentationLayerStoreValues, key: string) => {
+  const clusterLabelFilters = {
+    ...store.clusterLabelFilters,
+    [store.selectedClusterLabelKey]: {
+      cellNameFilters: store.cellNameFilters,
+      isCellNameFilterOn: store.isCellNameFilterOn,
+      showFilteredCells: store.showFilteredCells
+    }
+  };
+
+  return {
+    selectedClusterLabelKey: key,
+    clusterLabelFilters,
+    ...(clusterLabelFilters[key] ?? {
+      cellNameFilters: new Set<string>(),
+      isCellNameFilterOn: false,
+      showFilteredCells: false
+    })
+  };
 };
 
 export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>((set) => ({
@@ -50,6 +73,6 @@ export const useCellSegmentationLayerStore = create<CellSegmentationLayerStore>(
   deleteSelectedCells: (selectionId) =>
     set((store) => ({ selectedCells: store.selectedCells.filter((selection) => selection.roiId !== selectionId) })),
   setSelectedSegmentationLabel: (label) => set({ selectedSegmentationLabel: label }),
-  setSelectedClusterLabelKey: (key) => set({ selectedClusterLabelKey: key }),
+  setSelectedClusterLabelKey: (key) => set((store) => getClusterLabelFilterState(store, key)),
   reset: () => set({ ...CELL_SEGMENTATION_STORE_DEFAULT_VALUES })
 }));
