@@ -22,8 +22,8 @@ export const CellsFilterTable = () => {
     );
 
   useEffect(() => {
-    setActiveFilters(useCellSegmentationLayerStore.getState().cellNameFilters);
-  }, []);
+    setActiveFilters(cellNameFilters);
+  }, [cellNameFilters]);
 
   const rowData: CellsFilterTableRowEntry[] = colorMapConfig
     ? colorMapConfig.map((item) => ({
