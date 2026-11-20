@@ -50,6 +50,9 @@ These controls balance transcript rendering performance with transcript display 
       - **Change Gene Color:** Changes the color selection for a given gene.
       - **Show Selected:** Hides all non-selected genes.
       - **Change Page:** Moves between pages when there are too many genes to display at once.
+      - **Resize Columns:** Drag a column header divider to adjust its width. Scroll horizontally when the columns exceed the panel width. This also applies to the Direct-Seq filter table.
+      - **Open Table in Floating Window:** Click the expand icon next to **Apply** to show another view of the full table in a draggable, resizable window. The panel table remains visible. In the floating window, **Clear** and **Apply** are grouped at the bottom left. Both views share selections, search, sorting, pagination, colors, and the active-only toggle, while column widths can be adjusted separately. Closing and reopening the window preserves its column widths. This also applies to Direct-Seq.
+      - **Read Full Metadata:** Hover over a metadata value or focus it with the keyboard to view its full text in a tooltip.
 
 - <b><u>Import/Export Colormap:</u></b>
 

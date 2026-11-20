@@ -2,7 +2,7 @@ import { Box, Theme, Typography, useTheme } from '@mui/material';
 import { PointFilterOptions } from './PointFilterOptions';
 import { PointFiltersTable } from './PointFiltersTable';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
+import { useTranscriptSource } from '../TranscriptSourceContext';
 import { useTranslation } from 'react-i18next';
 import { GxFilterTableColormap } from '../../../../shared/components/GxFilterTable/GxFilterTableColormap/GxFilterTableColormap';
 import { useSnackbar } from 'notistack';
@@ -12,11 +12,13 @@ export const PointFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { colorMapConfig, setColormapConfig, hasTranscriptsData, transcriptConfigLoaded } = useZarrDataStore();
+  const { useColorMap, useDataStatus, colormapExportFileName } = useTranscriptSource();
+  const { colorMapConfig, setColormapConfig } = useColorMap();
+  const { hasData, configLoaded } = useDataStatus();
 
   const isColormapConfigValid = colorMapConfig && colorMapConfig.length;
   // Colormap is lazy-loaded, so it's missing only after the config load finished
-  const isColormapMissing = hasTranscriptsData && transcriptConfigLoaded && !isColormapConfigValid;
+  const isColormapMissing = hasData && configLoaded && !isColormapConfigValid;
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -62,7 +64,7 @@ export const PointFilter = () => {
     const blob = new Blob([jsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
-    const fileName = 'custom_transcripts-colormap';
+    const fileName = colormapExportFileName;
 
     const a = document.createElement('a');
     a.href = url;

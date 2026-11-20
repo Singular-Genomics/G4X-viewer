@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../../stores/DirectSeqLayerStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { useCytometryGraphStore } from '../../stores/CytometryGraphStore/CytometryGraphStore';
 import { useUmapGraphStore } from '../../stores/UmapGraphStore/UmapGraphStore';
@@ -12,6 +13,9 @@ import { GroupedActiveFilters } from './ActiveFiltersPanel.types';
 export const useActiveFilters = () => {
   const { t } = useTranslation();
   const [isGeneNameFilterActive, geneNameFilters, showFilteredPoints] = useTranscriptLayerStore(
+    useShallow((store) => [store.isGeneNameFilterActive, store.geneNameFilters, store.showFilteredPoints])
+  );
+  const [isTargetFilterActive, targetFilters, showFilteredTargets] = useDirectSeqLayerStore(
     useShallow((store) => [store.isGeneNameFilterActive, store.geneNameFilters, store.showFilteredPoints])
   );
   const [isCellNameFilterOn, cellNameFilters, showFilteredCells] = useCellSegmentationLayerStore(
@@ -38,6 +42,20 @@ export const useActiveFilters = () => {
     }
     if (transcriptFilters.length > 0) {
       groupedFilters[t('activeFilters.transcriptsLayer')] = transcriptFilters;
+    }
+
+    // Direct-Seq Layer Filters
+    const directSeqFilters: string[] = [];
+    if (isTargetFilterActive) {
+      directSeqFilters.push(
+        t('activeFilters.targetFilter', { count: targetFilters.size, target: targetFilters.values().next() })
+      );
+    }
+    if (showFilteredTargets) {
+      directSeqFilters.push(t('activeFilters.showFilteredPoints'));
+    }
+    if (directSeqFilters.length > 0) {
+      groupedFilters[t('activeFilters.directSeqLayer')] = directSeqFilters;
     }
 
     // Segmentation Layer Filters

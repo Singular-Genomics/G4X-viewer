@@ -13,4 +13,6 @@ export type GxFilterTableProps<T extends GxFilterTableRowPropBase> = {
   onApplyClick: () => void;
   clearDisabled?: boolean;
   applyDisabled?: boolean;
+  disableColumnResize?: boolean;
+  floatingWindowTitle?: string;
 };

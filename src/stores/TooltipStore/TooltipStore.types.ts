@@ -7,7 +7,7 @@ export type TooltipStoreValues = {
   object?: any;
 };
 
-export type TooltipType = 'Transcript' | 'CellMask';
+export type TooltipType = 'Transcript' | 'DirectSeq' | 'CellMask';
 
 type Position = {
   x: number;

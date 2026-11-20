@@ -9,6 +9,7 @@ import { GxCollapsibleSection } from '../../shared/components/GxCollapsibleSecti
 import { SourceFilesSection } from './SourceFilesSection/SourceFilesSection';
 import { ViewControlsSection } from './ViewControlsSection/ViewControlsSection';
 import { TranscriptLayerSection } from './TranscriptLayerSection/TranscriptLayerSection';
+import { TranscriptSourceProvider } from './TranscriptLayerSection/TranscriptSourceContext';
 import { useZarrDataStore } from '../../stores/ZarrDataStore';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { CellMasksLayerSection } from './CellMasksLayerSection';
@@ -17,6 +18,7 @@ import { BrightfieldImagesSection } from './BrightfieldImagesSection/Brightfield
 import { useTranslation } from 'react-i18next';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useTranscriptLayerStore } from '../../stores/TranscriptLayerStore';
+import { useDirectSeqLayerStore } from '../../stores/DirectSeqLayerStore';
 import { GxCheckbox } from '../../shared/components/GxCheckbox';
 import { useShallow } from 'zustand/react/shallow';
 import { useChannelsStore } from '../../stores/ChannelsStore';
@@ -27,11 +29,15 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
   const sx = styles(theme);
   const [isControllerOn, setIsControllerOn] = useState(true);
   const hasTranscriptsData = useZarrDataStore((store) => store.hasTranscriptsData);
+  const hasDirectSeqData = useZarrDataStore((store) => store.directSeq.hasData);
   const hasSegmentationData = useZarrDataStore((store) => store.hasSegmentationData);
   const [isCellLayerOn, toggleCellLayer] = useCellSegmentationLayerStore(
     useShallow((store) => [store.isCellLayerOn, store.toggleCellLayer])
   );
   const [isTranscriptLayerOn, toggleTranscriptLayer] = useTranscriptLayerStore(
+    useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
+  );
+  const [isDirectSeqLayerOn, toggleDirectSeqLayer] = useDirectSeqLayerStore(
     useShallow((store) => [store.isTranscriptLayerOn, store.toggleTranscriptLayer])
   );
   const [isBrightfieldLayerVisible, toggleBrightfieldLayer] = useBrightfieldImagesStore(
@@ -120,6 +126,27 @@ export const ViewController = ({ imageLoaded }: ViewControllerProps) => {
               >
                 <TranscriptLayerSection />
               </GxCollapsibleSection>
+              {/* Optional, only for datasets with Direct-Seq */}
+              {hasDirectSeqData && (
+                <GxCollapsibleSection
+                  sectionTitle={t('directSeqSettings.sectionTitle')}
+                  disabled={!imageLoaded}
+                  unmountOnExit={false}
+                  headerAction={
+                    <GxCheckbox
+                      checked={isDirectSeqLayerOn}
+                      onChange={toggleDirectSeqLayer}
+                      disabled={!imageLoaded}
+                      disableTouchRipple
+                      sx={sx.headerCheckbox}
+                    />
+                  }
+                >
+                  <TranscriptSourceProvider source="directSeq">
+                    <TranscriptLayerSection />
+                  </TranscriptSourceProvider>
+                </GxCollapsibleSection>
+              )}
               <GxCollapsibleSection
                 sectionTitle={t('segmentationSettings.sectionTitle')}
                 disabled={!imageLoaded || !hasSegmentationData}

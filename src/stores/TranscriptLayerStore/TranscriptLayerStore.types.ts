@@ -9,6 +9,7 @@ export type TranscriptLayerStoreValues = {
   showFilteredPoints: boolean;
   showTilesBoundries: boolean;
   showTilesData: boolean;
+  showPointOutline: boolean;
   maxVisibleLayers: number | null;
   overrideLayers: boolean;
   pointSize: number;
@@ -23,6 +24,7 @@ export type TranscriptLayerStoreMethods = {
   toggleTranscriptLayer: () => void;
   toggleTileBoundries: () => void;
   toggleTileData: () => void;
+  togglePointOutline: () => void;
   toggleGeneNameFilter: () => void;
   toggleShowFilteredPoints: () => void;
   toggleOverrideLayer: () => void;

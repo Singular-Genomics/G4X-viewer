@@ -1,9 +1,8 @@
 import { Box, Theme, Tooltip, tooltipClasses, Typography } from '@mui/material';
 import { GxSlider } from '../../../../../shared/components/GxSlider';
-import { useZarrDataStore } from '../../../../../stores/ZarrDataStore';
 import { MaxLayerSliderMark, MaxLayerSliderProps } from './MaxLayerSlider.types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useTranscriptLayerStore } from '../../../../../stores/TranscriptLayerStore';
+import { useTranscriptSource } from '../../TranscriptSourceContext';
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from '../AdvancedViewOptions.helpers';
 import InfoIcon from '@mui/icons-material/Info';
@@ -12,16 +11,17 @@ import { useTranslation } from 'react-i18next';
 export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
   const { t } = useTranslation();
   const [sliderValuer, setSliderValue] = useState(0);
-  const { layers } = useZarrDataStore((store) => store.layerConfig);
-  const [maxVisibleLayers] = useTranscriptLayerStore(useShallow((store) => [store.maxVisibleLayers]));
+  const { useLayerStore, useLayersCount } = useTranscriptSource();
+  const layers = useLayersCount();
+  const [maxVisibleLayers] = useLayerStore(useShallow((store) => [store.maxVisibleLayers]));
 
   useEffect(() => {
     if (maxVisibleLayers === null) {
-      useTranscriptLayerStore.setState({ maxVisibleLayers: layers });
+      useLayerStore.setState({ maxVisibleLayers: layers });
     } else {
       setSliderValue(layers - maxVisibleLayers);
     }
-  }, [maxVisibleLayers, layers]);
+  }, [maxVisibleLayers, layers, useLayerStore]);
 
   const sliderMarks: MaxLayerSliderMark[] = useMemo(
     () =>
@@ -34,10 +34,10 @@ export const MaxLayerSlider = ({ disabled }: MaxLayerSliderProps) => {
 
   const onMaxLayerChange = useCallback(
     (newValue: number) => {
-      useTranscriptLayerStore.setState({ maxVisibleLayers: layers - newValue });
+      useLayerStore.setState({ maxVisibleLayers: layers - newValue });
       triggerViewerRerender();
     },
-    [layers]
+    [layers, useLayerStore]
   );
 
   return (

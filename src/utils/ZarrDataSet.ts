@@ -2,8 +2,10 @@ import { open, get, FetchStore } from 'zarrita';
 import axios from 'axios';
 import type {
   ZarrLayerConfig,
-  ZarrGeneColors,
+  ZarrColorMapAttrs,
   ZarrTranscriptAttrs,
+  ZarrTranscriptSource,
+  ZarrTranscriptField,
   ZarrTileCoordinates,
   ZarrTranscriptTileData,
   ZarrTranscriptPoint,
@@ -16,6 +18,12 @@ import { createZarrPaths, ZARR_SUBPATHS, ZARR_CELL_FIELDS } from './ZarrPaths';
 import { loadCellsFromZarr, loadCellsFromStoreFactory, fetchClusterIdsFromStoreFactory } from './ZarrCellsLoader';
 
 const noCacheHeaders = { 'Cache-Control': 'no-cache' };
+
+// Direct-Seq uses `target` where transcripts use `gene_name`
+const TRANSCRIPT_NAME_FIELD: Record<ZarrTranscriptSource, ZarrTranscriptField> = {
+  transcripts: 'gene_name',
+  directSeq: 'target'
+};
 
 export class NoCacheFetchStore {
   constructor(public url: string) {}
@@ -48,12 +56,13 @@ class SkipAttrsFetchStore extends NoCacheFetchStore {
  *     gene_names,gene_counts,gene_indices,gene_indptr}
  *   (cluster_labels & cluster_labels_order live in /cells/{segmentation}/.zattrs)
  * - transcripts: /transcripts/p{z}/y{yy}/x{xx}/{cell_id,gene_name,position}
+ * - direct_seq: /direct_seq/p{z}/y{yy}/x{xx}/{cell_id,target,position} (same layout as transcripts)
  * - run_metadata: stored in .zattrs at root level
  */
 export class ZarrDataSet {
   private zarrURL: string;
   private paths: ReturnType<typeof createZarrPaths>;
-  private transcriptAttrs: ZarrTranscriptAttrs | null = null;
+  private transcriptAttrs: Partial<Record<ZarrTranscriptSource, ZarrTranscriptAttrs>> = {};
   private storeFactory: ZarritaStoreFactory;
   private isCustomStore: boolean;
 
@@ -113,6 +122,15 @@ export class ZarrDataSet {
     return layerConfig !== null;
   }
 
+  public async hasDirectSeqData(): Promise<boolean> {
+    // HEAD probe first, avoids the .zattrs error path when the group is absent
+    if (!this.isCustomStore && !(await this.hasZarrNode(this.paths.attrs.directSeq()))) {
+      return false;
+    }
+    const layerConfig = await this.fetchTranscriptLayerConfig('directSeq');
+    return layerConfig !== null;
+  }
+
   public async hasSegmentationData(): Promise<boolean> {
     return this.hasZarrNode(`${this.paths.cells.base()}/${ZARR_SUBPATHS.attrs.group}`);
   }
@@ -146,47 +164,50 @@ export class ZarrDataSet {
     }
   }
 
-  private async fetchTranscriptAttrs(): Promise<ZarrTranscriptAttrs> {
-    if (this.transcriptAttrs) {
-      return this.transcriptAttrs;
+  private async fetchTranscriptAttrs(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrTranscriptAttrs> {
+    const cached = this.transcriptAttrs[source];
+    if (cached) {
+      return cached;
     }
     try {
-      const store = this.storeFactory(ZARR_SUBPATHS.transcripts.base);
+      const store = this.storeFactory(ZARR_SUBPATHS[source].base);
       const data = await store.get(`/${ZARR_SUBPATHS.attrs.root}`);
       if (data) {
         const decoded = JSON.parse(new TextDecoder().decode(data));
-        this.transcriptAttrs = decoded;
+        this.transcriptAttrs[source] = decoded;
         return decoded;
       }
+      // No URL to fall back to for a custom store
+      if (this.isCustomStore) {
+        return {};
+      }
       // Fallback to axios for HTTP stores that may not support .zattrs via get()
-      const response = await axios.get(this.paths.attrs.transcripts(), { headers: noCacheHeaders });
-      this.transcriptAttrs = response.data;
+      const response = await axios.get(this.paths.attrs[source](), { headers: noCacheHeaders });
+      this.transcriptAttrs[source] = response.data;
       return response.data;
     } catch (error) {
-      console.error('Failed to fetch transcript .zattrs:', error);
+      console.error(`Failed to fetch ${source} .zattrs:`, error);
       return {};
     }
   }
 
-  public async fetchTranscriptLayerConfig(): Promise<ZarrLayerConfig | null> {
-    const attrs = await this.fetchTranscriptAttrs();
+  public async fetchTranscriptLayerConfig(
+    source: ZarrTranscriptSource = 'transcripts'
+  ): Promise<ZarrLayerConfig | null> {
+    const attrs = await this.fetchTranscriptAttrs(source);
     return attrs.layer_config || null;
   }
 
-  public async fetchTranscriptColors(): Promise<ZarrGeneColors | null> {
-    const attrs = await this.fetchTranscriptAttrs();
-    return attrs.gene_colors || null;
+  // Everything the filter table and colormap are built from, `metadata` takes precedence over gene_colors / gene_order
+  public async fetchColorMapAttrs(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrColorMapAttrs> {
+    const { gene_colors, gene_order, metadata, metadata_order } = await this.fetchTranscriptAttrs(source);
+    return { gene_colors, gene_order, metadata, metadata_order };
   }
 
-  public async fetchTranscriptGeneOrder(): Promise<string[] | null> {
-    const attrs = await this.fetchTranscriptAttrs();
-    return attrs.gene_order || null;
-  }
-
-  public async detectLayerConfig(): Promise<ZarrLayerConfig | null> {
+  public async detectLayerConfig(source: ZarrTranscriptSource = 'transcripts'): Promise<ZarrLayerConfig | null> {
     try {
-      const transcriptConfig = await this.fetchTranscriptLayerConfig();
-      if (transcriptConfig) {
+      const transcriptConfig = await this.fetchTranscriptLayerConfig(source);
+      if (transcriptConfig || source === 'directSeq') {
         return transcriptConfig;
       }
 
@@ -222,46 +243,63 @@ export class ZarrDataSet {
     return levels.length > 0 ? levels : [0, 1, 2, 3, 4];
   }
 
-  public async getTranscriptTileData({ z, y, x }: ZarrTileCoordinates): Promise<ZarrTranscriptTileData | null> {
+  public async getTranscriptTileData(
+    { z, y, x }: ZarrTileCoordinates,
+    source: ZarrTranscriptSource = 'transcripts'
+  ): Promise<ZarrTranscriptTileData | null> {
     try {
-      const transcriptConfig = await this.fetchTranscriptLayerConfig();
+      const transcriptConfig = await this.fetchTranscriptLayerConfig(source);
       const maxZoom = transcriptConfig ? transcriptConfig.layers : 4;
       const invertedZ = maxZoom - z;
 
-      const tileField = (field: 'cell_id' | 'gene_name' | 'position') =>
-        ZARR_SUBPATHS.transcripts.tileField({ z: invertedZ, y, x, field });
+      const tileField = (field: ZarrTranscriptField) => ZARR_SUBPATHS[source].tileField({ z: invertedZ, y, x, field });
+      const nameField = TRANSCRIPT_NAME_FIELD[source];
+      const isDirectSeq = source === 'directSeq';
 
       // open.v2 + attrs: false skips the .zattrs request (tile arrays have none, so it always ends in a 404 round trip)
       // and the Zarr v3 fallback probe for missing tiles. Transcript data is Zarr v2 only.
-      const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open.v2(this.storeFactory(tileField('cell_id')) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField('gene_name')) as any, { kind: 'array', attrs: false }).catch(() => null),
-        open.v2(this.storeFactory(tileField('position')) as any, { kind: 'array', attrs: false }).catch(() => null)
+      const openField = (field: ZarrTranscriptField) =>
+        open.v2(this.storeFactory(tileField(field)) as any, { kind: 'array', attrs: false }).catch(() => null);
+
+      // sequence and mean_QS are Direct-Seq only
+      const [cellIdArray, geneNameArray, positionArray, sequenceArray, meanQsArray] = await Promise.all([
+        openField('cell_id'),
+        openField(nameField),
+        openField('position'),
+        isDirectSeq ? openField('sequence') : null,
+        isDirectSeq ? openField('mean_QS') : null
       ]);
 
       if (!cellIdArray || !geneNameArray || !positionArray) {
         return { pointsData: [], numberOfPoints: 0 };
       }
 
-      const [cellIdChunk, geneNameChunk, positionChunk] = await Promise.all([
+      const [cellIdChunk, geneNameChunk, positionChunk, sequenceChunk, meanQsChunk] = await Promise.all([
         get(cellIdArray),
         get(geneNameArray),
-        get(positionArray)
+        get(positionArray),
+        sequenceArray && get(sequenceArray),
+        meanQsArray && get(meanQsArray)
       ]);
 
       const cellIds = cellIdChunk.data as Int32Array;
       const geneNames = geneNameChunk.data as any;
       const positions = positionChunk.data as Int32Array;
+      const sequences = sequenceChunk?.data as any;
+      const meanQs = meanQsChunk?.data as Float32Array | undefined;
       const numberOfPoints = cellIds.length;
 
       const pointsData: ZarrTranscriptPoint[] = [];
       for (let i = 0; i < numberOfPoints; i++) {
         const geneName = geneNames.get ? geneNames.get(i) : String(geneNames[i]);
-        pointsData.push({
+        const point: ZarrTranscriptPoint = {
           cellId: String(cellIds[i]),
           geneName: geneName,
           position: [positions[i * 2], positions[i * 2 + 1]]
-        });
+        };
+        if (sequences) point.sequence = sequences.get ? sequences.get(i) : String(sequences[i]);
+        if (meanQs) point.meanQs = meanQs[i];
+        pointsData.push(point);
       }
 
       return {
@@ -277,19 +315,22 @@ export class ZarrDataSet {
   public async getTranscriptTileRawData(
     invertedZ: number,
     y: number,
-    x: number
+    x: number,
+    source: ZarrTranscriptSource = 'transcripts'
   ): Promise<{ cellIds: Int32Array; geneNames: unknown; positions: Int32Array; count: number } | null> {
     try {
       const tileParams = { z: invertedZ, y, x };
+      const paths = this.paths[source];
+      const nameField = TRANSCRIPT_NAME_FIELD[source];
 
       const [cellIdArray, geneNameArray, positionArray] = await Promise.all([
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'cell_id' })), {
+        open(new SkipAttrsFetchStore(paths.tileField({ ...tileParams, field: 'cell_id' })), {
           kind: 'array'
         }).catch(() => null),
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'gene_name' })), {
+        open(new SkipAttrsFetchStore(paths.tileField({ ...tileParams, field: nameField })), {
           kind: 'array'
         }).catch(() => null),
-        open(new SkipAttrsFetchStore(this.paths.transcripts.tileField({ ...tileParams, field: 'position' })), {
+        open(new SkipAttrsFetchStore(paths.tileField({ ...tileParams, field: 'position' })), {
           kind: 'array'
         }).catch(() => null)
       ]);

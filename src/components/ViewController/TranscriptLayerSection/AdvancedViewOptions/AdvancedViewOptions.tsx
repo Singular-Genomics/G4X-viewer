@@ -2,18 +2,18 @@ import { useCallback, useState } from 'react';
 import { Box, FormControlLabel, Typography } from '@mui/material';
 import { GxSwitch } from '../../../../shared/components/GxSwitch';
 import { MaxLayerSlider } from './MaxLayerSlider';
-import { useTranscriptLayerStore } from '../../../../stores/TranscriptLayerStore';
+import { useTranscriptSource } from '../TranscriptSourceContext';
 import { useShallow } from 'zustand/react/shallow';
 import { triggerViewerRerender } from './AdvancedViewOptions.helpers';
 import { GxModal } from '../../../../shared/components/GxModal';
 import { useTranslation } from 'react-i18next';
-import { useZarrDataStore } from '../../../../stores/ZarrDataStore';
 
 export const AdvancedViewOptions = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const transcriptConfigLoaded = useZarrDataStore((store) => store.transcriptConfigLoaded);
-  const [overrideLayers, toggleOverrideLayer] = useTranscriptLayerStore(
+  const { useLayerStore, useDataStatus } = useTranscriptSource();
+  const { configLoaded } = useDataStatus();
+  const [overrideLayers, toggleOverrideLayer] = useLayerStore(
     useShallow((store) => [store.overrideLayers, store.toggleOverrideLayer])
   );
 
@@ -30,15 +30,15 @@ export const AdvancedViewOptions = () => {
   const onContinue = useCallback(() => {
     setIsModalOpen(false);
     triggerViewerRerender();
-    useTranscriptLayerStore.setState({ overrideLayers: true });
-  }, []);
+    useLayerStore.setState({ overrideLayers: true });
+  }, [useLayerStore]);
 
   return (
     <>
       <Box sx={sx.optionsToggleWrapper}>
         <FormControlLabel
           label={t('transcriptsSettings.subsamplingControlLabel')}
-          disabled={!transcriptConfigLoaded}
+          disabled={!configLoaded}
           control={
             <GxSwitch
               checked={overrideLayers}
@@ -46,7 +46,7 @@ export const AdvancedViewOptions = () => {
             />
           }
         />
-        <MaxLayerSlider disabled={!overrideLayers || !transcriptConfigLoaded} />
+        <MaxLayerSlider disabled={!overrideLayers || !configLoaded} />
       </Box>
       <GxModal
         isOpen={isModalOpen}
