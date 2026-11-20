@@ -1,7 +1,7 @@
 import { Box, Theme, Typography, alpha, useMediaQuery, useTheme } from '@mui/material';
 import { useViewerStore } from '../../stores/ViewerStore/ViewerStore';
 import { PictureInPictureViewerAdapter } from '../../components/PictureInPictureViewerAdapter/PictureInPictureViewerAdapter';
-import { ViewController } from '../../components/ViewController';
+import { SIDE_PANEL_DEFAULT_WIDTH, ViewController } from '../../components/ViewController';
 import { useShallow } from 'zustand/react/shallow';
 import { GxLoader } from '../../shared/components/GxLoader';
 import { useProteinImage } from '../../hooks/useProteinImage.hook';
@@ -21,15 +21,18 @@ import { ViewerLoadingBar } from '../../components/ViewerLoadingBar';
 import { useCellSegmentationLayerStore } from '../../stores/CellSegmentationLayerStore/CellSegmentationLayerStore';
 import { MobileLayerControls } from '../../components/MobileLayerControls';
 import { useOnDemandDataLoader } from '../../hooks/useOnDemandDataLoader.hook';
+import { useState } from 'react';
 
 // Delay prevents loader flicker for very short transcript tile requests.
 const TRANSCRIPT_TILES_LOADING_DELAY_MS = 150;
 
-export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps) => {
+export const ViewerView = ({ className, isViewerActive = true, isUiHidden = false }: ViewerViewProps) => {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const sx = styles(theme);
   const { t } = useTranslation();
+  // Lives here because ViewController unmounts when the UI is hidden.
+  const [sidePanelWidth, setSidePanelWidth] = useState(SIDE_PANEL_DEFAULT_WIDTH);
 
   const [source, isViewerLoading, isTranscriptTilesLoading] = useViewerStore(
     useShallow((store) => [store.source, store.isViewerLoading, store.isTranscriptTilesLoading])
@@ -54,11 +57,15 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
         <>
           {source && !(isViewerLoading && isViewerLoading.type === VIEWER_LOADING_TYPES.MAIN_IMAGE) ? (
             <>
-              <PictureInPictureViewerAdapter isViewerActive={isViewerActive} />
-              <ImageInfo />
-              {!isDesktop && <MobileLayerControls />}
+              <PictureInPictureViewerAdapter
+                isViewerActive={isViewerActive}
+                isUiHidden={isUiHidden}
+              />
+              {!isUiHidden && <ImageInfo />}
+              {!isUiHidden && !isDesktop && <MobileLayerControls />}
             </>
           ) : (
+            !isUiHidden &&
             !isViewerLoading && (
               <Typography
                 sx={sx.infoText}
@@ -68,7 +75,7 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               </Typography>
             )
           )}
-          {isViewerLoading && (
+          {!isUiHidden && isViewerLoading && (
             <Box sx={sx.loaderContainer}>
               <GxLoader version="light" />
               {isViewerLoading.message && (
@@ -76,25 +83,33 @@ export const ViewerView = ({ className, isViewerActive = true }: ViewerViewProps
               )}
             </Box>
           )}
-          <Box sx={sx.loadingBarsContainer}>
-            <ViewerLoadingBar
-              isLoading={isTranscriptTilesLoading}
-              text={t('viewer.loadingTranscripts')}
-              delayMs={TRANSCRIPT_TILES_LOADING_DELAY_MS}
-            />
-            <ViewerLoadingBar
-              isLoading={isCellLayerOn && cellMasksData === null}
-              text={t('viewer.loadingSegmentation')}
-            />
-          </Box>
-          {isDesktop && <SummaryButton />}
-          {isDesktop && <ShareSettingsButton />}
-          {isDesktop && <DetailsPopup />}
+          {!isUiHidden && (
+            <Box sx={sx.loadingBarsContainer}>
+              <ViewerLoadingBar
+                isLoading={isTranscriptTilesLoading}
+                text={t('viewer.loadingTranscripts')}
+                delayMs={TRANSCRIPT_TILES_LOADING_DELAY_MS}
+              />
+              <ViewerLoadingBar
+                isLoading={isCellLayerOn && cellMasksData === null}
+                text={t('viewer.loadingSegmentation')}
+              />
+            </Box>
+          )}
+          {!isUiHidden && isDesktop && <SummaryButton />}
+          {!isUiHidden && isDesktop && <ShareSettingsButton />}
+          {!isUiHidden && isDesktop && <DetailsPopup />}
         </>
       </Box>
-      {isDesktop && <ViewController imageLoaded={!!source} />}
-      <ActiveFiltersPanel />
-      <MobileWelcomeModal />
+      {!isUiHidden && isDesktop && (
+        <ViewController
+          imageLoaded={!!source}
+          panelWidth={sidePanelWidth}
+          onPanelWidthChange={setSidePanelWidth}
+        />
+      )}
+      {!isUiHidden && <ActiveFiltersPanel />}
+      {!isUiHidden && <MobileWelcomeModal />}
     </Box>
   );
 };

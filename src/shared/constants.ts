@@ -11,6 +11,7 @@ export const DEFAULT_OVERVIEW_MOBILE = {
 };
 
 export const LAYER_ZOOM_OFFSET = 2;
+export const TOOLTIP_ENTER_DELAY = 500;
 
 export const COLORMAP_OPTIONS = [
   'viridis',

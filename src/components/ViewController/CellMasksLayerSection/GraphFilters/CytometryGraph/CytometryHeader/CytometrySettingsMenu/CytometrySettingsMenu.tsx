@@ -138,7 +138,10 @@ export const CytometrySettingsMenu = () => {
       sx={sx.settingsButtonWrapper}
       ref={menenuAnchor}
     >
-      <IconButton onClick={() => setOpenMenu((prev) => !prev)}>
+      <IconButton
+        size="small"
+        onClick={() => setOpenMenu((prev) => !prev)}
+      >
         <SettingsIcon />
       </IconButton>
       <Popover

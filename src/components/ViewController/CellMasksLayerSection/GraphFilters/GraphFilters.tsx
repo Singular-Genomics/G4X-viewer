@@ -8,6 +8,16 @@ import { useTranslation } from 'react-i18next';
 
 type GraphMode = undefined | 'flow_cytometry' | 'umap';
 
+const GRAPH_WINDOW_CONFIG = {
+  startWidth: 608,
+  startHeight: 456,
+  minWidth: 480,
+  minHeight: 360,
+  maxWidth: 1280,
+  maxHeight: 720,
+  startY: 100
+};
+
 export const GraphFilters = () => {
   const theme = useTheme();
   const sx = styles(theme);
@@ -50,15 +60,7 @@ export const GraphFilters = () => {
         <GxWindow
           title={selectedGraph?.replace('_', ' ')}
           titleTooltip={(selectedGraph === 'flow_cytometry' && t('tooltips.flowCytometry.title')) || undefined}
-          config={{
-            startWidth: 800,
-            startHeight: 400,
-            minWidth: 400,
-            minHeight: 400,
-            maxWidth: 1400,
-            maxHeight: 800,
-            startY: 100
-          }}
+          config={GRAPH_WINDOW_CONFIG}
           onClose={() => {
             setIsWindowVisible(false);
             setSelectedGraph(undefined);

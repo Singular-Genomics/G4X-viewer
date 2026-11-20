@@ -6,12 +6,19 @@ import { ZoomInput } from './ZoomInput';
 import { usePolygonDrawingStore } from '../../../stores/PolygonDrawingStore';
 import { useTranslation } from 'react-i18next';
 import { OverviewToggle } from '../ChannelsSettingsSection/OverviewToggle';
+import { GxThemeModeToggle } from '../../../shared/components/GxThemeModeToggle';
 
 export const ViewControlsSection = () => {
   const { t } = useTranslation();
   const polygonFeatures = usePolygonDrawingStore((store) => store.polygonFeatures);
   return (
     <Box sx={sx.sectionContainer}>
+      <Box>
+        <Typography sx={sx.subsectionTitle}>{t('viewSettings.appearance')}</Typography>
+        <Box sx={sx.togglesSubSection}>
+          <GxThemeModeToggle />
+        </Box>
+      </Box>
       <ImageDetails />
       <GlobalSelectionSliders />
       <Box sx={sx.zoomControlContainer}>
