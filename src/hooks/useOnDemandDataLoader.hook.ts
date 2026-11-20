@@ -10,6 +10,7 @@ import {
   applyCytometryFilterUrlSettings,
   applyTranscriptFilterUrlSettings
 } from '../utils/urlSettings';
+import { URL_KEYS } from '../utils/urlSettings.keys';
 
 export const useOnDemandDataLoader = () => {
   const { t } = useTranslation();
@@ -96,9 +97,11 @@ export const useOnDemandDataLoader = () => {
         const defaultSegmentation = availableSegmentations[0];
 
         const generalDetails = useViewerStore.getState().generalDetails;
+        // Share links can request a non-default cluster label
+        const clusterLabelKey = new URLSearchParams(window.location.search).get(URL_KEYS.segClusterKey) ?? undefined;
 
         if (zarrDataSet) {
-          const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName);
+          const cellsData = await zarrDataSet.fetchCellsData(defaultSegmentation.folderName, clusterLabelKey);
           if (useZarrDataStore.getState().zarrDataSet !== zarrDataSet) return;
 
           let proteinNames = cellsData.metadata.proteinNames;
@@ -117,7 +120,7 @@ export const useOnDemandDataLoader = () => {
             umapDataAvailable: hasUmapData,
             segmentationMetadata: { ...cellsData.metadata, proteinNames },
             availableClusterLabels: cellsData.clusterLabels,
-            selectedClusterLabelKey: cellsData.clusterLabels[0].key
+            selectedClusterLabelKey: cellsData.selectedClusterLabelKey
           });
           applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
           applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));
@@ -125,7 +128,11 @@ export const useOnDemandDataLoader = () => {
           const { loadCellsFromStoreFactory, extractProteinNamesFromMetadata } =
             await import('../utils/ZarrCellsLoader');
 
-          const cellsData = await loadCellsFromStoreFactory(zarrStoreFactory, defaultSegmentation.folderName);
+          const cellsData = await loadCellsFromStoreFactory(
+            zarrStoreFactory,
+            defaultSegmentation.folderName,
+            clusterLabelKey
+          );
           if (useZarrDataStore.getState().zarrStoreFactory !== zarrStoreFactory) return;
 
           let proteinNames = cellsData.metadata.proteinNames;
@@ -144,7 +151,7 @@ export const useOnDemandDataLoader = () => {
             umapDataAvailable: hasUmapData,
             segmentationMetadata: { ...cellsData.metadata, proteinNames },
             availableClusterLabels: cellsData.clusterLabels,
-            selectedClusterLabelKey: cellsData.clusterLabels[0].key
+            selectedClusterLabelKey: cellsData.selectedClusterLabelKey
           });
           applyCellFilterUrlSettings(new URLSearchParams(window.location.search));
           applyCytometryFilterUrlSettings(new URLSearchParams(window.location.search));

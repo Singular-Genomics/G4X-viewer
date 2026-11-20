@@ -12,9 +12,10 @@ export const CellsFilter = () => {
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const sx = styles(theme);
-  const { cellColormapConfig, setCellColormapConfig } = useCellSegmentationLayerStore();
+  const { cellColormapConfig, setCellColormapConfig, cellMasksData } = useCellSegmentationLayerStore();
 
   const isColormapConfigValid = cellColormapConfig && cellColormapConfig.length;
+  const isColormapMissing = cellMasksData !== null && !isColormapConfigValid;
 
   const onDrop = (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -80,7 +81,7 @@ export const CellsFilter = () => {
 
   return (
     <Box sx={{ ...(isColormapConfigValid ? {} : sx.disabledWrapper) }}>
-      {!isColormapConfigValid && (
+      {isColormapMissing && (
         <Box sx={sx.errorContainer}>
           <ErrorIcon sx={sx.errorIcon} />
           <Typography sx={sx.errorText}>{t('general.filterMissingColormap')}</Typography>

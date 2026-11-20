@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented in this file.
 
+## [4.0.1] - 2026-11-20
+
+### Improvements & Fixes
+
+- Fix erroneous missing colormap error notification
+- Fix loading of cluster ID, cell colors, and cell filters from share link
+- Hide tooltip when pointer leaves the viewer canvas
+- Prevent cluster ID dropdown from clearing filters
+- Show Zarr image in overview when its layer is hidden
+
 ## [4.0.0] - 2026-10-13
 
 ### Breaking Changes

@@ -24,6 +24,8 @@ These controls select segmentation and cluster sources, style cell masks, and ap
 
       Selects which clustering annotation is displayed in the viewer. By default, the viewer provides base Leiden clustering. You can use the [g4x-helpers](https://docs.singulargenomics.com/G4X-helpers/) toolkit to upload additional cluster annotation layers that appear in this drop-down menu.
 
+      Each Cluster ID source remembers its own applied cluster selections, filter enabled state, and discarded-cell visibility during the current session. Switching from `leiden_coarse` to `leiden_fine` restores the filters last applied to `leiden_fine`; a source without saved filters starts with filtering disabled and no clusters selected. Unapplied table selections are discarded when switching sources. Changing the segmentation source or loading a new dataset clears this filter history.
+
 - <b><u>Cell Fill Opacity:</u></b>
 
       Adjusts the transparency of cell fills when enabled. A value of **0** is fully transparent, while **100** is fully opaque.
