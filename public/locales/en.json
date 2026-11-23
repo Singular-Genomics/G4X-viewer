@@ -319,6 +319,7 @@
     "layerToggles": "Layer Toggles",
     "polygonLayer": "ROI Polygons Layer",
     "proteinChannelsLayer": "Protein Channels Layer",
+    "pyramidLevel": "Pyramid Level",
     "polygonLayerOpacity": "ROI Polygons Opacity",
     "scale": "Scale",
     "sectionTitle": "View Settings",
