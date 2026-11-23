@@ -19,7 +19,6 @@ export type ViewerStoreValues = {
   metadata: any; // <- This is complicated
   source: ViewerSourceType | null;
   generalDetails: GeneralDetailsType | null;
-  pyramidResolution: number;
   viewportWidth: number;
   viewportHeight: number;
   viewState?: any;

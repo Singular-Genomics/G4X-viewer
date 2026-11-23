@@ -17,7 +17,6 @@ const DEFAULT_VIEWER_STORE_STATE: ViewerStoreValues = {
   metadata: null,
   source: null,
   generalDetails: null,
-  pyramidResolution: 0,
   viewportWidth: 0,
   viewportHeight: 0,
   viewState: null,

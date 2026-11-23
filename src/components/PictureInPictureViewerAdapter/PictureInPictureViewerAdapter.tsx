@@ -15,7 +15,6 @@ import {
 import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
 import { Tooltip } from '../Tooltip';
 import { useTooltipStore } from '../../stores/TooltipStore';
-import { debounce } from 'lodash';
 import { useBrightfieldImagesStore } from '../../stores/BrightfieldImagesStore';
 import { useSnackbar } from 'notistack';
 import { PolygonDrawingMenu } from '../PolygonDrawingMenu';
@@ -42,8 +41,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const polygonTextLayer = usePolygonTextLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
-
-  const debouncedUpdateRef = useRef<any>(null);
 
   useEffect(
     () =>
@@ -118,25 +115,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       useTooltipStore.setState({ object: undefined });
     }
   };
-
-  useEffect(() => {
-    debouncedUpdateRef.current = debounce(
-      (zoom: number) => {
-        const z = Math.min(Math.max(Math.round(-zoom), 0), loader.length - 1);
-        useViewerStore.setState({
-          pyramidResolution: z
-        });
-      },
-      250,
-      { trailing: true }
-    );
-
-    return () => {
-      if (debouncedUpdateRef.current) {
-        debouncedUpdateRef.current.cancel();
-      }
-    };
-  }, [loader.length]);
 
   useEffect(() => {
     if (containerSize.width && containerSize.height && loader[0]?.shape?.length) {
@@ -257,11 +235,6 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
               useViewerStore.setState({
                 viewState: { ...newViewState, id: viewId }
               });
-
-              // Update the pyramidResolution with debounce
-              if (debouncedUpdateRef.current) {
-                debouncedUpdateRef.current((newViewState as any).zoom);
-              }
             }}
             hoverHooks={
               {
