@@ -12,7 +12,7 @@ import {
   usePolygonDrawingLayer,
   usePolygonTextLayer
 } from './PictureInPictureViewerAdapter.hooks';
-import { useEffect, useRef, type MouseEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react';
 import { Tooltip } from '../Tooltip';
 import { useTooltipStore } from '../../stores/TooltipStore';
 import { debounce } from 'lodash';
@@ -26,6 +26,7 @@ import { VIEWER_LOADING_TYPES } from '../../stores/ViewerStore';
 import { PictureInPictureViewerAdapterProps } from './PictureInPictureViewerAdapter.types';
 import { drawScaleBarOnCanvas } from '../ScaleBar/utils';
 import { DrawPolygonMode } from '@deck.gl-community/editable-layers';
+import type { Device } from '@luma.gl/core';
 
 export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: PictureInPictureViewerAdapterProps) => {
   const theme = useTheme();
@@ -42,6 +43,8 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const polygonTextLayer = usePolygonTextLayer();
   const deckGLRef = useRef<any>(null);
   const { enqueueSnackbar } = useSnackbar();
+  // Remount viewer on WebGL context loss
+  const [deckKey, setDeckKey] = useState(0);
 
   const debouncedUpdateRef = useRef<any>(null);
 
@@ -204,6 +207,12 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
   const deckProps = {
     layers: [cellMasksLayer, transcriptLayer],
     ref: deckGLRef,
+    onDeviceInitialized: (device: Device) => {
+      device.lost.then(() => {
+        // Ignore stale canvases
+        if (deckGLRef.current?.deck?.device === device) setDeckKey((key) => key + 1);
+      });
+    },
     glOptions: {
       preserveDrawingBuffer: true
     },
@@ -235,6 +244,7 @@ export const PictureInPictureViewerAdapter = ({ isViewerActive = true }: Picture
       {containerSize.width && containerSize.height && viewState && loader[0]?.shape?.length && (
         <>
           <PictureInPictureViewer
+            key={deckKey}
             contrastLimits={contrastLimits}
             colors={colors}
             channelsVisible={visibleChannels}
