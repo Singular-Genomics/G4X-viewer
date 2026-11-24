@@ -59,7 +59,7 @@
     "@vivjs/loaders": "0.21.0",
     "axios": "~1.13.5",
     "geotiff": "^2.1.3",
-    "i18next": "^25.7.2",
+    "i18next": "^26.3.4",
     "i18next-http-backend": "^3.0.2",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
