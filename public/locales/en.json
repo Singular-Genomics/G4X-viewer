@@ -448,7 +448,7 @@
       "export": "Export the current protein settings as a JSON file.",
       "import": "Import protein channel settings from a JSON file.",
       "currentPixelIntensity": "Intensity value of the specific protein channel at the location of your cursor.",
-      "minMaxDisplay": "All pixels above/below these values will display as zero.",
+      "minMaxDisplay": "Display range, not a filter: below Min is black, above Max is full intensity. Slider range: {{min}}–{{max}}, you can type up to {{limit}}.",
       "proteomicsColormap": "Choose a color mapping mode: Additive Blend ('None') for mixed overlapping signals, or Colormaps (Any other preset) for predefined intensity gradients."
     },
     "segmentationSettings": {

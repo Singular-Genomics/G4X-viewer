@@ -5,7 +5,11 @@ import { PropertiesUpdateType, useChannelsStore } from '../../../../stores/Chann
 import { useViewerStore } from '../../../../stores/ViewerStore';
 import { useMetadata } from '../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../legacy/utils';
-import { CHANNEL_MIN_FALLBACK, CHANNEL_MAX_FALLBACK } from './ChannelController/ChannelController.helpers';
+import {
+  CHANNEL_MIN_FALLBACK,
+  CHANNEL_MAX_FALLBACK,
+  getWindowDomain
+} from './ChannelController/ChannelController.helpers';
 
 export const ChannelControllers = () => {
   const theme = useTheme();
@@ -76,7 +80,7 @@ export const ChannelControllers = () => {
           setIsChannelLoading(index, true);
 
           try {
-            const { domain, contrastLimits: newContrastLimit } = await getSingleSelectionStats({
+            const { domain: statsDomain, contrastLimits: newContrastLimit } = await getSingleSelectionStats({
               loader,
               selection
             });
@@ -84,6 +88,7 @@ export const ChannelControllers = () => {
               Pixels: { Channels }
             } = metadata;
             const { c } = selection;
+            const domain = getWindowDomain(Channels[c].Window) ?? statsDomain;
 
             const newProps: Partial<PropertiesUpdateType> = {};
             if (!(channelName in channelsSettings)) {

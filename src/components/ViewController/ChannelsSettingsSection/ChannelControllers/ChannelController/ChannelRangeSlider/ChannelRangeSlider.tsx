@@ -1,5 +1,5 @@
 import { Box, Input, SxProps, Theme, useTheme } from '@mui/material';
-import { CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
+import { CHANNEL_MAX_FALLBACK, CHANNEL_STEP, colormapToRgb } from '../ChannelController.helpers';
 import { ChannelRangeSliderProps } from './ChannelRangeSlider.types';
 import { ChangeEvent, useCallback, useEffect, useMemo } from 'react';
 import { debounce } from 'lodash';
@@ -29,6 +29,8 @@ export const ChannelRangeSlider = ({
 
   const [currentMinValue, currentMaxValue] = slider;
   const [domainMin, domainMax] = domain;
+  // Domain is only an estimate, so allow the full 16-bit range
+  const maxValueLimit = Math.max(domainMax, CHANNEL_MAX_FALLBACK);
 
   useEffect(() => {
     setMinInputValue(currentMinValue.toString());
@@ -63,11 +65,15 @@ export const ChannelRangeSlider = ({
       debounce((currentValue: string) => {
         if (currentValue === '') return;
         const newValue =
-          +currentValue <= currentMinValue ? currentMinValue : +currentValue > domainMax ? domainMax : +currentValue;
+          +currentValue <= currentMinValue
+            ? currentMinValue
+            : +currentValue > maxValueLimit
+              ? maxValueLimit
+              : +currentValue;
         setMaxInputValue(newValue.toString());
         handleSliderChange([currentMinValue, newValue] as [number, number]);
       }, DEBOUNCE_TIME_MS),
-    [currentMinValue, domainMax, handleSliderChange, setMaxInputValue]
+    [currentMinValue, maxValueLimit, handleSliderChange, setMaxInputValue]
   );
 
   const handleMaxInputChange = useCallback(
@@ -88,7 +94,7 @@ export const ChannelRangeSlider = ({
         value={minInputValue}
         onChange={handleMinInputChange}
         inputProps={{
-          max: domainMax,
+          max: maxValueLimit,
           step: CHANNEL_STEP
         }}
       />
@@ -112,11 +118,13 @@ export const ChannelRangeSlider = ({
         value={maxInputValue}
         onChange={handleMaxInputChange}
         inputProps={{
-          max: domainMax,
+          max: maxValueLimit,
           step: CHANNEL_STEP
         }}
       />
-      <InfoTooltip title={t('tooltips.channelSettings.minMaxDisplay')} />
+      <InfoTooltip
+        title={t('tooltips.channelSettings.minMaxDisplay', { min: domainMin, max: domainMax, limit: maxValueLimit })}
+      />
     </Box>
   );
 };
