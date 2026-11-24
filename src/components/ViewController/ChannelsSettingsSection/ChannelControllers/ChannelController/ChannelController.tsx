@@ -1,4 +1,4 @@
-import { calculateExpandedRange, getPixelValueDisplay, MORPHOLOGY_KEYWORDS } from './ChannelController.helpers';
+import { getPixelValueDisplay, getVisibleRange, MORPHOLOGY_KEYWORDS } from './ChannelController.helpers';
 import { ChannelControllerProps, SliderRangeMode } from './ChannelController.types';
 import {
   Box,
@@ -79,29 +79,25 @@ export const ChannelController = ({
   const [minInputValue, setMinInputValue] = useState<string>(currentMinValue.toString());
   const [maxInputValue, setMaxInputValue] = useState<string>(currentMaxValue.toString());
 
-  const [visibleRange, setVisibleRange] = useState(() => {
-    const [calcMin, calcMax] = calculateExpandedRange(
-      currentMinValue,
-      currentMaxValue,
-      Number(rangeMin),
-      Number(rangeMax)
-    );
-    return { min: calcMin, max: calcMax };
-  });
+  const [visibleRange, setVisibleRange] = useState(() => getVisibleRange('expanded', slider, domain));
+
+  // Reset on channel or domain change
+  const [syncedRange, setSyncedRange] = useState({ name, domainMin, domainMax });
+  if (syncedRange.name !== name || syncedRange.domainMin !== domainMin || syncedRange.domainMax !== domainMax) {
+    setSyncedRange({ name, domainMin, domainMax });
+    setVisibleRange(getVisibleRange(sliderRangeMode, slider, domain));
+  } else if (currentMinValue < visibleRange.min || currentMaxValue > visibleRange.max) {
+    // Grow only, shrinking would rescale the track mid-drag
+    setVisibleRange({
+      min: Math.min(visibleRange.min, currentMinValue),
+      max: Math.max(visibleRange.max, currentMaxValue)
+    });
+  }
 
   const handleModeToggle = () => {
-    setSliderRangeMode((prev) => {
-      const newMode = prev === 'expanded' ? 'contract' : 'expanded';
-      const rMin = Number(rangeMin);
-      const rMax = Number(rangeMax);
-      if (newMode === 'contract') {
-        setVisibleRange({ min: rMin, max: rMax });
-      } else {
-        const [eMin, eMax] = calculateExpandedRange(currentMinValue, currentMaxValue, rMin, rMax);
-        setVisibleRange({ min: eMin, max: eMax });
-      }
-      return newMode;
-    });
+    const newMode = sliderRangeMode === 'expanded' ? 'contract' : 'expanded';
+    setSliderRangeMode(newMode);
+    setVisibleRange(getVisibleRange(newMode, slider, domain));
   };
 
   return (

@@ -8,6 +8,7 @@ import { useChannelsStore } from '../../../../../stores/ChannelsStore';
 import { useMetadata } from '../../../../../hooks/useMetadata.hook';
 import { getSingleSelectionStats } from '../../../../../legacy/utils';
 import { COLOR_PALLETE } from '../../../../../shared/constants';
+import { getWindowDomain } from '../ChannelController/ChannelController.helpers';
 import { useTranslation } from 'react-i18next';
 
 export const AddChannel = () => {
@@ -46,10 +47,11 @@ export const AddChannel = () => {
     getSingleSelectionStats({
       loader,
       selection
-    }).then(({ domain, contrastLimits }) => {
+    }).then(({ domain: statsDomain, contrastLimits }) => {
       const { c } = selection;
       const channelName = metadata.Pixels.Channels[c]?.Name ?? `Channel ${c}`;
       const { Channels } = metadata.Pixels;
+      const domain = getWindowDomain(Channels[c]?.Window) ?? statsDomain;
       const initialColor =
         (Channels[c].Color && Channels[c].Color.slice(0, -1)) ?? (COLOR_PALLETE[c] || [255, 255, 255]);
       if (!(channelName in channelsSettings)) {

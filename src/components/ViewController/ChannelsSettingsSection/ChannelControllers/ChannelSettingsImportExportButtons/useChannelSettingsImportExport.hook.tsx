@@ -7,6 +7,7 @@ import { ChannelsSettings, PropertiesUpdateType, useChannelsStore } from '../../
 import { useViewerStore } from '../../../../../stores/ViewerStore';
 import { validateChannelImportData } from './ChannelSettingsImportExportButtons.helpers';
 import { MAX_UINT16_VALUE } from '../../../../../shared/constants';
+import { getWindowDomain } from '../ChannelController/ChannelController.helpers';
 import { MAX_CHANNELS } from '@hms-dbmi/viv';
 import { List, ListItem } from '@mui/material';
 
@@ -272,6 +273,9 @@ export const useChannelSettingsImportExport = () => {
               selections: { c: channelIndex, z: 0 }
             };
 
+            const windowDomain = getWindowDomain(metadata?.Pixels?.Channels?.[channelIndex]?.Window);
+            if (windowDomain) newProps.domains = windowDomain;
+
             if (channelData.visible !== undefined) newProps.channelsVisible = channelData.visible;
             if (s?.color !== undefined) newProps.colors = s.color;
             if (s?.minValue !== undefined && s?.maxValue !== undefined)
@@ -313,7 +317,7 @@ export const useChannelSettingsImportExport = () => {
                 channelsVisible: channelData.visible ?? true,
                 colors: s?.color ?? [255, 255, 255],
                 contrastLimits,
-                domains: contrastLimits
+                domains: getWindowDomain(metadata?.Pixels?.Channels?.[channelIndex]?.Window) ?? contrastLimits
               } as any);
             });
 
@@ -370,7 +374,7 @@ export const useChannelSettingsImportExport = () => {
 
       reader.readAsText(file);
     },
-    [ids, channelOptions, generalDetails, enqueueSnackbar, t]
+    [ids, channelOptions, metadata, generalDetails, enqueueSnackbar, t]
   );
 
   const dropzone = useDropzone({
